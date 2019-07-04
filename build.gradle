@@ -1,0 +1,48 @@
+apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+group = "me.TechsCode"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+assemble.dependsOn shadowJar
+
+repositories {
+    maven { url 'https://jitpack.io' }
+
+    jcenter()
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile project(":TechsCodeAPIClient")
+
+    compile "net.dv8tion:JDA:3.8.3_464"
+    compile 'org.jsoup:jsoup:1.8.3'
+    compile 'org.apache.commons:commons-lang3:3.7'
+    compile 'mysql:mysql-connector-java:5.1.17'
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
+    }
+}
+
+shadowJar {
+    archiveName = "TechDiscordBot.jar"
+    destinationDir = file("/Users/tech/Desktop")
+}
+
+jar {
+    manifest {
+        attributes 'Class-Path': '/libs/a.jar'
+        attributes 'Main-Class': 'me.TechsCode.TechDiscordBot.TechDiscordBot'
+    }
+}
