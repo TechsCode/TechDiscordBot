@@ -37,7 +37,7 @@ buildscript {
 
 shadowJar {
     archiveName = "TechDiscordBot.jar"
-    destinationDir = file("/Users/tech/Desktop")
+    destinationDir = file("D:\\Programming\\Bots\\Exports")
 }
 
 jar {
