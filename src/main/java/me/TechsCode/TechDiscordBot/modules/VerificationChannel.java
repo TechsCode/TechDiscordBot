@@ -64,8 +64,8 @@ public class VerificationChannel extends Module {
                     }
                 } else {
                     if(apiNotAvailable == null){
-                        CustomEmbedBuilder message = new CustomEmbedBuilder("Verifications disabled")
-                                .setText("The Web API is currently unavailable. Contact staff for more info")
+                        CustomEmbedBuilder message = new CustomEmbedBuilder("Verifications Disabled")
+                                .setText("The Web API is currently unavailable. Please contact staff for more info!")
                                 .error();
 
                         apiNotAvailable = message.send(channel);
@@ -115,7 +115,7 @@ public class VerificationChannel extends Module {
         CustomEmbedBuilder errorMessage = new CustomEmbedBuilder("Error ("+e.getAuthor().getName()+")").error();
 
         if(verificationQueue.contains(e.getAuthor().getId())){
-            errorMessage.setText("Please follow the instruction above").sendTemporary(channel, 15);
+            errorMessage.setText("Please follow the instruction above!").sendTemporary(channel, 15);
             return;
         }
 
@@ -134,7 +134,7 @@ public class VerificationChannel extends Module {
         Purchase[] purchases = bot.getTechsCodeAPI().getPurchases().username(username).get();
 
         if(purchases.length == 0){
-            errorMessage.setText("The user "+username+" does not own any of Tech's Plugins").sendTemporary(channel, 10);
+            errorMessage.setText("The user "+username+" does not own any of Tech's Plugins. It can take up to 15 minutes from purchase for the Bot to recognize your purchase.").sendTemporary(channel, 10);
             return;
         }
 
