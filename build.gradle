@@ -35,7 +35,7 @@ ssh.remotes {
         host = 's3.techsco.de'
         port = 22
         user = 'eazyftw'
-        password = 'Q&*98%ch`x+Bv:6^'
+        password = "${Password}"
     }
 }
 
