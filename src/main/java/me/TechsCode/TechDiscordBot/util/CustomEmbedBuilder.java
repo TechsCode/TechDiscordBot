@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 public class CustomEmbedBuilder extends EmbedBuilder {
 
     public CustomEmbedBuilder(String title) {
-        if(title != null) setAuthor(title, "http://techmods.de", "https://i.imgur.com/nnegGEV.png");
+        if(title != null) setAuthor(title, "http://techsco.de", "https://i.imgur.com/nnegGEV.png");
         setColor(new Color(81, 153, 226));
         setFooter("Developed by Tech");
     }
