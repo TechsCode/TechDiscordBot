@@ -1,7 +1,7 @@
 package me.TechsCode.TechDiscordBot.modules;
 
 import me.TechsCode.TechDiscordBot.Module;
-import me.TechsCode.TechDiscordBot.Requirement;
+import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -18,8 +18,8 @@ public class AdvertisingFilter extends Module {
     @SubscribeEvent
     public void recieve(MessageReceivedEvent e) {
         String msg = e.getMessage().getContentDisplay();
-        msg.replaceAll("(https?:\\/\\/)?(www\\.)?(discord\\.(gg|io|me|li)|discordapp\\.com\\/invite)\\/.+[a-z]", "9209`uw9u1d9uqwdqwdb918d09");
-        if(msg.contains("9209`uw9u1d9uqwdqwdb918d09")) {
+
+        if(msg.matches("(https?:\\/\\/)?(www\\.)?(discord\\.(gg|io|me|li)|discordapp\\.com\\/invite)\\/.+[a-z]")) {
             e.getMessage().delete().queue();
             new CustomEmbedBuilder("Advertising").setText("Please do not advertise " + e.getAuthor().getAsMention() + "!").error().sendTemporary(e.getTextChannel(), 10, TimeUnit.SECONDS);
         }
