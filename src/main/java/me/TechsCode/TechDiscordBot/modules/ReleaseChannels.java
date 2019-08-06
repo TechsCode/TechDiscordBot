@@ -88,7 +88,7 @@ public class ReleaseChannels extends Module {
                 .addField("Changes", e.getMessage().getContentDisplay(), true);
 
         Message message = builder.send(e.getTextChannel());
-        e.getChannel().sendFile(file, message).queue();
+        e.getChannel().sendFile(file).queue();
 
         e.getMessage().delete().queue();
     }

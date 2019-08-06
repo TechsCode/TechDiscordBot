@@ -1,6 +1,7 @@
 apply plugin: 'idea'
 apply plugin: 'java'
 apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'org.hidetake.ssh'
 
 group = "me.TechsCode"
 
@@ -20,12 +21,37 @@ repositories {
 dependencies {
     compile project(":TechsCodeAPIClient")
 
-    compile "net.dv8tion:JDA:3.8.3_464"
+    compile 'net.dv8tion:JDA:3.8.3_464'
     compile 'org.jsoup:jsoup:1.8.3'
     compile 'org.apache.commons:commons-lang3:3.7'
     compile 'mysql:mysql-connector-java:5.1.17'
 
     compile 'net.sourceforge.htmlunit:htmlunit:2.29'
+}
+
+
+ssh.remotes {
+    server {
+        host = 's3.techsco.de'
+        port = 22
+        user = 'eazyftw'
+        password = 'Q&*98%ch`x+Bv:6^'
+    }
+}
+
+ssh.settings {
+    knownHosts = allowAnyHosts
+    dryRun = false
+}
+
+task upload {
+    doLast {
+        ssh.run {
+            session(ssh.remotes.server) {
+                put from: files('/Users/tech/Desktop/TechDiscordBot.jar'), into: '../../srv/Discord/TechsPluginTesters'
+            }
+        }
+    }
 }
 
 buildscript {
@@ -34,12 +60,13 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
+        classpath 'org.hidetake:gradle-ssh-plugin:2.10.1'
     }
 }
 
 shadowJar {
-    archiveName = "TechDiscordBot.jar"
-    destinationDir = file("/Users/tech/Desktop")
+    archiveName = 'TechDiscordBot.jar'
+    destinationDir = file('/Users/tech/Desktop')
 }
 
 jar {

@@ -19,7 +19,7 @@ public class AdvertisingFilter extends Module {
     public void recieve(MessageReceivedEvent e) {
         String msg = e.getMessage().getContentDisplay();
 
-        if(msg.matches("(https?:\\/\\/)?(www\\.)?(discord\\.(gg|io|me|li)|discordapp\\.com\\/invite)\\/.+[a-z]")) {
+        if(msg.matches(".*(https?:\\/\\/)?(www\\.)?(discord\\.(gg|io|me|li)|discordapp\\.com\\/invite)\\/.+[a-z]")) {
             e.getMessage().delete().queue();
             new CustomEmbedBuilder("Advertising").setText("Please do not advertise " + e.getAuthor().getAsMention() + "!").error().sendTemporary(e.getTextChannel(), 10, TimeUnit.SECONDS);
         }
