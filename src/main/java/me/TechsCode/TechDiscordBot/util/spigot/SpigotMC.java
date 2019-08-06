@@ -1,5 +1,7 @@
 package me.TechsCode.TechDiscordBot.util.spigot;
 
+import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -10,8 +12,14 @@ import java.util.ArrayList;
 
 public class SpigotMC {
 
-    public static ProfileComment[] getComments(String userId){
-        Document doc = doc("http://spigotmc.org/members/"+userId);
+    private VirtualBrowser browser;
+
+    public SpigotMC() {
+        this.browser = new VirtualBrowser();
+    }
+
+    public ProfileComment[] getComments(String userId){
+        Document doc = doc("https://spigotmc.org/members/"+userId);
 
         ArrayList<ProfileComment> comments = new ArrayList<>();
 
@@ -22,7 +30,7 @@ public class SpigotMC {
         }
 
         for(int page = 1; page <= pages; page++){
-            doc = doc("http://spigotmc.org/members/"+userId+"?page="+page);
+            doc = doc("https://spigotmc.org/members/"+userId+"?page="+page);
 
             if(doc != null){
                 for(Element all : doc.getElementsByClass("messageSimple")){
@@ -50,17 +58,11 @@ public class SpigotMC {
         return userid;
     }
 
-    private static Document doc(String url) {
-        try {
-            return Jsoup.connect(url)
-                    .userAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0")
-                    .referrer("http://www.google.com")
-                    .timeout(30 * 1000)
-                    .maxBodySize(0).get();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        return null;
+    private Document doc(String url) {
+        HtmlPage htmlPage = browser.request(url, HttpMethod.GET);
+        Document doc = Jsoup.parse(htmlPage.asXml());
+
+        return doc;
     }
 }
