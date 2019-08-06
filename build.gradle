@@ -49,6 +49,7 @@ task upload {
         ssh.run {
             session(ssh.remotes.server) {
                 put from: files('/Users/tech/Desktop/TechDiscordBot.jar'), into: '../../srv/Discord/TechsPluginTesters'
+                put from: files('/Users/tech/Desktop/TechDiscordBot.jar'), into: '../../srv/Discord/TechsPluginSupport'
             }
         }
     }
