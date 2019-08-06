@@ -1,6 +1,7 @@
 package me.TechsCode.TechDiscordBot.objects;
 
 import me.TechsCode.TechDiscordBot.Query;
+import net.dv8tion.jda.core.entities.Category;
 import net.dv8tion.jda.core.entities.TextChannel;
 
 import java.util.List;
@@ -16,5 +17,9 @@ public class ChannelQuery extends Query<TextChannel> {
         List<TextChannel> channels = all().stream().filter(textChannel -> textChannel.getParent().getName().equalsIgnoreCase(category)).collect(Collectors.toList());
 
         return new ChannelQuery(channels);
+    }
+
+    public ChannelQuery inCategory(Category category){
+        return inCategory(category.getName());
     }
 }

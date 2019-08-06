@@ -2,6 +2,7 @@ package me.TechsCode.TechDiscordBot;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Query<T> {
@@ -34,5 +35,9 @@ public class Query<T> {
 
     public T first(){
         return hasAny() ? objects.get(0) : null;
+    }
+
+    public Query<T> filter(Predicate<? super T> predicate){
+        return new Query<T>(objects.stream().filter(predicate).collect(Collectors.toList()));
     }
 }

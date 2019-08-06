@@ -48,4 +48,16 @@ public class CustomEmbedBuilder extends EmbedBuilder {
     public void sendTemporary(TextChannel textChannel, int duration){
         sendTemporary(textChannel, duration, TimeUnit.SECONDS);
     }
+
+    @Override
+    public CustomEmbedBuilder addField(String name, String value, boolean inline) {
+        super.addField(name, value, inline);
+        return this;
+    }
+
+    @Override
+    public CustomEmbedBuilder addBlankField(boolean inline) {
+        super.addBlankField(inline);
+        return this;
+    }
 }
