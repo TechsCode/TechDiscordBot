@@ -1,5 +1,6 @@
 package me.TechsCode.TechDiscordBot;
 
+import me.TechsCode.TechDiscordBot.objects.ChannelQuery;
 import me.TechsCode.TechDiscordBot.storage.Storage;
 import me.TechsCode.TechDiscordBot.util.Project;
 import me.TechsCode.TechDiscordBot.util.ConsoleColor;
@@ -14,9 +15,10 @@ import javax.security.auth.login.LoginException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EventListener;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TechDiscordBot implements EventListener {
 
@@ -92,6 +94,8 @@ public class TechDiscordBot implements EventListener {
                 try {
                     Module module = (Module) each.getConstructor(TechDiscordBot.class).newInstance(this);
 
+                    module.enable();
+
                     if(module.isEnabled()){
                         modules.add(module);
                     }
@@ -133,19 +137,27 @@ public class TechDiscordBot implements EventListener {
         System.out.println(ConsoleColor.BLUE_BRIGHT+"["+ConsoleColor.WHITE_BOLD_BRIGHT+"Discord Bot"+ConsoleColor.BLUE_BRIGHT+"] "+ConsoleColor.RESET+message);
     }
 
-    public Role getRole(String name){
-        return guild.getRolesByName(name, true).stream().findFirst().orElse(null);
+    public Query<Role> getRoles(String... names){
+        List<Role> roles = Arrays.stream(names).flatMap(name -> guild.getRolesByName(name, true).stream()).collect(Collectors.toList());
+
+        return new Query<>(roles);
     }
 
-    public TextChannel getChannel(String name){
-        return guild.getTextChannelsByName(name, true).stream().findFirst().orElse(null);
+    public ChannelQuery getChannels(String... names){
+        List<TextChannel> channels = Arrays.stream(names).flatMap(name -> guild.getTextChannelsByName(name, true).stream()).collect(Collectors.toList());
+
+        return new ChannelQuery(channels);
     }
 
-    public Category getCategory(String name){
-        return guild.getCategoriesByName(name, true).stream().findFirst().orElse(null);
+    public Query<Category> getCategories(String... names){
+        List<Category> channels = Arrays.stream(names).flatMap(name -> guild.getCategoriesByName(name, true).stream()).collect(Collectors.toList());
+
+        return new Query<>(channels);
     }
 
-    public Emote getEmote(String name){
-        return guild.getEmotesByName(name, true).stream().findFirst().orElse(null);
+    public Query<Emote> getEmotes(String... names){
+        List<Emote> emotes = Arrays.stream(names).flatMap(name -> guild.getEmotesByName(name, true).stream()).collect(Collectors.toList());
+
+        return new Query<>(emotes);
     }
 }

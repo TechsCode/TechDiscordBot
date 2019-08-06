@@ -1,20 +1,18 @@
 package me.TechsCode.TechDiscordBot.modules;
 
 import me.TechsCode.TechDiscordBot.Module;
-import me.TechsCode.TechDiscordBot.Requirement;
+import me.TechsCode.TechDiscordBot.Query;
+import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
+import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
-import me.TechsCode.TechDiscordBot.requirements.ChannelRequirement;
 import me.TechsCode.TechDiscordBot.storage.Verification;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import me.TechsCode.TechDiscordBot.util.spigot.ProfileComment;
 import me.TechsCode.TechDiscordBot.util.spigot.SpigotMC;
-import me.TechsCode.TechsCodeAPICli.TechsCodeAPIClient;
 import me.TechsCode.TechsCodeAPICli.objects.Purchase;
-import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.core.hooks.SubscribeEvent;
 
 import java.util.ArrayList;
@@ -22,6 +20,15 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class VerificationChannel extends Module {
+
+    private final DefinedQuery<TextChannel> VERIFICATION_CHANNEL = new DefinedQuery<TextChannel>() {
+        @Override
+        protected Query<TextChannel> newQuery() {
+            return bot.getChannels("verification");
+        }
+    };
+
+    private SpigotMC spigotMC;
 
     private TextChannel channel;
     private Message lastInstructions, apiNotAvailable;
@@ -33,7 +40,9 @@ public class VerificationChannel extends Module {
 
     @Override
     public void onEnable() {
-        channel = bot.getChannel("verification");
+        this.spigotMC = new SpigotMC();
+
+        channel = VERIFICATION_CHANNEL.query().first();
 
         lastInstructions = null;
         apiNotAvailable = null;
@@ -96,17 +105,17 @@ public class VerificationChannel extends Module {
     @Override
     public Requirement[] getRequirements() {
         return new Requirement[]{
-                new ChannelRequirement("verification")
+                new Requirement(VERIFICATION_CHANNEL, 1, "Missing Verifications Channel (#verification)")
         };
     }
 
     @SubscribeEvent
     public void onMessage(MessageReceivedEvent e) {
-        if(!e.getTextChannel().getName().equalsIgnoreCase("verification")){
+        if(e.getAuthor().isBot()) return;
+
+        if(!e.getTextChannel().equals(VERIFICATION_CHANNEL.query().first())){
             return;
         }
-
-        if(e.getAuthor().isBot()) return;
 
         // Remove typed in message
         e.getMessage().delete().complete();
@@ -161,7 +170,7 @@ public class VerificationChannel extends Module {
                 long start = System.currentTimeMillis();
 
                 while (System.currentTimeMillis()-start < TimeUnit.MINUTES.toMillis(3)){
-                    for(ProfileComment all : SpigotMC.getComments(userId)){
+                    for(ProfileComment all : spigotMC.getComments(userId)){
                         if(all.getUserId().equals(userId) && all.getText().equals("TechVerification")){
                             m.delete().complete();
 

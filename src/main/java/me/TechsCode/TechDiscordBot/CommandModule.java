@@ -1,18 +1,14 @@
 package me.TechsCode.TechDiscordBot;
 
-import me.TechsCode.TechDiscordBot.requirements.ChannelRequirement;
-import me.TechsCode.TechDiscordBot.requirements.RoleRequirement;
+import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
+import me.TechsCode.TechDiscordBot.objects.Requirement;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.SubscribeEvent;
-import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class CommandModule extends Module {
@@ -27,8 +23,8 @@ public abstract class CommandModule extends Module {
 
         if(!first.equalsIgnoreCase(getCommand())) return;
 
-        Set<Role> restrictedRoles = Arrays.stream(getRestrictedRoles()).map(bot::getRole).collect(Collectors.toSet());
-        Set<TextChannel> restrictedChannels = Arrays.stream(getRestrictedChannels()).map(bot::getChannel).collect(Collectors.toSet());
+        List<Role> restrictedRoles = getRestrictedRoles().query().all();
+        List<TextChannel> restrictedChannels = getRestrictedChannels().query().all();
 
         // Check if the player has at least one of the restricted roles
         if(!restrictedRoles.isEmpty() && Collections.disjoint(e.getMember().getRoles(), restrictedRoles)){
@@ -61,17 +57,19 @@ public abstract class CommandModule extends Module {
 
     @Override
     public Requirement[] getRequirements() {
-        return ArrayUtils.addAll(
-                Arrays.stream(getRestrictedRoles()).map(RoleRequirement::new).toArray(RoleRequirement[]::new),
-                Arrays.stream(getRestrictedChannels()).map(ChannelRequirement::new).toArray(ChannelRequirement[]::new)
-        );
+        Set<Requirement> requirements = new HashSet<>();
+
+        if(getRestrictedRoles() != null) requirements.add(new Requirement(getRestrictedRoles(), 1, "No Roles found which are suitable for running this Command (Missing Restricted Roles)"));
+        if(getRestrictedChannels() != null) requirements.add(new Requirement(getRestrictedChannels(), 1, "No Channels found which are suitable for running this Command (Missing Restricted Channels)"));
+
+        return requirements.toArray(new Requirement[0]);
     }
 
     public abstract String getCommand();
 
-    public abstract String[] getRestrictedRoles();
+    public abstract DefinedQuery<Role> getRestrictedRoles();
 
-    public abstract String[] getRestrictedChannels();
+    public abstract DefinedQuery<TextChannel> getRestrictedChannels();
 
     public abstract void onCommand(TextChannel channel, Member member, String[] args);
 }

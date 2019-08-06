@@ -1,10 +1,8 @@
 package me.TechsCode.TechDiscordBot.modules;
 
-import me.TechsCode.TechDiscordBot.Module;
-import me.TechsCode.TechDiscordBot.Requirement;
-import me.TechsCode.TechDiscordBot.TechDiscordBot;
-import me.TechsCode.TechDiscordBot.requirements.CategoryRequirement;
-import me.TechsCode.TechDiscordBot.requirements.ChannelRequirement;
+import me.TechsCode.TechDiscordBot.*;
+import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
+import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
@@ -20,8 +18,26 @@ import java.util.concurrent.TimeUnit;
 
 public class TicketSystem extends Module {
 
-    private Category category;
-    private TextChannel textChannel;
+    private final DefinedQuery<Role> SUPPORTER_ROLE = new DefinedQuery<Role>() {
+        @Override
+        protected Query<Role> newQuery() {
+            return bot.getRoles("Supporter");
+        }
+    };
+
+    private final DefinedQuery<Category> TICKET_CATEGORY = new DefinedQuery<Category>() {
+        @Override
+        protected Query<Category> newQuery() {
+            return bot.getCategories("tickets");
+        }
+    };
+
+    private final DefinedQuery<TextChannel> CREATION_CHANNEL = new DefinedQuery<TextChannel>() {
+        @Override
+        protected Query<TextChannel> newQuery() {
+            return bot.getChannels("tickets");
+        }
+    };
 
     private Message lastInstructions;
 
@@ -48,11 +64,13 @@ public class TicketSystem extends Module {
                 channel.delete().completeAfter(20, TimeUnit.SECONDS);
 
                 if(closedByUser){
+                    TextChannel creationChannel = CREATION_CHANNEL.query().first();
+
                     new CustomEmbedBuilder(closedByUser ? "Solved Ticket" : "Closed Ticket")
                             .setText("The ticket ("+channel.getName()+") from "+e.getAuthor().getAsMention()+" is now solved. Thanks for contacting us")
-                            .success().send(textChannel);
+                            .success().send(creationChannel);
 
-                    sendInstructions();
+                    sendInstructions(creationChannel);
                 }
             }
         }
@@ -60,11 +78,12 @@ public class TicketSystem extends Module {
 
     @SubscribeEvent
     public void createChannel(MessageReceivedEvent e) {
-        TextChannel channel = (TextChannel) e.getChannel();
-
         if(e.getMember().getUser().isBot()) return;
 
-        if(!channel.equals(textChannel)) return;
+        TextChannel channel = (TextChannel) e.getChannel();
+        TextChannel creationChannel = CREATION_CHANNEL.query().first();
+
+        if(!channel.equals(creationChannel)) return;
 
         TextChannel ticketChat = getOpenTicketChat(e.getMember());
 
@@ -73,7 +92,7 @@ public class TicketSystem extends Module {
         if(ticketChat != null){
             new CustomEmbedBuilder("Error")
                     .setText("You already have an open ticket ("+ticketChat.getAsMention()+")").error()
-                    .sendTemporary(textChannel, 10);
+                    .sendTemporary(creationChannel, 10);
 
             return;
         }
@@ -91,10 +110,8 @@ public class TicketSystem extends Module {
         permissionsAllow.add(Permission.MESSAGE_WRITE);
         permissionsAllow.add(Permission.MESSAGE_HISTORY);
 
-        Role supporter = bot.getRole("Supporter");
-
         ticketChat.getManager()
-                .putPermissionOverride(supporter, permissionsAllow, Arrays.asList(Permission.MESSAGE_TTS))
+                .putPermissionOverride(SUPPORTER_ROLE.query().first(), permissionsAllow, Arrays.asList(Permission.MESSAGE_TTS))
                 .putPermissionOverride(e.getMember(), permissionsAllow, Arrays.asList(Permission.MESSAGE_TTS))
                 .putPermissionOverride(bot.getGuild().getPublicRole(), new ArrayList<>(), Arrays.asList(Permission.MESSAGE_READ, Permission.MESSAGE_WRITE))
                 .complete();
@@ -106,10 +123,10 @@ public class TicketSystem extends Module {
 
         new CustomEmbedBuilder("New Ticket")
                 .setText(e.getAuthor().getAsMention()+" created a new ticket ("+ticketChat.getAsMention()+")")
-                .send(textChannel);
+                .send(creationChannel);
     }
 
-    public void sendInstructions(){
+    public void sendInstructions(TextChannel textChannel){
         if(lastInstructions != null){
             lastInstructions.delete().complete();
         }
@@ -128,7 +145,7 @@ public class TicketSystem extends Module {
         String name = "ticket-"+ UUID.randomUUID().toString().split("-")[0];
 
         return (TextChannel) bot.getGuild().getController().createTextChannel(name)
-                .setParent(category)
+                .setParent(TICKET_CATEGORY.query().first())
                 .setTopic("Ticket from " + member.getAsMention() + " | Problem Solved? Please type in !solved")
                 .complete();
     }
@@ -149,10 +166,7 @@ public class TicketSystem extends Module {
 
     @Override
     public void onEnable() {
-        category = bot.getCategory("Tickets");
-        textChannel = bot.getChannel("tickets");
-
-        sendInstructions();
+        sendInstructions(CREATION_CHANNEL.query().first());
     }
 
     @Override
@@ -170,8 +184,9 @@ public class TicketSystem extends Module {
     @Override
     public Requirement[] getRequirements() {
         return new Requirement[]{
-                new CategoryRequirement("Tickets"),
-                new ChannelRequirement("Tickets")
+                new Requirement(CREATION_CHANNEL, 1, "Missing Creation Channel (#tickets)"),
+                new Requirement(TICKET_CATEGORY, 1, "Missing Tickets Category (tickets)"),
+                new Requirement(SUPPORTER_ROLE, 1, "Missing 'Supporter' Role")
         };
     }
 }

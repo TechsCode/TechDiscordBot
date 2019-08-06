@@ -1,23 +1,24 @@
 package me.TechsCode.TechDiscordBot.modules;
 
 import me.TechsCode.TechDiscordBot.Module;
-import me.TechsCode.TechDiscordBot.Requirement;
+import me.TechsCode.TechDiscordBot.Query;
+import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
+import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
-import me.TechsCode.TechDiscordBot.requirements.RoleRequirement;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.SubscribeEvent;
-import org.apache.commons.lang3.ArrayUtils;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class EmbedMessageSender extends Module {
+
+    private final DefinedQuery<Role> SUPPORTER_ROLE = new DefinedQuery<Role>() {
+        @Override
+        protected Query newQuery() {
+            return bot.getRoles("supporter");
+        }
+    };
 
     public EmbedMessageSender(TechDiscordBot bot) {
         super(bot);
@@ -25,9 +26,7 @@ public class EmbedMessageSender extends Module {
 
     @SubscribeEvent
     public void receive(MessageReceivedEvent e){
-        Role role = bot.getRole("Supporter");
-
-        if(!e.getMember().getRoles().contains(role)) return;
+        if(!e.getMember().getRoles().contains(SUPPORTER_ROLE.query().first())) return;
 
         TextChannel textChannel = e.getTextChannel();
 
@@ -67,7 +66,7 @@ public class EmbedMessageSender extends Module {
     @Override
     public Requirement[] getRequirements() {
         return new Requirement[]{
-                new RoleRequirement("Supporter")
+                new Requirement(SUPPORTER_ROLE, 1, "Missing 'Supporter' Role")
         };
     }
 }

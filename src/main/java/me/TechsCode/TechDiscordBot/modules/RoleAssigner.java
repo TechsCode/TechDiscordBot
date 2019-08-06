@@ -1,13 +1,12 @@
 package me.TechsCode.TechDiscordBot.modules;
 
 import me.TechsCode.TechDiscordBot.Module;
-import me.TechsCode.TechDiscordBot.Requirement;
+import me.TechsCode.TechDiscordBot.Query;
+import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
+import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
-import me.TechsCode.TechDiscordBot.requirements.RoleRequirement;
 import me.TechsCode.TechDiscordBot.storage.Verification;
-import me.TechsCode.TechsCodeAPICli.TechsCodeAPIClient;
 import me.TechsCode.TechsCodeAPICli.objects.Resource;
-import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 
@@ -18,7 +17,28 @@ import static java.lang.Thread.sleep;
 
 public class RoleAssigner extends Module {
 
-    private Role verificationRole, reviewSquad;
+    private final DefinedQuery<Role> VERIFICATION_ROLE = new DefinedQuery<Role>() {
+        @Override
+        protected Query<Role> newQuery() {
+            return bot.getRoles("Verified");
+        }
+    };
+
+    private final DefinedQuery<Role> REVIEW_SQUAD_ROLE = new DefinedQuery<Role>() {
+        @Override
+        protected Query<Role> newQuery() {
+            return bot.getRoles("Review Squad");
+        }
+    };
+
+    private final DefinedQuery<Role> RESOURCE_ROLES = new DefinedQuery<Role>() {
+        @Override
+        protected Query<Role> newQuery() {
+            String[] resourceNames = bot.getTechsCodeAPI().getResources().premium().getStream().map(Resource::getResourceName).toArray(String[]::new);
+
+            return bot.getRoles(resourceNames);
+        }
+    };
 
     public RoleAssigner(TechDiscordBot bot) {
         super(bot);
@@ -26,9 +46,6 @@ public class RoleAssigner extends Module {
 
     @Override
     public void onEnable() {
-        verificationRole = bot.getRole("Verified");
-        reviewSquad = bot.getRole("Review Squad");
-
         new Thread(() -> {
             while (true){
                 loop();
@@ -54,17 +71,22 @@ public class RoleAssigner extends Module {
 
     @Override
     public Requirement[] getRequirements() {
-        Set<Requirement> requirements = new HashSet<>();
-        requirements.add(new RoleRequirement("Verified"));
-        requirements.add(new RoleRequirement("Review Squad"));
-
-        bot.getTechsCodeAPI().getResources().premium().getStream().filter(resource -> requirements.add(new RoleRequirement(resource.getResourceName())));
-
-        return requirements.stream().toArray(Requirement[]::new);
+        return new Requirement[]{
+                new Requirement(VERIFICATION_ROLE, 1, "Missing 'Verified' Role"),
+                new Requirement(REVIEW_SQUAD_ROLE, 1, "Missing 'Review Squad' Role"),
+                new Requirement(RESOURCE_ROLES, 1, "Missing Resource Roles (Use Resource Names as Role Names)")
+        };
     }
 
 
     public void loop(){
+        if(!bot.getTechsCodeAPI().isAvailable()){
+            return;
+        }
+
+        Role verificationRole = VERIFICATION_ROLE.query().first();
+        Role reviewSquad = REVIEW_SQUAD_ROLE.query().first();
+
         Set<Verification> verifications = bot.getStorage().retrieveVerifications();
 
         for(Member all : bot.getGuild().getMembers()){
@@ -85,7 +107,7 @@ public class RoleAssigner extends Module {
                 int ownedPlugins = 0;
 
                 for(Resource resource : bot.getTechsCodeAPI().getResources().premium().get()){
-                    Role role = bot.getRole(resource.getResourceName());
+                    Role role = bot.getRoles(resource.getResourceName()).first();
 
                     boolean purchased = resource.getPurchases().userId(userId).size() > 0;
                     boolean reviewed = resource.getReviews().userId(userId).size() > 0;
@@ -112,7 +134,7 @@ public class RoleAssigner extends Module {
                 rolesToRemove.add(reviewSquad);
 
                 for(Resource resource : bot.getTechsCodeAPI().getResources().premium().get()) {
-                    Role role = bot.getRole(resource.getResourceName());
+                    Role role = bot.getRoles(resource.getResourceName()).first();
 
                     rolesToRemove.add(role);
                 }

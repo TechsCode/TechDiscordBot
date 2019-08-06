@@ -1,10 +1,7 @@
 package me.TechsCode.TechDiscordBot;
 
+import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.util.ConsoleColor;
-import net.dv8tion.jda.core.events.Event;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.hooks.EventListener;
-import net.dv8tion.jda.core.hooks.SubscribeEvent;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -18,9 +15,11 @@ public abstract class Module {
 
     public Module(TechDiscordBot bot) {
         this.bot = bot;
+    }
 
+    public void enable(){
         Set<Requirement> failedRequirements = Arrays.stream(getRequirements())
-                .filter(requirement -> !requirement.check(bot))
+                .filter(requirement -> !requirement.check())
                 .collect(Collectors.toSet());
 
         if(failedRequirements.isEmpty()){
@@ -31,7 +30,7 @@ public abstract class Module {
         } else {
             bot.log(ConsoleColor.YELLOW+"Failed Enabling Module "+ConsoleColor.YELLOW_BOLD_BRIGHT+getName()+ConsoleColor.YELLOW+" because:");
 
-            failedRequirements.forEach(requirement -> bot.log(ConsoleColor.WHITE+"- "+requirement.getFailReason()));
+            failedRequirements.forEach(requirement -> bot.log(ConsoleColor.WHITE+"- "+requirement.getUnmatchMessage()));
         }
     }
 

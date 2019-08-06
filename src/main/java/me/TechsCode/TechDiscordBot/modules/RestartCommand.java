@@ -1,15 +1,25 @@
 package me.TechsCode.TechDiscordBot.modules;
 
 import me.TechsCode.TechDiscordBot.CommandModule;
+import me.TechsCode.TechDiscordBot.Query;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
+import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 
 import java.util.concurrent.TimeUnit;
 
 public class RestartCommand extends CommandModule {
+
+    private final DefinedQuery<Role> SUPPORTER_ROLE = new DefinedQuery<Role>() {
+        @Override
+        protected Query<Role> newQuery() {
+            return bot.getRoles("Supporter");
+        }
+    };
 
     public RestartCommand(TechDiscordBot bot) {
         super(bot);
@@ -21,13 +31,13 @@ public class RestartCommand extends CommandModule {
     }
 
     @Override
-    public String[] getRestrictedRoles() {
-        return new String[]{"Supporter"};
+    public DefinedQuery<Role> getRestrictedRoles() {
+        return SUPPORTER_ROLE;
     }
 
     @Override
-    public String[] getRestrictedChannels() {
-        return new String[0];
+    public DefinedQuery<TextChannel> getRestrictedChannels() {
+        return null;
     }
 
     @Override

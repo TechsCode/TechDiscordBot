@@ -24,6 +24,8 @@ dependencies {
     compile 'org.jsoup:jsoup:1.8.3'
     compile 'org.apache.commons:commons-lang3:3.7'
     compile 'mysql:mysql-connector-java:5.1.17'
+
+    compile 'net.sourceforge.htmlunit:htmlunit:2.29'
 }
 
 buildscript {
@@ -31,7 +33,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
     }
 }
 
