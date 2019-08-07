@@ -29,13 +29,15 @@ dependencies {
     compile 'net.sourceforge.htmlunit:htmlunit:2.29'
 }
 
+def props = new Properties()
+file("build.properties").withInputStream { props.load(it) }
 
 ssh.remotes {
     server {
-        host = 's3.techsco.de'
-        port = 22
-        user = 'eazyftw'
-        password = "${Password}"
+        host = props.getProperty("host")
+        port = Integer.valueOf(props.getProperty("port"))
+        user = props.getProperty("user")
+        password = props.getProperty("password")
     }
 }
 
@@ -48,7 +50,7 @@ task upload {
     doLast {
         ssh.run {
             session(ssh.remotes.server) {
-                put from: files('/Users/tech/Desktop/TechDiscordBot.jar'), into: '../../srv/Discord/TechsPluginTesters'
+                put from: files('build/TechDiscordBot.jar'), into: props.getProperty("location")
             }
         }
     }
@@ -66,7 +68,7 @@ buildscript {
 
 shadowJar {
     archiveName = 'TechDiscordBot.jar'
-    destinationDir = file('/Users/tech/Desktop')
+    destinationDir = file('build')
 }
 
 jar {

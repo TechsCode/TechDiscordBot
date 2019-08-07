@@ -4,3 +4,6 @@
 .gradle/
 out/
 build/
+
+# Dont include that file with sensitive credentials
+build.properties
