@@ -2,6 +2,7 @@ package me.TechsCode.TechDiscordBot;
 
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
+import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -19,6 +20,7 @@ public abstract class CommandModule extends Module {
 
     @SubscribeEvent
     public void onCommand(GuildMessageReceivedEvent e){
+        if(!e.getChannelType().equals(ChannelType.TEXT)) return;
         String first = e.getMessage().getContentDisplay().split(" ")[0];
 
         if(!first.equalsIgnoreCase(getCommand())) return;

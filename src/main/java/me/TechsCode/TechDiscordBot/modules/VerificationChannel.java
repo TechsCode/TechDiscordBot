@@ -10,6 +10,7 @@ import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import me.TechsCode.TechDiscordBot.util.spigot.ProfileComment;
 import me.TechsCode.TechDiscordBot.util.spigot.SpigotMC;
 import me.TechsCode.TechsCodeAPICli.objects.Purchase;
+import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -111,6 +112,7 @@ public class VerificationChannel extends Module {
 
     @SubscribeEvent
     public void onMessage(MessageReceivedEvent e) {
+        if(!e.getChannelType().equals(ChannelType.TEXT)) return;
         if(e.getAuthor().isBot()) return;
 
         if(!e.getTextChannel().equals(VERIFICATION_CHANNEL.query().first())){

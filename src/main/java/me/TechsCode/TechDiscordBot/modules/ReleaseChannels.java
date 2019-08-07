@@ -52,6 +52,7 @@ public class ReleaseChannels extends Module {
 
     @SubscribeEvent
     public void receive(MessageReceivedEvent e) {
+        if(!e.getChannelType().equals(ChannelType.TEXT)) return;
         if(e.getAuthor().isBot()) return;
 
         if(!CHANNELS.query().all().contains(e.getTextChannel())){

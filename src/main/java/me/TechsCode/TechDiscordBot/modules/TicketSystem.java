@@ -49,10 +49,11 @@ public class TicketSystem extends Module {
 
     @SubscribeEvent
     public void closeCommand(MessageReceivedEvent e){
+        if(!e.getChannelType().equals(ChannelType.TEXT)) return;
         TextChannel channel = (TextChannel) e.getChannel();
 
         if(isTicketChat(channel)) {
-            if(ArrayUtils.contains(closeCommands, e.getMessage().getContentDisplay().toLowerCase())){
+            if(isCommand(e.getMessage().getContentDisplay().toLowerCase())) {
                 e.getMessage().delete().submit();
 
                 boolean closedByUser = channel.getTopic().contains(e.getAuthor().getAsMention());
@@ -64,17 +65,20 @@ public class TicketSystem extends Module {
                             .setText("Thank you for contacting us " + e.getAuthor().getAsMention() + "! Consider writing a review if you enjoyed the support.")
                             .send(channel);
 
-                    channel.delete().queueAfter(20, TimeUnit.SECONDS);
+                    channel.delete().completeAfter(20, TimeUnit.SECONDS);
                     new CustomEmbedBuilder("Solved Ticket")
                             .setText("The ticket ("+channel.getName()+") from "+e.getAuthor().getAsMention()+" is now solved. Thanks for contacting us!")
                             .success().send(creationChannel);
                     sendInstructions(creationChannel);
                 } else {
+                    boolean hasReason = e.getMessage().getContentDisplay().split(" ").length > 1;
+                    String[] reasons = e.getMessage().getContentDisplay().split(" ");
+                    String reason = String.join(" ", Arrays.copyOfRange(reasons, 1, reasons.length));
+                    String reasonSend = (hasReason ? " \n \n**Reason**: " + reason : "");
                     new CustomEmbedBuilder("Ticket")
-                            .setText(e.getAuthor().getAsMention() + " has closed this support ticket.")
+                            .setText(e.getAuthor().getAsMention() + " has closed this support ticket." + reasonSend)
                             .send(channel);
-
-                    channel.delete().queueAfter(20, TimeUnit.SECONDS);
+                    channel.delete().completeAfter(20, TimeUnit.SECONDS);
                     String id = channel.getTopic().split("<")[1].split(">")[0].replace("@", "");
                     Member member = channel.getGuild().getMemberById(id);
                     if(member != null) {
@@ -82,16 +86,28 @@ public class TicketSystem extends Module {
                                 .setText("The ticket (" + channel.getName() + ") from " + member.getAsMention() + " has been closed!")
                                 .success().send(creationChannel);
                         sendInstructions(creationChannel);
+                        new CustomEmbedBuilder("Closed Ticket")
+                                .setText("Your ticket (" + channel.getName() + ") has been closed!"+reasonSend)
+                                .success().send(member);
+                        sendInstructions(creationChannel);
                     } else {
-                        bot.log("Welp... member is null. @ TicketSystem Line 79.");
+                        new CustomEmbedBuilder("Closed Ticket")
+                                .setText("The ticket (" + channel.getName() + ") from *member has left* has been closed!")
+                                .success().send(creationChannel);
+                        sendInstructions(creationChannel);
                     }
                 }
             }
         }
     }
 
+    public boolean isCommand(String msg) {
+        return Arrays.stream(closeCommands).anyMatch(msg::startsWith);
+    }
+
     @SubscribeEvent
     public void createChannel(MessageReceivedEvent e) {
+        if(!e.getChannelType().equals(ChannelType.TEXT)) return;
         if(e.getMember().getUser().isBot()) return;
 
         TextChannel channel = (TextChannel) e.getChannel();

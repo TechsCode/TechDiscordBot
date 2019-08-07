@@ -6,6 +6,7 @@ import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
+import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -26,6 +27,7 @@ public class EmbedMessageSender extends Module {
 
     @SubscribeEvent
     public void receive(MessageReceivedEvent e){
+        if(!e.getChannelType().equals(ChannelType.TEXT)) return;
         if(!e.getMember().getRoles().contains(SUPPORTER_ROLE.query().first())) return;
 
         TextChannel textChannel = e.getTextChannel();

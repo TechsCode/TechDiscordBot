@@ -4,6 +4,7 @@ import me.TechsCode.TechDiscordBot.Module;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
+import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.SubscribeEvent;
 
@@ -17,6 +18,7 @@ public class AdvertisingFilter extends Module {
 
     @SubscribeEvent
     public void recieve(MessageReceivedEvent e) {
+        if(!e.getChannelType().equals(ChannelType.TEXT)) return;
         String msg = e.getMessage().getContentDisplay();
 
         if(msg.matches(".*(https?:\\/\\/)?(www\\.)?(discord\\.(gg|io|me|li)|discordapp\\.com\\/invite)\\/.+[a-z]")) {

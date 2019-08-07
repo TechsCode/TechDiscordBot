@@ -77,3 +77,7 @@ jar {
         attributes 'Main-Class': 'me.TechsCode.TechDiscordBot.TechDiscordBot'
     }
 }
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}

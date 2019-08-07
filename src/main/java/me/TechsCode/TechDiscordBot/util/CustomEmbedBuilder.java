@@ -1,9 +1,7 @@
 package me.TechsCode.TechDiscordBot.util;
 
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageEmbed;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.*;
 
 import java.awt.*;
 import java.util.concurrent.TimeUnit;
@@ -38,6 +36,18 @@ public class CustomEmbedBuilder extends EmbedBuilder {
 
     public Message send(TextChannel textChannel){
         return textChannel.sendMessage(build()).complete();
+    }
+
+    public Message sendAfter(TextChannel textChannel, TimeUnit unit, int amount){
+        return textChannel.sendMessage(build()).completeAfter(amount, unit);
+    }
+
+    public Message send(User user) {
+        return user.openPrivateChannel().complete().sendMessage(build()).complete();
+    }
+
+    public Message send(Member member) {
+        return send(member.getUser());
     }
 
     public void sendTemporary(TextChannel textChannel, int duration, TimeUnit timeUnit){
