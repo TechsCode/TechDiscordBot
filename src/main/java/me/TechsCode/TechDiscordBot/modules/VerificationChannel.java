@@ -73,7 +73,7 @@ public class VerificationChannel extends Module {
                     }
                 } else {
                     if(apiNotAvailable == null){
-                        CustomEmbedBuilder message = new CustomEmbedBuilder("Verifications Disabled")
+                        CustomEmbedBuilder message = new CustomEmbedBuilder("Verification Disabled")
                                 .setText("The Web API is currently unavailable. Please contact staff for more info!")
                                 .error();
 
@@ -105,7 +105,7 @@ public class VerificationChannel extends Module {
     @Override
     public Requirement[] getRequirements() {
         return new Requirement[]{
-                new Requirement(VERIFICATION_CHANNEL, 1, "Missing Verifications Channel (#verification)")
+                new Requirement(VERIFICATION_CHANNEL, 1, "Missing Verification Channel (#verification)")
         };
     }
 
@@ -130,7 +130,7 @@ public class VerificationChannel extends Module {
 
         Verification existingVerification = bot.getStorage().retrieveVerificationWithDiscord(e.getAuthor().getId());
         if(existingVerification != null){
-            errorMessage.setText("You are already linked with the SpigotMC Account and your roles will be updated automatically").sendTemporary(channel, 15);
+            errorMessage.setText("You are already linked to your SpigotMC Account and your roles will be updated automatically!").sendTemporary(channel, 15);
             return;
         }
 
@@ -153,7 +153,7 @@ public class VerificationChannel extends Module {
         existingVerification = bot.getStorage().retrieveVerificationWithSpigot(userId);
         if(existingVerification != null){
             Purchase purchase = bot.getTechsCodeAPI().getPurchases().userId(existingVerification.getUserId()).first();
-            errorMessage.setText("The SpigotMC User "+username+" is already linked with "+purchase.getUsername()).sendTemporary(channel, 10);
+            errorMessage.setText("The SpigotMC User "+username+" is already linked with "+purchase.getUsername() + ". If you believe this is a mistake, please contact Tech.").sendTemporary(channel, 10);
             return;
         }
 
@@ -175,7 +175,7 @@ public class VerificationChannel extends Module {
                             m.delete().complete();
 
                             new CustomEmbedBuilder("Verification Completed for "+e.getAuthor().getName()).success()
-                                    .setText(e.getAuthor().getName()+" successfully verified the SpigotMC Account!")
+                                    .setText(e.getAuthor().getName()+" has successfully verified their SpigotMC Account!")
                                     .send(channel);
 
                             sendInstructions();
@@ -189,7 +189,7 @@ public class VerificationChannel extends Module {
 
                 m.delete().complete();
                 verificationQueue.remove(e.getAuthor().getId());
-                errorMessage.setText("Your verification process timed out! Please try again.").sendTemporary(channel, 15);
+                errorMessage.setText("The Verification process has timed out! Please try again.").sendTemporary(channel, 15);
             }
         }.start();
         return;
