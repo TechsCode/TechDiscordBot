@@ -21,7 +21,7 @@ public class TicketSystem extends Module {
     private final DefinedQuery<Role> SUPPORTER_ROLE = new DefinedQuery<Role>() {
         @Override
         protected Query<Role> newQuery() {
-            return bot.getRoles("Supporter");
+            return bot.getRoles("Staff");
         }
     };
 
@@ -131,7 +131,7 @@ public class TicketSystem extends Module {
             lastInstructions.delete().complete();
         }
 
-        CustomEmbedBuilder howItWorksMessage = new CustomEmbedBuilder("How to create a ticket")
+        CustomEmbedBuilder howItWorksMessage = new CustomEmbedBuilder("How to Create a Ticket")
                 .setText("You want to receive direct support from us? \nType in your question or issue below and we will get to you as soon as possible!");
 
         lastInstructions = howItWorksMessage.send(textChannel);
