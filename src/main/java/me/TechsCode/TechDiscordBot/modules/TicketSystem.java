@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TicketSystem extends Module {
 
-    private final DefinedQuery<Role> SUPPORTER_ROLE = new DefinedQuery<Role>() {
+    private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
         @Override
         protected Query<Role> newQuery() {
             return bot.getRoles("Staff");
@@ -141,7 +141,7 @@ public class TicketSystem extends Module {
         permissionsAllow.add(Permission.MESSAGE_HISTORY);
 
         ticketChat.getManager()
-                .putPermissionOverride(SUPPORTER_ROLE.query().first(), permissionsAllow, Arrays.asList(Permission.MESSAGE_TTS))
+                .putPermissionOverride(STAFF_ROLE.query().first(), permissionsAllow, Arrays.asList(Permission.MESSAGE_TTS))
                 .putPermissionOverride(e.getMember(), permissionsAllow, Arrays.asList(Permission.MESSAGE_TTS))
                 .putPermissionOverride(bot.getGuild().getPublicRole(), new ArrayList<>(), Arrays.asList(Permission.MESSAGE_READ, Permission.MESSAGE_WRITE))
                 .complete();
@@ -216,7 +216,7 @@ public class TicketSystem extends Module {
         return new Requirement[]{
                 new Requirement(CREATION_CHANNEL, 1, "Missing Creation Channel (#tickets)"),
                 new Requirement(TICKET_CATEGORY, 1, "Missing Tickets Category (tickets)"),
-                new Requirement(SUPPORTER_ROLE, 1, "Missing 'Supporter' Role")
+                new Requirement(STAFF_ROLE, 1, "Missing 'Staff' Role")
         };
     }
 }
