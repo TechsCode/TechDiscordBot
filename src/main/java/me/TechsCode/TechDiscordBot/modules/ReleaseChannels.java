@@ -6,10 +6,7 @@ import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageType;
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.SubscribeEvent;
 
@@ -78,17 +75,40 @@ public class ReleaseChannels extends Module {
         attachment.download(file);
         file.deleteOnExit();
 
+        Role testersRole = bot.getRoles(e.getMessage().getCategory().getName()).first();
+        String testersMention = testersRole != null ? testersRole.getAsMention() : "everyone";
+
         TextChannel feedbackChannel = bot.getChannels("feedback").inCategory(e.getMessage().getCategory()).first();
         String feedbackMention = feedbackChannel != null ? feedbackChannel.getAsMention() : "**#feedback**";
 
+        Emote upvoteEmote = bot.getEmotes("upvote").first();
+        Emote downvoteEmote = bot.getEmotes("downvote").first();
+
         CustomEmbedBuilder builder = new CustomEmbedBuilder("New Release")
-                .setText("**Hello @ everyone!** \n" +
+                .setText("**Hello** "+testersMention+ " **Testers!** \n" +
+                        "\n" +
                         "A new File has just been submitted for testing.\n" +
-                        "After testing please give us feedback in "+feedbackMention)
-                .addField("Changes", e.getMessage().getContentDisplay(), true);
+                        "Please test every change carefully and give us feedback in "+feedbackMention+"\n" +
+                        "\n" +
+                        "Make sure to **react** to let us know if the changes are working")
+                .addField("Changes", e.getMessage().getContentDisplay(), false);
 
         Message message = builder.send(e.getTextChannel());
         e.getChannel().sendFile(file).queue();
+
+        if(testersRole != null){
+            Message mentionMessage = e.getChannel().sendMessage(testersRole.getAsMention()).complete();
+            mentionMessage.delete().queueAfter(3, TimeUnit.SECONDS);
+        }
+
+        if(feedbackChannel != null){
+            feedbackChannel.sendMessage("A new File has just been released in "+e.getTextChannel().getAsMention()).submit();
+        }
+
+        if(upvoteEmote != null && downvoteEmote != null){
+            message.addReaction(upvoteEmote).submit();
+            message.addReaction(downvoteEmote).submit();
+        }
 
         e.getMessage().delete().queue();
     }
