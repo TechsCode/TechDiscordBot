@@ -110,7 +110,7 @@ public class TechDiscordBot implements EventListener {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> modules.forEach(Module::onDisable)));
 
-        log("Successfully loaded "+modules.size()+" modules");
+        log("Successfully loaded "+modules.size()+" modules!");
     }
 
     public JDA getJDA() {

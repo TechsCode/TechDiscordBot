@@ -41,7 +41,7 @@ public class TicketSystem extends Module {
 
     private Message lastInstructions;
 
-    private String[] closeCommands = new String[]{"!solved", "!close", "-close"};
+    private String[] closeCommands = new String[]{"!solved", "!close", "-close", "-solved"};
 
     public TicketSystem(TechDiscordBot bot) {
         super(bot);
@@ -57,20 +57,34 @@ public class TicketSystem extends Module {
 
                 boolean closedByUser = channel.getTopic().contains(e.getAuthor().getAsMention());
 
-                new CustomEmbedBuilder("Ticket")
-                        .setText(closedByUser ? "Thank you for contacting us "+e.getAuthor().getAsMention()+"! Consider writing a review if you enjoyed the support" : e.getAuthor().getAsMention()+" has closed this support ticket")
-                        .send(channel);
-
-                channel.delete().completeAfter(20, TimeUnit.SECONDS);
+                TextChannel creationChannel = CREATION_CHANNEL.query().first();
 
                 if(closedByUser){
-                    TextChannel creationChannel = CREATION_CHANNEL.query().first();
+                    new CustomEmbedBuilder("Ticket")
+                            .setText("Thank you for contacting us " + e.getAuthor().getAsMention() + "! Consider writing a review if you enjoyed the support.")
+                            .send(channel);
 
-                    new CustomEmbedBuilder(closedByUser ? "Solved Ticket" : "Closed Ticket")
-                            .setText("The ticket ("+channel.getName()+") from "+e.getAuthor().getAsMention()+" is now solved. Thanks for contacting us")
+                    channel.delete().queueAfter(20, TimeUnit.SECONDS);
+                    new CustomEmbedBuilder("Solved Ticket")
+                            .setText("The ticket ("+channel.getName()+") from "+e.getAuthor().getAsMention()+" is now solved. Thanks for contacting us!")
                             .success().send(creationChannel);
-
                     sendInstructions(creationChannel);
+                } else {
+                    new CustomEmbedBuilder("Ticket")
+                            .setText(e.getAuthor().getAsMention() + " has closed this support ticket.")
+                            .send(channel);
+
+                    channel.delete().queueAfter(20, TimeUnit.SECONDS);
+                    String id = channel.getTopic().split("<")[1].split(">")[0].replace("@", "");
+                    Member member = channel.getGuild().getMemberById(id);
+                    if(member != null) {
+                        new CustomEmbedBuilder("Closed Ticket")
+                                .setText("The ticket (" + channel.getName() + ") from " + member.getAsMention() + " has been closed!")
+                                .success().send(creationChannel);
+                        sendInstructions(creationChannel);
+                    } else {
+                        bot.log("Welp... member is null. @ TicketSystem Line 79.");
+                    }
                 }
             }
         }
