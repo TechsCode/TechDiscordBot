@@ -6,6 +6,7 @@ import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.SubscribeEvent;
@@ -65,7 +66,7 @@ public class ReleaseChannels extends Module {
         Message.Attachment attachment = e.getMessage().getAttachments().get(0);
 
         if(!attachment.getFileName().endsWith(".jar")){
-            new CustomEmbedBuilder("File not accepted").setText("The file type must be a jar file.").sendTemporary(e.getTextChannel(), 5, TimeUnit.SECONDS);
+            new CustomEmbedBuilder("File Not Accepted!").setText("The file type must be a jar file.").sendTemporary(e.getTextChannel(), 5, TimeUnit.SECONDS);
             e.getMessage().delete().queue();
             return;
         }
@@ -87,10 +88,10 @@ public class ReleaseChannels extends Module {
         CustomEmbedBuilder builder = new CustomEmbedBuilder("New Release")
                 .setText("**Hello** "+testersMention+ " **Testers!** \n" +
                         "\n" +
-                        "A new File has just been submitted for testing.\n" +
+                        "A new file has just been submitted for testing.\n" +
                         "Please test every change carefully and give us feedback in "+feedbackMention+"\n" +
                         "\n" +
-                        "Make sure to **react** to let us know if the changes are working")
+                        "Make sure to **react** to let us know if the changes are working.")
                 .addField("Changes", e.getMessage().getContentDisplay(), false);
 
         Message message = builder.send(e.getTextChannel());
@@ -102,7 +103,7 @@ public class ReleaseChannels extends Module {
         }
 
         if(feedbackChannel != null){
-            feedbackChannel.sendMessage("A new File has just been released in "+e.getTextChannel().getAsMention()).submit();
+            feedbackChannel.sendMessage(new EmbedBuilder().setDescription("A new file has just been released in "+e.getTextChannel().getAsMention() + "!").build()).submit();
         }
 
         if(upvoteEmote != null && downvoteEmote != null){
