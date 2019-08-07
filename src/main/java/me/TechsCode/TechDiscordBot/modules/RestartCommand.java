@@ -14,10 +14,10 @@ import java.util.concurrent.TimeUnit;
 
 public class RestartCommand extends CommandModule {
 
-    private final DefinedQuery<Role> SUPPORTER_ROLE = new DefinedQuery<Role>() {
+    private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
         @Override
         protected Query<Role> newQuery() {
-            return bot.getRoles("Supporter");
+            return bot.getRoles("Staff");
         }
     };
 
@@ -32,7 +32,7 @@ public class RestartCommand extends CommandModule {
 
     @Override
     public DefinedQuery<Role> getRestrictedRoles() {
-        return SUPPORTER_ROLE;
+        return STAFF_ROLE;
     }
 
     @Override

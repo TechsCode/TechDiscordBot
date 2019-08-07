@@ -12,45 +12,49 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.SubscribeEvent;
 
-public class EmbedMessageSender extends Module {
+public class MessageSender extends Module {
 
-    private final DefinedQuery<Role> SUPPORTER_ROLE = new DefinedQuery<Role>() {
+    private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
         @Override
         protected Query newQuery() {
-            return bot.getRoles("supporter");
+            return bot.getRoles("staff");
         }
     };
 
-    public EmbedMessageSender(TechDiscordBot bot) {
+    public MessageSender(TechDiscordBot bot) {
         super(bot);
     }
 
     @SubscribeEvent
     public void receive(MessageReceivedEvent e){
         if(!e.getChannelType().equals(ChannelType.TEXT)) return;
-        if(!e.getMember().getRoles().contains(SUPPORTER_ROLE.query().first())) return;
+        if(!e.getMember().getRoles().contains(STAFF_ROLE.query().first())) return;
 
-        TextChannel textChannel = e.getTextChannel();
+        String message = e.getMessage().getContentDisplay();
 
-        if(e.getMessage().getContentDisplay().startsWith("^ ")){
+        if(message.startsWith("^^ ") && message.endsWith(" ^^")){
             e.getMessage().delete().complete();
 
-            if(e.getMessage().getContentDisplay().length() <= 2){
-                return;
-            }
+            String text = message.substring(3, message.length()-3);
+            e.getChannel().sendMessage(text).complete();
+            return;
+        }
 
-            String text = e.getMessage().getContentDisplay().substring(2);
+        if(message.startsWith("^ ")){
+            e.getMessage().delete().complete();
+
+            String text = message.substring(2);
             String[] arguments = text.split("\\^");
 
             if(arguments.length != 2){
-                new CustomEmbedBuilder("Invalid Arguments").setText("Usage: ^ Title ^ Message").error().sendTemporary(textChannel, 5);
+                new CustomEmbedBuilder("Invalid Arguments").setText("Usage: ^ Title ^ Message").error().sendTemporary(e.getTextChannel(), 5);
                 return;
             }
 
-            CustomEmbedBuilder message = new CustomEmbedBuilder(arguments[0]);
-            message.setFooter("Posted by "+e.getAuthor().getName());
-            message.setText(arguments[1]);
-            message.send(textChannel);
+            new CustomEmbedBuilder(arguments[0])
+                    .setFooter("Posted by "+e.getAuthor().getName())
+                    .setText(arguments[1])
+                    .send(e.getTextChannel());
         }
     }
 
@@ -62,13 +66,13 @@ public class EmbedMessageSender extends Module {
 
     @Override
     public String getName() {
-        return "Embed Message Sender";
+        return "Message Sender";
     }
 
     @Override
     public Requirement[] getRequirements() {
         return new Requirement[]{
-                new Requirement(SUPPORTER_ROLE, 1, "Missing 'Supporter' Role")
+                new Requirement(STAFF_ROLE, 1, "Missing 'Staff' Role")
         };
     }
 }
