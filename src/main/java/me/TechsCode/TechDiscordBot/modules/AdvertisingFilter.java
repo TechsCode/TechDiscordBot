@@ -6,7 +6,9 @@ import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import me.TechsCode.TechDiscordBot.util.RedirectUtil;
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.core.hooks.SubscribeEvent;
@@ -19,47 +21,61 @@ import java.util.regex.Pattern;
 
 public class AdvertisingFilter extends Module {
 
+    private final String DISCORD_REGEX = ".*(https?:\\/\\/)?(www\\.)?(discord\\.(gg|io|me|li)|discordapp\\.com\\/invite)\\/.+.*";
+    private final Pattern URL_PATTERN = Pattern.compile("([--:\\w?@%&+~#=]*\\.[a-z]{2,4}\\/{0,2})((?:[?&](?:\\w+)=(?:\\w+))+|[--:\\w?@%&+~#=]+)?");
+
     public AdvertisingFilter(TechDiscordBot bot) {
         super(bot);
     }
 
-    private String DISCORD_REGEX = ".*(https?:\\/\\/)?(www\\.)?(discord\\.(gg|io|me|li)|discordapp\\.com\\/invite)\\/.+.*";
-    private String URL_REGEX = "([--:\\w?@%&+~#=]*\\.[a-z]{2,4}\\/{0,2})((?:[?&](?:\\w+)=(?:\\w+))+|[--:\\w?@%&+~#=]+)?";
-
     @SubscribeEvent
     public void recieve(MessageReceivedEvent e) {
         if(!e.getChannelType().equals(ChannelType.TEXT)) return;
-        filterDiscordLinks(e.getMessage());
+
+        if(checkIfAdvertisement(e.getMessage()) && !isStaff(e.getMember())){
+            removeAdvertisement(e.getMessage());
+        }
     }
 
     @SubscribeEvent
     public void update(MessageUpdateEvent e) {
         if(!e.getChannelType().equals(ChannelType.TEXT)) return;
-        filterDiscordLinks(e.getMessage());
+
+        if(checkIfAdvertisement(e.getMessage()) && !isStaff(e.getMember())){
+            removeAdvertisement(e.getMessage());
+        }
     }
 
-    public void filterDiscordLinks(Message message) {
+    private boolean isStaff(Member member){
+        Role staffRole = bot.getRoles("staff").first();
+
+        return staffRole != null && member.getRoles().contains(staffRole);
+    }
+
+    private boolean checkIfAdvertisement(Message message) {
         String msg = message.getContentDisplay();
         if(msg.matches(DISCORD_REGEX)) {
-            message.delete().queue();
-            new CustomEmbedBuilder("Advertising").setText("Please do not advertise " + message.getAuthor().getAsMention() + "!").error().sendTemporary(message.getTextChannel(), 10, TimeUnit.SECONDS);
-            return;
+            return true;
         }
-        for(String url : getUrlsInMsg(msg)) {
-            String url2 = RedirectUtil.getRedirectUrl(url);
-            if(url2.matches(DISCORD_REGEX)){
-                message.delete().queue();
-                new CustomEmbedBuilder("Advertising").setText("Please do not advertise " + message.getAuthor().getAsMention() + "!").error().sendTemporary(message.getTextChannel(), 10, TimeUnit.SECONDS);
-                return;
+
+        Matcher m = URL_PATTERN.matcher(msg);
+
+        while (m.find()){
+            String url = RedirectUtil.getRedirectUrl(m.group());
+            if(url.matches(DISCORD_REGEX)){
+                return true;
             }
         }
+
+        return false;
     }
 
-    public List<String> getUrlsInMsg(String msg) {
-        List<String> matches = new ArrayList<>();
-        Matcher m = Pattern.compile(URL_REGEX).matcher(msg);
-        while(m.find()) matches.add(m.group());
-        return matches;
+    private void removeAdvertisement(Message message){
+        message.delete().queue();
+
+        new CustomEmbedBuilder("Advertising")
+                .setText("Please do not advertise " + message.getAuthor().getAsMention() + "!").error()
+                .sendTemporary(message.getTextChannel(), 10, TimeUnit.SECONDS);
     }
 
     @Override
