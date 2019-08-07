@@ -20,7 +20,6 @@ public abstract class CommandModule extends Module {
 
     @SubscribeEvent
     public void onCommand(GuildMessageReceivedEvent e){
-        if(!e.getChannelType().equals(ChannelType.TEXT)) return;
         String first = e.getMessage().getContentDisplay().split(" ")[0];
 
         if(!first.equalsIgnoreCase(getCommand())) return;
