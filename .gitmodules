@@ -1,4 +1,4 @@
 [submodule "TechsCodeAPIClient"]
 	path = TechsCodeAPIClient
-	url = http://github.com/techscode/techscodeapiclient
+	url = https://github.com/TechsCode/TechsCodeAPIClient
 	branch = master
