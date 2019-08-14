@@ -1,20 +1,18 @@
 package me.TechsCode.TechDiscordBot.modules;
 
 import me.TechsCode.TechDiscordBot.Module;
-import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
+import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import me.TechsCode.TechDiscordBot.util.RedirectUtil;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.events.message.MessageUpdateEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.core.hooks.SubscribeEvent;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,8 +27,8 @@ public class AdvertisingFilter extends Module {
     }
 
     @SubscribeEvent
-    public void recieve(MessageReceivedEvent e) {
-        if(!e.getChannelType().equals(ChannelType.TEXT)) return;
+    public void recieve(GuildMessageReceivedEvent e) {
+        if(!e.getChannel().equals(ChannelType.TEXT)) return;
 
         if(checkIfAdvertisement(e.getMessage()) && !isStaff(e.getMember())){
             removeAdvertisement(e.getMessage());
@@ -38,8 +36,8 @@ public class AdvertisingFilter extends Module {
     }
 
     @SubscribeEvent
-    public void update(MessageUpdateEvent e) {
-        if(!e.getChannelType().equals(ChannelType.TEXT)) return;
+    public void update(GuildMessageUpdateEvent e) {
+        if(!e.getChannel().equals(ChannelType.TEXT)) return;
 
         if(checkIfAdvertisement(e.getMessage()) && !isStaff(e.getMember())){
             removeAdvertisement(e.getMessage());

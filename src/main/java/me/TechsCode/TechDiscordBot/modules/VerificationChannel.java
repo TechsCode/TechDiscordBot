@@ -2,18 +2,17 @@ package me.TechsCode.TechDiscordBot.modules;
 
 import me.TechsCode.TechDiscordBot.Module;
 import me.TechsCode.TechDiscordBot.Query;
+import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
-import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.storage.Verification;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import me.TechsCode.TechDiscordBot.util.spigot.ProfileComment;
 import me.TechsCode.TechDiscordBot.util.spigot.SpigotMC;
 import me.TechsCode.TechsCodeAPICli.objects.Purchase;
-import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.SubscribeEvent;
 
 import java.util.ArrayList;
@@ -111,11 +110,10 @@ public class VerificationChannel extends Module {
     }
 
     @SubscribeEvent
-    public void onMessage(MessageReceivedEvent e) {
-        if(!e.getChannelType().equals(ChannelType.TEXT)) return;
+    public void onMessage(GuildMessageReceivedEvent e) {
         if(e.getAuthor().isBot()) return;
 
-        if(!e.getTextChannel().equals(VERIFICATION_CHANNEL.query().first())){
+        if(!e.getChannel().equals(VERIFICATION_CHANNEL.query().first())){
             return;
         }
 

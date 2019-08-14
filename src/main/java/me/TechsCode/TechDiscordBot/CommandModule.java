@@ -2,61 +2,56 @@ package me.TechsCode.TechDiscordBot;
 
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
-import net.dv8tion.jda.core.entities.ChannelType;
+import me.TechsCode.TechDiscordBot.util.ConsoleColor;
 import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.hooks.SubscribeEvent;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class CommandModule extends Module {
+public abstract class CommandModule {
+
+    protected TechDiscordBot bot;
+
+    private boolean enabled;
 
     public CommandModule(TechDiscordBot bot) {
-        super(bot);
+        this.bot = bot;
     }
 
-    @SubscribeEvent
-    public void onCommand(GuildMessageReceivedEvent e){
-        String first = e.getMessage().getContentDisplay().split(" ")[0];
+    public void enable(){
+        Set<Requirement> failedRequirements = Arrays.stream(getRequirements())
+                .filter(requirement -> !requirement.check())
+                .collect(Collectors.toSet());
 
-        if(!first.equalsIgnoreCase(getCommand())) return;
+        if(failedRequirements.isEmpty()){
+            bot.log("Enabling Module "+getName()+"..");
+            onEnable();
 
-        List<Role> restrictedRoles = getRestrictedRoles().query().all();
-        List<TextChannel> restrictedChannels = getRestrictedChannels().query().all();
+            enabled = true;
+        } else {
+            bot.log(ConsoleColor.YELLOW+"Failed Enabling Module "+ConsoleColor.YELLOW_BOLD_BRIGHT+getName()+ConsoleColor.YELLOW+" because:");
 
-        // Check if the player has at least one of the restricted roles
-        if(!restrictedRoles.isEmpty() && Collections.disjoint(e.getMember().getRoles(), restrictedRoles)){
-            return;
+            failedRequirements.forEach(requirement -> bot.log(ConsoleColor.WHITE+"- "+requirement.getUnmatchMessage()));
         }
-
-        // Check if the message was sent in one of the restricted channels (if there are any)
-        if(!restrictedChannels.isEmpty() && !restrictedChannels.contains(e.getChannel())){
-            return;
-        }
-
-        String message = e.getMessage().getContentDisplay();
-        String[] args = Arrays.copyOfRange(message.split(" "), 1, message.length());
-
-        e.getMessage().delete().complete();
-
-        onCommand(e.getChannel(), e.getMember(), args);
     }
 
-    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     public void onEnable() {}
 
-    @Override
     public void onDisable() {}
 
-    @Override
     public String getName() {
         return "["+getCommand()+"] Command";
     }
 
-    @Override
     public Requirement[] getRequirements() {
         Set<Requirement> requirements = new HashSet<>();
 
@@ -72,5 +67,5 @@ public abstract class CommandModule extends Module {
 
     public abstract DefinedQuery<TextChannel> getRestrictedChannels();
 
-    public abstract void onCommand(TextChannel channel, Member member, String[] args);
+    public abstract void onCommand(TextChannel channel, Message message, Member member, String[] args);
 }

@@ -2,25 +2,27 @@ package me.TechsCode.TechDiscordBot;
 
 import me.TechsCode.TechDiscordBot.objects.ChannelQuery;
 import me.TechsCode.TechDiscordBot.storage.Storage;
-import me.TechsCode.TechDiscordBot.util.Project;
 import me.TechsCode.TechDiscordBot.util.ConsoleColor;
+import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
+import me.TechsCode.TechDiscordBot.util.Project;
 import me.TechsCode.TechsCodeAPICli.TechsCodeAPIClient;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.AnnotatedEventManager;
+import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.core.hooks.SubscribeEvent;
 
 import javax.security.auth.login.LoginException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EventListener;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class TechDiscordBot implements EventListener {
+public class TechDiscordBot extends ListenerAdapter implements EventListener {
 
     private final String TECHSCODEAPI = "api.techsco.de";
 
@@ -32,6 +34,7 @@ public class TechDiscordBot implements EventListener {
     private Storage storage;
 
     private List<Module> modules;
+    private List<CommandModule> cmdModules;
 
     public static void main(String[] args) {
         if (args.length != 7) {
@@ -62,44 +65,48 @@ public class TechDiscordBot implements EventListener {
         guild = guilds.size() != 0 ? guilds.get(0) : null;
         self = guild != null ? guild.getSelfMember() : null;
 
-        if(guild == null){
-            log(ConsoleColor.RED+"The Bot is not a member of a guild");
+        if (guild == null) {
+            log(ConsoleColor.RED + "The Bot is not a member of a guild");
             return;
         }
 
-        if(guilds.size() > 1){
-            log(ConsoleColor.RED+"The Bot is a member of too many guilds.");
+        if (guilds.size() > 1) {
+            log(ConsoleColor.RED + "The Bot is a member of too many guilds.");
             return;
         }
 
-        log("Successfully logged in as "+self.getEffectiveName()+" into "+guild.getName());
+        log("Successfully logged in as " + self.getEffectiveName() + " into " + guild.getName());
 
-        log("Connecting to "+TECHSCODEAPI+"..");
+        log("Connecting to " + TECHSCODEAPI + "..");
         this.techsCodeAPIClient = new TechsCodeAPIClient(TECHSCODEAPI, apiToken);
 
-        log("Initializing MySQL Storage "+mysqlHost+":"+mysqlPort+"..");
+        log("Initializing MySQL Storage " + mysqlHost + ":" + mysqlPort + "..");
         this.storage = new Storage(mysqlHost, mysqlPort, mysqlDatabase, mysqlUsername, mysqlPassword);
 
-        if(!storage.isEnabled()){
-            log(ConsoleColor.RED+"Failed connecting to MySQL:");
+        if (!storage.isEnabled()) {
+            log(ConsoleColor.RED + "Failed connecting to MySQL:");
             log(storage.getErrorMessage());
             return;
         }
 
         log("Loading modules...");
         modules = new ArrayList<>();
+        cmdModules = new ArrayList<>();
 
-        for(Class each : Project.getClasses("me.TechsCode.")){
-            if(Module.class.isAssignableFrom(each) && !Modifier.isAbstract(each.getModifiers())){
+        for (Class each : Project.getClasses("me.TechsCode.")) {
+            if (CommandModule.class.isAssignableFrom(each) && !Modifier.isAbstract(each.getModifiers())) {
+                try {
+                    CommandModule module = (CommandModule) each.getConstructor(TechDiscordBot.class).newInstance(this);
+                    module.enable();
+                    if (module.isEnabled()) cmdModules.add(module);
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    e.printStackTrace();
+                }
+            } else if (Module.class.isAssignableFrom(each) && !Modifier.isAbstract(each.getModifiers())) {
                 try {
                     Module module = (Module) each.getConstructor(TechDiscordBot.class).newInstance(this);
-
                     module.enable();
-
-                    if(module.isEnabled()){
-                        modules.add(module);
-                    }
-
+                    if (module.isEnabled()) modules.add(module);
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                     e.printStackTrace();
                 }
@@ -107,10 +114,47 @@ public class TechDiscordBot implements EventListener {
         }
 
         jda.addEventListener(modules.toArray());
+        jda.addEventListener(cmdModules.toArray());
+        jda.addEventListener(this);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> modules.forEach(Module::onDisable)));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> cmdModules.forEach(CommandModule::onDisable)));
 
-        log("Successfully loaded "+modules.size()+" modules!");
+        log("Successfully loaded " + (modules.size() + cmdModules.size()) + " modules!");
+    }
+
+    @SubscribeEvent
+    public void onMessage(GuildMessageReceivedEvent e) {
+        String first = e.getMessage().getContentDisplay().split(" ")[0];
+
+        CommandModule cmd = cmdModules.stream().filter(cmdM -> cmdM.getCommand().equalsIgnoreCase(first)).findFirst().orElse(null);
+        if(cmd == null) return;
+
+        List<Role> restrictedRoles = new ArrayList<>();
+        if(cmd.getRestrictedRoles() != null && cmd.getRestrictedRoles().query() != null && cmd.getRestrictedRoles().query().all() != null) restrictedRoles.addAll(cmd.getRestrictedRoles().query().all());
+        List<TextChannel> restrictedChannels =  new ArrayList<>();
+        if(cmd.getRestrictedChannels() != null && cmd.getRestrictedChannels().query() != null && cmd.getRestrictedChannels().query().all() != null) restrictedChannels.addAll(cmd.getRestrictedChannels().query().all());
+
+        // Check if the player has at least one of the restricted roles
+        if(!restrictedRoles.isEmpty() && Collections.disjoint(e.getMember().getRoles(), restrictedRoles)) {
+            new CustomEmbedBuilder("No Permissions")
+                    .error()
+                    .setText("You don't have enough permissions to execute this command!")
+                    .sendTemporary(e.getChannel(), 5, TimeUnit.SECONDS);
+            return;
+        }
+
+        // Check if the message was sent in one of the restricted channels (if there are any)
+        if (!restrictedChannels.isEmpty() && !restrictedChannels.contains(e.getChannel())) {
+            return;
+        }
+
+        String message = e.getMessage().getContentDisplay();
+        String[] args = Arrays.copyOfRange(message.split(" "), 1, message.split(" ").length);
+
+        cmd.onCommand(e.getChannel(), e.getMessage(), e.getMember(), args);
+
+        e.getMessage().delete().complete();
     }
 
     public JDA getJDA() {

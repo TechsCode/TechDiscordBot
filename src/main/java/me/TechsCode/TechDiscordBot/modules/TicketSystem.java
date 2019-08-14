@@ -6,9 +6,8 @@ import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.SubscribeEvent;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,9 +47,8 @@ public class TicketSystem extends Module {
     }
 
     @SubscribeEvent
-    public void closeCommand(MessageReceivedEvent e){
-        if(!e.getChannelType().equals(ChannelType.TEXT)) return;
-        TextChannel channel = (TextChannel) e.getChannel();
+    public void closeCommand(GuildMessageReceivedEvent e){
+        TextChannel channel = e.getChannel();
 
         if(isTicketChat(channel)) {
             if(isCommand(e.getMessage().getContentDisplay().toLowerCase())) {
@@ -106,8 +104,7 @@ public class TicketSystem extends Module {
     }
 
     @SubscribeEvent
-    public void createChannel(MessageReceivedEvent e) {
-        if(!e.getChannelType().equals(ChannelType.TEXT)) return;
+    public void createChannel(GuildMessageReceivedEvent e) {
         if(e.getMember().getUser().isBot()) return;
 
         TextChannel channel = (TextChannel) e.getChannel();

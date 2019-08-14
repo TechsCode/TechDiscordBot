@@ -8,11 +8,10 @@ import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.SubscribeEvent;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public class ReleaseChannels extends Module {
@@ -51,11 +50,10 @@ public class ReleaseChannels extends Module {
     }
 
     @SubscribeEvent
-    public void receive(MessageReceivedEvent e) {
-        if(!e.getChannelType().equals(ChannelType.TEXT)) return;
+    public void receive(GuildMessageReceivedEvent e) {
         if(e.getAuthor().isBot()) return;
 
-        if(!CHANNELS.query().all().contains(e.getTextChannel())){
+        if(!CHANNELS.query().all().contains(e.getChannel())){
             return;
         }
 
@@ -67,7 +65,7 @@ public class ReleaseChannels extends Module {
         Message.Attachment attachment = e.getMessage().getAttachments().get(0);
 
         if(!attachment.getFileName().endsWith(".jar")){
-            new CustomEmbedBuilder("File Not Accepted!").setText("The file type must be a jar file.").sendTemporary(e.getTextChannel(), 5, TimeUnit.SECONDS);
+            new CustomEmbedBuilder("File Not Accepted!").setText("The file type must be a jar file.").sendTemporary(e.getChannel(), 5, TimeUnit.SECONDS);
             e.getMessage().delete().queue();
             return;
         }
@@ -95,7 +93,7 @@ public class ReleaseChannels extends Module {
                         "Make sure to **react** to let us know if the changes are working.")
                 .addField("Changes", e.getMessage().getContentDisplay(), false);
 
-        Message message = builder.send(e.getTextChannel());
+        Message message = builder.send(e.getChannel());
         e.getChannel().sendFile(file).queue();
 
         if(testersRole != null){
@@ -104,7 +102,7 @@ public class ReleaseChannels extends Module {
         }
 
         if(feedbackChannel != null){
-            feedbackChannel.sendMessage(new EmbedBuilder().setDescription("A new file has just been released in "+e.getTextChannel().getAsMention() + "!").build()).submit();
+            feedbackChannel.sendMessage(new EmbedBuilder().setDescription("A new file has just been released in " + e.getChannel().getAsMention() + "!").build()).submit();
         }
 
         if(upvoteEmote != null && downvoteEmote != null){
