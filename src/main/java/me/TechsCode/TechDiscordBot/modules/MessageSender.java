@@ -15,7 +15,7 @@ public class MessageSender extends Module {
     private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
         @Override
         protected Query newQuery() {
-            return bot.getRoles("staff");
+            return bot.getRoles("Staff");
         }
     };
 
