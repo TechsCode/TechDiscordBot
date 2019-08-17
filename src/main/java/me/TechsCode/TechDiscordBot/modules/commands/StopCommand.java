@@ -12,7 +12,7 @@ import net.dv8tion.jda.core.entities.TextChannel;
 
 import java.util.concurrent.TimeUnit;
 
-public class RestartCommand extends CommandModule {
+public class StopCommand extends CommandModule {
 
     private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
         @Override
@@ -21,13 +21,13 @@ public class RestartCommand extends CommandModule {
         }
     };
 
-    public RestartCommand(TechDiscordBot bot) {
+    public StopCommand(TechDiscordBot bot) {
         super(bot);
     }
 
     @Override
     public String getCommand() {
-        return "!restart";
+        return "!stop";
     }
 
     @Override
@@ -42,8 +42,8 @@ public class RestartCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
-        new CustomEmbedBuilder("Restart")
-                .setText("The bot will be performing a restart..")
+        new CustomEmbedBuilder("stop")
+                .setText("The bot will be stopping..")
                 .sendTemporary(channel, 10, TimeUnit.SECONDS);
 
         System.exit(0);

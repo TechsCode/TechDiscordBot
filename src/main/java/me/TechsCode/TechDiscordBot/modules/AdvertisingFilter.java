@@ -28,8 +28,6 @@ public class AdvertisingFilter extends Module {
 
     @SubscribeEvent
     public void recieve(GuildMessageReceivedEvent e) {
-        if(!e.getChannel().equals(ChannelType.TEXT)) return;
-
         if(checkIfAdvertisement(e.getMessage()) && !isStaff(e.getMember())){
             removeAdvertisement(e.getMessage());
         }
@@ -37,8 +35,6 @@ public class AdvertisingFilter extends Module {
 
     @SubscribeEvent
     public void update(GuildMessageUpdateEvent e) {
-        if(!e.getChannel().equals(ChannelType.TEXT)) return;
-
         if(checkIfAdvertisement(e.getMessage()) && !isStaff(e.getMember())){
             removeAdvertisement(e.getMessage());
         }
@@ -70,7 +66,6 @@ public class AdvertisingFilter extends Module {
 
     private void removeAdvertisement(Message message){
         message.delete().queue();
-
         new CustomEmbedBuilder("Advertising")
                 .setText("Please do not advertise " + message.getAuthor().getAsMention() + "!").error()
                 .sendTemporary(message.getTextChannel(), 10, TimeUnit.SECONDS);
