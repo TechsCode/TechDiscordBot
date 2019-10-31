@@ -26,7 +26,9 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
 
     private final String TECHSCODEAPI = "api.techsco.de";
 
-    private JDA jda;
+    private static TechDiscordBot i;
+
+    private static JDA jda;
     private Guild guild;
     private Member self;
 
@@ -42,12 +44,12 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
             System.out.println("java -jar TechPluginSupportBot.jar <Discord Bot Token> <Tech API Token> <MySQL Host> <MySQL Port> <MySQL Database> <MySQL Username> <MySQL Password>");
             return;
         }
-
         new TechDiscordBot(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
     }
 
     public TechDiscordBot(String token, String apiToken, String mysqlHost, String mysqlPort, String mysqlDatabase, String mysqlUsername, String mysqlPassword) {
         try {
+            i = this;
             try {
                 jda = new JDABuilder(AccountType.BOT)
                         .setEventManager(new AnnotatedEventManager())
@@ -157,10 +159,6 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
         e.getMessage().delete().complete();
     }
 
-    public JDA getJDA() {
-        return jda;
-    }
-
     public Guild getGuild() {
         return guild;
     }
@@ -203,5 +201,13 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
         List<Emote> emotes = Arrays.stream(names).flatMap(name -> guild.getEmotesByName(name, true).stream()).collect(Collectors.toList());
 
         return new Query<>(emotes);
+    }
+
+    public static JDA getJDA() {
+        return jda;
+    }
+
+    public static TechDiscordBot getBot() {
+        return i;
     }
 }

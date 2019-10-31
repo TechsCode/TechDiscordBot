@@ -4,6 +4,7 @@ import me.TechsCode.TechDiscordBot.*;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
+import me.TechsCode.TechDiscordBot.util.Plugin;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -175,10 +176,16 @@ public class TicketSystem extends Module {
                 .setFooter("Ticket created by "+e.getAuthor().getName())
                 .send(ticketChat);
 
-
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        for(Plugin p : Plugin.fromUser(e.getMember())) {
+            if(i != 0) sb.append(" ");
+            sb.append(p.getEmoji().getAsMention());
+            i++;
+        }
 
         new CustomEmbedBuilder(false)
-                .setText(e.getMessage().getContentDisplay())
+                .setText(sb.toString())
                 .send(ticketChat);
 
         new CustomEmbedBuilder("New Ticket")
