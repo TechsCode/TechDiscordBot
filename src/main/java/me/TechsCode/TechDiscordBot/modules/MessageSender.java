@@ -25,6 +25,7 @@ public class MessageSender extends Module {
 
     @SubscribeEvent
     public void receive(GuildMessageReceivedEvent e){
+        if(e.getMember() == null || e.getMember().getRoles() == null) return;
         if(!e.getMember().getRoles().contains(STAFF_ROLE.query().first())) return;
 
         String message = e.getMessage().getContentDisplay();
