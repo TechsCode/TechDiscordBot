@@ -276,7 +276,7 @@ public class TicketSystem extends Module {
     @SubscribeEvent
     public void createChannel(GuildMessageReceivedEvent e) {
         if(e.getMember().getUser().isBot()) return;
-
+        if(e.getChannel() == null) return;
         TextChannel channel = e.getChannel();
         TextChannel creationChannel = CREATION_CHANNEL.query().first();
 
