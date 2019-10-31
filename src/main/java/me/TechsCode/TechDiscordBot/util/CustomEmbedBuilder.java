@@ -14,6 +14,11 @@ public class CustomEmbedBuilder extends EmbedBuilder {
         setFooter("Developed by Tech");
     }
 
+    public CustomEmbedBuilder(boolean footer) {
+        setColor(new Color(81, 153, 226));
+        if(footer) setFooter("Developed by Tech");
+    }
+
     public CustomEmbedBuilder setFooter(String text){
         setFooter("Tech's Plugin Support • "+text, "https://i.imgur.com/nzfiUTy.png");
         return this;

@@ -12,7 +12,6 @@ import net.dv8tion.jda.core.hooks.SubscribeEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class TicketSystem extends Module {
@@ -28,6 +27,34 @@ public class TicketSystem extends Module {
         @Override
         protected Query<Category> newQuery() {
             return bot.getCategories("tickets");
+        }
+    };
+
+    private final DefinedQuery<Category> UNRESPONDED_TICKETS_CATEGORY = new DefinedQuery<Category>() {
+        @Override
+        protected Query<Category> newQuery() {
+            return bot.getCategories("unresponded-tickets");
+        }
+    };
+
+    private final DefinedQuery<Category> RESPONDED_TICKETS_CATEGORY = new DefinedQuery<Category>() {
+        @Override
+        protected Query<Category> newQuery() {
+            return bot.getCategories("responded-tickets");
+        }
+    };
+
+    private final DefinedQuery<Category> IN_PROGRESS_TICKETS_CATEGORY = new DefinedQuery<Category>() {
+        @Override
+        protected Query<Category> newQuery() {
+            return bot.getCategories("in-progress-tickets");
+        }
+    };
+
+    private final DefinedQuery<Category> TECH_TICKETS_CATEGORY = new DefinedQuery<Category>() {
+        @Override
+        protected Query<Category> newQuery() {
+            return bot.getCategories("tech-tickets");
         }
     };
 
@@ -47,11 +74,11 @@ public class TicketSystem extends Module {
     }
 
     @SubscribeEvent
-    public void closeCommand(GuildMessageReceivedEvent e){
+    public void commands(GuildMessageReceivedEvent e){
         TextChannel channel = e.getChannel();
 
         if(isTicketChat(channel)) {
-            if(isCommand(e.getMessage().getContentDisplay().toLowerCase())) {
+            if(isCloseCommand(e.getMessage().getContentDisplay().toLowerCase())) {
                 e.getMessage().delete().submit();
 
                 boolean closedByUser = channel.getTopic().contains(e.getAuthor().getAsMention());
@@ -99,7 +126,7 @@ public class TicketSystem extends Module {
         }
     }
 
-    public boolean isCommand(String msg) {
+    public boolean isCloseCommand(String msg) {
         return Arrays.stream(closeCommands).anyMatch(msg::startsWith);
     }
 
@@ -107,7 +134,7 @@ public class TicketSystem extends Module {
     public void createChannel(GuildMessageReceivedEvent e) {
         if(e.getMember().getUser().isBot()) return;
 
-        TextChannel channel = (TextChannel) e.getChannel();
+        TextChannel channel = e.getChannel();
         TextChannel creationChannel = CREATION_CHANNEL.query().first();
 
         if(!channel.equals(creationChannel)) return;
@@ -148,6 +175,12 @@ public class TicketSystem extends Module {
                 .setFooter("Ticket created by "+e.getAuthor().getName())
                 .send(ticketChat);
 
+
+
+        new CustomEmbedBuilder(false)
+                .setText(e.getMessage().getContentDisplay())
+                .send(ticketChat);
+
         new CustomEmbedBuilder("New Ticket")
                 .setText(e.getAuthor().getAsMention()+" created a new ticket ("+ticketChat.getAsMention()+")")
                 .send(creationChannel);
@@ -169,7 +202,7 @@ public class TicketSystem extends Module {
     }
 
     public TextChannel createTicketChannel(Member member) {
-        String name = "ticket-"+ UUID.randomUUID().toString().split("-")[0];
+        String name = "ticket-" + member.getUser().getName().toLowerCase().substring(0, Math.min(member.getUser().getName().toLowerCase().length(), 10));
 
         return (TextChannel) bot.getGuild().getController().createTextChannel(name)
                 .setParent(TICKET_CATEGORY.query().first())
@@ -213,6 +246,10 @@ public class TicketSystem extends Module {
         return new Requirement[]{
                 new Requirement(CREATION_CHANNEL, 1, "Missing Creation Channel (#tickets)"),
                 new Requirement(TICKET_CATEGORY, 1, "Missing Tickets Category (tickets)"),
+                //new Requirement(UNRESPONDED_TICKETS_CATEGORY, 1, "Missing Tickets Category (unresponded-tickets)"),
+                //new Requirement(RESPONDED_TICKETS_CATEGORY, 1, "Missing Tickets Category (responded-tickets)"),
+                //new Requirement(TECH_TICKETS_CATEGORY, 1, "Missing Tickets Category (tech-tickets)"),
+                //new Requirement(IN_PROGRESS_TICKETS_CATEGORY, 1, "Missing Tickets Category (in-progress-tickets)"),
                 new Requirement(STAFF_ROLE, 1, "Missing 'Staff' Role")
         };
     }

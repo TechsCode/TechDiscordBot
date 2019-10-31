@@ -8,12 +8,12 @@ import me.TechsCode.TechDiscordBot.storage.Verification;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import me.TechsCode.TechsCodeAPICli.collections.PurchaseCollection;
 import me.TechsCode.TechsCodeAPICli.objects.Purchase;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.entities.TextChannel;
 
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class UserCheckCommand extends CommandModule {
@@ -85,17 +85,14 @@ public class UserCheckCommand extends CommandModule {
                     .send(channel);
         } else {
             Purchase purchase = purchases.getStream().sorted(Comparator.comparingLong(p  -> p.getTime().getUnixTime())).skip(purchases.size() - 1).findFirst().get();
-            //purchases.getStream().forEach(p -> bot.log(p.getTime().getHumanTime()));
             String date = purchase.getTime().getHumanTime();
             boolean hasBoughtAll = bot.getTechsCodeAPI().getResources().premium().size() == purchases.size();
             StringBuilder sb = new StringBuilder();
-            for(Purchase p : purchases.get()) {
-                sb.append("- ").append(p.getResourceName()).append(" for ").append(p.getCost().getValue() == 0d ? "Free" : p.getCost().getValue() + p.getCost().getCurrency()).append(",\n ");
-            }
+            for(Purchase p : purchases.get()) sb.append("- ").append(p.getResourceName()).append(" for ").append(p.getCost().getValue() == 0d ? "Free" : p.getCost().getValue() + p.getCost().getCurrency()).append(",\n ");
             String purchasesString = sb.toString();
             new CustomEmbedBuilder(member.getEffectiveName() + "'s Purchases")
                     .success()
-                    .setText(member.getAsMention() + " has bought " + (hasBoughtAll ? "**all** " : " ") + purchases.size() + " of Tech's Resources.\n\nTheir last purchase was on " + date + ".\n\n**Their purchases include:**\n" + purchasesString.substring(0, purchasesString.length() - 3) + ".")
+                    .setText("Spigot URL: https://www.spigotmc.org/members/" + verification.getUserId() + "\n\n" + member.getAsMention() + " has bought " + (hasBoughtAll ? "**all** " : " ") + purchases.size() + " of Tech's Resources.\n\nTheir last purchase was on " + date + ".\n\n**Their purchases include:**\n" + purchasesString.substring(0, purchasesString.length() - 3) + ".")
                     .send(channel);
         }
     }
