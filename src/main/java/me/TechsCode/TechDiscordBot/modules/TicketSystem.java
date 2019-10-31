@@ -186,8 +186,8 @@ public class TicketSystem extends Module {
                 .send(creationChannel);
     }
 
-    public void sendInstructions(TextChannel textChannel){
-        if(lastInstructions != null){
+    public void sendInstructions(TextChannel textChannel) {
+        if(lastInstructions != null) {
             lastInstructions.delete().complete();
         }
 

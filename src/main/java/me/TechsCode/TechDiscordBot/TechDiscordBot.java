@@ -96,7 +96,7 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
         for (Class each : Project.getClasses("me.TechsCode.")) {
             if (CommandModule.class.isAssignableFrom(each) && !Modifier.isAbstract(each.getModifiers())) {
                 try {
-                    CommandModule module = (CommandModule) each.getConstructor(TechDiscordBot.class).newInstance(this);
+                    CommandModule module = (CommandModule)each.getConstructor(TechDiscordBot.class).newInstance(this);
                     module.enable();
                     if (module.isEnabled()) cmdModules.add(module);
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
