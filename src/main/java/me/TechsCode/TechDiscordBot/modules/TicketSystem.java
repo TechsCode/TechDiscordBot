@@ -86,10 +86,8 @@ public class TicketSystem extends Module {
     public void onGuildMessage(GuildMessageReceivedEvent e) {
         TextChannel channel = e.getChannel();
         if(e.getAuthor().isBot()) return;
-
-        boolean isTicketCreator = channel.getTopic().contains(e.getAuthor().getAsMention());
-
         if (isTicketChat(channel)) {
+            boolean isTicketCreator = channel.getTopic().contains(e.getAuthor().getAsMention());
             if(!channel.getParent().getName().contains("tech")) {
                 if (isTicketCreator) {
                     channel.getManager().setParent(UNRESPONDED_TICKETS_CATEGORY.query().first()).queue();
