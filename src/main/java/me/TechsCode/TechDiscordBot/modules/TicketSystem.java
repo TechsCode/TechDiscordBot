@@ -165,6 +165,14 @@ public class TicketSystem extends Module {
                                 .success().send(channel);
                         return;
                     }
+                    boolean isTicketCreator2 = channel.getTopic().contains(member.getAsMention());
+                    if(isTicketCreator2) {
+                        new CustomEmbedBuilder("Error")
+                                .setText("You cannot remove the Ticket Creator!")
+                                .error()
+                                .success().send(channel);
+                        return;
+                    }
                     new CustomEmbedBuilder("Removed User")
                             .success()
                             .setText("Successfully remove " + member.getAsMention() + " from the ticket!")
