@@ -93,7 +93,7 @@ public class TicketSystem extends Module {
                     channel.getManager().setParent(UNRESPONDED_TICKETS_CATEGORY.query().first()).queue();
                 } else if (Util.isStaff(e.getMember())) {
                     if(!channel.getParent().getName().contains("responded")) {
-                        channel.sendmessage(e.getAuthor().getAsMention());
+                        channel.sendMessage(e.getAuthor().getAsMention()).complete();
                         e.getMessage().delete().submit();
                     }
                     channel.getManager().setParent(RESPONDED_TICKETS_CATEGORY.query().first()).queue();
