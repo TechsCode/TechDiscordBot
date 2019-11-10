@@ -187,9 +187,7 @@ public class TicketSystem extends Module {
                 }
             } else if (isCloseCommand(e.getMessage().getContentDisplay().toLowerCase())) {
                 e.getMessage().delete().submit();
-
                 TextChannel creationChannel = CREATION_CHANNEL.query().first();
-
                 if (isTicketCreator) {
                     new CustomEmbedBuilder("Ticket")
                             .setText("Thank you for contacting us " + e.getAuthor().getAsMention() + "! Consider writing a review if you enjoyed the support.")
@@ -278,7 +276,12 @@ public class TicketSystem extends Module {
         if(e.getMember().getUser().isBot()) return;
         if(e.getChannel() == null) return;
         TextChannel channel = e.getChannel();
-        TextChannel creationChannel = CREATION_CHANNEL.query().first();
+        TextChannel creationChannel;
+        try {
+            creationChannel = CREATION_CHANNEL.query().first();
+        } catch (NullPointerException ex) {
+            creationChannel = channel.getGuild().getTextChannelsByName("tickets", true).get(0);
+        }
 
         if(!channel.equals(creationChannel)) return;
 
@@ -390,9 +393,9 @@ public class TicketSystem extends Module {
         return "Ticket System";
     }
 
-    public Member getMemberFromTicket(TextChannel ticket) {
-        String id = ticket.getTopic().split("<")[1].split(">")[0].replace("@", "");
-        return TechDiscordBot.getBot().getGuild().getMemberById(id);
+    public Member getMemberFromTicket(TextChannel channel) {
+        String id = channel.getTopic().split("<")[1].split(">")[0].replace("@", "");
+        return channel.getGuild().getMemberById(id);
     }
 
     @Override
