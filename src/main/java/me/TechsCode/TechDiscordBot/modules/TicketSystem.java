@@ -94,7 +94,7 @@ public class TicketSystem extends Module {
                 } else if (Util.isStaff(e.getMember())) {
                     if(!channel.getParent().getName().contains("responded")) {
                         channel.sendmessage(e.getAuthor().getAsMention());
-                        channel.getMessage().delete().submit()
+                        e.getMessage().delete().submit();
                     }
                     channel.getManager().setParent(RESPONDED_TICKETS_CATEGORY.query().first()).queue();
                 } else {
