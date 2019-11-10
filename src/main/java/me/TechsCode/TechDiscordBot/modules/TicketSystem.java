@@ -92,7 +92,10 @@ public class TicketSystem extends Module {
                 if (isTicketCreator) {
                     channel.getManager().setParent(UNRESPONDED_TICKETS_CATEGORY.query().first()).queue();
                 } else if (Util.isStaff(e.getMember())) {
-                    if(channel.getParent().equals(UNRESPONDED_TICKETS_CATEGORY.query().first())) channel.sendMessage(getMemberFromTicket(channel).getAsMention()).complete();
+                    if(channel.getParent().equals(UNRESPONDED_TICKETS_CATEGORY.query().first())) {
+                        Message msg = channel.sendMessage(getMemberFromTicket(channel).getAsMention()).complete();
+                        msg.delete().complete();
+                    }
                     channel.getManager().setParent(RESPONDED_TICKETS_CATEGORY.query().first()).queue();
                 } else {
                     channel.getManager().setParent(UNRESPONDED_TICKETS_CATEGORY.query().first()).queue();
