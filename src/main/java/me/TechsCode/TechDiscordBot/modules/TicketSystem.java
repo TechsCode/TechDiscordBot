@@ -92,10 +92,7 @@ public class TicketSystem extends Module {
                 if (isTicketCreator) {
                     channel.getManager().setParent(UNRESPONDED_TICKETS_CATEGORY.query().first()).queue();
                 } else if (Util.isStaff(e.getMember())) {
-                    if(!channel.getParent().getName().contains("responded")) {
-                        channel.sendMessage(e.getAuthor().getAsMention()).complete();
-                        e.getMessage().delete().submit();
-                    }
+                    if(channel.getParent().equals(UNRESPONDED_TICKETS_CATEGORY.query().first())) channel.sendMessage(getMemberFromTicket(channel).getAsMention()).complete();
                     channel.getManager().setParent(RESPONDED_TICKETS_CATEGORY.query().first()).queue();
                 } else {
                     channel.getManager().setParent(UNRESPONDED_TICKETS_CATEGORY.query().first()).queue();
@@ -392,6 +389,11 @@ public class TicketSystem extends Module {
     @Override
     public String getName() {
         return "Ticket System";
+    }
+
+    public Member getMemberFromTicket(TextChannel ticket) {
+        String id = ticket.getTopic().split("<")[1].split(">")[0].replace("@", "");
+        return TechDiscordBot.getBot().getGuild().getMemberById(id);
     }
 
     @Override
