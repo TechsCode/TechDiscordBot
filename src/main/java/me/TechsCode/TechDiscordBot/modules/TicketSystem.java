@@ -209,8 +209,7 @@ public class TicketSystem extends Module {
                             .setText(e.getAuthor().getAsMention() + " has closed this support ticket." + reasonSend)
                             .send(channel);
                     channel.delete().completeAfter(20, TimeUnit.SECONDS);
-                    String id = channel.getTopic().split("<")[1].split(">")[0].replace("@", "");
-                    Member member = channel.getGuild().getMemberById(id);
+                    Member member = getMemberFromTicket(channel);
                     if (member != null) {
                         new CustomEmbedBuilder("Closed Ticket")
                                 .setText("The ticket (" + channel.getName() + ") from " + member.getAsMention() + " has been closed!")
