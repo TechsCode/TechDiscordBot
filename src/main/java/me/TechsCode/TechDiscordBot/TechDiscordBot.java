@@ -1,6 +1,7 @@
 package me.TechsCode.TechDiscordBot;
 
 import me.TechsCode.TechDiscordBot.objects.ChannelQuery;
+import me.TechsCode.TechDiscordBot.songoda.SongodaAPIClient;
 import me.TechsCode.TechDiscordBot.storage.Storage;
 import me.TechsCode.TechDiscordBot.util.ConsoleColor;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
@@ -33,21 +34,22 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
     private Member self;
 
     private TechsCodeAPIClient techsCodeAPIClient;
+    private SongodaAPIClient songodaAPIClient;
     private Storage storage;
 
     private List<Module> modules;
     private List<CommandModule> cmdModules;
 
     public static void main(String[] args) {
-        if (args.length != 7) {
+        if (args.length != 8) {
             System.out.println("Invalid start arguments. Consider using:");
-            System.out.println("java -jar TechPluginSupportBot.jar <Discord Bot Token> <Tech API Token> <MySQL Host> <MySQL Port> <MySQL Database> <MySQL Username> <MySQL Password>");
+            System.out.println("java -jar TechPluginSupportBot.jar <Discord Bot Token> <Tech API Token> <Songoda Token> <MySQL Host> <MySQL Port> <MySQL Database> <MySQL Username> <MySQL Password>");
             return;
         }
-        new TechDiscordBot(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+        new TechDiscordBot(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
     }
 
-    public TechDiscordBot(String token, String apiToken, String mysqlHost, String mysqlPort, String mysqlDatabase, String mysqlUsername, String mysqlPassword) {
+    public TechDiscordBot(String token, String apiToken, String songodaToken, String mysqlHost, String mysqlPort, String mysqlDatabase, String mysqlUsername, String mysqlPassword) {
         try {
             i = this;
             try {
@@ -81,6 +83,9 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
 
         log("Connecting to " + TECHSCODEAPI + "..");
         this.techsCodeAPIClient = new TechsCodeAPIClient(TECHSCODEAPI, apiToken);
+
+        log("Connecting to Songoda.com");
+        this.songodaAPIClient = new SongodaAPIClient(songodaToken);
 
         log("Initializing MySQL Storage " + mysqlHost + ":" + mysqlPort + "..");
         this.storage = new Storage(mysqlHost, mysqlPort, mysqlDatabase, mysqlUsername, mysqlPassword);
@@ -169,6 +174,10 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
 
     public TechsCodeAPIClient getTechsCodeAPI() {
         return techsCodeAPIClient;
+    }
+
+    public SongodaAPIClient getSongodaAPIClient() {
+        return songodaAPIClient;
     }
 
     public Storage getStorage() {

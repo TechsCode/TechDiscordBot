@@ -5,13 +5,16 @@ import me.TechsCode.TechDiscordBot.Query;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
+import me.TechsCode.TechDiscordBot.songoda.SongodaPurchase;
 import me.TechsCode.TechDiscordBot.storage.Verification;
+import me.TechsCode.TechsCodeAPICli.collections.ResourceCollection;
 import me.TechsCode.TechsCodeAPICli.objects.Resource;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static java.lang.Thread.sleep;
 
@@ -21,6 +24,13 @@ public class RoleAssigner extends Module {
         @Override
         protected Query<Role> newQuery() {
             return bot.getRoles("Verified");
+        }
+    };
+
+    private final DefinedQuery<Role> SONGODA_VERIFICATION_ROLE = new DefinedQuery<Role>() {
+        @Override
+        protected Query<Role> newQuery() {
+            return bot.getRoles("Songoda-Verified");
         }
     };
 
@@ -84,64 +94,77 @@ public class RoleAssigner extends Module {
             return;
         }
 
+        if(!bot.getSongodaAPIClient().isLoaded()){
+            return;
+        }
+
         Role verificationRole = VERIFICATION_ROLE.query().first();
+        Role songodaVerificationRole = SONGODA_VERIFICATION_ROLE.query().first();
         Role reviewSquad = REVIEW_SQUAD_ROLE.query().first();
 
         Set<Verification> verifications = bot.getStorage().retrieveVerifications();
+
+        Set<Role> roles = new HashSet<>();
+        roles.add(verificationRole);
+        roles.add(songodaVerificationRole);
+        roles.add(reviewSquad);
+        roles.addAll(RESOURCE_ROLES.query().all());
+
+        ResourceCollection resources = bot.getTechsCodeAPI().getResources().premium();
 
         for(Member all : bot.getGuild().getMembers()){
             Verification verification = verifications.stream()
                     .filter(v -> v.getDiscordId().equals(all.getUser().getId()))
                     .findAny().orElse(null);
 
-
-            List<Role> rolesToAdd = new ArrayList<>();
-            List<Role> rolesToRemove = new ArrayList<>();
+            Set<Role> rolesToKeep = new HashSet<>();
 
             if(verification != null){
-                String userId = verification.getUserId();
+                rolesToKeep.add(verificationRole);
 
-                rolesToAdd.add(verificationRole);
+                int purchases = 0;
+                int reviews = 0;
 
-                boolean allReviewed = true;
-                int ownedPlugins = 0;
-
-                for(Resource resource : bot.getTechsCodeAPI().getResources().premium().get()){
+                for(Resource resource : resources.get()){
                     Role role = bot.getRoles(resource.getResourceName()).first();
 
-                    boolean purchased = resource.getPurchases().userId(userId).size() > 0;
-                    boolean reviewed = resource.getReviews().userId(userId).size() > 0;
+                    boolean purchased = resource.getPurchases().userId(verification.getUserId()).size() > 0;
+                    boolean reviewed = resource.getReviews().userId(verification.getUserId()).size() > 0;
+
+                    if(purchased) purchases++;
+                    if(reviewed) reviews++;
 
                     if(purchased){
-                        rolesToAdd.add(role);
-                        ownedPlugins++;
-                    } else {
-                        rolesToRemove.add(role);
-                    }
-
-                    if(allReviewed){
-                        allReviewed = purchased == reviewed;
+                        rolesToKeep.add(role);
                     }
                 }
 
-                if(allReviewed && ownedPlugins != 0){
-                    rolesToAdd.add(reviewSquad);
-                } else {
-                    rolesToRemove.add(reviewSquad);
-                }
-            } else {
-                rolesToRemove.add(verificationRole);
-                rolesToRemove.add(reviewSquad);
-
-                for(Resource resource : bot.getTechsCodeAPI().getResources().premium().get()) {
-                    Role role = bot.getRoles(resource.getResourceName()).first();
-
-                    rolesToRemove.add(role);
+                if(purchases != 0 && purchases == reviews){
+                    rolesToKeep.add(reviewSquad);
                 }
             }
 
+            for(SongodaPurchase songodaPurchase : bot.getSongodaAPIClient().getPurchases()){
+                if(songodaPurchase.getDiscord() != null && songodaPurchase.getDiscord().equalsIgnoreCase(all.getUser().getName()+"#"+all.getUser().getDiscriminator())){
+                    rolesToKeep.add(songodaVerificationRole);
+                    rolesToKeep.add(bot.getRoles(songodaPurchase.getName()).first());
+                }
+            }
+
+            Set<Role> rolesToRemove = roles.stream()
+                    .filter(role -> !rolesToKeep.contains(role))
+                    .filter(role -> all.getRoles().contains(role))
+                    .collect(Collectors.toSet());
+
+            Set<Role> rolesToAdd = rolesToKeep.stream()
+                    .filter(role -> !all.getRoles().contains(role))
+                    .collect(Collectors.toSet());
+
             bot.getGuild().getController().addRolesToMember(all, rolesToAdd).complete();
             bot.getGuild().getController().removeRolesFromMember(all, rolesToRemove).complete();
+
+            rolesToRemove.forEach(x -> bot.log("[Roles] Removed the Role "+x.getName()+" from Member "+all.getEffectiveName()));
+            rolesToAdd.forEach(x -> bot.log("[Roles] Added the Role "+x.getName()+" to Member "+all.getEffectiveName()));
         }
     }
 }
