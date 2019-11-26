@@ -37,6 +37,10 @@ public class SongodaAPIClient extends Thread {
         return purchases;
     }
 
+    public List<SongodaPurchase> getPurchases(String discord) {
+        return getPurchases().stream().filter(sp -> sp.getDiscord().equals(discord)).collect(Collectors.toList());
+    }
+
     @Override
     public void run() {
         while (true){

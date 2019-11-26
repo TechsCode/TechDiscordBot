@@ -11,12 +11,18 @@ public class CustomEmbedBuilder extends EmbedBuilder {
     public CustomEmbedBuilder(String title) {
         if(title != null) setAuthor(title, "http://techsco.de", "https://i.imgur.com/nnegGEV.png");
         setColor(new Color(81, 153, 226));
-        setFooter("Developed by Tech");
+        setFooter("Developed by Tech & Team");
+    }
+
+    public CustomEmbedBuilder(String title, boolean footer) {
+        if(title != null) setAuthor(title, "http://techsco.de", "https://i.imgur.com/nnegGEV.png");
+        setColor(new Color(81, 153, 226));
+        if(footer) setFooter("Developed by Tech & Team");
     }
 
     public CustomEmbedBuilder(boolean footer) {
         setColor(new Color(81, 153, 226));
-        if(footer) setFooter("Developed by Tech");
+        if(footer) setFooter("Developed by Tech & Team");
     }
 
     public CustomEmbedBuilder setFooter(String text){

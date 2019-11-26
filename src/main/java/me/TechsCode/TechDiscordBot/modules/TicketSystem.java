@@ -93,8 +93,10 @@ public class TicketSystem extends Module {
                     channel.getManager().setParent(UNRESPONDED_TICKETS_CATEGORY.query().first()).queue();
                 } else if (Util.isStaff(e.getMember())) {
                     if(channel.getParent().equals(UNRESPONDED_TICKETS_CATEGORY.query().first())) {
-                        Message msg = channel.sendMessage(getMemberFromTicket(channel).getAsMention()).complete();
-                        msg.delete().complete();
+                        if(getMemberFromTicket(channel) != null) {
+                            Message msg = channel.sendMessage(getMemberFromTicket(channel).getAsMention()).complete();
+                            msg.delete().complete();
+                        }
                     }
                     channel.getManager().setParent(RESPONDED_TICKETS_CATEGORY.query().first()).queue();
                 } else {
@@ -334,7 +336,7 @@ public class TicketSystem extends Module {
                 sb.append(p.getEmoji().getAsMention());
                 i++;
             }
-            new CustomEmbedBuilder(false)
+            new CustomEmbedBuilder("Owned Plugins", false)
                     .setText(sb.toString())
                     .send(ticketChat);
         }
