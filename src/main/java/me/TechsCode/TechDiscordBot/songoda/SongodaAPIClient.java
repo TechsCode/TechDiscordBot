@@ -1,6 +1,6 @@
 package me.TechsCode.TechDiscordBot.songoda;
 
-import org.apache.commons.io.IOUtils;
+import net.dv8tion.jda.core.entities.User;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -39,6 +39,10 @@ public class SongodaAPIClient extends Thread {
 
     public List<SongodaPurchase> getPurchases(String discord) {
         return getPurchases().stream().filter(sp -> sp.getDiscord().equals(discord)).collect(Collectors.toList());
+    }
+
+    public List<SongodaPurchase> getPurchases(User member) {
+        return getPurchases().stream().filter(sp -> sp.getDiscord().equals(member.getName() + "#" + member.getDiscriminator())).collect(Collectors.toList());
     }
 
     @Override

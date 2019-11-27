@@ -76,7 +76,7 @@ public enum Plugin {
         try {
             Verification verification = TechDiscordBot.getBot().getStorage().retrieveVerificationWithDiscord(member.getUser().getId());
             PurchaseCollection pc = TechDiscordBot.getBot().getTechsCodeAPI().getPurchases().userId(verification.getUserId());
-            List<SongodaPurchase> purchases = TechDiscordBot.getBot().getSongodaAPIClient().getPurchases();
+            List<SongodaPurchase> purchases = TechDiscordBot.getBot().getSongodaAPIClient().getPurchases(member.getUser());
             List<Plugin> plugins = Arrays.stream(pc.get()).map(purchase -> fromId(purchase.getResourceId())).collect(Collectors.toList());
             for(SongodaPurchase purchase : purchases) {
                 Plugin plugin = Plugin.byRoleName(purchase.getName());
