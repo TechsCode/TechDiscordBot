@@ -47,7 +47,7 @@ public class MuteCommand extends CommandModule {
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
         if(args.length == 0) {
-
+            new CustomEmbedBuilder("Mute Command").setText("Member is not found! Please specify a member in the arguments, either using their mention, name and discriminator, or user id.").error().send(channel);
         } else if(getMemberFromString(message, args[0]) != null) {
             Member memberS = getMemberFromString(message, args[0]);
             if(memberHasMutedRole(memberS)) {
