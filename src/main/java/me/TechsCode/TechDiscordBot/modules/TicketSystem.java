@@ -9,12 +9,10 @@ import me.TechsCode.TechDiscordBot.util.Util;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.core.hooks.SubscribeEvent;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class TicketSystem extends Module {
@@ -277,7 +275,17 @@ public class TicketSystem extends Module {
     }
 
     @SubscribeEvent
-    public void createChannel(GuildMessageReceivedEvent e) {
+    public void onReaction(GuildMessageReactionAddEvent e) {
+        if(e.getUser().isBot()) return;
+        if(!e.getChannel().equals(CREATION_CHANNEL.query().first())) return;
+        Member reactor = e.getMember();
+        Plugin plugin = Plugin.byEmote(e.getReactionEmote().getEmote());
+        if(plugin == null) return;
+        if(reactor.getRoles().stream().noneMatch(r -> r.getName().contains("Verified"))) {
+            e.getReaction().removeReaction().queue();
+            return;
+        }
+        e.getReaction().removeReaction().queue();
         if(e.getMember().getUser().isBot()) return;
         if(e.getChannel() == null) return;
         TextChannel channel = e.getChannel();
@@ -287,26 +295,26 @@ public class TicketSystem extends Module {
         } catch (NullPointerException ex) {
             creationChannel = channel.getGuild().getTextChannelsByName("tickets", true).get(0);
         }
-
         if(!channel.equals(creationChannel)) return;
-
         TextChannel ticketChat = getOpenTicketChat(e.getMember());
-
-        e.getMessage().delete().complete();
-
         if(ticketChat != null) {
             new CustomEmbedBuilder("Error")
                     .setText("You already have an open ticket ("+ticketChat.getAsMention()+")").error()
                     .sendTemporary(creationChannel, 10);
-
+            sendInstructions(e.getChannel());
             return;
         }
-
+        List<Plugin> plugins = Plugin.fromUser(e.getMember());
+        if(!plugins.contains(plugin)) {
+            new CustomEmbedBuilder("Error")
+                    .setText("You don't own the plugin you selected! (" + plugin.getEmoji().getAsMention() + " " + plugin.getRoleName() + ")").error()
+                    .sendTemporary(creationChannel, 10);
+            sendInstructions(e.getChannel());
+            return;
+        }
         ticketChat = createTicketChannel(e.getMember());
-
         ticketChat.getManager().clearOverridesRemoved();
         ticketChat.getManager().clearOverridesAdded();
-
         Collection<Permission> permissionsAllow = new ArrayList<>();
         permissionsAllow.add(Permission.MESSAGE_ADD_REACTION);
         permissionsAllow.add(Permission.MESSAGE_ATTACH_FILES);
@@ -314,35 +322,27 @@ public class TicketSystem extends Module {
         permissionsAllow.add(Permission.MESSAGE_READ);
         permissionsAllow.add(Permission.MESSAGE_WRITE);
         permissionsAllow.add(Permission.MESSAGE_HISTORY);
-
         ticketChat.getManager()
-                .putPermissionOverride(STAFF_ROLE.query().first(), permissionsAllow, Arrays.asList(Permission.MESSAGE_TTS))
-                .putPermissionOverride(e.getMember(), permissionsAllow, Arrays.asList(Permission.MESSAGE_TTS))
+                .putPermissionOverride(STAFF_ROLE.query().first(), permissionsAllow, Collections.singletonList(Permission.MESSAGE_TTS))
+                .putPermissionOverride(e.getMember(), permissionsAllow, Collections.singletonList(Permission.MESSAGE_TTS))
                 .putPermissionOverride(bot.getGuild().getPublicRole(), new ArrayList<>(), Arrays.asList(Permission.MESSAGE_READ, Permission.MESSAGE_WRITE))
                 .complete();
-
-        new CustomEmbedBuilder("Ticket Info")
-                .setText(e.getMessage().getContentDisplay())
-                .setFooter("Ticket created by "+e.getAuthor().getName())
-                .send(ticketChat);
-
-        List<Plugin> plugins = Plugin.fromUser(e.getMember());
-
-        if(plugins.size() > 0) {
-            StringBuilder sb = new StringBuilder();
-            int i = 0;
-            for (Plugin p : plugins) {
-                if (i != 0) sb.append(" ");
-                sb.append(p.getEmoji().getAsMention());
-                i++;
-            }
-            new CustomEmbedBuilder("Owned Plugins", false)
-                    .setText(sb.toString())
-                    .send(ticketChat);
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        for (Plugin p : plugins) {
+            if (i != 0) sb.append(" ");
+            sb.append(p.getEmoji().getAsMention());
+            i++;
         }
-
+        if(i == 0) sb.append("None");
+        new CustomEmbedBuilder(reactor.getEffectiveName() + " - " + reactor.getUser().getId())
+                .setText("Please describe your issue below.")
+                .addField("Plugin", plugin.getEmoji().getAsMention(), true)
+                //Maybe Soon: .addField("Plugin Version (Latest)", plugin.getLatestUpdate(), true)
+                .addField("Owned Plugins", sb.toString(), true)
+                .send(ticketChat);
         new CustomEmbedBuilder("New Ticket")
-                .setText(e.getAuthor().getAsMention()+" created a new ticket ("+ticketChat.getAsMention()+")")
+                .setText(reactor.getAsMention()+" created a new ticket ("+ticketChat.getAsMention()+")")
                 .send(creationChannel);
         sendInstructions(creationChannel);
     }
@@ -350,8 +350,9 @@ public class TicketSystem extends Module {
     public void sendInstructions(TextChannel textChannel) {
         if(lastInstructions != null) lastInstructions.delete().complete();
         CustomEmbedBuilder howItWorksMessage = new CustomEmbedBuilder("How to Create a Ticket")
-                .setText("You want to receive direct support from us? \nType in your question or issue below and we will get to you as soon as possible!");
+                .setText("Please react with the plugin that you need help with below!");
         lastInstructions = howItWorksMessage.send(textChannel);
+        for(Plugin pl : Plugin.values()) lastInstructions.addReaction(pl.getEmoji()).queue();
     }
 
     public boolean isTicketChat(TextChannel channel) {
@@ -359,8 +360,7 @@ public class TicketSystem extends Module {
     }
 
     public TextChannel createTicketChannel(Member member) {
-        String name = "ticket-" + member.getUser().getName().toLowerCase().substring(0, Math.min(member.getUser().getName().toLowerCase().length(), 10));
-
+        String name = "ticket-" + member.getUser().getName().toLowerCase().substring(0, Math.min(member.getUser().getName().toLowerCase().length(), 15));
         return (TextChannel) bot.getGuild().getController().createTextChannel(name)
                 .setParent(UNRESPONDED_TICKETS_CATEGORY.query().first())
                 .setTopic("Ticket from " + member.getAsMention() + " | Problem Solved? Please type in !solved")

@@ -41,6 +41,11 @@ public class UserCheckCommand extends CommandModule {
     }
 
     @Override
+    public String[] getAliases() {
+        return new String[]{"!verified"};
+    }
+
+    @Override
     public DefinedQuery<Role> getRestrictedRoles() {
         return STAFF_ROLE;
     }

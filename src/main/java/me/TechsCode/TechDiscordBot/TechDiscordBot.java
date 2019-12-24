@@ -134,7 +134,7 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
     public void onMessage(GuildMessageReceivedEvent e) {
         String first = e.getMessage().getContentDisplay().split(" ")[0];
 
-        CommandModule cmd = cmdModules.stream().filter(cmdM -> cmdM.getCommand().equalsIgnoreCase(first)).findFirst().orElse(null);
+        CommandModule cmd = cmdModules.stream().filter(cmdM -> cmdM.getCommand().equalsIgnoreCase(first) || (cmdM.getAliases() != null && Arrays.asList(cmdM.getAliases()).contains(first))).findFirst().orElse(null);
         if(cmd == null) return;
 
         List<Role> restrictedRoles = new ArrayList<>();
@@ -152,9 +152,7 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
         }
 
         // Check if the message was sent in one of the restricted channels (if there are any)
-        if (!restrictedChannels.isEmpty() && !restrictedChannels.contains(e.getChannel())) {
-            return;
-        }
+        if (!restrictedChannels.isEmpty() && !restrictedChannels.contains(e.getChannel())) return;
 
         String message = e.getMessage().getContentDisplay();
         String[] args = Arrays.copyOfRange(message.split(" "), 1, message.split(" ").length);

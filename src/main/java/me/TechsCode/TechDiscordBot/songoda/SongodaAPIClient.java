@@ -38,11 +38,11 @@ public class SongodaAPIClient extends Thread {
     }
 
     public List<SongodaPurchase> getPurchases(String discord) {
-        return getPurchases().stream().filter(sp -> sp.getDiscord().equals(discord)).collect(Collectors.toList());
+        return getPurchases().stream().filter(sp -> sp.getDiscord() != null && sp.getDiscord().equals(discord)).collect(Collectors.toList());
     }
 
     public List<SongodaPurchase> getPurchases(User member) {
-        return getPurchases().stream().filter(sp -> sp.getDiscord().equals(member.getName() + "#" + member.getDiscriminator())).collect(Collectors.toList());
+        return getPurchases().stream().filter(sp -> sp.getDiscord() != null && sp.getDiscord().equals(member.getName() + "#" + member.getDiscriminator())).collect(Collectors.toList());
     }
 
     @Override

@@ -31,6 +31,11 @@ public class StopCommand extends CommandModule {
     }
 
     @Override
+    public String[] getAliases() {
+        return null;
+    }
+
+    @Override
     public DefinedQuery<Role> getRestrictedRoles() {
         return STAFF_ROLE;
     }

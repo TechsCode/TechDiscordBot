@@ -63,6 +63,8 @@ public abstract class CommandModule {
 
     public abstract String getCommand();
 
+    public abstract String[] getAliases();
+
     public abstract DefinedQuery<Role> getRestrictedRoles();
 
     public abstract DefinedQuery<TextChannel> getRestrictedChannels();

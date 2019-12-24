@@ -4,6 +4,7 @@ import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.songoda.SongodaPurchase;
 import me.TechsCode.TechDiscordBot.storage.Verification;
 import me.TechsCode.TechsCodeAPICli.collections.PurchaseCollection;
+import me.TechsCode.TechsCodeAPICli.objects.Update;
 import net.dv8tion.jda.core.entities.Emote;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
@@ -68,22 +69,36 @@ public enum Plugin {
         return roleName;
     }
 
+    public Update getLatestUpdate() {
+        return TechDiscordBot.getBot().getTechsCodeAPI().getUpdates().resourceId(getResourceId()).get()[TechDiscordBot.getBot().getTechsCodeAPI().getUpdates().resourceId(getResourceId()).size() - 1];
+    }
+
     public static Plugin byRoleName(String roleName) {
         return Arrays.stream(Plugin.values()).filter(p -> p.getRoleName().equals(roleName)).findFirst().orElse(null);
+    }
+
+    public static Plugin byEmote(Emote emote) {
+        return Arrays.stream(values()).filter(e -> emote.getId().equals(e.getEmoji().getId())).findFirst().orElse(null);
     }
 
     public static List<Plugin> fromUser(Member member) {
         try {
             Verification verification = TechDiscordBot.getBot().getStorage().retrieveVerificationWithDiscord(member.getUser().getId());
             PurchaseCollection pc = TechDiscordBot.getBot().getTechsCodeAPI().getPurchases().userId(verification.getUserId());
-            List<SongodaPurchase> purchases = TechDiscordBot.getBot().getSongodaAPIClient().getPurchases(member.getUser());
+            List<SongodaPurchase> purchases = null;
+            try { purchases = TechDiscordBot.getBot().getSongodaAPIClient().getPurchases(member.getUser());
+            } catch (NullPointerException ignored) {}
             List<Plugin> plugins = Arrays.stream(pc.get()).map(purchase -> fromId(purchase.getResourceId())).collect(Collectors.toList());
-            for(SongodaPurchase purchase : purchases) {
-                Plugin plugin = Plugin.byRoleName(purchase.getName());
-                if(plugin != null && !plugins.contains(plugin)) plugins.add(plugin);
+            if(purchases != null) {
+                for (SongodaPurchase purchase : purchases) {
+                    Plugin plugin = Plugin.byRoleName(purchase.getName());
+                    if (plugin != null && !plugins.contains(plugin)) plugins.add(plugin);
+                }
             }
             return plugins;
         } catch (NullPointerException ex) {
+            TechDiscordBot.getBot().log("Error:");
+            ex.printStackTrace();
             return new ArrayList<>();
         }
     }
