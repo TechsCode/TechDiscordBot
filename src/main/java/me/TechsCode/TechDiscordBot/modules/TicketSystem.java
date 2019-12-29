@@ -360,7 +360,8 @@ public class TicketSystem extends Module {
     }
 
     public TextChannel createTicketChannel(Member member) {
-        String name = "ticket-" + member.getUser().getName().toLowerCase().substring(0, Math.min(member.getUser().getName().toLowerCase().length(), 15));
+        String name = "ticket-" + member.getEffectiveName().replaceAll("[^a-zA-Z ]", "").toLowerCase().substring(0, Math.min(member.getUser().getName().toLowerCase().length(), 20));
+        if(name.equals("ticket-")) name = "ticket-" + member.getUser().getId();
         return (TextChannel) bot.getGuild().getController().createTextChannel(name)
                 .setParent(UNRESPONDED_TICKETS_CATEGORY.query().first())
                 .setTopic("Ticket from " + member.getAsMention() + " | Problem Solved? Please type in !solved")
