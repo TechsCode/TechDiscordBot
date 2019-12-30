@@ -19,7 +19,7 @@ public class Verification {
         return discordId;
     }
 
-    public void delete(){
+    public void delete() {
         storage.removeVerification(this);
     }
 }

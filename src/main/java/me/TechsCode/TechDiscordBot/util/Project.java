@@ -11,7 +11,7 @@ import java.util.zip.ZipInputStream;
 
 public class Project {
 
-    public static String[] getFiles(){
+    public static String[] getFiles() {
         ArrayList<String> names = new ArrayList<>();
 
         try {
@@ -33,7 +33,7 @@ public class Project {
         return names.toArray(new String[names.size()]);
     }
 
-    public static Class[] getClasses(String prefix){
+    public static Class[] getClasses(String prefix) {
         return Arrays.stream(getFiles())
                 .filter(fileName -> fileName.endsWith(".class"))
                 .map(className -> className.replace("/", ".").replace(".class", ""))

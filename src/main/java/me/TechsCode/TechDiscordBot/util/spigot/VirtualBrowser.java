@@ -32,13 +32,13 @@ public class VirtualBrowser {
         java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF);
     }
 
-    public HtmlPage request(String url, HttpMethod httpMethod){
+    public HtmlPage request(String url, HttpMethod httpMethod) {
         try {
             WebRequest wr = new WebRequest(new URL(url), httpMethod);
 
             HtmlPage htmlPage = webClient.getPage(wr);
 
-            if(htmlPage.asText().contains("DDoS protection by Cloudflare")){
+            if(htmlPage.asText().contains("DDoS protection by Cloudflare")) {
                 System.out.println("Bypassing Cloud Flare..");
 
                 try {

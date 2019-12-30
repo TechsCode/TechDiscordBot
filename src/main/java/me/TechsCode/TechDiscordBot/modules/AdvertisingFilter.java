@@ -28,19 +28,19 @@ public class AdvertisingFilter extends Module {
 
     @SubscribeEvent
     public void recieve(GuildMessageReceivedEvent e) {
-        if(checkIfAdvertisement(e.getMessage()) && !isStaff(e.getMember())){
+        if(checkIfAdvertisement(e.getMessage()) && !isStaff(e.getMember())) {
             removeAdvertisement(e.getMessage());
         }
     }
 
     @SubscribeEvent
     public void update(GuildMessageUpdateEvent e) {
-        if(checkIfAdvertisement(e.getMessage()) && !isStaff(e.getMember())){
+        if(checkIfAdvertisement(e.getMessage()) && !isStaff(e.getMember())) {
             removeAdvertisement(e.getMessage());
         }
     }
 
-    private boolean isStaff(Member member){
+    private boolean isStaff(Member member) {
         Role staffRole = bot.getRoles("staff").first();
 
         return staffRole != null && member.getRoles().contains(staffRole);
@@ -54,9 +54,9 @@ public class AdvertisingFilter extends Module {
 
         Matcher m = URL_PATTERN.matcher(msg);
 
-        while (m.find()){
+        while (m.find()) {
             String url = RedirectUtil.getRedirectUrl(m.group());
-            if(url.matches(DISCORD_REGEX)){
+            if(url.matches(DISCORD_REGEX)) {
                 return true;
             }
         }
@@ -64,7 +64,7 @@ public class AdvertisingFilter extends Module {
         return false;
     }
 
-    private void removeAdvertisement(Message message){
+    private void removeAdvertisement(Message message) {
         message.delete().queue();
         new CustomEmbedBuilder("Advertising")
                 .setText("Please do not advertise " + message.getAuthor().getAsMention() + "!").error()

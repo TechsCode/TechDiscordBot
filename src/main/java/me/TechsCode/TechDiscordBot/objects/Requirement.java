@@ -17,7 +17,7 @@ public class Requirement {
         this.unmatchMessage = unmatchMessage;
     }
 
-    public boolean check(){
+    public boolean check() {
         int matches = query.query().amount();
 
         return matches >= matchesRequired;

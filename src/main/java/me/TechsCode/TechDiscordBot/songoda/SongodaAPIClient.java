@@ -20,7 +20,7 @@ public class SongodaAPIClient extends Thread {
     private String token;
     private List<SongodaPurchase> purchases;
 
-    public SongodaAPIClient(String token){
+    public SongodaAPIClient(String token) {
         this.token = token;
         this.purchases = null;
 
@@ -29,7 +29,7 @@ public class SongodaAPIClient extends Thread {
         start();
     }
 
-    public boolean isLoaded(){
+    public boolean isLoaded() {
         return purchases != null;
     }
 
@@ -47,10 +47,9 @@ public class SongodaAPIClient extends Thread {
 
     @Override
     public void run() {
-        while (true){
-
+        while (true) {
             try {
-                URI url = new URI("https://songoda.com/api/dashboard/payments?token="+token);
+                URI url = new URI("https://songoda.com/api/dashboard/payments?token=" + token + "&per_page=2000000");
                 HttpURLConnection httpcon = (HttpURLConnection) url.toURL().openConnection();
                 httpcon.addRequestProperty("User-Agent", "Mozilla/4.76");
                 httpcon.connect();

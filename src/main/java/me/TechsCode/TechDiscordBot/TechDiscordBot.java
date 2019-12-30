@@ -182,29 +182,29 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
         return storage;
     }
 
-    public void log(String message){
-        System.out.println(ConsoleColor.BLUE_BRIGHT+"["+ConsoleColor.WHITE_BOLD_BRIGHT+"Discord Bot"+ConsoleColor.BLUE_BRIGHT+"] "+ConsoleColor.RESET+message);
+    public void log(String message) {
+        System.out.println(ConsoleColor.BLUE_BRIGHT + "[" + ConsoleColor.WHITE_BOLD_BRIGHT + "Discord Bot" + ConsoleColor.BLUE_BRIGHT + "] " + ConsoleColor.RESET+message);
     }
 
-    public Query<Role> getRoles(String... names){
+    public Query<Role> getRoles(String... names) {
         List<Role> roles = Arrays.stream(names).flatMap(name -> guild.getRolesByName(name, true).stream()).collect(Collectors.toList());
 
         return new Query<>(roles);
     }
 
-    public ChannelQuery getChannels(String... names){
+    public ChannelQuery getChannels(String... names) {
         List<TextChannel> channels = Arrays.stream(names).flatMap(name -> guild.getTextChannelsByName(name, true).stream()).collect(Collectors.toList());
 
         return new ChannelQuery(channels);
     }
 
-    public Query<Category> getCategories(String... names){
+    public Query<Category> getCategories(String... names) {
         List<Category> channels = Arrays.stream(names).flatMap(name -> guild.getCategoriesByName(name, true).stream()).collect(Collectors.toList());
 
         return new Query<>(channels);
     }
 
-    public Query<Emote> getEmotes(String... names){
+    public Query<Emote> getEmotes(String... names) {
         List<Emote> emotes = Arrays.stream(names).flatMap(name -> guild.getEmotesByName(name, true).stream()).collect(Collectors.toList());
 
         return new Query<>(emotes);

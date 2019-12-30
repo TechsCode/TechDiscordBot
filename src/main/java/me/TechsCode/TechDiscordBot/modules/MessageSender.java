@@ -24,13 +24,13 @@ public class MessageSender extends Module {
     }
 
     @SubscribeEvent
-    public void receive(GuildMessageReceivedEvent e){
+    public void receive(GuildMessageReceivedEvent e) {
         if(e.getMember() == null || e.getMember().getRoles() == null) return;
         if(!e.getMember().getRoles().contains(STAFF_ROLE.query().first())) return;
 
         String message = e.getMessage().getContentDisplay();
 
-        if(message.startsWith("^^ ") && message.endsWith(" ^^")){
+        if(message.startsWith("^^ ") && message.endsWith(" ^^")) {
             e.getMessage().delete().complete();
 
             String text = message.substring(3, message.length()-3);
@@ -38,19 +38,19 @@ public class MessageSender extends Module {
             return;
         }
 
-        if(message.startsWith("^ ")){
+        if(message.startsWith("^ ")) {
             e.getMessage().delete().complete();
 
             String text = message.substring(2);
             String[] arguments = text.split("\\^");
 
-            if(arguments.length != 2){
+            if(arguments.length != 2) {
                 new CustomEmbedBuilder("Invalid Arguments").setText("Usage: ^ Title ^ Message").error().sendTemporary(e.getChannel(), 5);
                 return;
             }
 
             new CustomEmbedBuilder(arguments[0])
-                    .setFooter("Posted by "+e.getAuthor().getName())
+                    .setFooter("Posted by " + e.getAuthor().getName())
                     .setText(arguments[1])
                     .send(e.getChannel());
         }

@@ -57,7 +57,7 @@ public class RoleAssigner extends Module {
     @Override
     public void onEnable() {
         new Thread(() -> {
-            while (true){
+            while (true) {
                 loop();
 
                 try {
@@ -89,12 +89,12 @@ public class RoleAssigner extends Module {
     }
 
 
-    public void loop(){
-        if(!bot.getTechsCodeAPI().isAvailable()){
+    public void loop() {
+        if(!bot.getTechsCodeAPI().isAvailable()) {
             return;
         }
 
-        if(!bot.getSongodaAPIClient().isLoaded()){
+        if(!bot.getSongodaAPIClient().isLoaded()) {
             return;
         }
 
@@ -112,20 +112,20 @@ public class RoleAssigner extends Module {
 
         ResourceCollection resources = bot.getTechsCodeAPI().getResources().premium();
 
-        for(Member all : bot.getGuild().getMembers()){
+        for(Member all : bot.getGuild().getMembers()) {
             Verification verification = verifications.stream()
                     .filter(v -> v.getDiscordId().equals(all.getUser().getId()))
                     .findAny().orElse(null);
 
             Set<Role> rolesToKeep = new HashSet<>();
 
-            if(verification != null){
+            if(verification != null) {
                 rolesToKeep.add(verificationRole);
 
                 int purchases = 0;
                 int reviews = 0;
 
-                for(Resource resource : resources.get()){
+                for(Resource resource : resources.get()) {
                     Role role = bot.getRoles(resource.getResourceName()).first();
 
                     boolean purchased = resource.getPurchases().userId(verification.getUserId()).size() > 0;
@@ -134,18 +134,18 @@ public class RoleAssigner extends Module {
                     if(purchased) purchases++;
                     if(reviewed) reviews++;
 
-                    if(purchased){
+                    if(purchased) {
                         rolesToKeep.add(role);
                     }
                 }
 
-                if(purchases != 0 && purchases == reviews){
+                if(purchases != 0 && purchases == reviews) {
                     rolesToKeep.add(reviewSquad);
                 }
             }
 
-            for(SongodaPurchase songodaPurchase : bot.getSongodaAPIClient().getPurchases()){
-                if(songodaPurchase.getDiscord() != null && songodaPurchase.getDiscord().equalsIgnoreCase(all.getUser().getName()+"#"+all.getUser().getDiscriminator())){
+            for(SongodaPurchase songodaPurchase : bot.getSongodaAPIClient().getPurchases()) {
+                if(songodaPurchase.getDiscord() != null && songodaPurchase.getDiscord().equalsIgnoreCase(all.getUser().getName() + "#" + all.getUser().getDiscriminator())) {
                     rolesToKeep.add(songodaVerificationRole);
                     rolesToKeep.add(bot.getRoles(songodaPurchase.getName()).first());
                 }
@@ -163,8 +163,8 @@ public class RoleAssigner extends Module {
             bot.getGuild().getController().addRolesToMember(all, rolesToAdd).complete();
             bot.getGuild().getController().removeRolesFromMember(all, rolesToRemove).complete();
 
-            rolesToRemove.forEach(x -> bot.log("[Roles] Removed the Role "+x.getName()+" from Member "+all.getEffectiveName()));
-            rolesToAdd.forEach(x -> bot.log("[Roles] Added the Role "+x.getName()+" to Member "+all.getEffectiveName()));
+            rolesToRemove.forEach(x -> bot.log("[Roles] Removed the Role " + x.getName() + " from Member " + all.getEffectiveName()));
+            rolesToAdd.forEach(x -> bot.log("[Roles] Added the Role " + x.getName() + " to Member " + all.getEffectiveName()));
         }
     }
 }

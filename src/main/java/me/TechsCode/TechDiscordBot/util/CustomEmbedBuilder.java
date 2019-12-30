@@ -25,31 +25,31 @@ public class CustomEmbedBuilder extends EmbedBuilder {
         if(footer) setFooter("Developed by Tech & Team");
     }
 
-    public CustomEmbedBuilder setFooter(String text){
-        setFooter("Tech's Plugin Support • "+text, "https://i.imgur.com/nzfiUTy.png");
+    public CustomEmbedBuilder setFooter(String text) {
+        setFooter("Tech's Plugin Support • " + text, "https://i.imgur.com/nzfiUTy.png");
         return this;
     }
 
-    public CustomEmbedBuilder error(){
+    public CustomEmbedBuilder error() {
         setColor(new Color(178,34,34));
         return this;
     }
 
-    public CustomEmbedBuilder success(){
+    public CustomEmbedBuilder success() {
         setColor(new Color(50, 205, 50));
         return this;
     }
 
-    public CustomEmbedBuilder setText(String text){
+    public CustomEmbedBuilder setText(String text) {
         setDescription(text);
         return this;
     }
 
-    public Message send(TextChannel textChannel){
+    public Message send(TextChannel textChannel) {
         return textChannel.sendMessage(build()).complete();
     }
 
-    public Message sendAfter(TextChannel textChannel, TimeUnit unit, int amount){
+    public Message sendAfter(TextChannel textChannel, TimeUnit unit, int amount) {
         return textChannel.sendMessage(build()).completeAfter(amount, unit);
     }
 
@@ -61,12 +61,12 @@ public class CustomEmbedBuilder extends EmbedBuilder {
         return send(member.getUser());
     }
 
-    public void sendTemporary(TextChannel textChannel, int duration, TimeUnit timeUnit){
+    public void sendTemporary(TextChannel textChannel, int duration, TimeUnit timeUnit) {
         Message message = send(textChannel);
         message.delete().submitAfter(duration, timeUnit);
     }
 
-    public void sendTemporary(TextChannel textChannel, int duration){
+    public void sendTemporary(TextChannel textChannel, int duration) {
         sendTemporary(textChannel, duration, TimeUnit.SECONDS);
     }
 

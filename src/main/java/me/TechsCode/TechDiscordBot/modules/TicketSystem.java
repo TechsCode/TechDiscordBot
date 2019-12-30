@@ -299,7 +299,7 @@ public class TicketSystem extends Module {
         TextChannel ticketChat = getOpenTicketChat(e.getMember());
         if(ticketChat != null) {
             new CustomEmbedBuilder("Error")
-                    .setText("You already have an open ticket ("+ticketChat.getAsMention()+")").error()
+                    .setText("You already have an open ticket (" + ticketChat.getAsMention() + ")").error()
                     .sendTemporary(creationChannel, 10);
             sendInstructions(e.getChannel());
             return;
@@ -342,7 +342,7 @@ public class TicketSystem extends Module {
                 .addField("Owned Plugins", sb.toString(), true)
                 .send(ticketChat);
         new CustomEmbedBuilder("New Ticket")
-                .setText(reactor.getAsMention()+" created a new ticket ("+ticketChat.getAsMention()+")")
+                .setText(reactor.getAsMention() + " created a new ticket (" + ticketChat.getAsMention() + ")")
                 .send(creationChannel);
         sendInstructions(creationChannel);
     }
@@ -360,7 +360,8 @@ public class TicketSystem extends Module {
     }
 
     public TextChannel createTicketChannel(Member member) {
-        String name = "ticket-" + member.getUser().getName().toLowerCase().substring(0, Math.min(member.getUser().getName().toLowerCase().length(), 15));
+        String name = "ticket-" + member.getEffectiveName().replaceAll("[^a-zA-Z ]", "").toLowerCase().substring(0, Math.min(member.getUser().getName().toLowerCase().length(), 20));
+        if(name.equals("ticket-")) name = "ticket-" + member.getUser().getId();
         return (TextChannel) bot.getGuild().getController().createTextChannel(name)
                 .setParent(UNRESPONDED_TICKETS_CATEGORY.query().first())
                 .setTopic("Ticket from " + member.getAsMention() + " | Problem Solved? Please type in !solved")
@@ -369,7 +370,7 @@ public class TicketSystem extends Module {
 
     public TextChannel getOpenTicketChat(Member member) {
         for(TextChannel channel : bot.getGuild().getTextChannels()) {
-            if(isTicketChat(channel)){
+            if(isTicketChat(channel)) {
                 String topic = channel.getTopic();
                 if(topic != null) {
                     if (topic.contains(member.getAsMention())) {
@@ -388,7 +389,7 @@ public class TicketSystem extends Module {
 
     @Override
     public void onDisable() {
-        if(lastInstructions != null){
+        if(lastInstructions != null) {
             lastInstructions.delete().complete();
         }
     }

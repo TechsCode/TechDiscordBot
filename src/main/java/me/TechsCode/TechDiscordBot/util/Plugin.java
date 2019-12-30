@@ -45,7 +45,7 @@ public enum Plugin {
         return resourceId;
     }
 
-    public Role getRole(Guild guild){
+    public Role getRole(Guild guild) {
         return guild.getRoleById(roleId);
     }
 
@@ -86,11 +86,15 @@ public enum Plugin {
             Verification verification = TechDiscordBot.getBot().getStorage().retrieveVerificationWithDiscord(member.getUser().getId());
             PurchaseCollection pc = TechDiscordBot.getBot().getTechsCodeAPI().getPurchases().userId(verification.getUserId());
             List<SongodaPurchase> purchases = null;
-            try { purchases = TechDiscordBot.getBot().getSongodaAPIClient().getPurchases(member.getUser());
-            } catch (NullPointerException ignored) {}
+            try {
+                purchases = TechDiscordBot.getBot().getSongodaAPIClient().getPurchases(member.getUser());
+            } catch (NullPointerException ignored) {
+                TechDiscordBot.getBot().log("Could not find any Songoda plugins for " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator());
+            }
             List<Plugin> plugins = Arrays.stream(pc.get()).map(purchase -> fromId(purchase.getResourceId())).collect(Collectors.toList());
             if(purchases != null) {
                 for (SongodaPurchase purchase : purchases) {
+                    TechDiscordBot.getBot().log(purchase.getName() + " bought by " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator());
                     Plugin plugin = Plugin.byRoleName(purchase.getName());
                     if (plugin != null && !plugins.contains(plugin)) plugins.add(plugin);
                 }

@@ -17,20 +17,20 @@ public abstract class Module {
         this.bot = bot;
     }
 
-    public void enable(){
+    public void enable() {
         Set<Requirement> failedRequirements = Arrays.stream(getRequirements())
                 .filter(requirement -> !requirement.check())
                 .collect(Collectors.toSet());
 
-        if(failedRequirements.isEmpty()){
-            bot.log("Enabling Module "+getName()+"..");
+        if(failedRequirements.isEmpty()) {
+            bot.log("Enabling Module " + getName() + "..");
             onEnable();
 
             enabled = true;
         } else {
-            bot.log(ConsoleColor.YELLOW+"Failed Enabling Module "+ConsoleColor.YELLOW_BOLD_BRIGHT+getName()+ConsoleColor.YELLOW+" because:");
+            bot.log(ConsoleColor.YELLOW + "Failed Enabling Module " + ConsoleColor.YELLOW_BOLD_BRIGHT+getName()+ConsoleColor.YELLOW + " because:");
 
-            failedRequirements.forEach(requirement -> bot.log(ConsoleColor.WHITE+"- "+requirement.getUnmatchMessage()));
+            failedRequirements.forEach(requirement -> bot.log(ConsoleColor.WHITE + "- " + requirement.getUnmatchMessage()));
         }
     }
 

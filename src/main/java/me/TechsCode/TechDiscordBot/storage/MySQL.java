@@ -26,7 +26,7 @@ public class MySQL {
     }
 
     protected Connection getConnection() throws SQLException {
-        String connectString = "jdbc:mysql://"+host+":"+port+"/"+database+"?useSSL=false&characterEncoding=utf-8";
+        String connectString = "jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=false&characterEncoding=utf-8";
         return DriverManager.getConnection(connectString, username, password);
     }
 }

@@ -26,9 +26,9 @@ public class Storage {
         this.mySQL = new MySQL(host, port, database, username, password);
 
         try {
-            mySQL.update("CREATE TABLE IF NOT EXISTS "+VERIFICATIONS_TABLE+" (userid VARCHAR(10), discordid VARCHAR(32));");
+            mySQL.update("CREATE TABLE IF NOT EXISTS " + VERIFICATIONS_TABLE + " (userid VARCHAR(10), discordid VARCHAR(32));");
             enabled = true;
-        } catch (Exception e){
+        } catch (Exception e) {
             this.errorMessage = e.getMessage();
         }
     }
@@ -41,7 +41,7 @@ public class Storage {
         return errorMessage;
     }
 
-    public Set<Verification> retrieveVerifications(){
+    public Set<Verification> retrieveVerifications() {
         Set<Verification> ret = new HashSet<>();
 
         try {
@@ -49,7 +49,7 @@ public class Storage {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM Verifications;");
             ResultSet rs = preparedStatement.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
                 ret.add(new Verification(this, rs.getString("userid"), rs.getString("discordid")));
             }
 
@@ -62,25 +62,25 @@ public class Storage {
         return ret;
     }
 
-    public Verification retrieveVerificationWithDiscord(String discordId){
+    public Verification retrieveVerificationWithDiscord(String discordId) {
         return retrieveVerifications().stream().filter(verification -> verification.getDiscordId().equals(discordId)).findFirst().orElse(null);
     }
 
-    public Verification retrieveVerificationWithSpigot(String userId){
+    public Verification retrieveVerificationWithSpigot(String userId) {
         return retrieveVerifications().stream().filter(verification -> verification.getUserId().equals(userId)).findFirst().orElse(null);
     }
 
-    public void createVerification(String userId, String discordId){
+    public void createVerification(String userId, String discordId) {
         try {
-            mySQL.update("INSERT INTO "+VERIFICATIONS_TABLE+" (userid, discordid) VALUES ('"+userId+"', '"+discordId+"');");
-        } catch (SQLException e){
+            mySQL.update("INSERT INTO " + VERIFICATIONS_TABLE + " (userid, discordid) VALUES ('" + userId + "', '" + discordId + "');");
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void removeVerification(Verification verification){
+    public void removeVerification(Verification verification) {
         try {
-            mySQL.update("DELETE FROM "+VERIFICATIONS_TABLE+" WHERE `userid`="+verification.getUserId());
+            mySQL.update("DELETE FROM " + VERIFICATIONS_TABLE + " WHERE `userid`=" + verification.getUserId());
         } catch (SQLException e) {
             e.printStackTrace();
         }
