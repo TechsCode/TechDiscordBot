@@ -66,7 +66,7 @@ public class TicketSystem extends Module {
         }
     };
 
-    private Message lastInstructions;
+    private Message lastInstructions, apiNotAvailable;
 
     private String[] closeCommands = new String[]{"!solved", "!close", "-close", "-solved"};
     private String[] respondCommand = new String[]{"-r", "-respond", "!r", "!respond"};
@@ -78,6 +78,51 @@ public class TicketSystem extends Module {
 
     public TicketSystem(TechDiscordBot bot) {
         super(bot);
+    }
+
+    @Override
+    public void onEnable() {
+        lastInstructions = null;
+        apiNotAvailable = null;
+
+        sendInstructions(CREATION_CHANNEL.query().first());
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if(lastInstructions != null) lastInstructions.delete().complete();
+            if(apiNotAvailable != null) apiNotAvailable.delete().complete();
+        }));
+
+        /* Web API Offline Message Thread */
+        new Thread(() -> {
+            while (true) {
+                if(bot.getTechsCodeAPI().isAvailable()) {
+                    if(apiNotAvailable != null) {
+                        apiNotAvailable.delete().submit();
+                        apiNotAvailable = null;
+                        sendInstructions(CREATION_CHANNEL.query().first());
+                    }
+                } else {
+                    if(apiNotAvailable == null) {
+                        lastInstructions.delete().queue();
+                        CustomEmbedBuilder message = new CustomEmbedBuilder("Ticket Creation Disabled")
+                                .setText("The Web API is currently unavailable. Please contact staff for more info!")
+                                .error();
+                        apiNotAvailable = message.send(CREATION_CHANNEL.query().first());
+                    }
+                }
+                try {
+                    Thread.sleep(TimeUnit.SECONDS.toMillis(15));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    @Override
+    public void onDisable() {
+        if(lastInstructions != null) lastInstructions.delete().complete();
+        if(apiNotAvailable != null) apiNotAvailable.delete().complete();
     }
 
     @SubscribeEvent
@@ -360,11 +405,11 @@ public class TicketSystem extends Module {
     }
 
     public TextChannel createTicketChannel(Member member) {
-        String name = "ticket-" + member.getEffectiveName().replaceAll("[^a-zA-Z ]", "").toLowerCase().substring(0, Math.min(member.getUser().getName().toLowerCase().length(), 20));
+        String name = "ticket-" + member.getEffectiveName().replaceAll("[^a-zA-Z ]", "").toLowerCase();
         if(name.equals("ticket-")) name = "ticket-" + member.getUser().getId();
         return (TextChannel) bot.getGuild().getController().createTextChannel(name)
                 .setParent(UNRESPONDED_TICKETS_CATEGORY.query().first())
-                .setTopic("Ticket from " + member.getAsMention() + " | Problem Solved? Please type in !solved")
+                .setTopic("Ticket created by " + member.getAsMention() + " | Problem Solved? Please type in !solved")
                 .complete();
     }
 
@@ -380,18 +425,6 @@ public class TicketSystem extends Module {
             }
         }
         return null;
-    }
-
-    @Override
-    public void onEnable() {
-        sendInstructions(CREATION_CHANNEL.query().first());
-    }
-
-    @Override
-    public void onDisable() {
-        if(lastInstructions != null) {
-            lastInstructions.delete().complete();
-        }
     }
 
     @Override
