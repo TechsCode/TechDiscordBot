@@ -97,7 +97,6 @@ public class TicketSystem extends Module {
             while (true) {
                 if(bot.getTechsCodeAPI().isAvailable()) {
                     if(apiNotAvailable != null) {
-                        apiNotAvailable.delete().submit();
                         apiNotAvailable = null;
                         sendInstructions(CREATION_CHANNEL.query().first());
                     }
@@ -108,6 +107,11 @@ public class TicketSystem extends Module {
                                 .setText("The Web API is currently unavailable. Please contact staff for more info!")
                                 .error();
                         apiNotAvailable = message.send(CREATION_CHANNEL.query().first());
+                        if(lastInstructions != null) lastInstructions.delete().complete();
+                        CustomEmbedBuilder howItWorksMessage = new CustomEmbedBuilder("How to Create a Ticket")
+                                .setText("Please react with the plugin that you need help with below!");
+                        lastInstructions = howItWorksMessage.send(CREATION_CHANNEL.query().first());
+                        for(Plugin pl : Plugin.values()) lastInstructions.addReaction(pl.getEmoji()).queue();
                     }
                 }
                 try {
@@ -351,6 +355,7 @@ public class TicketSystem extends Module {
         }
         List<Plugin> plugins = Plugin.fromUser(e.getMember());
         if(!plugins.contains(plugin)) {
+            if(apiNotAvailable != null) return;
             new CustomEmbedBuilder("Error")
                     .setText("You don't own the plugin you selected! (" + plugin.getEmoji().getAsMention() + " " + plugin.getRoleName() + ")").error()
                     .sendTemporary(creationChannel, 10);
@@ -394,6 +399,13 @@ public class TicketSystem extends Module {
 
     public void sendInstructions(TextChannel textChannel) {
         if(lastInstructions != null) lastInstructions.delete().complete();
+        if(apiNotAvailable != null) {
+            apiNotAvailable.delete().complete();
+            CustomEmbedBuilder message = new CustomEmbedBuilder("Ticket Creation Disabled")
+                    .setText("The Web API is currently unavailable. Please contact staff for more info!\n\n**Note:** If you bought any of Techs plugin's from Songoda, you\nshould still be able to create a ticket!")
+                    .error();
+            apiNotAvailable = message.send(CREATION_CHANNEL.query().first());
+        }
         CustomEmbedBuilder howItWorksMessage = new CustomEmbedBuilder("How to Create a Ticket")
                 .setText("Please react with the plugin that you need help with below!");
         lastInstructions = howItWorksMessage.send(textChannel);

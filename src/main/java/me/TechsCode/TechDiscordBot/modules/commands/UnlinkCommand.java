@@ -52,6 +52,16 @@ public class UnlinkCommand extends CommandModule {
                     .setText("Please specify a user to unverify!")
                     .sendTemporary(channel, 10, TimeUnit.SECONDS);
         } else {
+            if(args[0].equals("offlineid")) {
+                if(args.length > 1) {
+                    process(args[1], channel);
+                } else {
+                    new CustomEmbedBuilder("Unlink")
+                            .error()
+                            .setText("Please specify a userid to unverify!")
+                            .sendTemporary(channel, 10, TimeUnit.SECONDS);
+                }
+            }
             if(message.getMentionedMembers().size() > 0) {
                 Member member1 = message.getMentionedMembers().get(0);
                 process(member1, channel);
@@ -74,6 +84,22 @@ public class UnlinkCommand extends CommandModule {
             new CustomEmbedBuilder("Unlink")
                     .success()
                     .setText("Successfully removed " + member.getAsMention() + "'s verification!")
+                    .send(channel);
+        }
+    }
+
+    public void process(String member, TextChannel channel) {
+        Verification verification = bot.getStorage().retrieveVerificationWithDiscord(member);
+        if(verification == null) {
+            new CustomEmbedBuilder("Unlink")
+                    .error()
+                    .setText(member + " is not verified!")
+                    .sendTemporary(channel, 10, TimeUnit.SECONDS);
+        } else {
+            verification.delete();
+            new CustomEmbedBuilder("Unlink")
+                    .success()
+                    .setText("Successfully removed " + member + "'s verification!")
                     .send(channel);
         }
     }

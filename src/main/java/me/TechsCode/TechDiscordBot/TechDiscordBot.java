@@ -194,14 +194,25 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
 
     public ChannelQuery getChannels(String... names) {
         List<TextChannel> channels = Arrays.stream(names).flatMap(name -> guild.getTextChannelsByName(name, true).stream()).collect(Collectors.toList());
-
         return new ChannelQuery(channels);
+    }
+
+    public TextChannel getChannel(String id) {
+        return guild.getTextChannelById(id);
     }
 
     public Query<Category> getCategories(String... names) {
         List<Category> channels = Arrays.stream(names).flatMap(name -> guild.getCategoriesByName(name, true).stream()).collect(Collectors.toList());
-
         return new Query<>(channels);
+    }
+
+    public Query<Member> getMembers(String... names) {
+        List<Member> channels = Arrays.stream(names).flatMap(name -> guild.getMembersByName(name, true).stream()).collect(Collectors.toList());
+        return new Query<>(channels);
+    }
+
+    public Member getMember(String id) {
+        return guild.getMemberById(id);
     }
 
     public Query<Emote> getEmotes(String... names) {

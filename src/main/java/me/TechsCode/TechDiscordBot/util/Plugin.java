@@ -84,14 +84,20 @@ public enum Plugin {
     public static List<Plugin> fromUser(Member member) {
         try {
             Verification verification = TechDiscordBot.getBot().getStorage().retrieveVerificationWithDiscord(member.getUser().getId());
-            PurchaseCollection pc = TechDiscordBot.getBot().getTechsCodeAPI().getPurchases().userId(verification.getUserId());
+            PurchaseCollection pc = null;
+            try {
+                pc = TechDiscordBot.getBot().getTechsCodeAPI().getPurchases().userId(verification.getUserId());
+            } catch (NullPointerException ignored) {
+                TechDiscordBot.getBot().log(ConsoleColor.RED + "Could not find any SpigotMC plugins for " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator());
+            }
             List<SongodaPurchase> purchases = null;
             try {
                 purchases = TechDiscordBot.getBot().getSongodaAPIClient().getPurchases(member.getUser());
             } catch (NullPointerException ignored) {
-                TechDiscordBot.getBot().log("Could not find any Songoda plugins for " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator());
+                TechDiscordBot.getBot().log(ConsoleColor.RED + "Could not find any Songoda plugins for " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator());
             }
-            List<Plugin> plugins = Arrays.stream(pc.get()).map(purchase -> fromId(purchase.getResourceId())).collect(Collectors.toList());
+            List<Plugin> plugins = new ArrayList<>();
+            if(pc != null) plugins = Arrays.stream(pc.get()).map(purchase -> fromId(purchase.getResourceId())).collect(Collectors.toList());
             if(purchases != null) {
                 for (SongodaPurchase purchase : purchases) {
                     TechDiscordBot.getBot().log(purchase.getName() + " bought by " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator());

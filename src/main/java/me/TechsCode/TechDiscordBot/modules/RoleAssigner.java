@@ -45,7 +45,6 @@ public class RoleAssigner extends Module {
         @Override
         protected Query<Role> newQuery() {
             String[] resourceNames = bot.getTechsCodeAPI().getResources().premium().getStream().map(Resource::getResourceName).toArray(String[]::new);
-
             return bot.getRoles(resourceNames);
         }
     };

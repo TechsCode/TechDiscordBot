@@ -50,37 +50,28 @@ public class VerificationChannel extends Module {
 
         sendInstructions();
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                if(lastInstructions != null) {
-                    lastInstructions.delete().complete();
-                }
-
-                if(apiNotAvailable != null) {
-                    apiNotAvailable.delete().complete();
-                }
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if(lastInstructions != null) lastInstructions.delete().complete();
+            if(apiNotAvailable != null) apiNotAvailable.delete().complete();
+        }));
 
         /* Web API Offline Message Thread */
         new Thread(() -> {
             while (true) {
                 if(bot.getTechsCodeAPI().isAvailable()) {
                     if(apiNotAvailable != null) {
-                        apiNotAvailable.delete().submit();
                         apiNotAvailable = null;
+                        sendInstructions();
                     }
                 } else {
                     if(apiNotAvailable == null) {
+                        lastInstructions.delete().complete();
                         CustomEmbedBuilder message = new CustomEmbedBuilder("Verification Disabled")
                                 .setText("The Web API is currently unavailable. Please contact staff for more info!")
                                 .error();
-
                         apiNotAvailable = message.send(channel);
                     }
                 }
-
                 try {
                     Thread.sleep(TimeUnit.SECONDS.toMillis(15));
                 } catch (InterruptedException e) {
@@ -168,19 +159,15 @@ public class VerificationChannel extends Module {
             @Override
             public void run() {
                 long start = System.currentTimeMillis();
-
                 while (System.currentTimeMillis()-start < TimeUnit.MINUTES.toMillis(3)) {
                     for(ProfileComment all : spigotMC.getComments(userId)) {
                         if(all.getUserId().equals(userId) && all.getText().equals("TechVerification")) {
                             m.delete().complete();
-
                             new CustomEmbedBuilder("Verification Completed for " + e.getAuthor().getName()).success()
                                     .setText(e.getAuthor().getName() + " has successfully verified their SpigotMC Account!")
                                     .send(channel);
-
                             sendInstructions();
                             verificationQueue.remove(e.getAuthor().getId());
-
                             bot.getStorage().createVerification(userId, e.getAuthor().getId());
                             return;
                         }
@@ -196,13 +183,10 @@ public class VerificationChannel extends Module {
     }
 
     public void sendInstructions() {
-        if(lastInstructions != null) {
-            lastInstructions.delete().complete();
-        }
-
+        if(apiNotAvailable != null) apiNotAvailable.delete().complete();
+        if(lastInstructions != null) lastInstructions.delete().complete();
         CustomEmbedBuilder howItWorksMessage = new CustomEmbedBuilder("How It Works")
-                .setText("Put your SpigotMC name in this Chat to verify.");
-
+                .setText("Type your SpigotMC name in this Chat to verify.");
         lastInstructions = howItWorksMessage.send(channel);
     }
 }
