@@ -55,7 +55,6 @@ public class WarningCommand extends CommandModule {
             if(args.length > 0) {
                 Member toWarn = getMemberFromString(message, args[0]);
                 if(toWarn == null) {
-                    message.delete().queue();
                     new CustomEmbedBuilder("Warn Command - Error")
                             .setText("Could not find a member using " + args[0] + "!")
                             .error()
@@ -87,7 +86,6 @@ public class WarningCommand extends CommandModule {
                     int warningId = Integer.parseInt(args[0]);
                     Warning warning = TechDiscordBot.getBot().getStorage().retrieveWarnings().stream().filter(w -> w.getId() == warningId).findFirst().orElse(null);
                     if(warning == null) {
-                        message.delete().queue();
                         new CustomEmbedBuilder("Unwarn Command - Error")
                                 .setText("Could not find a warning with the id " + warningId + "!")
                                 .error()
@@ -116,7 +114,6 @@ public class WarningCommand extends CommandModule {
             if(args.length > 0) {
                 Member warningsMember = getMemberFromString(message, args[0]);
                 if(warningsMember == null) {
-                    message.delete().queue();
                     new CustomEmbedBuilder("Warnings Command - Error")
                             .setText("Could not find a member using " + args[0] + "!")
                             .error()
@@ -129,7 +126,6 @@ public class WarningCommand extends CommandModule {
                         int warningId = Integer.parseInt(args[1]);
                         Warning warning = warnings.stream().filter(w -> w.getId() == warningId).findFirst().orElse(null);
                         if(warning == null) {
-                            message.delete().queue();
                             new CustomEmbedBuilder("Warnings Command - Error")
                                     .setText("Could not find a warning with the id " + warningId + "!")
                                     .error()
@@ -172,7 +168,6 @@ public class WarningCommand extends CommandModule {
                         .sendTemporary(channel, 5);
             }
         }
-        message.delete().queue();
     }
 
     public boolean isWarn(String msg) {
