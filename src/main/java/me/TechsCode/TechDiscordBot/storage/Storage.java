@@ -139,7 +139,7 @@ public class Storage {
                 .addField("Warned By", warner.getAsMention(), true)
                 .addField("Warned In", message.getTextChannel().getAsMention(), true)
                 .addField("# Of Warnings", String.valueOf(retrieveWarningsBy(warned).size() + 1), true)
-                .addField("Reason", reason, false)
+                .addField("Reason", reason, true)
         .send(INFRACTIONS_CHANNEL.query().first());
         try {
             mySQL.update("INSERT INTO " + WARNINGS_TABLE + " (id, warnedid, warnerid, channelid, messageid, reason) VALUES (" + getNextId() + ", '" + warned.getUser().getId() + "', '" + warner.getUser().getId() + "', '" + message2.getChannel().getId() + "', '" + message2.getId() + "', '" + reason.replace("'", "''") + "');");
@@ -157,7 +157,7 @@ public class Storage {
     }
 
     public int getNextId() {
-        int id = 0;
+        int id = -1;
         try {
             Connection connection = mySQL.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT MAX(id) as 'id' FROM " + WARNINGS_TABLE);
@@ -166,6 +166,6 @@ public class Storage {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return id;
+        return id + 1;
     }
 }

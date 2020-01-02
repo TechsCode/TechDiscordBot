@@ -141,7 +141,7 @@ public class WarningCommand extends CommandModule {
                                 .addField("Warned Member", warning.getWarned().getAsMention(), true)
                                 .addField("Warned By", warning.getWarner().getAsMention(), true)
                                 .addField("Warned In", warning.getChannel().getAsMention(), true)
-                                .addField("Reason", warning.getReason(), false)
+                                .addField("Reason", warning.getReason(), true)
                                 .success()
                                 .send(channel);
                     } catch (NumberFormatException ex) {
