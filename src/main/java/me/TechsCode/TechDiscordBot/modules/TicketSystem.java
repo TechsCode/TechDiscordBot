@@ -95,7 +95,7 @@ public class TicketSystem extends Module {
         /* Web API Offline Message Thread */
         new Thread(() -> {
             while (true) {
-                if(bot.getTechsCodeAPI().isAvailable()) {
+                if(bot.getSpigotAPI().isAvailable()) {
                     if(apiNotAvailable != null) {
                         apiNotAvailable = null;
                         sendInstructions(CREATION_CHANNEL.query().first());

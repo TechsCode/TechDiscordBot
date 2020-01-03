@@ -1,12 +1,12 @@
 package me.TechsCode.TechDiscordBot;
 
+import com.techeazy.spigotapi.client.SpigotAPIClient;
 import me.TechsCode.TechDiscordBot.objects.ChannelQuery;
 import me.TechsCode.TechDiscordBot.songoda.SongodaAPIClient;
 import me.TechsCode.TechDiscordBot.storage.Storage;
 import me.TechsCode.TechDiscordBot.util.ConsoleColor;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import me.TechsCode.TechDiscordBot.util.Project;
-import me.TechsCode.TechsCodeAPICli.TechsCodeAPIClient;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -33,7 +33,7 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
     private Guild guild;
     private Member self;
 
-    private TechsCodeAPIClient techsCodeAPIClient;
+    private SpigotAPIClient spigotAPICient;
     private SongodaAPIClient songodaAPIClient;
     private Storage storage;
 
@@ -82,7 +82,7 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
         log("Successfully logged in as " + self.getEffectiveName() + " into " + guild.getName());
 
         log("Connecting to " + TECHSCODEAPI + "..");
-        this.techsCodeAPIClient = new TechsCodeAPIClient(TECHSCODEAPI, apiToken);
+        this.spigotAPICient = new SpigotAPIClient(TECHSCODEAPI, apiToken);
 
         log("Connecting to Songoda.com");
         this.songodaAPIClient = new SongodaAPIClient(songodaToken);
@@ -170,8 +170,8 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
         return self;
     }
 
-    public TechsCodeAPIClient getTechsCodeAPI() {
-        return techsCodeAPIClient;
+    public SpigotAPIClient getSpigotAPI() {
+        return spigotAPICient;
     }
 
     public SongodaAPIClient getSongodaAPIClient() {

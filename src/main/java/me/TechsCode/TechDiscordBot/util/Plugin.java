@@ -1,10 +1,10 @@
 package me.TechsCode.TechDiscordBot.util;
 
+import com.techeazy.spigotapi.data.collections.PurchaseCollection;
+import com.techeazy.spigotapi.data.objects.Update;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.songoda.SongodaPurchase;
 import me.TechsCode.TechDiscordBot.storage.Verification;
-import me.TechsCode.TechsCodeAPICli.collections.PurchaseCollection;
-import me.TechsCode.TechsCodeAPICli.objects.Update;
 import net.dv8tion.jda.core.entities.Emote;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
@@ -54,7 +54,7 @@ public enum Plugin {
     }
 
     public String getResourceLogo() {
-        return resourceLogo;
+        return TechDiscordBot.getBot().getSpigotAPI().getResources().resourceId(resourceId).get()[0].getIcon();
     }
 
     public String getEmojiName() {
@@ -70,7 +70,7 @@ public enum Plugin {
     }
 
     public Update getLatestUpdate() {
-        return TechDiscordBot.getBot().getTechsCodeAPI().getUpdates().resourceId(getResourceId()).get()[TechDiscordBot.getBot().getTechsCodeAPI().getUpdates().resourceId(getResourceId()).size() - 1];
+        return TechDiscordBot.getBot().getSpigotAPI().getUpdates().resourceId(getResourceId()).get()[TechDiscordBot.getBot().getSpigotAPI().getUpdates().resourceId(getResourceId()).size() - 1];
     }
 
     public static Plugin byRoleName(String roleName) {
@@ -86,7 +86,7 @@ public enum Plugin {
             Verification verification = TechDiscordBot.getBot().getStorage().retrieveVerificationWithDiscord(member.getUser().getId());
             PurchaseCollection pc = null;
             try {
-                pc = TechDiscordBot.getBot().getTechsCodeAPI().getPurchases().userId(verification.getUserId());
+                pc = TechDiscordBot.getBot().getSpigotAPI().getPurchases().userId(verification.getUserId());
             } catch (NullPointerException ignored) {
                 TechDiscordBot.getBot().log(ConsoleColor.RED + "Could not find any SpigotMC plugins for " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator());
             }

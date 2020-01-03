@@ -2,10 +2,12 @@ package me.TechsCode.TechDiscordBot.util;
 
 import me.TechsCode.TechDiscordBot.Query;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class CustomEmbedBuilder extends EmbedBuilder {
@@ -51,6 +53,10 @@ public class CustomEmbedBuilder extends EmbedBuilder {
         return textChannel.sendMessage(build()).complete();
     }
 
+    public Message send(Query<TextChannel> msg) {
+        return msg.first().sendMessage(build()).complete();
+    }
+
     public Message sendAfter(TextChannel textChannel, TimeUnit unit, int amount) {
         return textChannel.sendMessage(build()).completeAfter(amount, unit);
     }
@@ -70,6 +76,24 @@ public class CustomEmbedBuilder extends EmbedBuilder {
 
     public void sendTemporary(TextChannel textChannel, int duration) {
         sendTemporary(textChannel, duration, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public CustomEmbedBuilder setThumbnail(String url) {
+        super.setThumbnail(url);
+        return this;
+    }
+
+    @Override
+    public CustomEmbedBuilder setColor(Color color) {
+        super.setColor(color);
+        return this;
+    }
+
+    @Override
+    public CustomEmbedBuilder setImage(String url) {
+        super.setImage(url);
+        return this;
     }
 
     @Override

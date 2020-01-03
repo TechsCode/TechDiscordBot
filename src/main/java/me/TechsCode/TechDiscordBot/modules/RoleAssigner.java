@@ -1,5 +1,7 @@
 package me.TechsCode.TechDiscordBot.modules;
 
+import com.techeazy.spigotapi.data.collections.ResourceCollection;
+import com.techeazy.spigotapi.data.objects.Resource;
 import me.TechsCode.TechDiscordBot.Module;
 import me.TechsCode.TechDiscordBot.Query;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
@@ -7,8 +9,6 @@ import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.songoda.SongodaPurchase;
 import me.TechsCode.TechDiscordBot.storage.Verification;
-import me.TechsCode.TechsCodeAPICli.collections.ResourceCollection;
-import me.TechsCode.TechsCodeAPICli.objects.Resource;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 
@@ -44,7 +44,7 @@ public class RoleAssigner extends Module {
     private final DefinedQuery<Role> RESOURCE_ROLES = new DefinedQuery<Role>() {
         @Override
         protected Query<Role> newQuery() {
-            String[] resourceNames = bot.getTechsCodeAPI().getResources().premium().getStream().map(Resource::getResourceName).toArray(String[]::new);
+            String[] resourceNames = bot.getSpigotAPI().getResources().premium().getStream().map(Resource::getResourceName).toArray(String[]::new);
             return bot.getRoles(resourceNames);
         }
     };
@@ -89,7 +89,7 @@ public class RoleAssigner extends Module {
 
 
     public void loop() {
-        if(!bot.getTechsCodeAPI().isAvailable()) {
+        if(!bot.getSpigotAPI().isAvailable()) {
             return;
         }
 
@@ -109,7 +109,7 @@ public class RoleAssigner extends Module {
         roles.add(reviewSquad);
         roles.addAll(RESOURCE_ROLES.query().all());
 
-        ResourceCollection resources = bot.getTechsCodeAPI().getResources().premium();
+        ResourceCollection resources = bot.getSpigotAPI().getResources().premium();
 
         for(Member all : bot.getGuild().getMembers()) {
             Verification verification = verifications.stream()

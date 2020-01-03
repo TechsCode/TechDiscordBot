@@ -1,5 +1,6 @@
 package me.TechsCode.TechDiscordBot.modules;
 
+import com.techeazy.spigotapi.data.objects.Purchase;
 import me.TechsCode.TechDiscordBot.Module;
 import me.TechsCode.TechDiscordBot.Query;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
@@ -9,7 +10,6 @@ import me.TechsCode.TechDiscordBot.storage.Verification;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import me.TechsCode.TechDiscordBot.util.spigot.ProfileComment;
 import me.TechsCode.TechDiscordBot.util.spigot.SpigotMC;
-import me.TechsCode.TechsCodeAPICli.objects.Purchase;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -58,7 +58,7 @@ public class VerificationChannel extends Module {
         /* Web API Offline Message Thread */
         new Thread(() -> {
             while (true) {
-                if(bot.getTechsCodeAPI().isAvailable()) {
+                if(bot.getSpigotAPI().isAvailable()) {
                     if(apiNotAvailable != null) {
                         apiNotAvailable = null;
                         sendInstructions();
@@ -131,7 +131,7 @@ public class VerificationChannel extends Module {
             return;
         }
 
-        Purchase[] purchases = bot.getTechsCodeAPI().getPurchases().username(username).get();
+        Purchase[] purchases = bot.getSpigotAPI().getPurchases().username(username).get();
 
         if(purchases.length == 0) {
             errorMessage.setText("The user " + username + " does not own any of Tech's Plugins. It can take up to 15 minutes from purchase for the Bot to recognize your purchase.").sendTemporary(channel, 10);
@@ -143,7 +143,7 @@ public class VerificationChannel extends Module {
 
         existingVerification = bot.getStorage().retrieveVerificationWithSpigot(userId);
         if(existingVerification != null) {
-            Purchase purchase = bot.getTechsCodeAPI().getPurchases().userId(existingVerification.getUserId()).first();
+            Purchase purchase = bot.getSpigotAPI().getPurchases().userId(existingVerification.getUserId()).first();
             errorMessage.setText("The SpigotMC User " + username + " is already linked with " + purchase.getUsername() + ". If you believe this is a mistake, please contact Tech.").sendTemporary(channel, 10);
             return;
         }

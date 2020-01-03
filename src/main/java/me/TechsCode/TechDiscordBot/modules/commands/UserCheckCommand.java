@@ -6,8 +6,8 @@ import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.storage.Verification;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
-import me.TechsCode.TechsCodeAPICli.collections.PurchaseCollection;
-import me.TechsCode.TechsCodeAPICli.objects.Purchase;
+import com.techeazy.spigotapi.data.objects.*;
+import com.techeazy.spigotapi.data.collections.*;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
@@ -74,7 +74,7 @@ public class UserCheckCommand extends CommandModule {
     }
 
     public void process(Member member, TextChannel channel) {
-        if(!bot.getTechsCodeAPI().isAvailable()) {
+        if(!bot.getSpigotAPI().isAvailable()) {
             new CustomEmbedBuilder("API Offline")
                     .error()
                     .setText("The API is offline! I cannot check a user if it's offline!")
@@ -82,7 +82,7 @@ public class UserCheckCommand extends CommandModule {
         }
         Verification verification = bot.getStorage().retrieveVerificationWithDiscord(member.getUser().getId());
         PurchaseCollection purchases = null;
-        if(verification != null) purchases = bot.getTechsCodeAPI().getPurchases().userId(verification.getUserId());
+        if(verification != null) purchases = bot.getSpigotAPI().getPurchases().userId(verification.getUserId());
         if(purchases == null || purchases.size() == 0) {
             new CustomEmbedBuilder(member.getEffectiveName() + "'s Purchases")
                     .success()
@@ -91,7 +91,7 @@ public class UserCheckCommand extends CommandModule {
         } else {
             Purchase purchase = purchases.getStream().sorted(Comparator.comparingLong(p  -> p.getTime().getUnixTime())).skip(purchases.size() - 1).findFirst().get();
             String date = purchase.getTime().getHumanTime();
-            boolean hasBoughtAll = bot.getTechsCodeAPI().getResources().premium().size() == purchases.size();
+            boolean hasBoughtAll = bot.getSpigotAPI().getResources().premium().size() == purchases.size();
             StringBuilder sb = new StringBuilder();
             for(Purchase p : purchases.get()) sb.append("- ").append(p.getResourceName()).append(" for ").append(p.getCost().getValue() == 0d ? "Free" : p.getCost().getValue() + p.getCost().getCurrency()).append(",\n ");
             String purchasesString = sb.toString();

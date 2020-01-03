@@ -8,8 +8,6 @@ group = "me.TechsCode"
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-assemble.dependsOn shadowJar
-
 repositories {
     maven { url 'https://jitpack.io' }
 
@@ -19,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    compile project(":TechsCodeAPIClient")
+    //compile project(":TechsCodeAPIClient")
 
     compile 'net.dv8tion:JDA:3.8.3_464'
     compile 'org.jsoup:jsoup:1.8.3'
@@ -27,6 +25,8 @@ dependencies {
     compile 'mysql:mysql-connector-java:5.1.17'
 
     compile 'net.sourceforge.htmlunit:htmlunit:2.29'
+
+    compile files('libs/SpigotAPI.jar')
 }
 
 def props = new Properties()
