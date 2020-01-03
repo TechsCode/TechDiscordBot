@@ -417,7 +417,7 @@ public class TicketSystem extends Module {
     }
 
     public TextChannel createTicketChannel(Member member) {
-        String name = "ticket-" + member.getEffectiveName().replaceAll("[^a-zA-Z ]", "").toLowerCase();
+        String name = "ticket-" + member.getEffectiveName().replace(" ", "").replaceAll("^[a-zA-Z0-9_-]*$", "").toLowerCase();
         if(name.equals("ticket-")) name = "ticket-" + member.getUser().getId();
         return (TextChannel) bot.getGuild().getController().createTextChannel(name)
                 .setParent(UNRESPONDED_TICKETS_CATEGORY.query().first())
