@@ -89,13 +89,8 @@ public class RoleAssigner extends Module {
 
 
     public void loop() {
-        if(!bot.getSpigotAPI().isAvailable()) {
-            return;
-        }
-
-        if(!bot.getSongodaAPIClient().isLoaded()) {
-            return;
-        }
+        if(!bot.getSpigotAPI().isAvailable()) return;
+        if(!bot.getSongodaAPIClient().isLoaded()) return;
 
         Role verificationRole = VERIFICATION_ROLE.query().first();
         Role songodaVerificationRole = SONGODA_VERIFICATION_ROLE.query().first();

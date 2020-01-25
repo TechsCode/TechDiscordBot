@@ -79,6 +79,7 @@ public class UserCheckCommand extends CommandModule {
                     .error()
                     .setText("The API is offline! I cannot check a user if it's offline!")
                     .sendTemporary(channel, 10, TimeUnit.SECONDS);
+            return;
         }
         Verification verification = bot.getStorage().retrieveVerificationWithDiscord(member.getUser().getId());
         PurchaseCollection purchases = null;
