@@ -4,6 +4,11 @@
 .gradle/
 out/
 build/
+/libs/SpigotAPI.jar
+/gradle/wrapper/gradle-wrapper.jar
+/gradle/wrapper/gradle-wrapper.properties
+/gradlew
+/gradlew.bat
 
 # Dont include that file with sensitive credentials
 build.properties

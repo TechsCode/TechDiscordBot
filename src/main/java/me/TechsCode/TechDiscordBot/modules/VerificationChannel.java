@@ -1,6 +1,8 @@
 package me.TechsCode.TechDiscordBot.modules;
 
+import com.techeazy.spigotapi.data.objects.ProfileComment;
 import com.techeazy.spigotapi.data.objects.Purchase;
+import com.techeazy.spigotapi.spigot.SpigotMC;
 import me.TechsCode.TechDiscordBot.Module;
 import me.TechsCode.TechDiscordBot.Query;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
@@ -8,8 +10,6 @@ import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.storage.Verification;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
-import me.TechsCode.TechDiscordBot.util.spigot.ProfileComment;
-import me.TechsCode.TechDiscordBot.util.spigot.SpigotMC;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -28,8 +28,6 @@ public class VerificationChannel extends Module {
         }
     };
 
-    private SpigotMC spigotMC;
-
     private TextChannel channel;
     private Message lastInstructions, apiNotAvailable;
     private List<String> verificationQueue;
@@ -40,7 +38,6 @@ public class VerificationChannel extends Module {
 
     @Override
     public void onEnable() {
-        this.spigotMC = new SpigotMC();
 
         channel = VERIFICATION_CHANNEL.query().first();
 
@@ -61,15 +58,15 @@ public class VerificationChannel extends Module {
                 if(bot.getSpigotAPI().isAvailable()) {
                     if(apiNotAvailable != null) {
                         apiNotAvailable = null;
-                        sendInstructions();
+                        //sendInstructions();
                     }
                 } else {
                     if(apiNotAvailable == null) {
-                        lastInstructions.delete().complete();
-                        CustomEmbedBuilder message = new CustomEmbedBuilder("Verification Disabled")
-                                .setText("The Web API is currently unavailable. Please contact staff for more info!")
-                                .error();
-                        apiNotAvailable = message.send(channel);
+                        //lastInstructions.delete().complete();
+                        //CustomEmbedBuilder message = new CustomEmbedBuilder("Verification Disabled")
+                        //        .setText("The Web API is currently unavailable. Please contact staff for more info!")
+                        //        .error();
+                        //apiNotAvailable = message.send(channel);
                     }
                 }
                 try {
@@ -105,6 +102,11 @@ public class VerificationChannel extends Module {
         if(e.getAuthor().isBot()) return;
 
         if(!e.getChannel().equals(VERIFICATION_CHANNEL.query().first())) {
+            return;
+        }
+
+        if(true) {// Return it for now ;p
+            e.getMessage().delete().queue();
             return;
         }
 
@@ -155,38 +157,37 @@ public class VerificationChannel extends Module {
 
         verificationQueue.add(e.getAuthor().getId());
 
-        new Thread() {
-            @Override
-            public void run() {
-                long start = System.currentTimeMillis();
-                while (System.currentTimeMillis()-start < TimeUnit.MINUTES.toMillis(3)) {
-                    for(ProfileComment all : spigotMC.getComments(userId)) {
-                        if(all.getUserId().equals(userId) && all.getText().equals("TechVerification")) {
-                            m.delete().complete();
-                            new CustomEmbedBuilder("Verification Completed for " + e.getAuthor().getName()).success()
-                                    .setText(e.getAuthor().getName() + " has successfully verified their SpigotMC Account!")
-                                    .send(channel);
-                            sendInstructions();
-                            verificationQueue.remove(e.getAuthor().getId());
-                            bot.getStorage().createVerification(userId, e.getAuthor().getId());
-                            return;
-                        }
+        new Thread(() -> {
+            long start = System.currentTimeMillis();
+            while (System.currentTimeMillis() - start < TimeUnit.MINUTES.toMillis(3)) {
+                for(ProfileComment all : SpigotMC.getComments(userId)) {
+                    if(all.getUserId().equals(userId) && all.getText().equals("TechVerification")) {
+                        m.delete().complete();
+                        new CustomEmbedBuilder("Verification Completed for " + e.getAuthor().getName()).success()
+                                .setText(e.getAuthor().getName() + " has successfully verified their SpigotMC Account!")
+                                .send(channel);
+                        sendInstructions();
+                        verificationQueue.remove(e.getAuthor().getId());
+                        bot.getStorage().createVerification(userId, e.getAuthor().getId());
+                        return;
                     }
                 }
-
-                m.delete().complete();
-                verificationQueue.remove(e.getAuthor().getId());
-                errorMessage.setText("The Verification process has timed out! Please try again.").sendTemporary(channel, 15);
             }
-        }.start();
-        return;
+
+            m.delete().complete();
+            verificationQueue.remove(e.getAuthor().getId());
+            errorMessage.setText("The Verification process has timed out! Please try again.").sendTemporary(channel, 15);
+        }).start();
     }
 
     public void sendInstructions() {
-        if(apiNotAvailable != null) apiNotAvailable.delete().complete();
-        if(lastInstructions != null) lastInstructions.delete().complete();
-        CustomEmbedBuilder howItWorksMessage = new CustomEmbedBuilder("How It Works")
-                .setText("Type your SpigotMC name in this Chat to verify.");
+        CustomEmbedBuilder howItWorksMessage = new CustomEmbedBuilder("Verification is Broken")
+                .setText("**How do I do it now?**\nPlease let a Staff Member know that you would like to verify. You can either DM them or mention one of them in #general. When you do so, make sure to give them a link to your spigot profile. Please also post `TechVerification` on it so we can verify you own the account. Hopefully soon, a staff member will get back to you telling you that your account is linked. Shortly after, you should get your roles!\n\n**Sorry for the inconvenience!**");
         lastInstructions = howItWorksMessage.send(channel);
+        //if(apiNotAvailable != null) apiNotAvailable.delete().complete();
+        //if(lastInstructions != null) lastInstructions.delete().complete();
+        //CustomEmbedBuilder howItWorksMessage = new CustomEmbedBuilder("How It Works")
+        //        .setText("Type your SpigotMC name in this Chat to verify.");
+        //lastInstructions = howItWorksMessage.send(channel);
     }
 }

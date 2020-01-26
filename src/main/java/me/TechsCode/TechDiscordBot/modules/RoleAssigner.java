@@ -83,7 +83,7 @@ public class RoleAssigner extends Module {
         return new Requirement[]{
                 new Requirement(VERIFICATION_ROLE, 1, "Missing 'Verified' Role"),
                 new Requirement(REVIEW_SQUAD_ROLE, 1, "Missing 'Review Squad' Role"),
-                new Requirement(RESOURCE_ROLES, 1, "Missing Resource Roles (Use Resource Names as Role Names)")
+                new Requirement(RESOURCE_ROLES, 1, "Missing Resource Roles (API Could Also Be Down)")
         };
     }
 
