@@ -58,7 +58,6 @@ public class RoleAssigner extends Module {
         new Thread(() -> {
             while (true) {
                 loop();
-
                 try {
                     sleep(TimeUnit.SECONDS.toMillis(3));
                 } catch (InterruptedException e) {

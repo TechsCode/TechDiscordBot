@@ -23,9 +23,7 @@ public class SongodaAPIClient extends Thread {
     public SongodaAPIClient(String token) {
         this.token = token;
         this.purchases = null;
-
         System.setProperty("http.agent", "Chrome");
-
         start();
     }
 
@@ -53,15 +51,12 @@ public class SongodaAPIClient extends Thread {
                 HttpURLConnection httpcon = (HttpURLConnection) url.toURL().openConnection();
                 httpcon.addRequestProperty("User-Agent", "Mozilla/4.76");
                 httpcon.connect();
-
                 JSONParser parser = new JSONParser();
                 JSONObject root = (JSONObject) parser.parse(new InputStreamReader((InputStream) httpcon.getContent()));
                 JSONArray data = (JSONArray) root.get("data");
-
                 purchases = (List<SongodaPurchase>) data.stream()
                         .map(x -> new SongodaPurchase((String) ((JSONObject) x).get("product"), (String) ((JSONObject) x).get("discord")))
                         .collect(Collectors.toList());
-
                 httpcon.disconnect();
             } catch (IOException | URISyntaxException | ParseException e) {
                 e.printStackTrace();

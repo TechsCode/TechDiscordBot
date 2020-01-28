@@ -6,6 +6,7 @@ import me.TechsCode.TechDiscordBot.Query;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
+import me.TechsCode.TechDiscordBot.storage.Verification;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import me.TechsCode.TechDiscordBot.util.Plugin;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -68,11 +69,15 @@ public class ActivitiesChannel extends Module {
     public void printReview(Plugin plugin, Review review) {
         StringBuilder ratingSB = new StringBuilder();
         for(int i = 0; i < review.getRating(); ++i) ratingSB.append(":star:");
+        Verification verification = TechDiscordBot.getBot().getStorage().retrieveVerificationWithSpigot(review.getUserId());
+        boolean isVerified = verification != null;
+        boolean isMemberInDiscord = (isVerified && TechDiscordBot.getBot().getMember(verification.getDiscordId()) != null);
+        String usernameOrAt = (isMemberInDiscord ? TechDiscordBot.getBot().getMember(verification.getDiscordId()).getAsMention() : review.getUsername());
         new CustomEmbedBuilder("Review from " + review.getUsername())
                 .setColor(plugin.getColor())
                 .setThumbnail(review.getResource().getIcon())
                 .addField("Rating", ratingSB.toString(), true)
-                .setText("```" + review.getText() + "```\nThanks to " + review.getUsername() + " for making this review!")
+                .setText("```" + review.getText() + "```\nThanks to " + usernameOrAt + " for making this review!")
                 .send(ACTIVITIES_CHANNEL.query().first());
         announcedIds.add((review.getReviewId()));
     }

@@ -27,40 +27,28 @@ public class AdvertisingFilter extends Module {
     }
 
     @SubscribeEvent
-    public void recieve(GuildMessageReceivedEvent e) {
-        if(checkIfAdvertisement(e.getMessage()) && !isStaff(e.getMember())) {
-            removeAdvertisement(e.getMessage());
-        }
+    public void receive(GuildMessageReceivedEvent e) {
+        if(checkIfAdvertisement(e.getMessage()) && !isStaff(e.getMember())) removeAdvertisement(e.getMessage());
     }
 
     @SubscribeEvent
     public void update(GuildMessageUpdateEvent e) {
-        if(checkIfAdvertisement(e.getMessage()) && !isStaff(e.getMember())) {
-            removeAdvertisement(e.getMessage());
-        }
+        if(checkIfAdvertisement(e.getMessage()) && !isStaff(e.getMember())) removeAdvertisement(e.getMessage());
     }
 
     private boolean isStaff(Member member) {
         Role staffRole = bot.getRoles("staff").first();
-
         return staffRole != null && member.getRoles().contains(staffRole);
     }
 
     private boolean checkIfAdvertisement(Message message) {
         String msg = message.getContentDisplay();
-        if(msg.matches(DISCORD_REGEX)) {
-            return true;
-        }
-
+        if(msg.matches(DISCORD_REGEX)) return true;
         Matcher m = URL_PATTERN.matcher(msg);
-
         while (m.find()) {
             String url = RedirectUtil.getRedirectUrl(m.group());
-            if(url.matches(DISCORD_REGEX)) {
-                return true;
-            }
+            if(url.matches(DISCORD_REGEX)) return true;
         }
-
         return false;
     }
 

@@ -10,11 +10,7 @@ public abstract class DefinedQuery<T> {
 
     public Query<T> query() {
         if(!ENABLE_CACHING) return newQuery();
-
-        if(cache == null) {
-            cache = newQuery();
-        }
-
+        if(cache == null) cache = newQuery();
         return cache;
     }
 

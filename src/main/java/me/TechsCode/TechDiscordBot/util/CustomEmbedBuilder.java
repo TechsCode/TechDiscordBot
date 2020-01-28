@@ -12,6 +12,10 @@ import java.util.concurrent.TimeUnit;
 
 public class CustomEmbedBuilder extends EmbedBuilder {
 
+    public CustomEmbedBuilder() {
+        setColor(new Color(81, 153, 226));
+    }
+
     public CustomEmbedBuilder(String title) {
         if(title != null) setAuthor(title, "http://techsco.de", "https://i.imgur.com/nnegGEV.png");
         setColor(new Color(81, 153, 226));

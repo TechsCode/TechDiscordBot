@@ -11,7 +11,6 @@ public class Requirement {
     public Requirement(DefinedQuery query, int matchesRequired, String unmatchMessage) {
         Objects.requireNonNull(query, "Defined Query cannot be null");
         Objects.requireNonNull(unmatchMessage, "Message cannot be null");
-
         this.query = query;
         this.matchesRequired = matchesRequired;
         this.unmatchMessage = unmatchMessage;
@@ -19,7 +18,6 @@ public class Requirement {
 
     public boolean check() {
         int matches = query.query().amount();
-
         return matches >= matchesRequired;
     }
 
