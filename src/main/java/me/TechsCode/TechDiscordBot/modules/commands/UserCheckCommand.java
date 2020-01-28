@@ -1,7 +1,7 @@
 package me.TechsCode.TechDiscordBot.modules.commands;
 
-import me.TechsCode.TechDiscordBot.CommandModule;
-import me.TechsCode.TechDiscordBot.Query;
+import me.TechsCode.TechDiscordBot.command.CommandModule;
+import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.storage.Verification;
@@ -31,29 +31,19 @@ public class UserCheckCommand extends CommandModule {
         }
     };
 
-    public UserCheckCommand(TechDiscordBot bot) {
-        super(bot);
-    }
+    public UserCheckCommand(TechDiscordBot bot) { super(bot); }
 
     @Override
-    public String getCommand() {
-        return "!check";
-    }
+    public String getCommand() { return "!check"; }
 
     @Override
-    public String[] getAliases() {
-        return new String[]{"!verified"};
-    }
+    public String[] getAliases() { return new String[]{"!verified"}; }
 
     @Override
-    public DefinedQuery<Role> getRestrictedRoles() {
-        return STAFF_ROLE;
-    }
+    public DefinedQuery<Role> getRestrictedRoles() { return STAFF_ROLE; }
 
     @Override
-    public DefinedQuery<TextChannel> getRestrictedChannels() {
-        return STAFF_CHANNEL;
-    }
+    public DefinedQuery<TextChannel> getRestrictedChannels() { return STAFF_CHANNEL; }
 
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {

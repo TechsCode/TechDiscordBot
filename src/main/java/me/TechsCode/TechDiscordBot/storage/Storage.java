@@ -1,6 +1,6 @@
 package me.TechsCode.TechDiscordBot.storage;
 
-import me.TechsCode.TechDiscordBot.Query;
+import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
@@ -48,13 +48,9 @@ public class Storage {
         }
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
+    public boolean isEnabled() { return enabled; }
 
-    public String getErrorMessage() {
-        return errorMessage;
-    }
+    public String getErrorMessage() { return errorMessage; }
 
     public Set<Verification> retrieveVerifications() {
         Set<Verification> ret = new HashSet<>();
@@ -71,21 +67,13 @@ public class Storage {
         return ret;
     }
 
-    public Verification retrieveVerificationWithDiscord(User user) {
-        return retrieveVerificationWithDiscord(user.getId());
-    }
+    public Verification retrieveVerificationWithDiscord(User user) { return retrieveVerificationWithDiscord(user.getId()); }
 
-    public Verification retrieveVerificationWithDiscord(Member member) {
-        return retrieveVerificationWithDiscord(member.getUser().getId());
-    }
+    public Verification retrieveVerificationWithDiscord(Member member) { return retrieveVerificationWithDiscord(member.getUser().getId()); }
 
-    public Verification retrieveVerificationWithDiscord(String discordId) {
-        return retrieveVerifications().stream().filter(verification -> verification.getDiscordId().equals(discordId)).findFirst().orElse(null);
-    }
+    public Verification retrieveVerificationWithDiscord(String discordId) { return retrieveVerifications().stream().filter(verification -> verification.getDiscordId().equals(discordId)).findFirst().orElse(null); }
 
-    public Verification retrieveVerificationWithSpigot(String userId) {
-        return retrieveVerifications().stream().filter(verification -> verification.getUserId().equals(userId)).findFirst().orElse(null);
-    }
+    public Verification retrieveVerificationWithSpigot(String userId) { return retrieveVerifications().stream().filter(verification -> verification.getUserId().equals(userId)).findFirst().orElse(null); }
 
     public void createVerification(String userId, String discordId) {
         try {

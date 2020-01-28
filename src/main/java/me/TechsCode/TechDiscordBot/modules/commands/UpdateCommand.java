@@ -1,7 +1,7 @@
 package me.TechsCode.TechDiscordBot.modules.commands;
 
-import me.TechsCode.TechDiscordBot.CommandModule;
-import me.TechsCode.TechDiscordBot.Query;
+import me.TechsCode.TechDiscordBot.command.CommandModule;
+import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
@@ -22,24 +22,16 @@ public class UpdateCommand extends CommandModule {
     public UpdateCommand(TechDiscordBot bot) { super(bot); }
 
     @Override
-    public String getCommand() {
-        return "!update";
-    }
+    public String getCommand() { return "!update"; }
 
     @Override
-    public String[] getAliases() {
-        return new String[]{"!link"};
-    }
+    public String[] getAliases() { return new String[]{"!link"}; }
 
     @Override
-    public DefinedQuery<Role> getRestrictedRoles() {
-        return STAFF_ROLE;
-    }
+    public DefinedQuery<Role> getRestrictedRoles() { return STAFF_ROLE; }
 
     @Override
-    public DefinedQuery<TextChannel> getRestrictedChannels() {
-        return null;
-    }
+    public DefinedQuery<TextChannel> getRestrictedChannels() { return null; }
 
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {

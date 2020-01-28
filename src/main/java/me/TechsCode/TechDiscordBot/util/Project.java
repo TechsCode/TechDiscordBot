@@ -13,7 +13,6 @@ public class Project {
 
     public static String[] getFiles() {
         ArrayList<String> names = new ArrayList<>();
-
         try {
             CodeSource src = Project.class.getProtectionDomain().getCodeSource();
             if (src != null) {
@@ -21,15 +20,13 @@ public class Project {
                 ZipInputStream zip = new ZipInputStream(jar.openStream());
                 while(true) {
                     ZipEntry e = zip.getNextEntry();
-                    if (e == null)
-                        break;
+                    if (e == null) break;
                     names.add(e.getName());
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return names.toArray(new String[names.size()]);
     }
 
@@ -48,7 +45,5 @@ public class Project {
                 })
                 .filter(Objects::nonNull)
                 .toArray(Class[]::new);
-
-
     }
 }

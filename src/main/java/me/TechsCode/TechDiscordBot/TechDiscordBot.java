@@ -1,7 +1,10 @@
 package me.TechsCode.TechDiscordBot;
 
 import com.techeazy.spigotapi.client.SpigotAPIClient;
+import me.TechsCode.TechDiscordBot.command.CommandModule;
 import me.TechsCode.TechDiscordBot.objects.ChannelQuery;
+import me.TechsCode.TechDiscordBot.objects.Module;
+import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.songoda.SongodaAPIClient;
 import me.TechsCode.TechDiscordBot.storage.Storage;
 import me.TechsCode.TechDiscordBot.util.ConsoleColor;

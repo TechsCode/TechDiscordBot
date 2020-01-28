@@ -2,6 +2,8 @@ package me.TechsCode.TechDiscordBot.modules;
 
 import me.TechsCode.TechDiscordBot.*;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
+import me.TechsCode.TechDiscordBot.objects.Module;
+import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import me.TechsCode.TechDiscordBot.util.Plugin;
@@ -76,22 +78,17 @@ public class TicketSystem extends Module {
     private String[] addUserCommands = new String[]{"!add", "-add", "!adduser", "-adduser"};
     private String[] removeUserCommands = new String[]{"!remove", "-remove", "!removeuser", "-removeuser"};
 
-    public TicketSystem(TechDiscordBot bot) {
-        super(bot);
-    }
+    public TicketSystem(TechDiscordBot bot) { super(bot); }
 
     @Override
     public void onEnable() {
         lastInstructions = null;
         apiNotAvailable = null;
-
         sendInstructions(CREATION_CHANNEL.query().first());
-
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if(lastInstructions != null) lastInstructions.delete().complete();
             if(apiNotAvailable != null) apiNotAvailable.delete().complete();
         }));
-
         /* Web API Offline Message Thread */
         new Thread(() -> {
             while (true) {
@@ -139,11 +136,9 @@ public class TicketSystem extends Module {
                 if (isTicketCreator) {
                     channel.getManager().setParent(UNRESPONDED_TICKETS_CATEGORY.query().first()).queue();
                 } else if (Util.isStaff(e.getMember())) {
-                    if(channel.getParent().equals(UNRESPONDED_TICKETS_CATEGORY.query().first())) {
-                        if(getMemberFromTicket(channel) != null) {
-                            Message msg = channel.sendMessage(getMemberFromTicket(channel).getAsMention()).complete();
-                            msg.delete().complete();
-                        }
+                    if (channel.getParent().equals(UNRESPONDED_TICKETS_CATEGORY.query().first()) && getMemberFromTicket(channel) != null) {
+                        Message msg = channel.sendMessage(getMemberFromTicket(channel).getAsMention()).complete();
+                        msg.delete().complete();
                     }
                     channel.getManager().setParent(RESPONDED_TICKETS_CATEGORY.query().first()).queue();
                 } else {
@@ -201,8 +196,7 @@ public class TicketSystem extends Module {
                 try {
                     if (member == null)
                         if (bot.getGuild().getMemberById(args[0]) != null) member = bot.getGuild().getMemberById(args[0]);
-                } catch (Exception ignored) {
-                }
+                } catch (Exception ignored) { }
                 if (member == null) {
                     new CustomEmbedBuilder("Error")
                             .setText("Error finding the user!")
@@ -295,33 +289,19 @@ public class TicketSystem extends Module {
         }
     }
 
-    public boolean isCloseCommand(String msg) {
-        return Arrays.stream(closeCommands).anyMatch(msg::startsWith);
-    }
+    public boolean isCloseCommand(String msg) { return Arrays.stream(closeCommands).anyMatch(msg::startsWith); }
 
-    public boolean isInProgressCommand(String msg) {
-        return Arrays.stream(inProgressCommand).anyMatch(msg::startsWith);
-    }
+    public boolean isInProgressCommand(String msg) { return Arrays.stream(inProgressCommand).anyMatch(msg::startsWith); }
 
-    public boolean isRespondedCommand(String msg) {
-        return Arrays.stream(respondCommand).anyMatch(msg::startsWith);
-    }
+    public boolean isRespondedCommand(String msg) { return Arrays.stream(respondCommand).anyMatch(msg::startsWith); }
 
-    public boolean isUnRespondedCommand(String msg) {
-        return Arrays.stream(unRespondCommand).anyMatch(msg::startsWith);
-    }
+    public boolean isUnRespondedCommand(String msg) { return Arrays.stream(unRespondCommand).anyMatch(msg::startsWith); }
 
-    public boolean isToTechCommand(String msg) {
-        return Arrays.stream(toTechCommands).anyMatch(msg::startsWith);
-    }
+    public boolean isToTechCommand(String msg) { return Arrays.stream(toTechCommands).anyMatch(msg::startsWith); }
 
-    public boolean isAddUserCommand(String msg) {
-        return Arrays.stream(addUserCommands).anyMatch(msg::startsWith);
-    }
+    public boolean isAddUserCommand(String msg) { return Arrays.stream(addUserCommands).anyMatch(msg::startsWith); }
 
-    public boolean isRemoveUserCommand(String msg) {
-        return Arrays.stream(removeUserCommands).anyMatch(msg::startsWith);
-    }
+    public boolean isRemoveUserCommand(String msg) { return Arrays.stream(removeUserCommands).anyMatch(msg::startsWith); }
 
     @SubscribeEvent
     public void onReaction(GuildMessageReactionAddEvent e) {
@@ -388,7 +368,7 @@ public class TicketSystem extends Module {
         new CustomEmbedBuilder(reactor.getEffectiveName() + " - " + reactor.getUser().getId())
                 .setText("Please describe your issue below.")
                 .addField("Plugin", plugin.getEmoji().getAsMention(), true)
-                //Maybe Soon: .addField("Plugin Version (Latest)", plugin.getLatestUpdate(), true)
+                .addField("Plugin Version (Latest)", plugin.getLatestUpdate().getVersion(), true)
                 .addField("Owned Plugins", sb.toString(), true)
                 .send(ticketChat);
         new CustomEmbedBuilder("New Ticket")
@@ -412,9 +392,7 @@ public class TicketSystem extends Module {
         for(Plugin pl : Plugin.values()) lastInstructions.addReaction(pl.getEmoji()).queue();
     }
 
-    public boolean isTicketChat(TextChannel channel) {
-        return channel.getName().contains("ticket-");
-    }
+    public boolean isTicketChat(TextChannel channel) { return channel.getName().contains("ticket-"); }
 
     public TextChannel createTicketChannel(Member member) {
         String name = "ticket-" + member.getEffectiveName().replaceAll("[^a-zA-Z\\d\\s_-]", "").toLowerCase();
@@ -425,24 +403,10 @@ public class TicketSystem extends Module {
                 .complete();
     }
 
-    public TextChannel getOpenTicketChat(Member member) {
-        for(TextChannel channel : bot.getGuild().getTextChannels()) {
-            if(isTicketChat(channel)) {
-                String topic = channel.getTopic();
-                if(topic != null) {
-                    if (topic.contains(member.getAsMention())) {
-                        return channel;
-                    }
-                }
-            }
-        }
-        return null;
-    }
+    public TextChannel getOpenTicketChat(Member member) { return bot.getGuild().getTextChannels().stream().filter(channel -> isTicketChat(channel) && channel.getTopic() != null && channel.getTopic().contains(member.getAsMention())).findFirst().orElse(null); }
 
     @Override
-    public String getName() {
-        return "Ticket System";
-    }
+    public String getName() { return "Ticket System"; }
 
     public Member getMemberFromTicket(TextChannel channel) {
         String id = channel.getTopic().split("<")[1].split(">")[0].replace("@", "");

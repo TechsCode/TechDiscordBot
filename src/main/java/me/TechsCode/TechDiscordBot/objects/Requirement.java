@@ -21,7 +21,5 @@ public class Requirement {
         return matches >= matchesRequired;
     }
 
-    public String getUnmatchMessage() {
-        return unmatchMessage;
-    }
+    public String getUnmatchMessage() { return unmatchMessage; }
 }

@@ -1,7 +1,5 @@
 package me.TechsCode.TechDiscordBot.objects;
 
-import me.TechsCode.TechDiscordBot.Query;
-
 public abstract class DefinedQuery<T> {
 
     private static final boolean ENABLE_CACHING = false;

@@ -41,5 +41,4 @@ public class RedirectUtil {
         }
         return url;
     }
-
 }

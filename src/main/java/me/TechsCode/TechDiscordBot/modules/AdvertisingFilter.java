@@ -1,11 +1,10 @@
 package me.TechsCode.TechDiscordBot.modules;
 
-import me.TechsCode.TechDiscordBot.Module;
+import me.TechsCode.TechDiscordBot.objects.Module;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import me.TechsCode.TechDiscordBot.util.RedirectUtil;
-import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
@@ -22,9 +21,7 @@ public class AdvertisingFilter extends Module {
     private final String DISCORD_REGEX = ".*(https?:\\/\\/)?(www\\.)?(discord\\.(gg|io|me|li)|discordapp\\.com\\/invite)\\/.+.*";
     private final Pattern URL_PATTERN = Pattern.compile("([--:\\w?@%&+~#=]*\\.[a-z]{2,4}\\/{0,2})((?:[?&](?:\\w+)=(?:\\w+))+|[--:\\w?@%&+~#=]+)?");
 
-    public AdvertisingFilter(TechDiscordBot bot) {
-        super(bot);
-    }
+    public AdvertisingFilter(TechDiscordBot bot) { super(bot); }
 
     @SubscribeEvent
     public void receive(GuildMessageReceivedEvent e) {
@@ -66,12 +63,8 @@ public class AdvertisingFilter extends Module {
     public void onDisable() {}
 
     @Override
-    public String getName() {
-        return "Advertising Filter";
-    }
+    public String getName() { return "Advertising Filter"; }
 
     @Override
-    public Requirement[] getRequirements() {
-        return new Requirement[0];
-    }
+    public Requirement[] getRequirements() { return new Requirement[0]; }
 }

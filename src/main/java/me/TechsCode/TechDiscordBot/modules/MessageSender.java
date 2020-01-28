@@ -1,7 +1,7 @@
 package me.TechsCode.TechDiscordBot.modules;
 
-import me.TechsCode.TechDiscordBot.Module;
-import me.TechsCode.TechDiscordBot.Query;
+import me.TechsCode.TechDiscordBot.objects.Module;
+import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
@@ -63,9 +63,7 @@ public class MessageSender extends Module {
     public void onDisable() { }
 
     @Override
-    public String getName() {
-        return "Message Sender";
-    }
+    public String getName() { return "Message Sender"; }
 
     @Override
     public Requirement[] getRequirements() {

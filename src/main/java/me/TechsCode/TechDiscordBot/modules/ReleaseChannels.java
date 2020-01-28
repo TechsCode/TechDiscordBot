@@ -1,7 +1,7 @@
 package me.TechsCode.TechDiscordBot.modules;
 
-import me.TechsCode.TechDiscordBot.Module;
-import me.TechsCode.TechDiscordBot.Query;
+import me.TechsCode.TechDiscordBot.objects.Module;
+import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
@@ -28,19 +28,13 @@ public class ReleaseChannels extends Module {
     }
 
     @Override
-    public void onEnable() {
-
-    }
+    public void onEnable() {}
 
     @Override
-    public void onDisable() {
-
-    }
+    public void onDisable() { }
 
     @Override
-    public String getName() {
-        return "Release Channels";
-    }
+    public String getName() { return "Release Channels"; }
 
     @Override
     public Requirement[] getRequirements() {
@@ -52,10 +46,7 @@ public class ReleaseChannels extends Module {
     @SubscribeEvent
     public void receive(GuildMessageReceivedEvent e) {
         if(e.getAuthor().isBot()) return;
-
-        if(!CHANNELS.query().all().contains(e.getChannel())) {
-            return;
-        }
+        if(!CHANNELS.query().all().contains(e.getChannel())) return;
 
         if(e.getMessage().getAttachments().size() != 1) {
             e.getMessage().delete().queue();

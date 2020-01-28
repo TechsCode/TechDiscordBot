@@ -1,7 +1,7 @@
 package me.TechsCode.TechDiscordBot.modules.commands;
 
-import me.TechsCode.TechDiscordBot.CommandModule;
-import me.TechsCode.TechDiscordBot.Query;
+import me.TechsCode.TechDiscordBot.command.CommandModule;
+import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.storage.Verification;
@@ -22,27 +22,19 @@ public class UnlinkCommand extends CommandModule {
         }
     };
 
-    public UnlinkCommand(TechDiscordBot bot) {  super(bot); }
+    public UnlinkCommand(TechDiscordBot bot) { super(bot); }
 
     @Override
-    public String getCommand() {
-        return "!unlink";
-    }
+    public String getCommand() { return "!unlink"; }
 
     @Override
-    public String[] getAliases() {
-        return null;
-    }
+    public String[] getAliases() { return null; }
 
     @Override
-    public DefinedQuery<Role> getRestrictedRoles() {
-        return STAFF_ROLE;
-    }
+    public DefinedQuery<Role> getRestrictedRoles() { return STAFF_ROLE; }
 
     @Override
-    public DefinedQuery<TextChannel> getRestrictedChannels() {
-        return null;
-    }
+    public DefinedQuery<TextChannel> getRestrictedChannels() { return null; }
 
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {

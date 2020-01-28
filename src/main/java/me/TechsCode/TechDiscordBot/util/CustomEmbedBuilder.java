@@ -1,6 +1,6 @@
 package me.TechsCode.TechDiscordBot.util;
 
-import me.TechsCode.TechDiscordBot.Query;
+import me.TechsCode.TechDiscordBot.objects.Query;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
@@ -53,21 +53,13 @@ public class CustomEmbedBuilder extends EmbedBuilder {
         return this;
     }
 
-    public Message send(TextChannel textChannel) {
-        return textChannel.sendMessage(build()).complete();
-    }
+    public Message send(TextChannel textChannel) { return textChannel.sendMessage(build()).complete(); }
 
-    public Message send(Query<TextChannel> msg) {
-        return msg.first().sendMessage(build()).complete();
-    }
+    public Message send(Query<TextChannel> msg) { return msg.first().sendMessage(build()).complete(); }
 
-    public Message sendAfter(TextChannel textChannel, TimeUnit unit, int amount) {
-        return textChannel.sendMessage(build()).completeAfter(amount, unit);
-    }
+    public Message sendAfter(TextChannel textChannel, TimeUnit unit, int amount) { return textChannel.sendMessage(build()).completeAfter(amount, unit); }
 
-    public Message send(User user) {
-        return user.openPrivateChannel().complete().sendMessage(build()).complete();
-    }
+    public Message send(User user) { return user.openPrivateChannel().complete().sendMessage(build()).complete(); }
 
     public Message send(Member member) {
         return send(member.getUser());
@@ -78,9 +70,7 @@ public class CustomEmbedBuilder extends EmbedBuilder {
         message.delete().submitAfter(duration, timeUnit);
     }
 
-    public void sendTemporary(TextChannel textChannel, int duration) {
-        sendTemporary(textChannel, duration, TimeUnit.SECONDS);
-    }
+    public void sendTemporary(TextChannel textChannel, int duration) { sendTemporary(textChannel, duration, TimeUnit.SECONDS); }
 
     @Override
     public CustomEmbedBuilder setThumbnail(String url) {

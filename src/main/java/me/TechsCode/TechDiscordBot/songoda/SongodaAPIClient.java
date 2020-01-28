@@ -27,21 +27,13 @@ public class SongodaAPIClient extends Thread {
         start();
     }
 
-    public boolean isLoaded() {
-        return purchases != null;
-    }
+    public boolean isLoaded() { return purchases != null; }
 
-    public List<SongodaPurchase> getPurchases() {
-        return purchases;
-    }
+    public List<SongodaPurchase> getPurchases() { return purchases; }
 
-    public List<SongodaPurchase> getPurchases(String discord) {
-        return getPurchases().stream().filter(sp -> sp.getDiscord() != null && sp.getDiscord().equals(discord)).collect(Collectors.toList());
-    }
+    public List<SongodaPurchase> getPurchases(String discord) { return getPurchases().stream().filter(sp -> sp.getDiscord() != null && sp.getDiscord().equals(discord)).collect(Collectors.toList()); }
 
-    public List<SongodaPurchase> getPurchases(User member) {
-        return getPurchases().stream().filter(sp -> sp.getDiscord() != null && sp.getDiscord().equals(member.getName() + "#" + member.getDiscriminator())).collect(Collectors.toList());
-    }
+    public List<SongodaPurchase> getPurchases(User member) { return getPurchases().stream().filter(sp -> sp.getDiscord() != null && sp.getDiscord().equals(member.getName() + "#" + member.getDiscriminator())).collect(Collectors.toList()); }
 
     @Override
     public void run() {
@@ -54,14 +46,11 @@ public class SongodaAPIClient extends Thread {
                 JSONParser parser = new JSONParser();
                 JSONObject root = (JSONObject) parser.parse(new InputStreamReader((InputStream) httpcon.getContent()));
                 JSONArray data = (JSONArray) root.get("data");
-                purchases = (List<SongodaPurchase>) data.stream()
-                        .map(x -> new SongodaPurchase((String) ((JSONObject) x).get("product"), (String) ((JSONObject) x).get("discord")))
-                        .collect(Collectors.toList());
+                purchases = (List<SongodaPurchase>) data.stream().map(x -> new SongodaPurchase((String) ((JSONObject) x).get("product"), (String) ((JSONObject) x).get("discord"))).collect(Collectors.toList());
                 httpcon.disconnect();
             } catch (IOException | URISyntaxException | ParseException e) {
                 e.printStackTrace();
             }
-
             try {
                 sleep(10000);
             } catch (InterruptedException e) {

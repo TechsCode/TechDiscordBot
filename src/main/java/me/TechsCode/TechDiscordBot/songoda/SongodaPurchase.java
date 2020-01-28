@@ -10,11 +10,7 @@ public class SongodaPurchase {
         this.discord = discord;
     }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
 
-    public String getDiscord() {
-        return discord;
-    }
+    public String getDiscord() { return discord; }
 }

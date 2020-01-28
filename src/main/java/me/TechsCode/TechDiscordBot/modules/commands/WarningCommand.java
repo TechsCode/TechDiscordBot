@@ -1,7 +1,7 @@
 package me.TechsCode.TechDiscordBot.modules.commands;
 
-import me.TechsCode.TechDiscordBot.CommandModule;
-import me.TechsCode.TechDiscordBot.Query;
+import me.TechsCode.TechDiscordBot.command.CommandModule;
+import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.storage.Warning;
@@ -30,24 +30,16 @@ public class WarningCommand extends CommandModule {
     public WarningCommand(TechDiscordBot bot) { super(bot); }
 
     @Override
-    public String getCommand() {
-        return "!warn";
-    }
+    public String getCommand() { return "!warn"; }
 
     @Override
-    public String[] getAliases() {
-        return new String[]{"!unwarn", "!warnings"};
-    }
+    public String[] getAliases() { return new String[]{"!unwarn", "!warnings"}; }
 
     @Override
-    public DefinedQuery<Role> getRestrictedRoles() {
-        return STAFF_ROLE;
-    }
+    public DefinedQuery<Role> getRestrictedRoles() { return STAFF_ROLE; }
 
     @Override
-    public DefinedQuery<TextChannel> getRestrictedChannels() {
-        return null;
-    }
+    public DefinedQuery<TextChannel> getRestrictedChannels() { return null; }
 
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
@@ -170,17 +162,11 @@ public class WarningCommand extends CommandModule {
         }
     }
 
-    public boolean isWarn(String msg) {
-        return msg.startsWith("!warn ");
-    }
+    public boolean isWarn(String msg) { return msg.startsWith("!warn "); }
 
-    public boolean isUnWarn(String msg) {
-        return msg.startsWith("!unwarn ");
-    }
+    public boolean isUnWarn(String msg) { return msg.startsWith("!unwarn "); }
 
-    public boolean isWarnings(String msg) {
-        return msg.startsWith("!warnings ");
-    }
+    public boolean isWarnings(String msg) { return msg.startsWith("!warnings "); }
 
     public Member getMemberFromString(Message msg, String s) {
         if (msg.getMentionedMembers().size() > 0) {

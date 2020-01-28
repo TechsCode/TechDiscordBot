@@ -1,8 +1,8 @@
 package me.TechsCode.TechDiscordBot.modules;
 
 import com.techeazy.spigotapi.data.objects.*;
-import me.TechsCode.TechDiscordBot.Module;
-import me.TechsCode.TechDiscordBot.Query;
+import me.TechsCode.TechDiscordBot.objects.Module;
+import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
@@ -25,9 +25,7 @@ public class ActivitiesChannel extends Module {
 
     private ArrayList<String> announcedIds;
 
-    public ActivitiesChannel(TechDiscordBot bot) {
-        super(bot);
-    }
+    public ActivitiesChannel(TechDiscordBot bot) { super(bot); }
 
     @Override
     public void onEnable() {
@@ -55,9 +53,7 @@ public class ActivitiesChannel extends Module {
     public void onDisable() {}
 
     @Override
-    public String getName() {
-        return "Activities Channel";
-    }
+    public String getName() { return "Activities Channel"; }
 
     @Override
     public Requirement[] getRequirements() {
@@ -88,11 +84,7 @@ public class ActivitiesChannel extends Module {
                 .setThumbnail(plugin.getResourceLogo());
         ceb.addField("Version", update.getResource().getVersion(), true);
         ceb.addField("Download", "[Click Here](https://www.spigotmc.org/resources/" + update.getResourceId() + "/update?update=" + update.getUpdateId() + ")", true);
-        if (update.getDescription().trim().length() > 0) {
-            ceb.setText(update.getTitle() + "```" + update.getDescription() + "```");
-        } else {
-            ceb.setText(update.getTitle());
-        }
+        ceb.setText(update.getDescription().trim().length() > 0 ? update.getTitle() + "```" + update.getDescription() + "```" : update.getTitle());
         if(update.getImages() != null && update.getImages().length > 0 && !update.getImages()[0].getSource().isEmpty()) ceb.setImage(update.getImages()[0].getSource());
         ceb.send(ACTIVITIES_CHANNEL.query().first());
         announcedIds.add((update.getUpdateId()));

@@ -3,8 +3,8 @@ package me.TechsCode.TechDiscordBot.modules;
 import com.techeazy.spigotapi.data.objects.ProfileComment;
 import com.techeazy.spigotapi.data.objects.Purchase;
 import com.techeazy.spigotapi.spigot.SpigotMC;
-import me.TechsCode.TechDiscordBot.Module;
-import me.TechsCode.TechDiscordBot.Query;
+import me.TechsCode.TechDiscordBot.objects.Module;
+import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
@@ -32,9 +32,7 @@ public class VerificationChannel extends Module {
     private Message lastInstructions, apiNotAvailable;
     private List<String> verificationQueue;
 
-    public VerificationChannel(TechDiscordBot bot) {
-        super(bot);
-    }
+    public VerificationChannel(TechDiscordBot bot) { super(bot); }
 
     @Override
     public void onEnable() {
@@ -85,9 +83,7 @@ public class VerificationChannel extends Module {
     }
 
     @Override
-    public String getName() {
-        return "Verification Channel";
-    }
+    public String getName() { return "Verification Channel"; }
 
     @Override
     public Requirement[] getRequirements() {
