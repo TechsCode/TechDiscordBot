@@ -39,7 +39,7 @@ public class StopCommand extends CommandModule {
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
         new CustomEmbedBuilder("Stopping")
                 .setText("The bot will be stopping..")
-                .sendTemporary(channel, 10, TimeUnit.SECONDS);
+                .send(channel);
         System.exit(0);
     }
 }
