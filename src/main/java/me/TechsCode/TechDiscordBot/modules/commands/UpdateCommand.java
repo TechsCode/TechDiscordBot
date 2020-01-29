@@ -26,7 +26,7 @@ public class UpdateCommand extends CommandModule {
     public String getCommand() { return "!update"; }
 
     @Override
-    public String[] getAliases() { return new String[]{"!link"}; }
+    public String[] getAliases() { return new String[]{"!link", "!verify"}; }
 
     @Override
     public DefinedQuery<Role> getRestrictedRoles() { return STAFF_ROLE; }
