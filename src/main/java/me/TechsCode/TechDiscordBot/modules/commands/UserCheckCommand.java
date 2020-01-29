@@ -1,5 +1,6 @@
 package me.TechsCode.TechDiscordBot.modules.commands;
 
+import me.TechsCode.TechDiscordBot.command.CommandCategory;
 import me.TechsCode.TechDiscordBot.command.CommandModule;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
@@ -44,6 +45,9 @@ public class UserCheckCommand extends CommandModule {
 
     @Override
     public DefinedQuery<TextChannel> getRestrictedChannels() { return STAFF_CHANNEL; }
+
+    @Override
+    public CommandCategory getCategory() { return CommandCategory.ADMIN; }
 
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {

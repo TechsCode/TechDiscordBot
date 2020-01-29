@@ -1,9 +1,8 @@
 package me.TechsCode.TechDiscordBot.modules.commands;
 
+import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.command.CommandCategory;
 import me.TechsCode.TechDiscordBot.command.CommandModule;
-import me.TechsCode.TechDiscordBot.objects.Query;
-import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
@@ -11,37 +10,29 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 
-public class StopCommand extends CommandModule {
+public class InviteCommand extends CommandModule {
 
-    private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
-        @Override
-        protected Query<Role> newQuery() {
-            return bot.getRoles("Staff");
-        }
-    };
-
-    public StopCommand(TechDiscordBot bot) { super(bot); }
+    public InviteCommand(TechDiscordBot bot) { super(bot); }
 
     @Override
-    public String getCommand() { return "!stop"; }
+    public String getCommand() { return "!invite"; }
 
     @Override
-    public String[] getAliases() { return null; }
+    public String[] getAliases() { return new String[0]; }
 
     @Override
-    public DefinedQuery<Role> getRestrictedRoles() { return STAFF_ROLE; }
+    public DefinedQuery<Role> getRestrictedRoles() { return null; }
 
     @Override
     public DefinedQuery<TextChannel> getRestrictedChannels() { return null; }
 
     @Override
-    public CommandCategory getCategory() { return CommandCategory.ADMIN; }
+    public CommandCategory getCategory() { return CommandCategory.INFO; }
 
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
-        new CustomEmbedBuilder("Stopping")
-                .setText("The bot will be stopping..")
+        new CustomEmbedBuilder()
+                .setText("**Oh, look!** There is an invite link: https://discord.gg/3JuHDm8")
                 .send(channel);
-        System.exit(0);
     }
 }

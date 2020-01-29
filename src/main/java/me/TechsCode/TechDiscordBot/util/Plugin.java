@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public enum Plugin {
 
     ULTRA_PERMISSIONS("Ultra Permissions","42678", "416194311080771596", "330053303050436608", new Color(0,235,229), "UltraPermissions", "https://ultrapermissions.com/wiki"),
-    YOUTUBE_BRIDGE("Youtube Bridge", "35928", "416194347294392321", "311178282278322176", new Color(241,90,0),"YoutubeBridge", ""),
+    YOUTUBE_BRIDGE("Youtube Bridge", "35928", "416194347294392321", "311178282278322176", new Color(216, 56, 43),"YoutubeBridge", ""),
     ULTRA_CUSTOMIZER("Ultra Customizer", "49330", "416194287567372298", "380133603683860480", new Color(48, 101, 240), "UltraCustomizer", "https://ultracustomizer.com/wiki"),
     ULTRA_REGIONS("Ultra Regions", "58317", "465975554101739520", "465975795433734155", new Color(180,200,59), "UltraRegions", "https://ultraregions.com/wiki"),
     ULTRA_PUNISHMENTS("Ultra Punishments", "63511", "531255363505487872", "531251918291599401", new Color(247, 119, 39), "UltraPunishments", "https://ultrapunishments.com/wiki"),
@@ -44,6 +44,8 @@ public enum Plugin {
     public Role getRole(Guild guild) { return guild.getRoleById(roleId); }
 
     public Color getColor() { return color; }
+
+    public String getDescription() { return TechDiscordBot.getBot().getSpigotAPI().getResources().resourceId(resourceId).get()[0].getSubTitle(); }
 
     public String getResourceLogo() { return TechDiscordBot.getBot().getSpigotAPI().getResources().resourceId(resourceId).get()[0].getIcon(); }
 

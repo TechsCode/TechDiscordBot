@@ -137,7 +137,7 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
     public void onMessage(GuildMessageReceivedEvent e) {
         String first = e.getMessage().getContentDisplay().split(" ")[0];
 
-        CommandModule cmd = cmdModules.stream().filter(cmdM -> cmdM.getCommand().equalsIgnoreCase(first) || (cmdM.getAliases() != null && Arrays.asList(cmdM.getAliases()).contains(first))).findFirst().orElse(null);
+        CommandModule cmd = cmdModules.stream().filter(cmdM -> cmdM.getCommand() != null && cmdM.getCommand().equalsIgnoreCase(first) || (cmdM.getAliases() != null && Arrays.asList(cmdM.getAliases()).contains(first))).findFirst().orElse(null);
         if(cmd == null) return;
 
         List<Role> restrictedRoles = new ArrayList<>();

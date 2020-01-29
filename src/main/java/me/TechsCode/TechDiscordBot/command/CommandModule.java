@@ -59,5 +59,7 @@ public abstract class CommandModule {
 
     public abstract DefinedQuery<TextChannel> getRestrictedChannels();
 
+    public abstract CommandCategory getCategory();
+
     public abstract void onCommand(TextChannel channel, Message message, Member member, String[] args);
 }

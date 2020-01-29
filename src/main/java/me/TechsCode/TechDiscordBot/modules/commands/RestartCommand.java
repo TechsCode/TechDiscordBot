@@ -1,6 +1,7 @@
 package me.TechsCode.TechDiscordBot.modules.commands;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
+import me.TechsCode.TechDiscordBot.command.CommandCategory;
 import me.TechsCode.TechDiscordBot.command.CommandModule;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Module;
@@ -34,6 +35,9 @@ public class RestartCommand extends CommandModule {
 
     @Override
     public DefinedQuery<TextChannel> getRestrictedChannels() { return null; }
+
+    @Override
+    public CommandCategory getCategory() { return CommandCategory.ADMIN; }
 
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
