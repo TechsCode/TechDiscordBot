@@ -64,6 +64,11 @@ public class WarningCommand extends CommandModule {
                             .setText("Successfully created a warning! You may view it in " + INFRACTIONS_CHANNEL.query().first().getAsMention() + " channel!")
                             .success()
                             .sendTemporary(channel, 5);
+                    new CustomEmbedBuilder("You You Have Been Warned!")
+                            .setText("You have been warned by " + member.getAsMention() + " in Tech's Plugin Support for:\n\n" + reason + "!")
+                            .error()
+                            .setThumbnail("https://cdn2.iconfinder.com/data/icons/freecns-cumulus/32/519791-101_Warning-512.png")
+                            .send(toWarn);
                 } else {
                     new CustomEmbedBuilder("Warn Command - Error")
                             .setText("Please specify a reason!")
