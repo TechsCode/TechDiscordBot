@@ -62,7 +62,7 @@ public class HelpCommand extends CommandModule {
 
     public void listCommands(TextChannel channel,  String cmdNotFound, boolean seeStaff, boolean notFound) {
         List<CommandModule> commands = TechDiscordBot.getBot().getCommandModules();
-        if(!seeStaff) commands = TechDiscordBot.getBot().getCommandModules().stream().filter(cmd -> cmd.getRequirements() == null).collect(Collectors.toList());
+        if(!seeStaff) commands = TechDiscordBot.getBot().getCommandModules().stream().filter(cmd -> cmd.getRestrictedRoles() == null).collect(Collectors.toList());
         StringBuilder sb = new StringBuilder();
         if(notFound) sb.append("**!").append(cmdNotFound).append(" command not found!**\n\n");
         commands.forEach(cmd -> sb.append("`").append(cmd.getCommand()).append("`").append(", "));

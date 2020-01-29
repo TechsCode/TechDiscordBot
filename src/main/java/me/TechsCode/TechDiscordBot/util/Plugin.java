@@ -1,6 +1,7 @@
 package me.TechsCode.TechDiscordBot.util;
 
 import com.techeazy.spigotapi.data.collections.PurchaseCollection;
+import com.techeazy.spigotapi.data.objects.Resource;
 import com.techeazy.spigotapi.data.objects.Update;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.songoda.SongodaPurchase;
@@ -58,6 +59,8 @@ public enum Plugin {
     public String getWiki() { return wiki; }
 
     public boolean hasWiki() { return !wiki.isEmpty(); }
+
+    public Resource getResource() { return TechDiscordBot.getBot().getSpigotAPI().getResources().resourceId(getResourceId()).get()[0]; }
 
     public Update getLatestUpdate() { return TechDiscordBot.getBot().getSpigotAPI().getUpdates().resourceId(getResourceId()).get()[TechDiscordBot.getBot().getSpigotAPI().getUpdates().resourceId(getResourceId()).size() - 1]; }
 
