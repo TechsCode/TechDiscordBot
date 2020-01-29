@@ -12,9 +12,6 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 public class RestartCommand extends CommandModule {
 
     private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {

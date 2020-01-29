@@ -57,8 +57,6 @@ public enum Plugin {
 
     public boolean hasWiki() { return !wiki.isEmpty(); }
 
-    public String getResourceIcon() { return TechDiscordBot.getBot().getSpigotAPI().getResources().resourceId(getResourceId()).get()[0].getIcon(); }
-
     public Update getLatestUpdate() { return TechDiscordBot.getBot().getSpigotAPI().getUpdates().resourceId(getResourceId()).get()[TechDiscordBot.getBot().getSpigotAPI().getUpdates().resourceId(getResourceId()).size() - 1]; }
 
     public static List<Plugin> allWithWiki() { return Arrays.stream(Plugin.values()).filter(Plugin::hasWiki).collect(Collectors.toList()); }
