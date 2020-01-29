@@ -15,15 +15,29 @@ public class Util {
 
     public static boolean isStaff(Member member) { return member.getRoles().stream().anyMatch(r -> r.getName().contains("Supporter") || r.getName().contains("Staff")); }
 
-    public static List<String> runBashCommand(String command) {
+    public static List<String> runBashCommandArgs(String[] args) {
         try {
-            String[] commandWithArgs = new String[]{"/bin/bash", "-send"};
-            ArrayUtils.addAll(commandWithArgs, command.split(" "));
-            Process proc = new ProcessBuilder(commandWithArgs).start();
+            Process proc = Runtime.getRuntime().exec(args);
             BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             List<String> lines = reader.lines().collect(Collectors.toList());
             proc.waitFor();
-            lines.forEach(l -> TechDiscordBot.getBot().log(l));
+            return lines;
+        } catch (IOException | InterruptedException ex) {
+            TechDiscordBot.getBot().log(ConsoleColor.RED + "An error has occurred while trying to execute a bash command (" + String.join(" ", args) + "):");
+            ex.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<String> runBashCommand(String command) {
+        try {
+            String[] commandWithArgs = new String[]{"/bin/bash", "-c"};
+            ArrayUtils.addAll(commandWithArgs, command.split(" "));
+            //Process proc = new ProcessBuilder(commandWithArgs).start();
+            Process proc = Runtime.getRuntime().exec(command);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            List<String> lines = reader.lines().collect(Collectors.toList());
+            proc.waitFor();
             return lines;
         } catch (IOException | InterruptedException ex) {
             TechDiscordBot.getBot().log(ConsoleColor.RED + "An error has occurred while trying to execute a bash command (" + command + "):");
