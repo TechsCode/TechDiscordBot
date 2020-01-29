@@ -231,4 +231,8 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
     public static TechDiscordBot getBot() {
         return i;
     }
+
+    public List<Module> getModules() { return modules; }
+
+    public List<CommandModule> getCommandModules() { return cmdModules; }
 }

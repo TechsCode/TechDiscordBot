@@ -3,6 +3,7 @@ package me.TechsCode.TechDiscordBot.modules.commands;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.command.CommandModule;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
+import me.TechsCode.TechDiscordBot.objects.Module;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import me.TechsCode.TechDiscordBot.util.Util;
@@ -12,6 +13,7 @@ import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class RestartCommand extends CommandModule {
 
@@ -38,13 +40,10 @@ public class RestartCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
-        Util.runBashCommandArgs(new String[]{"/bin/bash", "-c", "sh ./start.sh"});
+        TechDiscordBot.getBot().getModules().forEach(Module::onDisable);
+        TechDiscordBot.getBot().getCommandModules().forEach(CommandModule::onDisable);
         new CustomEmbedBuilder("Restart Command").setText("Attempting to restart the bot.").send(channel);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.exit(11);
+        Util.runBashCommandArgs(new String[]{"/bin/bash", "-c", "sh ./restart.sh"});
+        System.exit(0);
     }
 }
