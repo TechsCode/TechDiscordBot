@@ -20,7 +20,7 @@ public enum Plugin {
     ULTRA_CUSTOMIZER("Ultra Customizer", "49330", "416194287567372298", "380133603683860480", new Color(184, 103, 243), "UltraCustomizer", "https://ultracustomizer.com/wiki"),
     ULTRA_REGIONS("Ultra Regions", "58317", "465975554101739520", "465975795433734155", new Color(57, 135, 153), "UltraRegions", "https://ultraregions.com/wiki"),
     ULTRA_PUNISHMENTS("Ultra Punishments", "63511", "531255363505487872", "531251918291599401", new Color(247, 119, 39), "UltraPunishments", "https://ultrapunishments.com/wiki"),
-    INSANE_SHOPS("Insane Shops", "67352", "531255363505487872", "576813543698202624", new Color(61, 135, 152), "InsaneShops", "https://insaneshops.com/wiki");
+    INSANE_SHOPS("Insane Shops", "67352", "531255363505487872", "576813543698202624", new Color(114, 185, 77), "InsaneShops", "https://insaneshops.com/wiki");
 
     private String resourceId, channelId, roleName, roleId, emojiName, wiki;
     private Color color;
