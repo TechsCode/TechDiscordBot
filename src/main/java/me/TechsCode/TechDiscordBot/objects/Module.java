@@ -22,7 +22,7 @@ public abstract class Module {
             onEnable();
             enabled = true;
         } else {
-            bot.log(ConsoleColor.YELLOW + "Failed Enabling Module " + ConsoleColor.YELLOW_BOLD_BRIGHT+getName()+ConsoleColor.YELLOW + " because:");
+            bot.log(ConsoleColor.YELLOW_BRIGHT + "Failed Enabling Module " + ConsoleColor.YELLOW_BOLD_BRIGHT+getName()+ConsoleColor.YELLOW_BRIGHT + " because:");
             failedRequirements.forEach(requirement -> bot.log(ConsoleColor.WHITE + "- " + requirement.getUnmatchMessage()));
         }
     }
