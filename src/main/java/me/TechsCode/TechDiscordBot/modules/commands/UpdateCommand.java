@@ -51,7 +51,7 @@ public class UpdateCommand extends CommandModule {
                 new CustomEmbedBuilder("Error").error().setText(args[1] + " is not a valid member id!").sendTemporary(channel, 10);
                 return;
             }
-            if(TechDiscordBot.getBot().getStorage().retrieveVerificationWithDiscord(args[1]) != null) {
+            if(TechDiscordBot.getBot().getStorage().retrieveVerificationWithDiscord(args[1]) != null || TechDiscordBot.getBot().getStorage().retrieveVerificationWithSpigot(args[0]) != null) {
                 new CustomEmbedBuilder("Error").error().setText(mem.getAsMention() + " (" + args[1] + ") is already verified!").sendTemporary(channel, 10);
                 return;
             }
