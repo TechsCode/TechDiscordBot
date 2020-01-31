@@ -49,7 +49,7 @@ public class OverviewCommand extends CommandModule {
             new CustomEmbedBuilder("API").setText("The API has to be online to execute this command!").error().sendTemporary(channel, 5);
             return;
         }
-        OVERVIEW_CHANNEL.query().first().getHistory().getRetrievedHistory().forEach(msg -> msg.delete().queue());
+        OVERVIEW_CHANNEL.query().first().getHistory().retrievePast(100).complete().forEach(msg -> msg.delete().queue());
         showAll();
     }
 

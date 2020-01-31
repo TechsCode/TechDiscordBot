@@ -1,6 +1,6 @@
 package me.TechsCode.TechDiscordBot.modules;
 
-import me.TechsCode.TechDiscordBot.*;
+import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Module;
 import me.TechsCode.TechDiscordBot.objects.Query;
@@ -238,13 +238,15 @@ public class TicketSystem extends Module {
                     new CustomEmbedBuilder("Ticket")
                             .setText("Thank you for contacting us " + e.getAuthor().getAsMention() + "! Consider writing a review if you enjoyed the support.")
                             .send(channel);
-                    channel.delete().completeAfter(20, TimeUnit.SECONDS);
+                    //Transcripts.createTranscript(e.getMember(), channel);
+                    channel.delete().completeAfter(10, TimeUnit.SECONDS);
                     new CustomEmbedBuilder("Solved Ticket")
                             .setText("The ticket (" + channel.getName() + ") from " + e.getAuthor().getAsMention() + " is now solved. Thanks for contacting us!")
                             .success().send(creationChannel);
                     sendInstructions(creationChannel);
                 } else {
                     if(!Util.isStaff(e.getMember())) return;
+                    Member member = getMemberFromTicket(channel);
                     boolean hasReason = e.getMessage().getContentDisplay().split(" ").length > 1;
                     String[] reasons = e.getMessage().getContentDisplay().split(" ");
                     String reason = String.join(" ", Arrays.copyOfRange(reasons, 1, reasons.length));
@@ -252,8 +254,8 @@ public class TicketSystem extends Module {
                     new CustomEmbedBuilder("Ticket")
                             .setText(e.getAuthor().getAsMention() + " has closed this support ticket." + reasonSend)
                             .send(channel);
-                    channel.delete().completeAfter(20, TimeUnit.SECONDS);
-                    Member member = getMemberFromTicket(channel);
+                    //Transcripts.createTranscript(member, channel);
+                    channel.delete().completeAfter(10, TimeUnit.SECONDS);
                     if (member != null) {
                         new CustomEmbedBuilder("Closed Ticket")
                                 .setText("The ticket (" + channel.getName() + ") from " + member.getAsMention() + " has been closed!")

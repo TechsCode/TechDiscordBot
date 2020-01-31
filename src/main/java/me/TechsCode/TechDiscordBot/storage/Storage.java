@@ -4,6 +4,7 @@ import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
+import me.TechsCode.TechDiscordBot.util.PasswordGenerator;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -23,6 +24,8 @@ public class Storage {
      */
     private final String VERIFICATIONS_TABLE = "Verifications";
 
+    private final String TRANSCRIPTS_TABLE = "Transcripts";
+
     private final String WARNINGS_TABLE = "Warnings";
 
     private final DefinedQuery<TextChannel> INFRACTIONS_CHANNEL = new DefinedQuery<TextChannel>() {
@@ -41,6 +44,7 @@ public class Storage {
         this.mySQL = new MySQL(host, port, database, username, password);
         try {
             mySQL.update("CREATE TABLE IF NOT EXISTS " + VERIFICATIONS_TABLE + " (userid VARCHAR(10), discordid VARCHAR(32));");
+            mySQL.update("CREATE TABLE IF NOT EXISTS " + TRANSCRIPTS_TABLE + " (id VARCHAR(32), html TEXT, password VARCHAR(6), PRIMARY KEY (id));");
             mySQL.update("CREATE TABLE IF NOT EXISTS " + WARNINGS_TABLE + " (id int(10), warnedid VARCHAR(32), warnerid VARCHAR(32), channelid VARCHAR(32), messageid VARCHAR(32), reason TEXT, PRIMARY KEY (id));");
             enabled = true;
         } catch (Exception e) {
@@ -119,6 +123,16 @@ public class Storage {
             e.printStackTrace();
         }
         return ret;
+    }
+
+    public String uploadTranscript(TextChannel channel, String html) {
+        String password = PasswordGenerator.generateRandomPassword(6);
+        try {
+            mySQL.update("INSERT INTO " + TRANSCRIPTS_TABLE + " (id, html, password) VALUES ('" + channel.getId() + "', '" + html.replace("'", "''") + "', '" + password + "');");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return password;
     }
 
     public void createWarning(Member warned, Member warner, Message message, String reason) {
