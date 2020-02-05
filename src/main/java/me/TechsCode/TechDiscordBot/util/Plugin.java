@@ -1,11 +1,11 @@
 package me.TechsCode.TechDiscordBot.util;
 
-import com.techeazy.spigotapi.data.collections.PurchaseCollection;
-import com.techeazy.spigotapi.data.objects.Resource;
-import com.techeazy.spigotapi.data.objects.Update;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.songoda.SongodaPurchase;
 import me.TechsCode.TechDiscordBot.storage.Verification;
+import me.TechsCode.TechsCodeAPICli.collections.PurchaseCollection;
+import me.TechsCode.TechsCodeAPICli.objects.Resource;
+import me.TechsCode.TechsCodeAPICli.objects.Update;
 import net.dv8tion.jda.core.entities.*;
 
 import java.awt.*;
