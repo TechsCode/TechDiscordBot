@@ -1,11 +1,11 @@
 package me.TechsCode.TechDiscordBot.util;
 
+import me.TechsCode.SpigotAPI.client.collections.PurchaseCollection;
+import me.TechsCode.SpigotAPI.client.objects.Resource;
+import me.TechsCode.SpigotAPI.client.objects.Update;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.songoda.SongodaPurchase;
 import me.TechsCode.TechDiscordBot.storage.Verification;
-import me.TechsCode.TechsCodeAPICli.collections.PurchaseCollection;
-import me.TechsCode.TechsCodeAPICli.objects.Resource;
-import me.TechsCode.TechsCodeAPICli.objects.Update;
 import net.dv8tion.jda.core.entities.*;
 
 import java.awt.*;
@@ -46,9 +46,9 @@ public enum Plugin {
 
     public Color getColor() { return color; }
 
-    public String getDescription() { return TechDiscordBot.getBot().getSpigotAPI().getResources().resourceId(resourceId).get()[0].getSubTitle(); }
+    public String getDescription() { return TechDiscordBot.getBot().getSpigotAPI().getResources().id(resourceId).get().getTagLine(); }
 
-    public String getResourceLogo() { return TechDiscordBot.getBot().getSpigotAPI().getResources().resourceId(resourceId).get()[0].getIcon(); }
+    public String getResourceLogo() { return TechDiscordBot.getBot().getSpigotAPI().getResources().id(resourceId).get().getIcon(); }
 
     public String getEmojiName() { return emojiName; }
 
@@ -60,7 +60,7 @@ public enum Plugin {
 
     public boolean hasWiki() { return !wiki.isEmpty(); }
 
-    public Resource getResource() { return TechDiscordBot.getBot().getSpigotAPI().getResources().resourceId(getResourceId()).get()[0]; }
+    public Resource getResource() { return TechDiscordBot.getBot().getSpigotAPI().getResources().id(getResourceId()).get(); }
 
     public Update getLatestUpdate() { return TechDiscordBot.getBot().getSpigotAPI().getUpdates().resourceId(getResourceId()).get()[TechDiscordBot.getBot().getSpigotAPI().getUpdates().resourceId(getResourceId()).size() - 1]; }
 

@@ -1,5 +1,6 @@
 package me.TechsCode.TechDiscordBot;
 
+import me.TechsCode.SpigotAPI.client.SpigotAPIClient;
 import me.TechsCode.TechDiscordBot.command.CommandModule;
 import me.TechsCode.TechDiscordBot.objects.ChannelQuery;
 import me.TechsCode.TechDiscordBot.objects.Module;
@@ -9,7 +10,6 @@ import me.TechsCode.TechDiscordBot.storage.Storage;
 import me.TechsCode.TechDiscordBot.util.ConsoleColor;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import me.TechsCode.TechDiscordBot.util.Project;
-import me.TechsCode.TechsCodeAPICli.TechsCodeAPIClient;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 public class TechDiscordBot extends ListenerAdapter implements EventListener {
 
-    private final String TECHSCODEAPI = "api.techsco.de";
+    private final String TECHSCODEAPI = "https://api.techsco.de";
 
     private static TechDiscordBot i;
 
@@ -36,7 +36,7 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
     private Guild guild;
     private Member self;
 
-    private TechsCodeAPIClient spigotAPICient;
+    private SpigotAPIClient spigotAPIClient;
     private SongodaAPIClient songodaAPIClient;
     private Storage storage;
 
@@ -84,10 +84,9 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
 
         log("Successfully logged in as " + self.getEffectiveName() + " into " + guild.getName());
 
-        log("Connecting to " + TECHSCODEAPI + "..");
-        this.spigotAPICient = new TechsCodeAPIClient(TECHSCODEAPI, apiToken);
+        this.spigotAPIClient = new SpigotAPIClient(TECHSCODEAPI, apiToken);
+        log("Purchases: "+spigotAPIClient.getPurchases().size());
 
-        log("Connecting to Songoda.com");
         this.songodaAPIClient = new SongodaAPIClient(songodaToken);
 
         log("Initializing MySQL Storage " + mysqlHost + ":" + mysqlPort + "..");
@@ -173,8 +172,8 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
         return self;
     }
 
-    public TechsCodeAPIClient getSpigotAPI() {
-        return spigotAPICient;
+    public SpigotAPIClient getSpigotAPI() {
+        return spigotAPIClient;
     }
 
     public SongodaAPIClient getSongodaAPIClient() {
@@ -185,7 +184,7 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
         return storage;
     }
 
-    public void log(String message) {
+    public static void log(String message) {
         System.out.println(ConsoleColor.BLUE_BRIGHT + "[" + ConsoleColor.WHITE_BOLD_BRIGHT + "Discord Bot" + ConsoleColor.BLUE_BRIGHT + "] " + ConsoleColor.RESET+message);
     }
 

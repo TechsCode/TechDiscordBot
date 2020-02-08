@@ -1,5 +1,6 @@
 package me.TechsCode.TechDiscordBot.songoda;
 
+import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import net.dv8tion.jda.core.entities.User;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -24,6 +25,7 @@ public class SongodaAPIClient extends Thread {
         this.token = token;
         this.purchases = null;
         System.setProperty("http.agent", "Chrome");
+
         start();
     }
 
@@ -37,6 +39,8 @@ public class SongodaAPIClient extends Thread {
 
     @Override
     public void run() {
+        TechDiscordBot.log("Connecting to Songoda.com");
+
         while (true) {
             try {
                 URI url = new URI("https://songoda.com/api/dashboard/payments?token=" + token + "&per_page=2000000");

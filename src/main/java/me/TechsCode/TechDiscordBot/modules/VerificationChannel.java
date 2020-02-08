@@ -1,13 +1,13 @@
 package me.TechsCode.TechDiscordBot.modules;
 
-import com.techeazy.spigotapi.data.objects.ProfileComment;
-import com.techeazy.spigotapi.data.objects.Purchase;
-import com.techeazy.spigotapi.spigot.SpigotMC;
+import me.TechsCode.SpigotAPI.client.objects.Purchase;
 import me.TechsCode.TechDiscordBot.objects.Module;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
+import me.TechsCode.TechDiscordBot.spigotmc.ProfileComment;
+import me.TechsCode.TechDiscordBot.spigotmc.SpigotMC;
 import me.TechsCode.TechDiscordBot.storage.Verification;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import net.dv8tion.jda.core.entities.Message;
@@ -97,11 +97,6 @@ public class VerificationChannel extends Module {
         if(e.getAuthor().isBot()) return;
         if(!e.getChannel().equals(VERIFICATION_CHANNEL.query().first())) return;
 
-        if(true) {// Return it for now ;p
-            e.getMessage().delete().queue();
-            return;
-        }
-
         // Remove typed in message
         e.getMessage().delete().complete();
 
@@ -173,15 +168,13 @@ public class VerificationChannel extends Module {
     }
 
     public void sendInstructions() {
-        CustomEmbedBuilder howItWorksMessage = new CustomEmbedBuilder("Verification is Broken")
-                .setText("**How do I do it now?**\nPlease let a Staff Member know that you would like to verify. You can either DM them or mention one of them in #general. When you do so, make sure to give them a link to your spigot profile. Please also post `TechVerification` on it so we can verify you own the account. Hopefully soon, a staff member will get back to you telling you that your account is linked. Shortly after, you should get your roles!\n\n**Sorry for the inconvenience!**");
+        //CustomEmbedBuilder howItWorksMessage = new CustomEmbedBuilder("Verification is Broken").setText("**How do I do it now?**\nPlease let a Staff Member know that you would like to verify. You can either DM them or mention one of them in #general. When you do so, make sure to give them a link to your spigot profile. Please also post `TechVerification` on it so we can verify you own the account. Hopefully soon, a staff member will get back to you telling you that your account is linked. Shortly after, you should get your roles!\n\n**Sorry for the inconvenience!**");
         if(apiNotAvailable != null && bot.getSpigotAPI().isAvailable()) {
             apiNotAvailable.delete().complete();
             apiNotAvailable = null;
         }
         if(lastInstructions != null) lastInstructions.delete().complete();
-        //CustomEmbedBuilder howItWorksMessage = new CustomEmbedBuilder("How It Works")
-        //        .setText("Type your SpigotMC name in this Chat to verify.");
+        CustomEmbedBuilder howItWorksMessage = new CustomEmbedBuilder("How It Works").setText("Type your SpigotMC name in this Chat to verify.");
         lastInstructions = howItWorksMessage.send(channel);
     }
 }

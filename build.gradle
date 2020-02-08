@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    compile project(":TechsCodeAPIClient")
+    compile project(":SpigotAPI")
 
     compile 'net.dv8tion:JDA:3.8.3_464'
     compile 'org.jsoup:jsoup:1.8.3'
@@ -45,7 +45,7 @@ ssh.settings {
     dryRun = false
 }
 
-task upload {
+task uploadBot {
     doLast {
         ssh.run {
             session(ssh.remotes.server) {

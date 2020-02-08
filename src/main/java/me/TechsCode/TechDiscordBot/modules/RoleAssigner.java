@@ -1,7 +1,10 @@
 package me.TechsCode.TechDiscordBot.modules;
 
-import com.techeazy.spigotapi.data.collections.ResourceCollection;
-import com.techeazy.spigotapi.data.objects.Resource;
+
+import me.TechsCode.SpigotAPI.client.collections.ResourceCollection;
+import me.TechsCode.SpigotAPI.client.objects.Purchase;
+import me.TechsCode.SpigotAPI.client.objects.Resource;
+import me.TechsCode.SpigotAPI.client.objects.Review;
 import me.TechsCode.TechDiscordBot.objects.Module;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
@@ -43,7 +46,7 @@ public class RoleAssigner extends Module {
     private final DefinedQuery<Role> RESOURCE_ROLES = new DefinedQuery<Role>() {
         @Override
         protected Query<Role> newQuery() {
-            String[] resourceNames = bot.getSpigotAPI().getResources().premium().getStream().map(Resource::getResourceName).toArray(String[]::new);
+            String[] resourceNames = bot.getSpigotAPI().getResources().premium().getStream().map(Resource::getName).toArray(String[]::new);
             return bot.getRoles(resourceNames);
         }
     };
@@ -90,28 +93,45 @@ public class RoleAssigner extends Module {
         Role reviewSquad = REVIEW_SQUAD_ROLE.query().first();
 
         Set<Verification> verifications = bot.getStorage().retrieveVerifications();
-        Set<Role> roles = new HashSet<>();
-        roles.add(verificationRole);
-        roles.add(songodaVerificationRole);
-        roles.add(reviewSquad);
-        roles.addAll(RESOURCE_ROLES.query().all());
+        Set<Role> possibleRoles = new HashSet<>();
+        possibleRoles.add(verificationRole);
+        possibleRoles.add(songodaVerificationRole);
+        possibleRoles.add(reviewSquad);
+        possibleRoles.addAll(RESOURCE_ROLES.query().all());
 
-        ResourceCollection resources = bot.getSpigotAPI().getResources().premium();
+        Resource[] resources = bot.getSpigotAPI().getResources().premium().get();
+
+        HashMap<String, List<String>> resourcePurchaserIds = new HashMap<>();
+        HashMap<String, List<String>> resourceReviewerIds = new HashMap<>();
+
+        bot.getSpigotAPI().getResources().premium().getStream()
+                .forEach(resource -> {
+                    resourcePurchaserIds.put(resource.getId(), resource.getPurchases().getStream().map(Purchase::getUserId).collect(Collectors.toList()));
+                    resourceReviewerIds.put(resource.getId(), resource.getReviews().getStream().map(Review::getUserId).collect(Collectors.toList()));
+                }
+        );
+
+       // System.out.print("Has Seliba Bought? "+(resourcePurchaserIds.get("42678").contains("316684")));
+        //System.out.print("Has Eazy Bought? "+(resourcePurchaserIds.get("42678").contains("55966")));
 
         for(Member all : bot.getGuild().getMembers()) {
             Verification verification = verifications.stream().filter(v -> v.getDiscordId().equals(all.getUser().getId())).findAny().orElse(null);
             Set<Role> rolesToKeep = new HashSet<>();
+
             if(verification != null) {
                 rolesToKeep.add(verificationRole);
                 int purchases = 0, reviews = 0;
-                for(Resource resource : resources.get()) {
-                    Role role = bot.getRoles(resource.getResourceName()).first();
-                    boolean purchased = resource.getPurchases().userId(verification.getUserId()).size() > 0;
-                    boolean reviewed = resource.getReviews().userId(verification.getUserId()).size() > 0;
+
+                for(Resource resource : resources) {
+                    Role role = bot.getRoles(resource.getName()).first();
+                    boolean purchased = resourcePurchaserIds.get(resource.getId()).contains(verification.getUserId());
+                    boolean reviewed = resourceReviewerIds.get(resource.getId()).contains(verification.getUserId());
+
                     if(purchased) purchases++;
                     if(reviewed) reviews++;
                     if(purchased) rolesToKeep.add(role);
                 }
+
                 if(purchases != 0 && purchases == reviews) rolesToKeep.add(reviewSquad);
             }
 
@@ -120,7 +140,7 @@ public class RoleAssigner extends Module {
                 rolesToKeep.add(bot.getRoles(songodaPurchase.getName()).first());
             });
 
-            Set<Role> rolesToRemove = roles.stream()
+            Set<Role> rolesToRemove = possibleRoles.stream()
                     .filter(role -> !rolesToKeep.contains(role))
                     .filter(role -> all.getRoles().contains(role))
                     .collect(Collectors.toSet());

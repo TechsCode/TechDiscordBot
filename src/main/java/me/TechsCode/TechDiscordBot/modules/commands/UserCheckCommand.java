@@ -1,5 +1,7 @@
 package me.TechsCode.TechDiscordBot.modules.commands;
 
+import me.TechsCode.SpigotAPI.client.collections.PurchaseCollection;
+import me.TechsCode.SpigotAPI.client.objects.Purchase;
 import me.TechsCode.TechDiscordBot.command.CommandCategory;
 import me.TechsCode.TechDiscordBot.command.CommandModule;
 import me.TechsCode.TechDiscordBot.objects.Query;
@@ -7,8 +9,6 @@ import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.storage.Verification;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
-import com.techeazy.spigotapi.data.objects.*;
-import com.techeazy.spigotapi.data.collections.*;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;

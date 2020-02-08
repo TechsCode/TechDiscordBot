@@ -1,6 +1,8 @@
 package me.TechsCode.TechDiscordBot.modules;
 
-import com.techeazy.spigotapi.data.objects.*;
+import me.TechsCode.SpigotAPI.client.objects.Resource;
+import me.TechsCode.SpigotAPI.client.objects.Review;
+import me.TechsCode.SpigotAPI.client.objects.Update;
 import me.TechsCode.TechDiscordBot.objects.Module;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
@@ -34,14 +36,14 @@ public class ActivitiesChannel extends Module {
             while (true) {
                 if(!bot.getSpigotAPI().isAvailable()) continue;
                 if(announcedIds.isEmpty()) {
-                    bot.getSpigotAPI().getReviews().getStream().forEach(x -> announcedIds.add(x.getReviewId()));
-                    bot.getSpigotAPI().getUpdates().getStream().forEach(x -> announcedIds.add(x.getUpdateId()));
+                    bot.getSpigotAPI().getReviews().getStream().forEach(x -> announcedIds.add(x.getId()));
+                    bot.getSpigotAPI().getUpdates().getStream().forEach(x -> announcedIds.add(x.getId()));
                 }
                 for(Resource resource : bot.getSpigotAPI().getResources().get()) {
-                    Plugin plugin = Plugin.fromId(resource.getResourceId());
+                    Plugin plugin = Plugin.fromId(resource.getId());
                     if(plugin == null) continue;
-                    Review[] newReviews = resource.getReviews().getStream().filter(x -> !announcedIds.contains(x.getReviewId())).toArray(Review[]::new);
-                    Update[] newUpdates = resource.getUpdates().getStream().filter(x -> !announcedIds.contains(x.getUpdateId())).toArray(Update[]::new);
+                    Review[] newReviews = resource.getReviews().getStream().filter(x -> !announcedIds.contains(x.getId())).toArray(Review[]::new);
+                    Update[] newUpdates = resource.getUpdates().getStream().filter(x -> !announcedIds.contains(x.getId())).toArray(Update[]::new);
                     Arrays.stream(newReviews).forEach(review -> printReview(plugin, review));
                     Arrays.stream(newUpdates).forEach(update -> printUpdate(plugin, update));
                 }
@@ -75,7 +77,7 @@ public class ActivitiesChannel extends Module {
                 .addField("Rating", ratingSB.toString(), true)
                 .setText("```" + review.getText() + "```\nThanks to " + usernameOrAt + " for making this review!")
                 .send(ACTIVITIES_CHANNEL.query().first());
-        announcedIds.add((review.getReviewId()));
+        announcedIds.add((review.getId()));
     }
 
     public void printUpdate(Plugin plugin, Update update) {
@@ -83,10 +85,10 @@ public class ActivitiesChannel extends Module {
                 .setColor(plugin.getColor())
                 .setThumbnail(plugin.getResourceLogo());
         ceb.addField("Version", update.getResource().getVersion(), true);
-        ceb.addField("Download", "[Click Here](https://www.spigotmc.org/resources/" + update.getResourceId() + "/update?update=" + update.getUpdateId() + ")", true);
+        ceb.addField("Download", "[Click Here](https://www.spigotmc.org/resources/" + update.getResourceId() + "/update?update=" + update.getId() + ")", true);
         ceb.setText(update.getDescription().trim().length() > 0 ? update.getTitle() + "```" + update.getDescription() + "```" : update.getTitle());
-        if(update.getImages() != null && update.getImages().length > 0 && !update.getImages()[0].getSource().isEmpty()) ceb.setImage(update.getImages()[0].getSource());
+        if(update.getImages() != null && update.getImages().length > 0 && !update.getImages()[0].isEmpty()) ceb.setImage(update.getImages()[0]);
         ceb.send(ACTIVITIES_CHANNEL.query().first());
-        announcedIds.add((update.getUpdateId()));
+        announcedIds.add((update.getId()));
     }
 }
