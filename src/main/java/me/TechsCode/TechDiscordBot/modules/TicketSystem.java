@@ -370,7 +370,6 @@ public class TicketSystem extends Module {
         new CustomEmbedBuilder(reactor.getEffectiveName() + " - " + reactor.getUser().getId())
                 .setText("Please describe your issue below.")
                 .addField("Plugin", plugin.getEmoji().getAsMention(), true)
-                .addField("Latest Version", plugin.getResource().getVersion(), true)
                 .addField("Owned Plugins", sb.toString(), true)
                 .send(ticketChat);
         new CustomEmbedBuilder("New Ticket")
