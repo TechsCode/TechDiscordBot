@@ -74,6 +74,8 @@ public enum Plugin {
 
     public static Plugin byEmote(Emote emote) { return Arrays.stream(values()).filter(e -> emote.getId().equals(e.getEmoji().getId())).findFirst().orElse(null); }
 
+    public static List<Plugin> fromUserUsingRoles(Member member) { return member.getRoles().stream().filter(role -> Plugin.byRoleName(role.getName()) != null).map(role -> Plugin.byRoleName(role.getName())).collect(Collectors.toList()); }
+
     public static List<Plugin> fromUser(Member member) {
         try {
             Verification verification = TechDiscordBot.getBot().getStorage().retrieveVerificationWithDiscord(member.getUser().getId());
@@ -81,13 +83,13 @@ public enum Plugin {
             try {
                 pc = TechDiscordBot.getBot().getSpigotAPI().getPurchases().userId(verification.getUserId());
             } catch (NullPointerException ignored) {
-                TechDiscordBot.getBot().log(ConsoleColor.RED + "Could not find any SpigotMC plugins for " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator());
+                TechDiscordBot.log(ConsoleColor.RED + "Could not find any SpigotMC plugins for " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator());
             }
             List<SongodaPurchase> purchases = null;
             try {
                 purchases = TechDiscordBot.getBot().getSongodaAPIClient().getPurchases(member.getUser());
             } catch (NullPointerException ignored) {
-                TechDiscordBot.getBot().log(ConsoleColor.RED + "Could not find any Songoda plugins for " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator());
+                TechDiscordBot.log(ConsoleColor.RED + "Could not find any Songoda plugins for " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator());
             }
             List<Plugin> plugins = new ArrayList<>();
             if(pc != null) plugins = Arrays.stream(pc.get()).map(purchase -> fromId(purchase.getResourceId())).collect(Collectors.toList());
@@ -100,7 +102,7 @@ public enum Plugin {
             }
             return plugins;
         } catch (NullPointerException ex) {
-            TechDiscordBot.getBot().log("Error:");
+            TechDiscordBot.log("Error:");
             ex.printStackTrace();
             return new ArrayList<>();
         }

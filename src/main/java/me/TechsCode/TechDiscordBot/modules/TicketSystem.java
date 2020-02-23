@@ -47,10 +47,10 @@ public class TicketSystem extends Module {
         }
     };
 
-    private final DefinedQuery<Category> IN_PROGRESS_TICKETS_CATEGORY = new DefinedQuery<Category>() {
+    private final DefinedQuery<Category> HIGH_PRIORITY_TICKETS_CATEGORY = new DefinedQuery<Category>() {
         @Override
         protected Query<Category> newQuery() {
-            return bot.getCategories("in-progress-tickets");
+            return bot.getCategories("high-priority-tickets");
         }
     };
 
@@ -73,7 +73,7 @@ public class TicketSystem extends Module {
     private String[] closeCommands = new String[]{"!solved", "!close", "-close", "-solved"};
     private String[] respondCommand = new String[]{"-r", "-respond", "!r", "!respond"};
     private String[] unRespondCommand = new String[]{"-ur", "-unrespond", "!ur", "!unrespond"};
-    private String[] inProgressCommand = new String[]{"-i", "!i", "!ip", "-ip"};
+    private String[] highPriorityCommand = new String[]{"-hp", "!hp", "!hp", "-hp", "-h", "!h", "!p", "-p"};
     private String[] toTechCommands = new String[]{"!tech", "-tech", "!t", "-t"};
     private String[] addUserCommands = new String[]{"!add", "-add", "!adduser", "-adduser"};
     private String[] removeUserCommands = new String[]{"!remove", "-remove", "!removeuser", "-removeuser"};
@@ -132,18 +132,18 @@ public class TicketSystem extends Module {
         if(e.getAuthor().isBot()) return;
         if (isTicketChat(channel)) {
             boolean isTicketCreator = channel.getTopic().contains(e.getAuthor().getAsMention());
-            if(!channel.getParent().getName().contains("tech")) {
+            if(!channel.getParent().getName().contains("tech") && !channel.getParent().getName().contains("high-priority")) {
                 if (isTicketCreator) {
                     channel.getManager().setParent(UNRESPONDED_TICKETS_CATEGORY.query().first()).queue();
                 } else if (Util.isStaff(e.getMember())) {
-                    if (channel.getParent().equals(UNRESPONDED_TICKETS_CATEGORY.query().first()) && getMemberFromTicket(channel) != null) {
-                        Message msg = channel.sendMessage(getMemberFromTicket(channel).getAsMention()).complete();
-                        msg.delete().complete();
-                    }
                     channel.getManager().setParent(RESPONDED_TICKETS_CATEGORY.query().first()).queue();
                 } else {
                     channel.getManager().setParent(UNRESPONDED_TICKETS_CATEGORY.query().first()).queue();
                 }
+            }
+            if (channel.getParent().equals(HIGH_PRIORITY_TICKETS_CATEGORY.query().first()) && getMemberFromTicket(channel) != null) {
+                Message msg = channel.sendMessage(getMemberFromTicket(channel).getAsMention() + ", Someone has responded to your ticket!").complete();
+                msg.delete().complete();
             }
             if (isAddUserCommand(e.getMessage().getContentDisplay().toLowerCase())) {
                 e.getMessage().delete().submit();
@@ -284,16 +284,16 @@ public class TicketSystem extends Module {
             } else if (isUnRespondedCommand(e.getMessage().getContentDisplay().toLowerCase())) {
                 e.getMessage().delete().submit();
                 if (Util.isStaff(e.getMember())) channel.getManager().setParent(UNRESPONDED_TICKETS_CATEGORY.query().first()).queue();
-            } else if (isInProgressCommand(e.getMessage().getContentDisplay().toLowerCase())) {
+            } else if (isInHighPriorityCommand(e.getMessage().getContentDisplay().toLowerCase())) {
                 e.getMessage().delete().submit();
-                if (Util.isStaff(e.getMember())) channel.getManager().setParent(IN_PROGRESS_TICKETS_CATEGORY.query().first()).queue();
+                if (Util.isStaff(e.getMember())) channel.getManager().setParent(HIGH_PRIORITY_TICKETS_CATEGORY.query().first()).queue();
             }
         }
     }
 
     public boolean isCloseCommand(String msg) { return Arrays.stream(closeCommands).anyMatch(msg::startsWith); }
 
-    public boolean isInProgressCommand(String msg) { return Arrays.stream(inProgressCommand).anyMatch(msg::startsWith); }
+    public boolean isInHighPriorityCommand(String msg) { return Arrays.stream(highPriorityCommand).anyMatch(msg::startsWith); }
 
     public boolean isRespondedCommand(String msg) { return Arrays.stream(respondCommand).anyMatch(msg::startsWith); }
 
@@ -335,7 +335,7 @@ public class TicketSystem extends Module {
             sendInstructions(e.getChannel());
             return;
         }
-        List<Plugin> plugins = Plugin.fromUser(e.getMember());
+        List<Plugin> plugins = Plugin.fromUserUsingRoles(e.getMember());
         if(!plugins.contains(plugin)) {
             if(apiNotAvailable != null) return;
             new CustomEmbedBuilder("Error")
@@ -422,7 +422,7 @@ public class TicketSystem extends Module {
                 new Requirement(UNRESPONDED_TICKETS_CATEGORY, 1, "Missing Tickets Category (unresponded-tickets)"),
                 new Requirement(RESPONDED_TICKETS_CATEGORY, 1, "Missing Tickets Category (responded-tickets)"),
                 new Requirement(TECH_TICKETS_CATEGORY, 1, "Missing Tickets Category (tech-tickets)"),
-                new Requirement(IN_PROGRESS_TICKETS_CATEGORY, 1, "Missing Tickets Category (in-progress-tickets)"),
+                new Requirement(HIGH_PRIORITY_TICKETS_CATEGORY, 1, "Missing Tickets Category (high-priority-tickets)"),
                 new Requirement(STAFF_ROLE, 1, "Missing 'Staff' Role")
         };
     }
