@@ -7,10 +7,9 @@ import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
 import me.TechsCode.TechDiscordBot.util.Plugin;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.core.hooks.SubscribeEvent;
 
 import java.util.Arrays;
 
@@ -58,6 +57,26 @@ public class OverviewCommand extends CommandModule {
         showRules();
         showPlugins();
         showInvite();
+        showVerify();
+    }
+
+    public void showVerify() {
+        Message msg = new CustomEmbedBuilder("Verify Yourself")
+                .setText("Due to the recent bot attack, you're now required to verify yourself, to do so, all you have to do is react to the message below!")
+                .setThumbnail("https://www.groovypost.com/wp-content/uploads/2016/11/500px-Icon_robot.svg_.png")
+                .send(OVERVIEW_CHANNEL.query().first());
+        msg.addReaction(bot.getEmotes("TechSupport").first()).complete();
+    }
+
+    @SubscribeEvent
+    public void onReactAdd(GuildMessageReactionAddEvent e) {
+        if(e.getUser().isBot()) return;
+        if(e.getUser().isFake()) return;
+        Emote emote = bot.getEmotes("TechSupport").first();
+        if(e.getReaction().getReactionEmote().isEmote() && e.getReaction().getReactionEmote().getEmote() == emote) {
+            if(e.getMember().getRoles().stream().anyMatch(r -> r.getName().equals("Member"))) return;
+            e.getGuild().getController().addRolesToMember(e.getMember(), bot.getRoles("Member").first()).complete();
+        }
     }
 
     public void showInfo() {

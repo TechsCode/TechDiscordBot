@@ -26,13 +26,12 @@ public abstract class CommandModule {
                 .filter(requirement -> !requirement.check())
                 .collect(Collectors.toSet());
         if(failedRequirements.isEmpty()) {
-            bot.log("Enabling Module " + getName() + "..");
+            TechDiscordBot.log("Enabling Module " + getName() + "..");
             onEnable();
             enabled = true;
         } else {
-            bot.log(ConsoleColor.YELLOW + "Failed Enabling Module " + ConsoleColor.YELLOW_BOLD_BRIGHT+getName()+ConsoleColor.YELLOW + " because:");
-
-            failedRequirements.forEach(requirement -> bot.log(ConsoleColor.WHITE + "- " + requirement.getUnmatchMessage()));
+            TechDiscordBot.log(ConsoleColor.YELLOW + "Failed Enabling Module " + ConsoleColor.YELLOW_BOLD_BRIGHT+getName()+ConsoleColor.YELLOW + " because:");
+            failedRequirements.forEach(requirement -> TechDiscordBot.log(ConsoleColor.WHITE + "- " + requirement.getUnmatchMessage()));
         }
     }
 

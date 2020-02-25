@@ -16,17 +16,17 @@ import java.util.stream.Collectors;
 
 public enum Plugin {
 
-    ULTRA_PERMISSIONS("Ultra Permissions","42678", "416194311080771596", "330053303050436608", new Color(0,235,229), "UltraPermissions", "https://ultrapermissions.com/wiki"),
-    YOUTUBE_BRIDGE("Youtube Bridge", "35928", "416194347294392321", "311178282278322176", new Color(216, 56, 43),"YoutubeBridge", ""),
-    ULTRA_CUSTOMIZER("Ultra Customizer", "49330", "416194287567372298", "380133603683860480", new Color(184, 103, 243), "UltraCustomizer", "https://ultracustomizer.com/wiki"),
-    ULTRA_REGIONS("Ultra Regions", "58317", "465975554101739520", "465975795433734155", new Color(57, 135, 153), "UltraRegions", "https://ultraregions.com/wiki"),
-    ULTRA_PUNISHMENTS("Ultra Punishments", "63511", "531255363505487872", "531251918291599401", new Color(247, 119, 39), "UltraPunishments", "https://ultrapunishments.com/wiki"),
-    INSANE_SHOPS("Insane Shops", "67352", "531255363505487872", "576813543698202624", new Color(114, 185, 77), "InsaneShops", "https://insaneshops.com/wiki");
+    ULTRA_PERMISSIONS("Ultra Permissions","42678", "416194311080771596", "330053303050436608", new Color(0,235,229), "UltraPermissions", "https://ultrapermissions.com/wiki", "https://www.spigotmc.org/data/resource_icons/42/42678.jpg?1551053784"),
+    YOUTUBE_BRIDGE("Youtube Bridge", "35928", "416194347294392321", "311178282278322176", new Color(216, 56, 43),"YoutubeBridge", "", "https://www.spigotmc.org/data/resource_icons/35/35928.jpg?1551053840"),
+    ULTRA_CUSTOMIZER("Ultra Customizer", "49330", "416194287567372298", "380133603683860480", new Color(184, 103, 243), "UltraCustomizer", "https://ultracustomizer.com/wiki", "https://www.spigotmc.org/data/resource_icons/49/49330.jpg?1552009867"),
+    ULTRA_REGIONS("Ultra Regions", "58317", "465975554101739520", "465975795433734155", new Color(57, 135, 153), "UltraRegions", "https://ultraregions.com/wiki", "https://www.spigotmc.org/data/resource_icons/58/58317.jpg?1557800307"),
+    ULTRA_PUNISHMENTS("Ultra Punishments", "63511", "531255363505487872", "531251918291599401", new Color(247, 119, 39), "UltraPunishments", "https://ultrapunishments.com/wiki", "https://www.spigotmc.org/data/resource_icons/63/63511.jpg?1551053820"),
+    INSANE_SHOPS("Insane Shops", "67352", "531255363505487872", "576813543698202624", new Color(114, 185, 77), "InsaneShops", "https://insaneshops.com/wiki", "https://www.spigotmc.org/data/resource_icons/67/67352.jpg?1557794141");
 
-    private String resourceId, channelId, roleName, roleId, emojiName, wiki;
+    private String resourceId, channelId, roleName, roleId, emojiName, wiki, logo;
     private Color color;
 
-    Plugin(String roleName, String resourceId, String roleId, String channelId, Color color, String emojiName, String wiki) {
+    Plugin(String roleName, String resourceId, String roleId, String channelId, Color color, String emojiName, String wiki, String logo) {
         this.roleName = roleName;
         this.resourceId = resourceId;
         this.channelId = channelId;
@@ -34,6 +34,7 @@ public enum Plugin {
         this.color = color;
         this.emojiName = emojiName;
         this.wiki = wiki;
+        this.logo = logo;
     }
 
     public String getResourceId() { return resourceId; }
@@ -48,7 +49,7 @@ public enum Plugin {
 
     public String getDescription() { return TechDiscordBot.getBot().getSpigotAPI().getResources().id(resourceId).get().getTagLine(); }
 
-    public String getResourceLogo() { return TechDiscordBot.getBot().getSpigotAPI().getResources().id(resourceId).get().getIcon(); }
+    public String getResourceLogo() { return logo; }
 
     public String getEmojiName() { return emojiName; }
 

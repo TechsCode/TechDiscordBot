@@ -18,12 +18,12 @@ public abstract class Module {
     public void enable() {
         Set<Requirement> failedRequirements = Arrays.stream(getRequirements()).filter(requirement -> !requirement.check()).collect(Collectors.toSet());
         if(failedRequirements.isEmpty()) {
-            bot.log("Enabling Module " + getName() + "..");
+            TechDiscordBot.log("Enabling Module " + getName() + "..");
             onEnable();
             enabled = true;
         } else {
-            bot.log(ConsoleColor.YELLOW_BRIGHT + "Failed Enabling Module " + ConsoleColor.YELLOW_BOLD_BRIGHT+getName()+ConsoleColor.YELLOW_BRIGHT + " because:");
-            failedRequirements.forEach(requirement -> bot.log(ConsoleColor.WHITE + "- " + requirement.getUnmatchMessage()));
+            TechDiscordBot.log(ConsoleColor.YELLOW_BRIGHT + "Failed Enabling Module " + ConsoleColor.YELLOW_BOLD_BRIGHT+getName()+ConsoleColor.YELLOW_BRIGHT + " because:");
+            failedRequirements.forEach(requirement -> TechDiscordBot.log(ConsoleColor.WHITE + "- " + requirement.getUnmatchMessage()));
         }
     }
 

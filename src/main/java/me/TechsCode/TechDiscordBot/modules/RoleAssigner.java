@@ -152,8 +152,8 @@ public class RoleAssigner extends Module {
             bot.getGuild().getController().addRolesToMember(all, rolesToAdd).complete();
             bot.getGuild().getController().removeRolesFromMember(all, rolesToRemove).complete();
 
-            rolesToRemove.forEach(x -> bot.log("[Roles] Removed the Role " + x.getName() + " from Member " + all.getEffectiveName()));
-            rolesToAdd.forEach(x -> bot.log("[Roles] Added the Role " + x.getName() + " to Member " + all.getEffectiveName()));
+            rolesToRemove.forEach(x -> TechDiscordBot.log("[Roles] Removed the Role " + x.getName() + " from Member " + all.getEffectiveName()));
+            rolesToAdd.forEach(x -> TechDiscordBot.log("[Roles] Added the Role " + x.getName() + " to Member " + all.getEffectiveName()));
         }
     }
 }

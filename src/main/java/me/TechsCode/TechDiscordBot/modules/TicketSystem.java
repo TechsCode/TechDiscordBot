@@ -73,7 +73,7 @@ public class TicketSystem extends Module {
     private String[] closeCommands = new String[]{"!solved", "!close", "-close", "-solved"};
     private String[] respondCommand = new String[]{"-r", "-respond", "!r", "!respond"};
     private String[] unRespondCommand = new String[]{"-ur", "-unrespond", "!ur", "!unrespond"};
-    private String[] highPriorityCommand = new String[]{"-hp", "!hp", "!hp", "-hp", "-h", "!h", "!p", "-p"};
+    private String[] highPriorityCommand = new String[]{"-hp", "!hp", "!hp", "-hp", "-h", "!h"};
     private String[] toTechCommands = new String[]{"!tech", "-tech", "!t", "-t"};
     private String[] addUserCommands = new String[]{"!add", "-add", "!adduser", "-adduser"};
     private String[] removeUserCommands = new String[]{"!remove", "-remove", "!removeuser", "-removeuser"};
