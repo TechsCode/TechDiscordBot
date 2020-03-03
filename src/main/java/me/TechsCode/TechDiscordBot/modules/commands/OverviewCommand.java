@@ -54,6 +54,7 @@ public class OverviewCommand extends CommandModule {
 
     public void showAll() {
         showInfo();
+        showFeedback();
         showRules();
         showPlugins();
         showInvite();
@@ -82,6 +83,13 @@ public class OverviewCommand extends CommandModule {
     public void showInfo() {
         new CustomEmbedBuilder("Tech's Plugin Support")
                 .setText("Welcome to **Tech's Plugin Support**. Here, not only can you get support for Tech's Plugins. You can talk and socialize with people too! You can also get help with other plugins!\n\nIf you're new here and need help with one or more of Tech's Plugins, you can verify in <#416186574078738432> to get support. Once you do, you will get access to the specified support channels.\nIf you are already verified and you have bought another plugin, simply wait for the bot to give you the role *(could take up to 15 minutes, possibly longer)*.")
+                .setThumbnail("https://i.imgur.com/SfFEnoU.png")
+                .send(OVERVIEW_CHANNEL.query().first());
+    }
+
+    public void showFeedback() {
+        new CustomEmbedBuilder("Tech's Plugin Support")
+                .setText("Would you like to suggest features for Tech's Plugins? You can do so by clicking here: https://feedback.techsco.de")
                 .setThumbnail("https://i.imgur.com/nzfiUTy.png")
                 .send(OVERVIEW_CHANNEL.query().first());
     }
