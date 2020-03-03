@@ -88,7 +88,7 @@ public class OverviewCommand extends CommandModule {
     }
 
     public void showFeedback() {
-        new CustomEmbedBuilder("Tech's Plugin Support")
+        new CustomEmbedBuilder("Feedback")
                 .setText("Would you like to suggest features for Tech's Plugins? You can do so by clicking here: https://feedback.techsco.de")
                 .setThumbnail("https://i.imgur.com/nzfiUTy.png")
                 .send(OVERVIEW_CHANNEL.query().first());
