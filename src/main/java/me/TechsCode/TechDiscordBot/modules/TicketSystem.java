@@ -84,7 +84,7 @@ public class TicketSystem extends Module {
     public void onEnable() {
         lastInstructions = null;
         apiNotAvailable = null;
-        sendInstructions(CREATION_CHANNEL.query().first());
+        sendInstructions();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if(lastInstructions != null) lastInstructions.delete().complete();
             if(apiNotAvailable != null) apiNotAvailable.delete().complete();
@@ -95,20 +95,15 @@ public class TicketSystem extends Module {
                 if(bot.getSpigotAPI().isAvailable()) {
                     if(apiNotAvailable != null) {
                         apiNotAvailable = null;
-                        sendInstructions(CREATION_CHANNEL.query().first());
+                        sendInstructions();
                     }
                 } else {
                     if(apiNotAvailable == null) {
-                        lastInstructions.delete().queue();
-                        CustomEmbedBuilder message = new CustomEmbedBuilder("Ticket Creation Disabled")
-                                .setText("The Web API is currently unavailable. Please contact staff for more info!")
+                        if(lastInstructions != null) lastInstructions.delete().complete();
+                        CustomEmbedBuilder message = new CustomEmbedBuilder()
+                                .setText("The Web API is currently unavailable. You cannot verify until it's online again!\n**Sorry for another inconvenience!**")
                                 .error();
                         apiNotAvailable = message.send(CREATION_CHANNEL.query().first());
-                        if(lastInstructions != null) lastInstructions.delete().complete();
-                        CustomEmbedBuilder howItWorksMessage = new CustomEmbedBuilder("How to Create a Ticket")
-                                .setText("Please react with the plugin that you need help with below!");
-                        lastInstructions = howItWorksMessage.send(CREATION_CHANNEL.query().first());
-                        for(Plugin pl : Plugin.values()) lastInstructions.addReaction(pl.getEmoji()).queue();
                     }
                 }
                 try {
@@ -243,7 +238,7 @@ public class TicketSystem extends Module {
                     new CustomEmbedBuilder("Solved Ticket")
                             .setText("The ticket (" + channel.getName() + ") from " + e.getAuthor().getAsMention() + " is now solved. Thanks for contacting us!")
                             .success().send(creationChannel);
-                    sendInstructions(creationChannel);
+                    sendInstructions();
                 } else {
                     if(!Util.isStaff(e.getMember())) return;
                     Member member = getMemberFromTicket(channel);
@@ -263,12 +258,12 @@ public class TicketSystem extends Module {
                         new CustomEmbedBuilder("Closed Ticket")
                                 .setText("Your ticket (" + channel.getName() + ") has been closed!" + reasonSend)
                                 .success().send(member);
-                        sendInstructions(creationChannel);
+                        sendInstructions();
                     } else {
                         new CustomEmbedBuilder("Closed Ticket")
                                 .setText("The ticket (" + channel.getName() + ") from *member has left* has been closed!")
                                 .success().send(creationChannel);
-                        sendInstructions(creationChannel);
+                        sendInstructions();
                     }
                 }
             } else if (isToTechCommand(e.getMessage().getContentDisplay().toLowerCase())) {
@@ -332,7 +327,7 @@ public class TicketSystem extends Module {
             new CustomEmbedBuilder("Error")
                     .setText("You already have an open ticket (" + ticketChat.getAsMention() + ")").error()
                     .sendTemporary(creationChannel, 10);
-            sendInstructions(e.getChannel());
+            sendInstructions();
             return;
         }
         List<Plugin> plugins = Plugin.fromUserUsingRoles(e.getMember());
@@ -341,7 +336,7 @@ public class TicketSystem extends Module {
             new CustomEmbedBuilder("Error")
                     .setText("You don't own the plugin you selected! (" + plugin.getEmoji().getAsMention() + " " + plugin.getRoleName() + ")").error()
                     .sendTemporary(creationChannel, 10);
-            sendInstructions(e.getChannel());
+            sendInstructions();
             return;
         }
         ticketChat = createTicketChannel(e.getMember());
@@ -375,10 +370,10 @@ public class TicketSystem extends Module {
         new CustomEmbedBuilder("New Ticket")
                 .setText(reactor.getAsMention() + " created a new ticket (" + ticketChat.getAsMention() + ")")
                 .send(creationChannel);
-        sendInstructions(creationChannel);
+        sendInstructions();
     }
 
-    public void sendInstructions(TextChannel textChannel) {
+    public void sendInstructions() {
         if(lastInstructions != null) lastInstructions.delete().complete();
         if(apiNotAvailable != null) {
             apiNotAvailable.delete().complete();
@@ -389,7 +384,7 @@ public class TicketSystem extends Module {
         }
         CustomEmbedBuilder howItWorksMessage = new CustomEmbedBuilder("How to Create a Ticket")
                 .setText("Please react with the plugin that you need help with below!");
-        lastInstructions = howItWorksMessage.send(textChannel);
+        lastInstructions = howItWorksMessage.send(CREATION_CHANNEL.query().first());
         for(Plugin pl : Plugin.values()) lastInstructions.addReaction(pl.getEmoji()).queue();
     }
 

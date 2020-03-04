@@ -11,6 +11,7 @@ import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.storage.Verification;
+import me.TechsCode.TechDiscordBot.util.Plugin;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 
@@ -46,7 +47,7 @@ public class RoleAssigner extends Module {
     private final DefinedQuery<Role> RESOURCE_ROLES = new DefinedQuery<Role>() {
         @Override
         protected Query<Role> newQuery() {
-            String[] resourceNames = bot.getSpigotAPI().getResources().premium().getStream().map(Resource::getName).toArray(String[]::new);
+            String[] resourceNames = Arrays.stream(Plugin.values()).map(Plugin::getRoleName).toArray(String[]::new);
             return bot.getRoles(resourceNames);
         }
     };
@@ -79,7 +80,7 @@ public class RoleAssigner extends Module {
         return new Requirement[]{
                 new Requirement(VERIFICATION_ROLE, 1, "Missing 'Verified' Role"),
                 new Requirement(REVIEW_SQUAD_ROLE, 1, "Missing 'Review Squad' Role"),
-                new Requirement(RESOURCE_ROLES, 1, "Missing Resource Roles (API Could Also Be Down)")
+                new Requirement(RESOURCE_ROLES, 1, "Missing Resource Roles")
         };
     }
 
