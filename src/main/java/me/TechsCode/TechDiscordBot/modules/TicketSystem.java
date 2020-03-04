@@ -101,7 +101,7 @@ public class TicketSystem extends Module {
                     if(apiNotAvailable == null) {
                         if(lastInstructions != null) lastInstructions.delete().complete();
                         CustomEmbedBuilder message = new CustomEmbedBuilder()
-                                .setText("The Web API is currently unavailable. You cannot verify until it's online again!\n**Sorry for another inconvenience!**")
+                                .setText("The Web API is currently unavailable. If you do not have the role for a plugin you have bought, you will have to wait to make a ticket!\n**Sorry for another inconvenience!**")
                                 .error();
                         apiNotAvailable = message.send(CREATION_CHANNEL.query().first());
                     }
