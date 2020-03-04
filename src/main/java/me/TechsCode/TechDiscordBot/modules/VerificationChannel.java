@@ -62,7 +62,7 @@ public class VerificationChannel extends Module {
                     if(apiNotAvailable == null) {
                         if(lastInstructions != null) lastInstructions.delete().complete();
                         CustomEmbedBuilder message = new CustomEmbedBuilder()
-                                .setText("The Web API is currently unavailable. You cannot verify until it's online again!\n**Sorry for another inconvenience!**")
+                                .setText("The Web API is currently unavailable. You cannot verify until it's online again!\n**Sorry for the inconvenience!**")
                                 .error();
                         apiNotAvailable = message.send(channel);
                     }
