@@ -336,7 +336,6 @@ public class TicketSystem extends Module {
         }
         List<Plugin> plugins = Plugin.fromUserUsingRoles(e.getMember());
         if(!plugins.contains(plugin)) {
-            if(apiNotAvailable != null) return;
             new CustomEmbedBuilder("Error")
                     .setText("You don't own the plugin you selected! (" + plugin.getEmoji().getAsMention() + " " + plugin.getRoleName() + ")").error()
                     .sendTemporary(creationChannel, 10);
@@ -378,6 +377,7 @@ public class TicketSystem extends Module {
     }
 
     public void sendInstructions() {
+        if(lastInstructions != null) lastInstructions.delete().queue();
         CustomEmbedBuilder howItWorksMessage = new CustomEmbedBuilder("How to Create a Ticket")
                 .setText("Please react with the plugin that you need help with below!");
         lastInstructions = howItWorksMessage.send(CREATION_CHANNEL.query().first());
