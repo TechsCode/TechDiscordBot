@@ -17,15 +17,20 @@ repositories {
 }
 
 dependencies {
-    compile project(":SpigotAPI")
+    shadow project(":SpigotAPI")
 
-    compile 'net.dv8tion:JDA:3.8.3_464'
-    compile 'org.jsoup:jsoup:1.8.3'
-    compile 'org.apache.commons:commons-lang3:3.7'
-    compile 'mysql:mysql-connector-java:5.1.17'
-    compile 'com.j2html:j2html:1.4.0'
+    shadow ('net.dv8tion:JDA:4.1.1_127') {
+        exclude module: 'opus-java' //No audio.
+    }
 
-    compile 'net.sourceforge.htmlunit:htmlunit:2.29'
+    shadow files('libs/ImgurAPI-1.0.0.jar')
+    shadow 'org.jsoup:jsoup:1.8.3'
+    shadow 'org.apache.commons:commons-lang3:3.7'
+    shadow 'mysql:mysql-connector-java:5.1.17'
+    shadow 'com.j2html:j2html:1.4.0'
+    shadow "com.googlecode.json-simple:json-simple:1.1.1"
+
+    shadow 'net.sourceforge.htmlunit:htmlunit:2.29'
 }
 
 def props = new Properties()
@@ -68,6 +73,9 @@ buildscript {
 shadowJar {
     archiveName = 'TechDiscordBot.jar'
     destinationDir = file('build')
+
+    dependsOn 'build'
+    configurations = [project.configurations.shadow]
 }
 
 jar {

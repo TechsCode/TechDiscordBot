@@ -1,63 +1,62 @@
 package me.TechsCode.TechDiscordBot;
 
+import com.gargoylesoftware.htmlunit.HttpMethod;
 import me.TechsCode.SpigotAPI.client.SpigotAPIClient;
-import me.TechsCode.TechDiscordBot.command.CommandModule;
+import me.TechsCode.TechDiscordBot.client.SongodaAPIClient;
+import me.TechsCode.TechDiscordBot.module.ModulesManager;
+import me.TechsCode.TechDiscordBot.mysql.MySQLSettings;
+import me.TechsCode.TechDiscordBot.mysql.storage.Storage;
 import me.TechsCode.TechDiscordBot.objects.ChannelQuery;
-import me.TechsCode.TechDiscordBot.objects.Module;
 import me.TechsCode.TechDiscordBot.objects.Query;
-import me.TechsCode.TechDiscordBot.songoda.SongodaAPIClient;
-import me.TechsCode.TechDiscordBot.storage.Storage;
+import me.TechsCode.TechDiscordBot.spigotmc.SpigotMC;
 import me.TechsCode.TechDiscordBot.util.ConsoleColor;
-import me.TechsCode.TechDiscordBot.util.CustomEmbedBuilder;
-import me.TechsCode.TechDiscordBot.util.Project;
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.hooks.AnnotatedEventManager;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import net.dv8tion.jda.core.hooks.SubscribeEvent;
+import net.dv8tion.jda.api.AccountType;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 
 import javax.security.auth.login.LoginException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class TechDiscordBot extends ListenerAdapter implements EventListener {
-
-    private final String TECHSCODEAPI = "https://api.techsco.de";
-
-    private static TechDiscordBot i;
+public class TechDiscordBot {
 
     private static JDA jda;
-    private Guild guild;
-    private Member self;
+    private static TechDiscordBot i;
 
-    private SpigotAPIClient spigotAPIClient;
-    private SongodaAPIClient songodaAPIClient;
-    private Storage storage;
+    private static Guild guild;
+    private static Member self;
 
-    private List<Module> modules;
-    private List<CommandModule> cmdModules;
+    private static SpigotAPIClient spigotAPIClient;
+    private static SongodaAPIClient songodaAPIClient;
+
+    private static Storage storage;
+
+    private static String imgurClientId, imgurClientSecret;
+
+    private static ModulesManager modulesManager;
 
     public static void main(String[] args) {
-        if (args.length != 8) {
-            System.out.println("Invalid start arguments. Consider using:");
-            System.out.println("java -jar TechPluginSupportBot.jar <Discord Bot Token> <Tech API Token> <Songoda Token> <MySQL Host> <MySQL Port> <MySQL Database> <MySQL Username> <MySQL Password>");
+        if (args.length < 9) {
+            log(ConsoleColor.RED + "Invalid start arguments. Consider using:");
+            log(ConsoleColor.WHITE_BOLD_BRIGHT + "java -jar TechPluginSupportBot.jar <Discord Bot Token> <Tech API Token> <Songoda Token> <MySQL Host> <MySQL Port> <MySQL Database> <MySQL Username> <MySQL Password> <Imgur Client ID>");
             return;
         }
-        new TechDiscordBot(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
+
+        new TechDiscordBot(args[0], args[1], args[2], MySQLSettings.of(args[3], args[4], args[5], args[6], args[7]), args[8], args[8]);
     }
 
-    public TechDiscordBot(String token, String apiToken, String songodaToken, String mysqlHost, String mysqlPort, String mysqlDatabase, String mysqlUsername, String mysqlPassword) {
+    public TechDiscordBot(String token, String apiToken, String songodaToken, MySQLSettings mySQLSettings, String iClientId, String iClientSecret) {
         try {
             i = this;
             try {
                 jda = new JDABuilder(AccountType.BOT)
                         .setEventManager(new AnnotatedEventManager())
+                        .setActivity(Activity.playing("in quarantine \uD83E\uDDA0\uD83D\uDE37"))
                         .setToken(token).build().awaitReady();
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -69,123 +68,130 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
 
         List<Guild> guilds = jda.getGuilds();
 
+        if(guilds.size() > 1) {
+            log(ConsoleColor.RED + "The bot is a member of too many guilds. Please leave them all except one!");
+            return;
+        }
+
         guild = guilds.size() != 0 ? guilds.get(0) : null;
         self = guild != null ? guild.getSelfMember() : null;
 
-        if (guild == null) {
-            log(ConsoleColor.RED + "The Bot is not a member of a guild");
+
+        if(guild == null) {
+            log(ConsoleColor.RED + "The bot is not a member of any guild. Please join a guild!");
             return;
         }
 
-        if (guilds.size() > 1) {
-            log(ConsoleColor.RED + "The Bot is a member of too many guilds.");
-            return;
+        spigotAPIClient = new SpigotAPIClient("https://api.techsco.de", apiToken);
+        songodaAPIClient = new SongodaAPIClient(songodaToken);
+
+        log("Initializing MySQL Storage " + mySQLSettings.getHost() + ":" + mySQLSettings.getPort() + "!");
+        storage = Storage.of(mySQLSettings);
+
+        if(!storage.isConnected()) {
+            log(ConsoleColor.RED + "Failed to connect to MySQL!");
+            log(storage.getLatestErrorMessage());
         }
 
-        log("Successfully logged in as " + self.getEffectiveName() + " into " + guild.getName());
+        modulesManager = new ModulesManager();
+        log("Loading modules..");
+        modulesManager.load();
+        jda.addEventListener(modulesManager);
 
-        this.spigotAPIClient = new SpigotAPIClient(TECHSCODEAPI, apiToken);
-        log("Purchases: "+spigotAPIClient.getPurchases().size());
+        imgurClientId = iClientId;
+        imgurClientSecret = iClientSecret;
 
-        this.songodaAPIClient = new SongodaAPIClient(songodaToken);
+        log("Successfully loaded the bot and logged into " + guild.getName() + " as " + self.getEffectiveName() + "!");
 
-        log("Initializing MySQL Storage " + mysqlHost + ":" + mysqlPort + "..");
-        this.storage = new Storage(mysqlHost, mysqlPort, mysqlDatabase, mysqlUsername, mysqlPassword);
+        log("");
 
-        if (!storage.isEnabled()) {
-            log(ConsoleColor.RED + "Failed connecting to MySQL:");
-            log(storage.getErrorMessage());
-            return;
+        log("Spigot:");
+        if(getSpigotAPI().isAvailable()) {
+            log("  » Purchases: " + getSpigotAPI().getPurchases().size());
+            log("  » Resources: " + getSpigotAPI().getResources().size());
+            log("  » Updates: " + getSpigotAPI().getUpdates().size());
+            log("  » Reviews: " + getSpigotAPI().getReviews().size());
+        } else {
+            log("  » " + ConsoleColor.RED + "Could not connect. Cannot show info!");
         }
 
-        log("Loading modules...");
-        modules = new ArrayList<>();
-        cmdModules = new ArrayList<>();
+        log("");
 
-        for (Class each : Project.getClasses("me.TechsCode.")) {
-            if (CommandModule.class.isAssignableFrom(each) && !Modifier.isAbstract(each.getModifiers())) {
+        log("Songoda: ");
+        if(getSongodaAPI().isLoaded()) {
+            log("  » Purchases: " + getSongodaAPI().getPurchases().size());
+        } else {
+            log("  » " + ConsoleColor.RED + "Could not connect. Cannot show info!");
+        }
+
+        log("");
+
+        log("Guild:");
+        log("  » Members: " + getGuild().getMembers().size());
+        log("  » Verified Members: " + getStorage().retrieveVerifications().stream().filter(v -> guild.getMemberById(v.getDiscordId()) != null).count());
+        log("  » Review Squad Members: " + getGuild().getMembers().stream().filter(member -> member.getRoles().stream().anyMatch(role -> role.getName().equals("Review Squad"))).count());
+        log("  » Donators: " + getGuild().getMembers().stream().filter(member -> member.getRoles().stream().anyMatch(role -> role.getName().contains("Donator"))).count());
+
+        log("");
+
+        getModulesManager().logLoad();
+
+        log("");
+        log("Startup Completed! The bot has successfully started!");
+
+        Logger.getLogger("ImgurApi").setLevel(Level.OFF);
+        startSpigotCloudflareBypass();
+    }
+
+    private void startSpigotCloudflareBypass() {
+        new Thread(() -> {
+            while(true) {
+                SpigotMC.getBrowser().request("https://spigotmc.org", HttpMethod.GET, false);
                 try {
-                    CommandModule module = (CommandModule)each.getConstructor(TechDiscordBot.class).newInstance(this);
-                    module.enable();
-                    if (module.isEnabled()) cmdModules.add(module);
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                    e.printStackTrace();
-                }
-            } else if (Module.class.isAssignableFrom(each) && !Modifier.isAbstract(each.getModifiers())) {
-                try {
-                    Module module = (Module) each.getConstructor(TechDiscordBot.class).newInstance(this);
-                    module.enable();
-                    if (module.isEnabled()) modules.add(module);
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    Thread.sleep(300000L);
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-        }
-
-        jda.addEventListener(modules.toArray());
-        jda.addEventListener(cmdModules.toArray());
-        jda.addEventListener(this);
-
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> modules.forEach(Module::onDisable)));
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> cmdModules.forEach(CommandModule::onDisable)));
-
-        log("Successfully loaded " + (modules.size() + cmdModules.size()) + " modules!");
+        }).start();
     }
 
-    @SubscribeEvent
-    public void onMessage(GuildMessageReceivedEvent e) {
-        String first = e.getMessage().getContentDisplay().split(" ")[0];
-
-        CommandModule cmd = cmdModules.stream().filter(cmdM -> cmdM.getCommand() != null && cmdM.getCommand().equalsIgnoreCase(first) || (cmdM.getAliases() != null && Arrays.asList(cmdM.getAliases()).contains(first))).findFirst().orElse(null);
-        if(cmd == null) return;
-
-        List<Role> restrictedRoles = new ArrayList<>();
-        if(cmd.getRestrictedRoles() != null && cmd.getRestrictedRoles().query() != null && cmd.getRestrictedRoles().query().all() != null) restrictedRoles.addAll(cmd.getRestrictedRoles().query().all());
-        List<TextChannel> restrictedChannels =  new ArrayList<>();
-        if(cmd.getRestrictedChannels() != null && cmd.getRestrictedChannels().query() != null && cmd.getRestrictedChannels().query().all() != null) restrictedChannels.addAll(cmd.getRestrictedChannels().query().all());
-
-        // Check if the player has at least one of the restricted roles
-        if(!restrictedRoles.isEmpty() && Collections.disjoint(e.getMember().getRoles(), restrictedRoles)) {
-            new CustomEmbedBuilder("No Permissions")
-                    .error()
-                    .setText("You don't have enough permissions to execute this command!")
-                    .sendTemporary(e.getChannel(), 5, TimeUnit.SECONDS);
-            return;
-        }
-
-        // Check if the message was sent in one of the restricted channels (if there are any)
-        if (!restrictedChannels.isEmpty() && !restrictedChannels.contains(e.getChannel())) return;
-
-        String message = e.getMessage().getContentDisplay();
-        String[] args = Arrays.copyOfRange(message.split(" "), 1, message.split(" ").length);
-
-        cmd.onCommand(e.getChannel(), e.getMessage(), e.getMember(), args);
-
-        e.getMessage().delete().complete();
+    public static JDA getJDA() {
+        return jda;
     }
 
-    public Guild getGuild() {
+    public static TechDiscordBot getBot() {
+        return i;
+    }
+
+    public static Guild getGuild() {
         return guild;
     }
 
-    public Member getSelf() {
+    public static Member getSelf() {
         return self;
     }
 
-    public SpigotAPIClient getSpigotAPI() {
-        return spigotAPIClient;
-    }
-
-    public SongodaAPIClient getSongodaAPIClient() {
-        return songodaAPIClient;
-    }
-
-    public Storage getStorage() {
+    public static Storage getStorage() {
         return storage;
     }
 
-    public static void log(String message) {
-        System.out.println(ConsoleColor.BLUE_BRIGHT + "[" + ConsoleColor.WHITE_BOLD_BRIGHT + "Discord Bot" + ConsoleColor.BLUE_BRIGHT + "] " + ConsoleColor.RESET+message);
+    public static String getImgurClientId() {
+        return imgurClientId;
+    }
+
+    public static String getImgurClientSecret() { return imgurClientSecret; }
+
+    public static SpigotAPIClient getSpigotAPI() {
+        return spigotAPIClient;
+    }
+
+    public static SongodaAPIClient getSongodaAPI() {
+        return songodaAPIClient;
+    }
+
+    public static ModulesManager getModulesManager() {
+        return modulesManager;
     }
 
     public Query<Role> getRoles(String... names) {
@@ -223,15 +229,24 @@ public class TechDiscordBot extends ListenerAdapter implements EventListener {
         return new Query<>(emotes);
     }
 
-    public static JDA getJDA() {
-        return jda;
+    public static Member getMemberFromString(Message msg, String s) {
+        if (msg.getMentionedMembers().size() > 0) {
+            return msg.getMentionedMembers().get(0);
+        } else if (getGuild().getMembers().stream().anyMatch(mem -> (mem.getUser().getName() + "#" + mem.getUser().getDiscriminator()).equalsIgnoreCase(s) || mem.getUser().getId().equalsIgnoreCase(s))) {
+            return getGuild().getMembers().stream().filter(mem -> (mem.getUser().getName() + "#" + mem.getUser().getDiscriminator()).equalsIgnoreCase(s) || mem.getUser().getId().equalsIgnoreCase(s)).findFirst().orElse(null);
+        }
+        return null;
     }
 
-    public static TechDiscordBot getBot() {
-        return i;
+    public static boolean isStaff(Member member) {
+        return member.getRoles().stream().anyMatch(r -> r.getName().contains("Supporter") || r.getName().contains("Staff"));
     }
 
-    public List<Module> getModules() { return modules; }
+    public static void log(String prefix, String message) {
+        System.out.println(prefix + " " + ConsoleColor.RESET + message + ConsoleColor.RESET);
+    }
 
-    public List<CommandModule> getCommandModules() { return cmdModules; }
+    public static void log(String message) {
+        System.out.println(ConsoleColor.PURPLE_BRIGHT + "[" + ConsoleColor.WHITE_BOLD_BRIGHT + "TechPluginSupport" + ConsoleColor.PURPLE_BRIGHT + "] " + ConsoleColor.RESET + message + ConsoleColor.RESET);
+    }
 }

@@ -4,9 +4,9 @@ import me.TechsCode.SpigotAPI.client.collections.PurchaseCollection;
 import me.TechsCode.SpigotAPI.client.objects.Resource;
 import me.TechsCode.SpigotAPI.client.objects.Update;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
-import me.TechsCode.TechDiscordBot.songoda.SongodaPurchase;
-import me.TechsCode.TechDiscordBot.storage.Verification;
-import net.dv8tion.jda.core.entities.*;
+import me.TechsCode.TechDiscordBot.mysql.storage.SongodaPurchase;
+import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
+import net.dv8tion.jda.api.entities.*;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -37,77 +37,139 @@ public enum Plugin {
         this.logo = logo;
     }
 
-    public String getResourceId() { return resourceId; }
+    public String getResourceId() {
+        return resourceId;
+    }
 
-    public String getChannelId() { return channelId; }
+    public String getChannelId() {
+        return channelId;
+    }
 
-    public String getRoleId() { return roleId; }
+    public String getRoleId() {
+        return roleId;
+    }
 
-    public Role getRole(Guild guild) { return guild.getRoleById(roleId); }
+    public Role getRole(Guild guild) {
+        return guild.getRoleById(roleId);
+    }
 
-    public Color getColor() { return color; }
+    public Color getColor() {
+        return color;
+    }
 
-    public String getDescription() { return TechDiscordBot.getBot().getSpigotAPI().getResources().id(resourceId).get().getTagLine(); }
+    public String getDescription() {
+        return TechDiscordBot.getSpigotAPI().getResources().id(resourceId).get().getTagLine();
+    }
 
-    public String getResourceLogo() { return logo; }
+    public String getResourceLogo() {
+        return logo;
+    }
 
-    public String getEmojiName() { return emojiName; }
+    public String getEmojiName() {
+        return emojiName;
+    }
 
-    public Emote getEmoji() { return TechDiscordBot.getJDA().getEmotesByName(getEmojiName(), false).get(0); }
+    public Emote getEmoji() {
+        return TechDiscordBot.getJDA().getEmotesByName(getEmojiName(), false).get(0);
+    }
 
-    public String getRoleName() { return roleName; }
+    public String getRoleName() {
+        return roleName;
+    }
 
-    public String getWiki() { return wiki; }
+    public String getWiki() {
+        return wiki;
+    }
 
-    public boolean hasWiki() { return !wiki.isEmpty(); }
+    public boolean hasWiki() {
+        return !wiki.isEmpty();
+    }
 
-    public Resource getResource() { return TechDiscordBot.getBot().getSpigotAPI().getResources().id(getResourceId()).get(); }
+    public Resource getResource() {
+        return TechDiscordBot.getSpigotAPI().getResources().id(getResourceId()).get();
+    }
 
-    public Update getLatestUpdate() { return TechDiscordBot.getBot().getSpigotAPI().getUpdates().resourceId(getResourceId()).get()[TechDiscordBot.getBot().getSpigotAPI().getUpdates().resourceId(getResourceId()).size() - 1]; }
+    public Update getLatestUpdate() {
+        return TechDiscordBot.getSpigotAPI().getUpdates().resourceId(getResourceId()).get()[TechDiscordBot.getSpigotAPI().getUpdates().resourceId(getResourceId()).size() - 1];
+    }
 
-    public static List<Plugin> allWithWiki() { return Arrays.stream(Plugin.values()).filter(Plugin::hasWiki).collect(Collectors.toList()); }
+    public static List<Plugin> allWithWiki() {
+        return Arrays.stream(Plugin.values()).filter(Plugin::hasWiki).collect(Collectors.toList());
+    }
 
-    public static boolean isPluginChannel(TextChannel channel) { return Arrays.stream(Plugin.values()).anyMatch(p -> channel.getId().equals(p.getChannelId())); }
+    public static boolean isPluginChannel(TextChannel channel) {
+        return Arrays.stream(Plugin.values()).anyMatch(p -> channel.getId().equals(p.getChannelId()));
+    }
 
-    public static Plugin byChannel(TextChannel channel) { return Arrays.stream(Plugin.values()).filter(p -> channel.getId().equals(p.getChannelId())).findFirst().orElse(null); }
+    public static Plugin byChannel(TextChannel channel) {
+        return Arrays.stream(Plugin.values()).filter(p -> channel.getId().equals(p.getChannelId())).findFirst().orElse(null);
+    }
 
-    public static Plugin byRoleName(String roleName) { return Arrays.stream(Plugin.values()).filter(p -> p.getRoleName().equals(roleName)).findFirst().orElse(null); }
+    public static Plugin byRoleName(String roleName) {
+        return Arrays.stream(Plugin.values()).filter(p -> p.getRoleName().equals(roleName)).findFirst().orElse(null);
+    }
 
-    public static Plugin byEmote(Emote emote) { return Arrays.stream(values()).filter(e -> emote.getId().equals(e.getEmoji().getId())).findFirst().orElse(null); }
+    public static Plugin byEmote(Emote emote) {
+        return Arrays.stream(values()).filter(e -> emote.getId().equals(e.getEmoji().getId())).findFirst().orElse(null);
+    }
 
-    public static List<Plugin> fromUserUsingRoles(Member member) { return member.getRoles().stream().filter(role -> Plugin.byRoleName(role.getName()) != null).map(role -> Plugin.byRoleName(role.getName())).collect(Collectors.toList()); }
+    public static List<Plugin> fromUserUsingRoles(Member member) {
+        return member.getRoles().stream().filter(role -> Plugin.byRoleName(role.getName()) != null).map(role -> Plugin.byRoleName(role.getName())).collect(Collectors.toList());
+    }
+
+    public static Plugin fromId(String resourceId) {
+        return Arrays.stream(values()).filter(all -> all.getResourceId().equals(resourceId)).findFirst().orElse(null);
+    }
+
+    public static String getMembersPluginsinEmojis(Member member) {
+        return getMembersPluginsinEmojis(member, "None");
+    }
+
+    public static String getMembersPluginsinEmojis(Member member, String defaultResponse) {
+        List<Plugin> plugins = Plugin.fromUser(member);
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        for (Plugin p : plugins) {
+            if (i != 0) sb.append(" ");
+            sb.append(p.getEmoji().getAsMention());
+            i++;
+        }
+        if(i == 0) sb.append(defaultResponse);
+        return sb.toString();
+    }
 
     public static List<Plugin> fromUser(Member member) {
         try {
-            Verification verification = TechDiscordBot.getBot().getStorage().retrieveVerificationWithDiscord(member.getUser().getId());
+            Verification verification = TechDiscordBot.getStorage().retrieveVerificationWithDiscord(member.getUser().getId());
+
             PurchaseCollection pc = null;
             try {
-                pc = TechDiscordBot.getBot().getSpigotAPI().getPurchases().userId(verification.getUserId());
+                pc = TechDiscordBot.getSpigotAPI().getPurchases().userId(verification.getUserId());
             } catch (NullPointerException ignored) {
                 TechDiscordBot.log(ConsoleColor.RED + "Could not find any SpigotMC plugins for " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator());
             }
+
             List<SongodaPurchase> purchases = null;
             try {
-                purchases = TechDiscordBot.getBot().getSongodaAPIClient().getPurchases(member.getUser());
+                purchases = TechDiscordBot.getSongodaAPI().getPurchases(member.getUser());
             } catch (NullPointerException ignored) {
                 TechDiscordBot.log(ConsoleColor.RED + "Could not find any Songoda plugins for " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator());
             }
+
             List<Plugin> plugins = new ArrayList<>();
             if(pc != null) plugins = Arrays.stream(pc.get()).map(purchase -> fromId(purchase.getResourceId())).collect(Collectors.toList());
             if(purchases != null) {
                 for (SongodaPurchase purchase : purchases) {
-                    //TechDiscordBot.getBot().log(purchase.getName() + " bought by " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator());
                     Plugin plugin = Plugin.byRoleName(purchase.getName());
                     if (plugin != null && !plugins.contains(plugin)) plugins.add(plugin);
                 }
             }
+
             return plugins;
         } catch (NullPointerException ex) {
-            TechDiscordBot.log("Error:");
+            TechDiscordBot.log(ConsoleColor.RED + "Error:");
             ex.printStackTrace();
             return new ArrayList<>();
         }
     }
-
-    public static Plugin fromId(String resourceId) { return Arrays.stream(values()).filter(all -> all.getResourceId().equals(resourceId)).findFirst().orElse(null); }
 }

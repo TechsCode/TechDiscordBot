@@ -9,8 +9,8 @@ public class Requirement {
     private String unmatchMessage;
 
     public Requirement(DefinedQuery query, int matchesRequired, String unmatchMessage) {
-        Objects.requireNonNull(query, "Defined Query cannot be null");
-        Objects.requireNonNull(unmatchMessage, "Message cannot be null");
+        Objects.requireNonNull(query, "Defined Query cannot be null!");
+        Objects.requireNonNull(unmatchMessage, "Message cannot be null!");
         this.query = query;
         this.matchesRequired = matchesRequired;
         this.unmatchMessage = unmatchMessage;
