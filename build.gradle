@@ -29,7 +29,7 @@ dependencies {
     shadow 'mysql:mysql-connector-java:5.1.17'
     shadow 'com.j2html:j2html:1.4.0'
     shadow "com.googlecode.json-simple:json-simple:1.1.1"
-
+    shadow 'com.github.EazyFTW:Ptero4J:0.2.9-BETA'
     shadow 'net.sourceforge.htmlunit:htmlunit:2.29'
 }
 

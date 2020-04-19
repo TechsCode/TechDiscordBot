@@ -18,6 +18,7 @@ public class Storage {
     private boolean connected;
 
     private String VERIFICATIONS_TABLE = "Verifications";
+    private String SERVERS_TABLE = "Servers";
 
     private Storage(MySQLSettings mySQLSettings) {
         this.connected = false;
@@ -40,6 +41,7 @@ public class Storage {
 
     public void createDefault() {
         mysql.update("CREATE TABLE IF NOT EXISTS " + VERIFICATIONS_TABLE + " (userid VARCHAR(10), discordid VARCHAR(32));");
+        mysql.update("CREATE TABLE IF NOT EXISTS " + SERVERS_TABLE + " (user_id int(64), discord_id VARCHAR(64));");
 
         this.connected = true;
     }
@@ -67,6 +69,37 @@ public class Storage {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM Verifications;");
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) ret.add(new Verification(this, rs.getString("userid"), rs.getString("discordid")));
+            rs.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
+    public void createServerUser(int userId, String discordId) {
+        mysql.update("INSERT INTO " + SERVERS_TABLE + " (user_id, discord_id) VALUES (" + userId + ", '" + discordId + "');");
+    }
+
+    public void removeServerUser(ServerUser serverUser) {
+        mysql.update("DELETE FROM " + SERVERS_TABLE + " WHERE `user_id`=" + serverUser.getUserId());
+    }
+
+    public ServerUser retrieveServerUserWithDiscord(User user) { return retrieveServerUserWithDiscord(user.getId()); }
+
+    public ServerUser retrieveServerUserWithDiscord(Member member) { return retrieveServerUserWithDiscord(member.getUser().getId()); }
+
+    public ServerUser retrieveServerUserWithDiscord(String discordId) { return retrieveServerUsers().stream().filter(serverUser -> serverUser.getDiscordId().equals(discordId)).findFirst().orElse(null); }
+
+    public ServerUser retrieveServerUserWithPteroId(int userId) { return retrieveServerUsers().stream().filter(serverUser -> serverUser.getUserId() == userId).findFirst().orElse(null); }
+
+    public Set<ServerUser> retrieveServerUsers() {
+        Set<ServerUser> ret = new HashSet<>();
+        try {
+            Connection connection = mysql.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM Servers;");
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) ret.add(new ServerUser(this, rs.getInt("user_id"), rs.getString("discord_id")));
             rs.close();
             connection.close();
         } catch (SQLException e) {

@@ -1,6 +1,8 @@
 package me.TechsCode.TechDiscordBot;
 
 import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.stanjg.ptero4j.PteroAdminAPI;
+import com.stanjg.ptero4j.PteroUserAPI;
 import me.TechsCode.SpigotAPI.client.SpigotAPIClient;
 import me.TechsCode.TechDiscordBot.client.SongodaAPIClient;
 import me.TechsCode.TechDiscordBot.module.ModulesManager;
@@ -15,6 +17,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
+import okhttp3.OkHttpClient;
 
 import javax.security.auth.login.LoginException;
 import java.util.Arrays;
@@ -40,17 +43,20 @@ public class TechDiscordBot {
 
     private static ModulesManager modulesManager;
 
+    private static PteroAdminAPI pteroAdminAPI;
+    private static PteroUserAPI pteroUserAPI;
+
     public static void main(String[] args) {
-        if (args.length < 9) {
+        if (args.length < 10) {
             log(ConsoleColor.RED + "Invalid start arguments. Consider using:");
-            log(ConsoleColor.WHITE_BOLD_BRIGHT + "java -jar TechPluginSupportBot.jar <Discord Bot Token> <Tech API Token> <Songoda Token> <MySQL Host> <MySQL Port> <MySQL Database> <MySQL Username> <MySQL Password> <Imgur Client ID>");
+            log(ConsoleColor.WHITE_BOLD_BRIGHT + "java -jar TechPluginSupportBot.jar <Discord Bot Token> <Tech API Token> <Songoda Token> <MySQL Host> <MySQL Port> <MySQL Database> <MySQL Username> <MySQL Password> <Imgur Client ID> <Ptero API Key>");
             return;
         }
 
-        new TechDiscordBot(args[0], args[1], args[2], MySQLSettings.of(args[3], args[4], args[5], args[6], args[7]), args[8], args[8]);
+        new TechDiscordBot(args[0], args[1], args[2], MySQLSettings.of(args[3], args[4], args[5], args[6], args[7]), args[8], args[8], args[9]);
     }
 
-    public TechDiscordBot(String token, String apiToken, String songodaToken, MySQLSettings mySQLSettings, String iClientId, String iClientSecret) {
+    public TechDiscordBot(String token, String apiToken, String songodaToken, MySQLSettings mySQLSettings, String iClientId, String iClientSecret, String pteroApiKey) {
         try {
             i = this;
             try {
@@ -100,6 +106,10 @@ public class TechDiscordBot {
 
         imgurClientId = iClientId;
         imgurClientSecret = iClientSecret;
+
+        Logger.getLogger(OkHttpClient.class.getName()).setLevel(Level.OFF);
+        pteroAdminAPI = new PteroAdminAPI("https://servers.techsco.de", pteroApiKey);
+        pteroUserAPI = new PteroUserAPI("https://servers.techsco.de", pteroApiKey);
 
         log("Successfully loaded the bot and logged into " + guild.getName() + " as " + self.getEffectiveName() + "!");
 
@@ -192,6 +202,14 @@ public class TechDiscordBot {
 
     public static ModulesManager getModulesManager() {
         return modulesManager;
+    }
+
+    public static PteroAdminAPI getPteroAdminAPI() {
+        return pteroAdminAPI;
+    }
+
+    public static PteroUserAPI getPteroUserAPI() {
+        return pteroUserAPI;
     }
 
     public Query<Role> getRoles(String... names) {

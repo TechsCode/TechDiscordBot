@@ -11,9 +11,15 @@ public class Verification {
         this.discordId = discordId;
     }
 
-    public String getUserId() { return userId; }
+    public String getUserId() {
+        return userId;
+    }
 
-    public String getDiscordId() { return discordId; }
+    public String getDiscordId() {
+        return discordId;
+    }
 
-    public void delete() { storage.removeVerification(this); }
+    public void delete() {
+        storage.removeVerification(this);
+    }
 }

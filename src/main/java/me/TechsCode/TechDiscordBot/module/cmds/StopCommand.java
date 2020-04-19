@@ -40,7 +40,7 @@ public class StopCommand extends CommandModule {
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
         new TechEmbedBuilder("Stopping")
-                .setText("The bot will be stopping..")
+                .setText("The bot will stop, then start!")
                 .send(channel);
         System.exit(0);
     }
