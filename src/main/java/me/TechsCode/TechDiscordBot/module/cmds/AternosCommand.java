@@ -47,7 +47,7 @@ public class AternosCommand extends CommandModule {
         String ping = bot.getMember("241267882728751104").getAsMention();
 
         new TechEmbedBuilder("Aternos")
-                .setText("Our partnership with Aternos in affiliation with Songoda has brought tons of people asking for support. **We do not offer support for Aternos members**. It is up to them to supply support for these plugins. Please ping " + ping + " in " + general + " for any questions regarding this.\n" +
+                .setText("Our partnership with Aternos has brought tons of people asking for support. **We do not offer support for Aternos members**. It is up to them to supply support for these plugins. Please ping " + ping + " in " + general + " for any questions regarding this.\n" +
                         "\n" +
                         "Thank you for understanding.")
                 .setFooter("Command Sent by " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator())
