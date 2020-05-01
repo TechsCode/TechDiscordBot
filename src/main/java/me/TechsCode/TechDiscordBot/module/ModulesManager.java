@@ -1,7 +1,6 @@
 package me.TechsCode.TechDiscordBot.module;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
-import me.TechsCode.TechDiscordBot.util.ConsoleColor;
 import me.TechsCode.TechDiscordBot.util.Project;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
@@ -105,5 +104,10 @@ public class ModulesManager {
 
     public List<CommandModule> getCommandModules() {
         return cmdModules;
+    }
+
+    public void disableAll() {
+        getModules().forEach(Module::onDisable);
+        getCommandModules().forEach(CommandModule::onDisable);
     }
 }
