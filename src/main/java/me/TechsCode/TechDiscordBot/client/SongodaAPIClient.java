@@ -1,5 +1,6 @@
 package me.TechsCode.TechDiscordBot.client;
 
+import me.TechsCode.SpigotAPI.client.APIScanner;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.mysql.storage.SongodaPurchase;
 import net.dv8tion.jda.api.entities.User;
@@ -21,18 +22,39 @@ public class SongodaAPIClient extends APIClient {
 
     private List<SongodaPurchase> purchases;
 
+    private APIScanner.APIStatus status;
+    private APIScanner.APIStatus cacheStatus;
+
     public SongodaAPIClient(String token) {
         super(token);
+        status = APIScanner.APIStatus.OFF;
+        cacheStatus = APIScanner.APIStatus.OFF;
         purchases = null;
     }
 
-    public boolean isLoaded() { return purchases != null; }
+    public boolean isLoaded() {
+        return purchases != null;
+    }
 
-    public List<SongodaPurchase> getPurchases() { return purchases; }
+    public List<SongodaPurchase> getPurchases() {
+        return purchases;
+    }
 
-    public List<SongodaPurchase> getPurchases(String discord) { return getPurchases().stream().filter(sp -> sp.getDiscord() != null && sp.getDiscord().equals(discord)).collect(Collectors.toList()); }
+    public APIScanner.APIStatus getStatus() {
+        return status;
+    }
 
-    public List<SongodaPurchase> getPurchases(User member) { return getPurchases().stream().filter(sp -> sp.getDiscord() != null && sp.getDiscord().equals(member.getName() + "#" + member.getDiscriminator())).collect(Collectors.toList()); }
+    public APIScanner.APIStatus getCacheStatus() {
+        return cacheStatus;
+    }
+
+    public List<SongodaPurchase> getPurchases(String discord) {
+        return getPurchases().stream().filter(sp -> sp.getDiscord() != null && sp.getDiscord().equals(discord)).collect(Collectors.toList());
+    }
+
+    public List<SongodaPurchase> getPurchases(User member) {
+        return getPurchases().stream().filter(sp -> sp.getDiscord() != null && sp.getDiscord().equals(member.getName() + "#" + member.getDiscriminator())).collect(Collectors.toList());
+    }
 
     @Override
     public void run() {
@@ -47,15 +69,23 @@ public class SongodaAPIClient extends APIClient {
                 JSONObject root = (JSONObject) parser.parse(new InputStreamReader((InputStream) httpcon.getContent()));
                 JSONArray data = (JSONArray) root.get("data");
                 purchases = (List<SongodaPurchase>) data.stream().map(x -> new SongodaPurchase((String) ((JSONObject) x).get("product"), (String) ((JSONObject) x).get("discord"))).collect(Collectors.toList());
+                status = APIScanner.APIStatus.OK;
                 httpcon.disconnect();
             } catch (IOException | URISyntaxException | ParseException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
+                status = APIScanner.APIStatus.OFF;
+            }
+            if(isLoaded()) {
+                cacheStatus = APIScanner.APIStatus.OK;
+            } else {
+                cacheStatus = APIScanner.APIStatus.OFF;
             }
             try {
                 sleep(50000L);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
+
         }
     }
 }
