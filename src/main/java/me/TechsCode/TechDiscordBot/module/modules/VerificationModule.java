@@ -17,8 +17,6 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,96 +45,95 @@ public class VerificationModule extends Module {
         channel = VERIFICATION_CHANNEL.query().first();
 
         lastInstructions = null;
-        apiNotAvailable = null;
+        //apiNotAvailable = null;
         verificationQueue = new ArrayList<>();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if(lastInstructions != null) lastInstructions.delete().complete();
-            if(apiNotAvailable != null) apiNotAvailable.delete().complete();
+            //if(apiNotAvailable != null) apiNotAvailable.delete().complete();
         }));
 
         sendInstructions();
-
-        startAPIOfflineThread();
+        //startAPIOfflineThread();
     }
 
     @Override
     public void onDisable() {
         if(lastInstructions != null) lastInstructions.delete().submit();
-        if(apiNotAvailable != null) apiNotAvailable.delete().complete();
+        //if(apiNotAvailable != null) apiNotAvailable.delete().complete();
     }
 
-    public void startAPIOfflineThread() {
-        new Thread(() -> {
-            while (true) {
-                if(TechDiscordBot.getSpigotAPI().isAvailable()) {
-                    if(apiNotAvailable != null) {
-                        apiNotAvailable = null;
-                        sendInstructions();
-                    }
-                } else {
-                    if(apiNotAvailable == null) {
-                        if(lastInstructions != null) lastInstructions.delete().complete();
-                        TechEmbedBuilder message = new TechEmbedBuilder()
-                                .setText("The Web API is currently unavailable. You cannot verify until it's online again!\n**Sorry for the inconvenience!**")
-                                .error();
-                        apiNotAvailable = message.send(channel);
-                    }
-                }
-                try {
-                    Thread.sleep(TimeUnit.SECONDS.toMillis(30));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
+//    public void startAPIOfflineThread() {
+//        new Thread(() -> {
+//            while (true) {
+//                if(TechDiscordBot.getSpigotAPI().isAvailable()) {
+//                    if(apiNotAvailable != null) {
+//                        apiNotAvailable = null;
+//                        sendInstructions();
+//                    }
+//                } else {
+//                    if(apiNotAvailable == null) {
+//                        if(lastInstructions != null) lastInstructions.delete().complete();
+//                        TechEmbedBuilder message = new TechEmbedBuilder()
+//                                .setText("The Web API is currently unavailable. You cannot verify until it's online again!\n**Sorry for the inconvenience!**")
+//                                .error();
+//                        apiNotAvailable = message.send(channel);
+//                    }
+//                }
+//                try {
+//                    Thread.sleep(TimeUnit.SECONDS.toMillis(30));
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }).start();
+//    }
 
     public void sendInstructions() {
-        if(apiNotAvailable != null && TechDiscordBot.getSpigotAPI().isAvailable()) {
-            apiNotAvailable.delete().complete();
-            apiNotAvailable = null;
-        }
+//        if(apiNotAvailable != null && TechDiscordBot.getSpigotAPI().isAvailable()) {
+//            apiNotAvailable.delete().complete();
+//            apiNotAvailable = null;
+//        }
 
         if(lastInstructions != null) lastInstructions.delete().complete();
-        TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("How It Works").setText("Type your SpigotMC Username in this Chat to verify.");
+        TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("How It Works").setText("Type your SpigotMC Username in this Chat to verify.\n\n**Have a Songoda Account?**\n\nPlease click [here](https://songoda.com/account/settings) to edit your discord settings.\nYour roles should then update automatically!");
         lastInstructions = howItWorksMessage.send(channel);
     }
 
     @SubscribeEvent
     public void onMessage(GuildMessageReceivedEvent e) {
-        if(e.getMember() == null) return;
-        if(e.getAuthor().isBot()) return;
-        if(!e.getChannel().equals(channel)) return;
+        if (e.getMember() == null) return;
+        if (e.getAuthor().isBot()) return;
+        if (!e.getChannel().equals(channel)) return;
 
         e.getMessage().delete().complete();
 
-        if(!TechDiscordBot.getSpigotAPI().isAvailable()) return;
+        if (!TechDiscordBot.getSpigotAPI().isAvailable()) return;
 
         TechEmbedBuilder errorMessage = new TechEmbedBuilder("Error (" + e.getAuthor().getName() + ")").error();
 
-        if(verificationQueue.contains(e.getAuthor().getId())) {
+        if (verificationQueue.contains(e.getAuthor().getId())) {
             errorMessage.setText("Please follow the instruction above!").sendTemporary(channel, 15);
             return;
         }
 
         Verification existingVerification = TechDiscordBot.getStorage().retrieveVerificationWithDiscord(e.getAuthor().getId());
-        if(existingVerification != null) {
+        if (existingVerification != null) {
             errorMessage.setText("You're already linked to your SpigotMC Account and your roles will be updated automatically!").sendTemporary(channel, 15);
             return;
         }
 
         String username = e.getMessage().getContentDisplay();
 
-        if(username.contains(" ")) {
+        if (username.contains(" ")) {
             errorMessage.setText("Please type in your SpigotMC Username!").sendTemporary(channel, 5);
             return;
         }
 
         Purchase[] purchases = TechDiscordBot.getSpigotAPI().getPurchases().username(username).get();
 
-        if(purchases.length == 0) {
-            errorMessage.setText("The user '" + username + "' does not own any of Tech's Plugins!\n\n*It may take up to 15 minutes for the bot to recognize new purchases.*").sendTemporary(channel, 10);
+        if (purchases.length == 0) {
+            errorMessage.setText("The user '" + username + "' does not own any of Tech's Plugins!\n\n*It may take up to 15 minutes for the bot to recognize new purchases.*\n\n*This could also be an issue with the api. If you believe this is a mistake, please contact a staff member!*").sendTemporary(channel, 10);
             return;
         }
 
@@ -144,15 +141,15 @@ public class VerificationModule extends Module {
         String userId = purchases[0].getUserId();
         String avatarUrl = purchases[0].getAvatarUrl();
 
-        if(!avatarUrl.contains("https://static.spigotmc.org/")) {
+        if(!avatarUrl.contains("https://static.spigotmc.org/") && !avatarUrl.startsWith("https://secure.gravatar.com/avatar/")) {
             String result = ImgurUploader.upload(avatarUrl);
-            if(result == null) {
+            if (result == null) {
                 TechDiscordBot.log(ConsoleColor.RED + "An error has occurred while trying to upload the Imgur image. Defaulting to https://i.imgur.com/dcRYH0P.png");
                 avatarUrl = "https://i.imgur.com/dcRYH0P.png";
             } else {
                 avatarUrl = result;
             }
-        } else {
+        } else if(!avatarUrl.startsWith("https://secure.gravatar.com/avatar/")) {
             avatarUrl = "https://i.imgur.com/dcRYH0P.png";
         }
 
