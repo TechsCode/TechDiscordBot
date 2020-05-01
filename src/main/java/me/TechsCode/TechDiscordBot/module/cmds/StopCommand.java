@@ -42,6 +42,7 @@ public class StopCommand extends CommandModule {
         new TechEmbedBuilder("Stopping")
                 .setText("The bot will stop, then start!")
                 .send(channel);
+        TechDiscordBot.getJDA().shutdownNow();
         System.exit(0);
     }
 }
