@@ -74,14 +74,13 @@ public class TechDiscordBot {
 
         List<Guild> guilds = jda.getGuilds();
 
-        if(guilds.size() > 1) {
-            log(ConsoleColor.RED + "The bot is a member of too many guilds. Please leave them all except one!");
+        if(guilds.size() > 2) {
+            log(ConsoleColor.RED + "The bot is a member of too many guilds. Please leave them all except two!");
             return;
         }
 
-        guild = guilds.size() != 0 ? guilds.get(0) : null;
+        guild = guilds.size() != 0 ? guilds.stream().filter(g -> g.getId().equals("311178000026566658")).findFirst().orElse(guild) : null;
         self = guild != null ? guild.getSelfMember() : null;
-
 
         if(guild == null) {
             log(ConsoleColor.RED + "The bot is not a member of any guild. Please join a guild!");
