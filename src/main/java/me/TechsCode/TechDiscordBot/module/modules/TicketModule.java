@@ -6,6 +6,7 @@ import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.objects.TicketPriority;
+import me.TechsCode.TechDiscordBot.tickets.TranscriptBuilder;
 import me.TechsCode.TechDiscordBot.util.Plugin;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -390,12 +391,18 @@ public class TicketModule extends Module {
         } else if(e.getMessage().getContentDisplay().startsWith("!close")) {
             e.getMessage().delete().submit();
             if (isTicketCreator) {
+                TranscriptBuilder.Builder ticket = new TranscriptBuilder.Builder()
+                        .channel(e.getChannel())
+                        .member(e.getMember())
+                        .password()
+                        .upload().
+                        message();
+
                 new TechEmbedBuilder("Ticket")
-                        .setText("Thank you for contacting us " + e.getAuthor().getAsMention() + ". Consider writing a review if you enjoyed the support!")
+                        .setText("Thank you for contacting us " + e.getAuthor().getAsMention() + ". Consider writing a review if you enjoyed the support!\n\n**Here is the transcript**: " + ticket.getUrl())
                         .send(e.getChannel());
 
-                //Transcripts.createTranscript(e.getMember(), channel);
-                e.getChannel().delete().completeAfter(10, TimeUnit.SECONDS);
+                e.getChannel().delete().completeAfter(15, TimeUnit.SECONDS);
 
                 new TechEmbedBuilder("Solved Ticket")
                         .setText("The ticket (" + e.getChannel().getName() + ") created by " + e.getAuthor().getAsMention() + " is now solved. Thanks for contacting us!")
@@ -419,11 +426,18 @@ public class TicketModule extends Module {
                 String reason = String.join(" ", Arrays.copyOfRange(reasons, 1, reasons.length));
                 String reasonSend = (hasReason ? " \n \n**Reason**: " + reason : "");
 
+                TranscriptBuilder.Builder ticket = new TranscriptBuilder.Builder()
+                        .channel(e.getChannel())
+                        .member(member)
+                        .password()
+                        .upload().
+                        message();
+
                 new TechEmbedBuilder("Ticket")
-                        .setText(e.getAuthor().getAsMention() + " has closed this support ticket." + reasonSend)
+                        .setText(e.getAuthor().getAsMention() + " has closed this support ticket." + reasonSend + "\n\n**Here is the transcript**:" + ticket.getUrl())
                         .send(e.getChannel());
 
-                e.getChannel().delete().completeAfter(10, TimeUnit.SECONDS);
+                e.getChannel().delete().completeAfter(15, TimeUnit.SECONDS);
                 if (member != null) {
                     new TechEmbedBuilder("Closed Ticket")
                             .setText("The ticket (" + e.getChannel().getName() + ") from " + member.getAsMention() + " has been closed!")

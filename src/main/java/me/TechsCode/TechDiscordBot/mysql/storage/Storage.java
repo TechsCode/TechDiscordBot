@@ -17,8 +17,9 @@ public class Storage {
     private MySQL mysql;
     private boolean connected;
 
-    private String VERIFICATIONS_TABLE = "Verifications";
-    private String SERVERS_TABLE = "Servers";
+    private final String VERIFICATIONS_TABLE = "Verifications";
+    private final String SERVERS_TABLE = "Servers";
+    private final String TRANSCRIPTS_TABLE = "Transcripts";
 
     private Storage(MySQLSettings mySQLSettings) {
         this.connected = false;
@@ -41,6 +42,7 @@ public class Storage {
 
     public void createDefault() {
         mysql.update("CREATE TABLE IF NOT EXISTS " + VERIFICATIONS_TABLE + " (userid VARCHAR(10), discordid VARCHAR(32));");
+        mysql.update("CREATE TABLE IF NOT EXISTS " + TRANSCRIPTS_TABLE + " (id VARCHAR(32), html LONGTEXT, password TEXT, PRIMARY KEY (id));");
         mysql.update("CREATE TABLE IF NOT EXISTS " + SERVERS_TABLE + " (user_id int(64), discord_id VARCHAR(64));");
 
         this.connected = true;
@@ -75,6 +77,10 @@ public class Storage {
             e.printStackTrace();
         }
         return ret;
+    }
+
+    public void uploadTranscript(Transcript transcript) {
+        mysql.update("INSERT INTO " + TRANSCRIPTS_TABLE + " (id, html, password) VALUES ('" + transcript.getChannelId() + "', '" + transcript.getHtml().replace("'", "''") + "', '" + transcript.getPassword() + "');");
     }
 
     public void createServerUser(int userId, String discordId) {
