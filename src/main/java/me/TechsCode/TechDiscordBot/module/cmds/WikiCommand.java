@@ -22,7 +22,7 @@ public class WikiCommand extends CommandModule {
     public String getCommand() { return "!wiki"; }
 
     @Override
-    public String[] getAliases() { return new String[]{"w"}; }
+    public String[] getAliases() { return new String[]{"!w"}; }
 
     @Override
     public DefinedQuery<Role> getRestrictedRoles() { return null; }
