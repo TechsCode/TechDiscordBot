@@ -10,6 +10,7 @@ import me.TechsCode.TechDiscordBot.mysql.MySQLSettings;
 import me.TechsCode.TechDiscordBot.mysql.storage.Storage;
 import me.TechsCode.TechDiscordBot.objects.ChannelQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
+import me.TechsCode.TechDiscordBot.reminders.ReminderManager;
 import me.TechsCode.TechDiscordBot.spigotmc.SpigotMC;
 import me.TechsCode.TechDiscordBot.util.ConsoleColor;
 import net.dv8tion.jda.api.AccountType;
@@ -42,6 +43,7 @@ public class TechDiscordBot {
     private static String imgurClientId, imgurClientSecret;
 
     private static ModulesManager modulesManager;
+    private static ReminderManager remindersManager;
 
     private static PteroAdminAPI pteroAdminAPI;
     private static PteroUserAPI pteroUserAPI;
@@ -101,7 +103,13 @@ public class TechDiscordBot {
         modulesManager = new ModulesManager();
         log("Loading modules..");
         modulesManager.load();
+
+        remindersManager = new ReminderManager();
+        log("Loading reminders..");
+        remindersManager.load();
+
         jda.addEventListener(modulesManager);
+        jda.addEventListener(remindersManager);
 
         imgurClientId = iClientId;
         imgurClientSecret = iClientSecret;
@@ -201,6 +209,10 @@ public class TechDiscordBot {
 
     public static ModulesManager getModulesManager() {
         return modulesManager;
+    }
+
+    public static ReminderManager getRemindersManager() {
+        return remindersManager;
     }
 
     public static PteroAdminAPI getPteroAdminAPI() {

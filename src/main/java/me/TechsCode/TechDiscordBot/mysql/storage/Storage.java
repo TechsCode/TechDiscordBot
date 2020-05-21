@@ -2,6 +2,8 @@ package me.TechsCode.TechDiscordBot.mysql.storage;
 
 import me.TechsCode.TechDiscordBot.mysql.MySQL;
 import me.TechsCode.TechDiscordBot.mysql.MySQLSettings;
+import me.TechsCode.TechDiscordBot.reminders.Reminder;
+import me.TechsCode.TechDiscordBot.reminders.ReminderType;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 
@@ -20,6 +22,7 @@ public class Storage {
     private final String VERIFICATIONS_TABLE = "Verifications";
     private final String SERVERS_TABLE = "Servers";
     private final String TRANSCRIPTS_TABLE = "Transcripts";
+    private final String REMINDERS_TABLE = "Reminders";
 
     private Storage(MySQLSettings mySQLSettings) {
         this.connected = false;
@@ -44,6 +47,7 @@ public class Storage {
         mysql.update("CREATE TABLE IF NOT EXISTS " + VERIFICATIONS_TABLE + " (userid VARCHAR(10), discordid VARCHAR(32));");
         mysql.update("CREATE TABLE IF NOT EXISTS " + TRANSCRIPTS_TABLE + " (id VARCHAR(32), html LONGTEXT, password TEXT, PRIMARY KEY (id));");
         mysql.update("CREATE TABLE IF NOT EXISTS " + SERVERS_TABLE + " (user_id int(64), discord_id VARCHAR(64));");
+        mysql.update("CREATE TABLE IF NOT EXISTS " + REMINDERS_TABLE + " (user_id varchar(32), channel_id varchar(32), time varchar(32), type tinyint(1), reminder longtext);");
 
         this.connected = true;
     }
@@ -68,7 +72,7 @@ public class Storage {
         Set<Verification> ret = new HashSet<>();
         try {
             Connection connection = mysql.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM Verifications;");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + VERIFICATIONS_TABLE + ";");
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) ret.add(new Verification(this, rs.getString("userid"), rs.getString("discordid")));
             rs.close();
@@ -103,7 +107,7 @@ public class Storage {
         Set<ServerUser> ret = new HashSet<>();
         try {
             Connection connection = mysql.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM Servers;");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + SERVERS_TABLE + ";");
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) ret.add(new ServerUser(this, rs.getInt("user_id"), rs.getString("discord_id")));
             rs.close();
@@ -112,5 +116,28 @@ public class Storage {
             e.printStackTrace();
         }
         return ret;
+    }
+
+    public Set<Reminder> retrieveReminders() {
+        Set<Reminder> ret = new HashSet<>();
+        try {
+            Connection connection = mysql.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + REMINDERS_TABLE + ";");
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) ret.add(new Reminder(rs.getString("user_id"), rs.getString("channel_id"), Long.parseLong(rs.getString("time")), null, (rs.getInt("type") == 0 ? ReminderType.CHANNEL : ReminderType.DMs), rs.getString("reminder")));
+            rs.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
+    public void saveReminder(Reminder reminder) {
+        mysql.update("INSERT INTO " + REMINDERS_TABLE + " (user_id, channel_id, time, type, reminder) VALUES ('" + reminder.getUserId() + "', " + (reminder.getChannelId() == null ? "NULL" : "'" + reminder.getChannelId() + "'") + ", '" + reminder.getTime() + "', " + reminder.getType().getI() + ", '" + reminder.getReminder().replace("'", "''") + "');");
+    }
+
+    public void deleteReminder(Reminder reminder) {
+        mysql.update("DELETE FROM " + REMINDERS_TABLE + " WHERE user_id='" + reminder.getUserId() + "' AND channel_id=" + (reminder.getChannelId() == null ? "NULL" : "'" + reminder.getChannelId() + "'") + " AND time='" + reminder.getTime() + "' AND type=" + reminder.getType().getI() + " AND reminder='" + reminder.getReminder().replace("'", "''") + "';");
     }
 }
