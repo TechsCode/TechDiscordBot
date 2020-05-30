@@ -399,7 +399,7 @@ public class TicketModule extends Module {
                         message();
 
                 new TechEmbedBuilder("Ticket")
-                        .setText("Thank you for contacting us " + e.getAuthor().getAsMention() + ". Consider writing a review if you enjoyed the support!\n\n**Here is the transcript**: " + ticket.getUrl())
+                        .setText("Thank you for contacting us " + e.getAuthor().getAsMention() + ". Consider writing a review if you enjoyed the support!\n\n**Here is the transcript**:\n" + ticket.getUrl())
                         .send(e.getChannel());
 
                 e.getChannel().delete().completeAfter(15, TimeUnit.SECONDS);
