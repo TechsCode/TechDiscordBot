@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 
 import java.awt.*;
 import java.util.concurrent.TimeUnit;
@@ -61,7 +62,12 @@ public class TechEmbedBuilder extends EmbedBuilder {
 
     public Message sendAfter(TextChannel textChannel, TimeUnit unit, int amount) { return textChannel.sendMessage(build()).completeAfter(amount, unit); }
 
-    public Message send(User user) { return user.openPrivateChannel().complete().sendMessage(build()).complete(); }
+    public Message send(User user) {
+        try {
+            return user.openPrivateChannel().complete().sendMessage(build()).complete();
+        } catch (ErrorResponseException ignore) {} //Ignore if user doesn't have DMs open.
+        return null;
+    }
 
     public Message send(Member member) {
         return send(member.getUser());

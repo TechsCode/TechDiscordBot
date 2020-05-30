@@ -24,9 +24,7 @@ public class ImgurUploader {
             ImgurApiClient client = new ImgurApiClient.Builder().clientAuth(TechDiscordBot.getImgurClientId(), TechDiscordBot.getImgurClientSecret()).build();
             Image img = client.imageService().uploadBase64Image(base64, null, null, null);
             return img.getLink();
-        } catch (ImgurApiException e) {// | IOException e) {
-            e.printStackTrace();
-        }
+        } catch (ImgurApiException ignored) {}
         return null;
     }
 

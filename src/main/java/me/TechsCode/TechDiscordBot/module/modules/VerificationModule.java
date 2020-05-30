@@ -10,7 +10,6 @@ import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.spigotmc.ProfileComment;
 import me.TechsCode.TechDiscordBot.spigotmc.SpigotMC;
-import me.TechsCode.TechDiscordBot.util.ConsoleColor;
 import me.TechsCode.TechDiscordBot.util.Plugin;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -144,7 +143,7 @@ public class VerificationModule extends Module {
         if(!avatarUrl.contains("https://static.spigotmc.org/") && !avatarUrl.startsWith("https://secure.gravatar.com/avatar/")) {
             String result = ImgurUploader.upload(avatarUrl);
             if (result == null) {
-                TechDiscordBot.log(ConsoleColor.RED + "An error has occurred while trying to upload the Imgur image. Defaulting to https://i.imgur.com/dcRYH0P.png");
+                //TechDiscordBot.log(ConsoleColor.RED + "An error has occurred while trying to upload the Imgur image. Defaulting to https://i.imgur.com/dcRYH0P.png");
                 avatarUrl = "https://i.imgur.com/dcRYH0P.png";
             } else {
                 avatarUrl = result;
