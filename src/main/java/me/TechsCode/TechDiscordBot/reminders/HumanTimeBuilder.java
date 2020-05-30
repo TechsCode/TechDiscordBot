@@ -1,5 +1,7 @@
 package me.TechsCode.TechDiscordBot.reminders;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class HumanTimeBuilder {
 
     private int seconds = 0;
@@ -63,7 +65,9 @@ public class HumanTimeBuilder {
             sb.append(seconds).append(" second").append(plural(seconds, false));
         }
 
-        return sb.toString();
+        String string = sb.toString();
+        if(string.endsWith(",")) string = StringUtils.chop(string);
+        return string;
     }
 
     public String plural(int am, boolean space) {
