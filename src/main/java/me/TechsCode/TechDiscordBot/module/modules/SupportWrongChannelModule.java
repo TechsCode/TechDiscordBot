@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class GeneralChannelModule extends Module {
+public class SupportWrongChannelModule extends Module {
 
     private final DefinedQuery<TextChannel> GENERAL_CHANNEL = new DefinedQuery<TextChannel>() {
         @Override
@@ -24,9 +24,17 @@ public class GeneralChannelModule extends Module {
         }
     };
 
-    public String[] triggerWords = new String[]{"ultra", "how can i", "help me", "youtube bridge", "youtubebridge", "how do i", "how does"};
+    private final DefinedQuery<TextChannel> PLUGIN_DISCUSSION_CHANNEL = new DefinedQuery<TextChannel>() {
+        @Override
+        protected Query<TextChannel> newQuery() { return bot.getChannels("plugin-discussion"); } };
 
-    public GeneralChannelModule(TechDiscordBot bot) {
+    private final DefinedQuery<TextChannel> CODING_HELP = new DefinedQuery<TextChannel>() {
+        @Override
+        protected Query<TextChannel> newQuery() { return bot.getChannels("coding-help"); } };
+
+    public String[] triggerWords = new String[]{"ultra", "how can i", "help me", "youtube bridge", "youtubebridge", "how do i", "how does", "uperms", "ucustomizer", "customizer", "permissions", "regions"};
+
+    public SupportWrongChannelModule(TechDiscordBot bot) {
         super(bot);
     }
 
@@ -40,16 +48,16 @@ public class GeneralChannelModule extends Module {
 
     @Override
     public String getName() {
-        return "General Channel Module";
+        return "Support in Wrong Channel";
     }
 
     @SubscribeEvent
     public void onMessage(GuildMessageReceivedEvent e) {
         if(e.getMember() == null) return;
         if(e.getAuthor().isBot()) return;
-        if(e.getChannel().getId().equals(GENERAL_CHANNEL.query().first().getId())) {
+        if(e.getChannel().getId().equals(GENERAL_CHANNEL.query().first().getId()) || e.getChannel().getId().equals(PLUGIN_DISCUSSION_CHANNEL.query().first().getId()) || e.getChannel().getId().equals(CODING_HELP.query().first().getId())) {
             if(Arrays.stream(triggerWords).anyMatch(word -> e.getMessage().getContentDisplay().toLowerCase().contains(word))) {
-                triggerMessage(e.getMember());
+                triggerMessage(e.getChannel(), e.getMember());
             }
         }
     }
@@ -68,18 +76,22 @@ public class GeneralChannelModule extends Module {
         }
     }
 
-    public void triggerMessage(Member member) {
+    public void triggerMessage(TextChannel channel, Member member) {
         if(messages.containsValue(member.getId())) return;
-        TextChannel channel = bot.getChannel("695493411117072425");
-        Message message = new TechEmbedBuilder().setText("**Hello, " + member.getAsMention() + "!** I've detected that you might be trying to get help in this channel! Please verify in " + channel.getAsMention() + " in order to get help, thanks!\n\n*If you are not trying to get help, you can delete this message by reacting to it!*")
+        TextChannel verificationChannel = bot.getChannel("695493411117072425");
+        Message message = new TechEmbedBuilder().setText("**Hello, " + member.getAsMention() + "!** I've detected that you might be trying to get help in this channel! Please verify in " + verificationChannel.getAsMention() + " in order to get help, thanks!\n\n*If you are not trying to get help, you can delete this message by reacting to it!*")
                 .error()
-                .send(GENERAL_CHANNEL.query().first());
+                .send(channel);
         message.addReaction("❌").queue();
         messages.put(message.getId(), member.getId());
     }
 
     @Override
     public Requirement[] getRequirements() {
-        return new Requirement[]{new Requirement(GENERAL_CHANNEL, 1, "Could not find #general")};
+        return new Requirement[]{
+                new Requirement(GENERAL_CHANNEL, 1, "Could not find #general"),
+                new Requirement(PLUGIN_DISCUSSION_CHANNEL, 1, "Could not find #plugin-discussion"),
+                new Requirement(CODING_HELP, 1, "Could not find #coding-help")
+        };
     }
 }
