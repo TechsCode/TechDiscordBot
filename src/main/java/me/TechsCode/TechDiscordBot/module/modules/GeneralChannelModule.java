@@ -74,7 +74,7 @@ public class GeneralChannelModule extends Module {
         Message message = new TechEmbedBuilder().setText("**Hello, " + member.getAsMention() + "!** I've detected that you might be trying to get help in this channel! Please verify in " + channel.getAsMention() + " in order to get help, thanks!\n\n*If you are not trying to get help, you can delete this message by reacting to it!*")
                 .error()
                 .send(GENERAL_CHANNEL.query().first());
-        message.addReaction(":x:").queue();
+        message.addReaction("❌").queue();
         messages.put(message.getId(), member.getId());
     }
 
