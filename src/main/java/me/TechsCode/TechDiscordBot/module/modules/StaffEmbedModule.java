@@ -29,7 +29,7 @@ public class StaffEmbedModule extends Module {
         if(e.getAuthor().isBot()) return;
         if(!e.getMember().getRoles().contains(STAFF_ROLE.query().first())) return;
 
-        String message = e.getMessage().getContentDisplay();
+        String message = e.getMessage().getContentRaw();
 
         if(message.startsWith("^^ ") && message.endsWith(" ^^")) {
             e.getMessage().delete().complete();
