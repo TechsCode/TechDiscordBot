@@ -44,7 +44,7 @@ public class AternosCommand extends CommandModule {
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
         String general = bot.getChannel("311178000026566658").getAsMention();
-        String ping = bot.getMember("241267882728751104").getAsMention();
+        String ping = bot.getMember("714663951320744037").getAsMention();
 
         new TechEmbedBuilder("Aternos")
                 .setText("Our partnership with Aternos has brought tons of people asking for support. **We do not offer support for Aternos members**. It is up to them to supply support for these plugins. Please ping " + ping + " in " + general + " for any questions regarding this.\n" +
