@@ -100,12 +100,12 @@ public class TranscriptBuilder {
         }
 
         public String getUrl() {
-            return "https://tickets.techsco.de/" + this.channelId + "/" + this.password;
+            return "https://tickets.techscode.de/" + this.channelId + "/" + this.password;
         }
 
         public Builder message() {
             new TechEmbedBuilder("New Transcript")
-                    .setText((this.member == null ? "Unknown" : member.getAsMention()) + "'s Ticket Transcript.\n\nhttps://tickets.techsco.de/" + this.channelId + "/" + this.password)
+                    .setText((this.member == null ? "Unknown" : member.getAsMention()) + "'s Ticket Transcript.\n\nhttps://tickets.techscode.de/" + this.channelId + "/" + this.password)
                     .send(TRANSCRIPTS_CHANNEL.query().first());
             return this;
         }

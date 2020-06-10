@@ -93,10 +93,10 @@ public class ServerCommand extends CommandModule {
                                             .addField("Username", user.getUser().getUsername(), true)
                                             .addField("Password", "`" + user.getPass() + "`", true)
                                             .addField("Server ID", server.getLongId(), true)
-                                            .addField("Server IP", "servers.techsco.de:" + port, true)
+                                            .addField("Server IP", "servers.techscode.de:" + port, true)
                                             .addField("Server MC Version", version.getVersion(), true)
                                             .addField("Max Databases", String.valueOf(server.getFeatureLimits().getMaxDatabases()), true)
-                                            .addField("Instructions", "Go to https://servers.techsco.de/auth/login and login with the information above. By the time you login, you should see the server!", false)
+                                            .addField("Instructions", "Go to https://servers.techscode.de/auth/login and login with the information above. By the time you login, you should see the server!", false)
                                             .send(channel);
                                 } else {
                                     try {
@@ -105,10 +105,10 @@ public class ServerCommand extends CommandModule {
                                                 .addField("Username", user.getUser().getUsername(), true)
                                                 .addField("Password", "`" + user.getPass() + "`", true)
                                                 .addField("Server ID", server.getLongId(), true)
-                                                .addField("Server IP", "servers.techsco.de:" + port, true)
+                                                .addField("Server IP", "servers.techscode.de:" + port, true)
                                                 .addField("Server MC Version", version.getVersion(), true)
                                                 .addField("Max Databases", String.valueOf(server.getFeatureLimits().getMaxDatabases()), true)
-                                                .addField("Instructions", "Go to https://servers.techsco.de/auth/login and login with the information above. By the time you login, you should see the server!", false)
+                                                .addField("Instructions", "Go to https://servers.techscode.de/auth/login and login with the information above. By the time you login, you should see the server!", false)
                                                 .send(memberServer);
                                     } catch (ErrorResponseException ex) {
                                         new TechEmbedBuilder("User/Server Information")
@@ -116,10 +116,10 @@ public class ServerCommand extends CommandModule {
                                                 .addField("Username", user.getUser().getUsername(), true)
                                                 .addField("Password", "`" + user.getPass() + "`", true)
                                                 .addField("Server ID", server.getLongId(), true)
-                                                .addField("Server IP", "servers.techsco.de:" + port, true)
+                                                .addField("Server IP", "servers.techscode.de:" + port, true)
                                                 .addField("Server MC Version", version.getVersion(), true)
                                                 .addField("Max Databases", String.valueOf(server.getFeatureLimits().getMaxDatabases()), true)
-                                                .addField("Instructions", "Go to https://servers.techsco.de/auth/login and login with the information above. By the time you login, you should see the server!", false)
+                                                .addField("Instructions", "Go to https://servers.techscode.de/auth/login and login with the information above. By the time you login, you should see the server!", false)
                                                 .send(channel);
                                     }
                                 }

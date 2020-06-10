@@ -89,7 +89,7 @@ public class TechDiscordBot {
             return;
         }
 
-        spigotAPIClient = new SpigotAPIClient("https://api.techsco.de", apiToken);
+        spigotAPIClient = new SpigotAPIClient("https://api.techscode.de", apiToken);
         songodaAPIClient = new SongodaAPIClient(songodaToken);
 
         log("Initializing MySQL Storage " + mySQLSettings.getHost() + ":" + mySQLSettings.getPort() + "!");
@@ -115,8 +115,8 @@ public class TechDiscordBot {
         imgurClientSecret = iClientSecret;
 
         Logger.getLogger(OkHttpClient.class.getName()).setLevel(Level.OFF);
-        pteroAdminAPI = new PteroAdminAPI("https://servers.techsco.de", pteroApiKey);
-        pteroUserAPI = new PteroUserAPI("https://servers.techsco.de", pteroApiKey);
+        pteroAdminAPI = new PteroAdminAPI("https://servers.techscode.de", pteroApiKey);
+        pteroUserAPI = new PteroUserAPI("https://servers.techscode.de", pteroApiKey);
 
         log("Successfully loaded the bot and logged into " + guild.getName() + " as " + self.getEffectiveName() + "!");
 
