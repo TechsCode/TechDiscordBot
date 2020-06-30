@@ -4,7 +4,6 @@ import me.TechsCode.SpigotAPI.client.collections.PurchaseCollection;
 import me.TechsCode.SpigotAPI.client.objects.Resource;
 import me.TechsCode.SpigotAPI.client.objects.Update;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
-import me.TechsCode.TechDiscordBot.mysql.storage.SongodaPurchase;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
 import net.dv8tion.jda.api.entities.*;
 
@@ -12,6 +11,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public enum Plugin {
@@ -23,8 +23,8 @@ public enum Plugin {
     ULTRA_PUNISHMENTS("Ultra Punishments", "63511", "531255363505487872", "531251918291599401", new Color(247, 119, 39), "UltraPunishments", "https://ultrapunishments.com/wiki", "https://www.spigotmc.org/data/resource_icons/63/63511.jpg?1551053820"),
     INSANE_SHOPS("Insane Shops", "67352", "531255363505487872", "576813543698202624", new Color(114, 185, 77), "InsaneShops", "https://insaneshops.com/wiki", "https://www.spigotmc.org/data/resource_icons/67/67352.jpg?1557794141");
 
-    private String resourceId, channelId, roleName, roleId, emojiName, wiki, logo;
-    private Color color;
+    private final String resourceId, channelId, roleName, roleId, emojiName, wiki, logo;
+    private final Color color;
 
     Plugin(String roleName, String resourceId, String roleId, String channelId, Color color, String emojiName, String wiki, String logo) {
         this.roleName = roleName;
@@ -97,6 +97,12 @@ public enum Plugin {
         return Arrays.stream(Plugin.values()).filter(Plugin::hasWiki).collect(Collectors.toList());
     }
 
+    public static String getEmotesByList(List<String> plugins) {
+        String sb = plugins.stream().map(Plugin::byRoleName).filter(Objects::nonNull).map(plugin -> plugin.getEmoji().getAsMention() + " ").collect(Collectors.joining());
+        if(sb.length() < 4) return "";
+        return sb.substring(0, sb.length() - 1);
+    }
+
     public static boolean isPluginChannel(TextChannel channel) {
         return Arrays.stream(Plugin.values()).anyMatch(p -> channel.getId().equals(p.getChannelId()));
     }
@@ -149,21 +155,21 @@ public enum Plugin {
                 TechDiscordBot.log(ConsoleColor.RED + "Could not find any SpigotMC plugins for " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator());
             }
 
-            List<SongodaPurchase> purchases = null;
-            try {
-                purchases = TechDiscordBot.getSongodaAPI().getPurchases(member.getUser());
-            } catch (NullPointerException ignored) {
-                TechDiscordBot.log(ConsoleColor.RED + "Could not find any Songoda plugins for " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator());
-            }
+//            List<SongodaPurchase> purchases = null;
+//            try {
+//                purchases = TechDiscordBot.getSongodaAPI().getPurchases(member.getUser());
+//            } catch (NullPointerException ignored) {
+//                TechDiscordBot.log(ConsoleColor.RED + "Could not find any Songoda plugins for " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator());
+//            }
 
             List<Plugin> plugins = new ArrayList<>();
             if(pc != null) plugins = Arrays.stream(pc.get()).map(purchase -> fromId(purchase.getResourceId())).collect(Collectors.toList());
-            if(purchases != null) {
-                for (SongodaPurchase purchase : purchases) {
-                    Plugin plugin = Plugin.byRoleName(purchase.getName());
-                    if (plugin != null && !plugins.contains(plugin)) plugins.add(plugin);
-                }
-            }
+//            if(purchases != null) {
+//                for (SongodaPurchase purchase : purchases) {
+//                    Plugin plugin = Plugin.byRoleName(purchase.getName());
+//                    if (plugin != null && !plugins.contains(plugin)) plugins.add(plugin);
+//                }
+//            }
 
             return plugins;
         } catch (NullPointerException ex) {

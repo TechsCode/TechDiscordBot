@@ -2,7 +2,6 @@ package me.TechsCode.TechDiscordBot.module.modules;
 
 import me.TechsCode.SpigotAPI.client.objects.Purchase;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
-import me.TechsCode.TechDiscordBot.imgur.ImgurUploader;
 import me.TechsCode.TechDiscordBot.module.Module;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
@@ -95,7 +94,7 @@ public class VerificationModule extends Module {
 //        }
 
         if(lastInstructions != null) lastInstructions.delete().complete();
-        TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("How It Works").setText("Type your SpigotMC Username in this Chat to verify then follow the instructions.");
+        TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("How It Works").setText("Type your SpigotMC Username in this Chat to verify.\n\nVerification not working? Feel free to contact a staff member in <#311178000026566658>.");
         lastInstructions = howItWorksMessage.send(channel);
     }
 
@@ -140,17 +139,18 @@ public class VerificationModule extends Module {
         String userId = purchases[0].getUserId();
         String avatarUrl = purchases[0].getAvatarUrl();
 
-        if(!avatarUrl.contains("https://static.spigotmc.org/") && !avatarUrl.startsWith("https://secure.gravatar.com/avatar/")) {
-            String result = ImgurUploader.upload(avatarUrl);
-            if (result == null) {
-                //TechDiscordBot.log(ConsoleColor.RED + "An error has occurred while trying to upload the Imgur image. Defaulting to https://i.imgur.com/dcRYH0P.png");
-                avatarUrl = "https://i.imgur.com/dcRYH0P.png";
-            } else {
-                avatarUrl = result;
-            }
-        } else if(!avatarUrl.startsWith("https://secure.gravatar.com/avatar/")) {
-            avatarUrl = "https://i.imgur.com/dcRYH0P.png";
-        }
+        //Maybe icons work now (Cloudflare)?!!!?
+//        if(!avatarUrl.contains("https://static.spigotmc.org/") && !avatarUrl.startsWith("https://secure.gravatar.com/avatar/")) {
+//            String result = ImgurUploader.upload(avatarUrl);
+//            if (result == null) {
+//                //TechDiscordBot.log(ConsoleColor.RED + "An error has occurred while trying to upload the Imgur image. Defaulting to https://i.imgur.com/dcRYH0P.png");
+//                avatarUrl = "https://i.imgur.com/dcRYH0P.png";
+//            } else {
+//                avatarUrl = result;
+//            }
+//        } else if(!avatarUrl.startsWith("https://secure.gravatar.com/avatar/")) {
+//            avatarUrl = "https://i.imgur.com/dcRYH0P.png";
+//        }
 
         existingVerification = TechDiscordBot.getStorage().retrieveVerificationWithSpigot(userId);
         if(existingVerification != null) {

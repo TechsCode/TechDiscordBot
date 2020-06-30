@@ -32,15 +32,15 @@ public class StaffEmbedModule extends Module {
         String message = e.getMessage().getContentRaw();
 
         if(message.startsWith("^^ ") && message.endsWith(" ^^")) {
-            e.getMessage().delete().complete();
+            e.getMessage().delete().queue();
 
-            String text = message.substring(3, message.length()-3);
-            e.getChannel().sendMessage(text).complete();
+            String text = message.substring(3, message.length() - 3);
+            e.getChannel().sendMessage(text).queue();
             return;
         }
 
         if(message.startsWith("^ ")) {
-            e.getMessage().delete().complete();
+            e.getMessage().delete().queue();
 
             String text = message.substring(2);
             String[] arguments = text.split("\\^");

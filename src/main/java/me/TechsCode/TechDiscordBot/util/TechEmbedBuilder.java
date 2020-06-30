@@ -8,7 +8,9 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 
 import java.awt.*;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 public class TechEmbedBuilder extends EmbedBuilder {
 
@@ -76,6 +78,14 @@ public class TechEmbedBuilder extends EmbedBuilder {
     public void sendTemporary(TextChannel textChannel, int duration, TimeUnit timeUnit) {
         Message message = send(textChannel);
         message.delete().submitAfter(duration, timeUnit);
+    }
+
+    public ScheduledFuture<?> sendAfter(TextChannel textChannel, int duration, Consumer<Message> onSuccess) {
+        return textChannel.sendMessage(build()).queueAfter(duration, TimeUnit.SECONDS, onSuccess);
+    }
+
+    public ScheduledFuture<?> sendAfter(TextChannel textChannel, int duration, TimeUnit timeUnit, Consumer<Message> onSuccess) {
+        return textChannel.sendMessage(build()).queueAfter(duration, timeUnit, onSuccess);
     }
 
     public void sendTemporary(TextChannel textChannel, int duration) {
