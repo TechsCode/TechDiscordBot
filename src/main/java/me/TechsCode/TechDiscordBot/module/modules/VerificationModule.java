@@ -95,7 +95,7 @@ public class VerificationModule extends Module {
 //        }
 
         if(lastInstructions != null) lastInstructions.delete().complete();
-        TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("How It Works").setText("Type your SpigotMC Username in this Chat to verify.\n\n**Have a Songoda Account?**\n\nPlease click [here](https://songoda.com/account/settings) to edit your discord settings.\nYour roles should then update automatically!");
+        TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("How It Works").setText("Type your SpigotMC Username in this Chat to verify then follow the instructions.");
         lastInstructions = howItWorksMessage.send(channel);
     }
 
@@ -132,7 +132,7 @@ public class VerificationModule extends Module {
         Purchase[] purchases = TechDiscordBot.getSpigotAPI().getPurchases().username(username).get();
 
         if (purchases.length == 0) {
-            errorMessage.setText("The user '" + username + "' does not own any of Tech's Plugins!\n\n*It may take up to 15 minutes for the bot to recognize new purchases.*\n\n*This could also be an issue with the api. If you believe this is a mistake, please contact a staff member!*").sendTemporary(channel, 10);
+            errorMessage.setText("The user '" + username + "' does not own any of Tech's Plugins!\n\n*It may take up to 20 minutes for the bot to recognize new purchases.*\n\n*This could also be an issue with the api. If you believe this is a mistake, please contact a staff member!*").sendTemporary(channel, 10);
             return;
         }
 

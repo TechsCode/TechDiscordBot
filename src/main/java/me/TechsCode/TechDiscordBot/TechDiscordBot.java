@@ -4,13 +4,14 @@ import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.stanjg.ptero4j.PteroAdminAPI;
 import com.stanjg.ptero4j.PteroUserAPI;
 import me.TechsCode.SpigotAPI.client.SpigotAPIClient;
-import me.TechsCode.TechDiscordBot.client.SongodaAPIClient;
 import me.TechsCode.TechDiscordBot.module.ModulesManager;
 import me.TechsCode.TechDiscordBot.mysql.MySQLSettings;
 import me.TechsCode.TechDiscordBot.mysql.storage.Storage;
 import me.TechsCode.TechDiscordBot.objects.ChannelQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.reminders.ReminderManager;
+import me.TechsCode.TechDiscordBot.songoda.SongodaPurchase;
+import me.TechsCode.TechDiscordBot.songoda.SongodaPurchases;
 import me.TechsCode.TechDiscordBot.spigotmc.SpigotMC;
 import me.TechsCode.TechDiscordBot.util.ConsoleColor;
 import net.dv8tion.jda.api.AccountType;
@@ -36,7 +37,8 @@ public class TechDiscordBot {
     private static Member self;
 
     private static SpigotAPIClient spigotAPIClient;
-    private static SongodaAPIClient songodaAPIClient;
+    //private static SongodaAPIClient songodaAPIClient;
+    private static List<SongodaPurchase> songodaPurchases;
 
     private static Storage storage;
 
@@ -90,7 +92,8 @@ public class TechDiscordBot {
         }
 
         spigotAPIClient = new SpigotAPIClient("https://api.techscode.de", apiToken);
-        songodaAPIClient = new SongodaAPIClient(songodaToken);
+        //songodaAPIClient = new SongodaAPIClient(songodaToken);
+        songodaPurchases = SongodaPurchases.getPurchases();
 
         log("Initializing MySQL Storage " + mySQLSettings.getHost() + ":" + mySQLSettings.getPort() + "!");
         storage = Storage.of(mySQLSettings);
@@ -135,11 +138,8 @@ public class TechDiscordBot {
         log("");
 
         log("Songoda: ");
-        if(getSongodaAPI().isLoaded()) {
-            log("  » Purchases: " + getSongodaAPI().getPurchases().size());
-        } else {
-            log("  » " + ConsoleColor.RED + "Could not connect. Cannot show info!");
-        }
+        log("  » Final Purchases: " + getSongodaPurchases().size());
+
 
         log("");
 
@@ -203,8 +203,12 @@ public class TechDiscordBot {
         return spigotAPIClient;
     }
 
-    public static SongodaAPIClient getSongodaAPI() {
-        return songodaAPIClient;
+//    public static SongodaAPIClient getSongodaAPI() {
+//        return songodaAPIClient;
+//    }
+
+    public static List<SongodaPurchase> getSongodaPurchases() {
+        return songodaPurchases;
     }
 
     public static ModulesManager getModulesManager() {

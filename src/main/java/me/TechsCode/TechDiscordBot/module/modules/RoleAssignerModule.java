@@ -5,7 +5,6 @@ import me.TechsCode.SpigotAPI.client.objects.Resource;
 import me.TechsCode.SpigotAPI.client.objects.Review;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.Module;
-import me.TechsCode.TechDiscordBot.mysql.storage.SongodaPurchase;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
@@ -90,7 +89,7 @@ public class RoleAssignerModule extends Module {
 
     public void loop() {
         if(!TechDiscordBot.getSpigotAPI().isAvailable()) return;
-        if(!TechDiscordBot.getSongodaAPI().isLoaded()) return;
+        //if(!TechDiscordBot.getSongodaAPI().isLoaded()) return;
 
         Role verificationRole = VERIFICATION_ROLE.query().first();
         Role songodaVerificationRole = SONGODA_VERIFICATION_ROLE.query().first();
@@ -134,12 +133,12 @@ public class RoleAssignerModule extends Module {
                 if(purchases != 0 && purchases == reviews) rolesToKeep.add(reviewSquad);
             }
 
-            for (SongodaPurchase songodaPurchase : TechDiscordBot.getSongodaAPI().getPurchases()) {
-                if (songodaPurchase.getDiscord() != null && songodaPurchase.getDiscord().equalsIgnoreCase(all.getUser().getName() + "#" + all.getUser().getDiscriminator())) {
-                    rolesToKeep.add(songodaVerificationRole);
-                    rolesToKeep.add(bot.getRoles(songodaPurchase.getName()).first());
-                }
-            }
+//            for (SongodaPurchase songodaPurchase : TechDiscordBot.getSongodaAPI().getPurchases()) {
+//                if (songodaPurchase.getDiscord() != null && songodaPurchase.getDiscord().equalsIgnoreCase(all.getUser().getName() + "#" + all.getUser().getDiscriminator())) {
+//                    rolesToKeep.add(songodaVerificationRole);
+//                    rolesToKeep.add(bot.getRoles(songodaPurchase.getName()).first());
+//                }
+//            }
 
             Set<Role> rolesToRemove = possibleRoles.stream()
                     .filter(role -> !rolesToKeep.contains(role))
