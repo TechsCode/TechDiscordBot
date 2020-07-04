@@ -19,7 +19,7 @@ repositories {
 dependencies {
     shadow project(":SpigotAPI")
 
-    shadow ('net.dv8tion:JDA:4.1.1_155') {
+    shadow ('net.dv8tion:JDA:4.2.0_172') {
         exclude module: 'opus-java' //No audio.
     }
 

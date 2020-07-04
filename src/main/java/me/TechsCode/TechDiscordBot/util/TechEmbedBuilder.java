@@ -19,13 +19,13 @@ public class TechEmbedBuilder extends EmbedBuilder {
     }
 
     public TechEmbedBuilder(String title) {
-        if(title != null) setAuthor(title, "http://techsco.de", "https://i.imgur.com/nnegGEV.png");
+        if(title != null) setAuthor(title, "http://techscode.de", "https://i.imgur.com/nnegGEV.png");
         setColor(new Color(81, 153, 226));
         setFooter("Developed by Tech & Team");
     }
 
     public TechEmbedBuilder(String title, boolean footer) {
-        if(title != null) setAuthor(title, "http://techsco.de", "https://i.imgur.com/nnegGEV.png");
+        if(title != null) setAuthor(title, "http://techscode.de", "https://i.imgur.com/nnegGEV.png");
         setColor(new Color(81, 153, 226));
         if(footer) setFooter("Developed by Tech & Team");
     }
