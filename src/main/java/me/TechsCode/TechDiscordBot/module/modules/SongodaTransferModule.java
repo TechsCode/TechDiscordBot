@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class SongodaTransferModule extends Module {
@@ -33,7 +34,6 @@ public class SongodaTransferModule extends Module {
     };
 
     private Message lastInstructions;
-    private boolean inUse;
 
     private String currentId;
     private Selection selectionStep;
@@ -53,7 +53,6 @@ public class SongodaTransferModule extends Module {
         email = null;
 
         plugins = "";
-        inUse = false;
         selectionStep = Selection.WAITING;
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -69,7 +68,6 @@ public class SongodaTransferModule extends Module {
         lastInstructions = howItWorksMessage.send(TRANSFER_CHANNEL.query().first());
         lastInstructions.addReaction(TechDiscordBot.getJDA().getEmoteById("433379431269138442")).queue();
 
-        inUse = false;
         selectionStep = Selection.WAITING;
         username = null;
         email = null;
@@ -84,7 +82,6 @@ public class SongodaTransferModule extends Module {
             lastInstructions = message;
             lastInstructions.addReaction(TechDiscordBot.getJDA().getEmoteById("433379431269138442")).queue();
 
-            inUse = false;
             selectionStep = Selection.WAITING;
             username = null;
             email = null;
@@ -97,14 +94,18 @@ public class SongodaTransferModule extends Module {
 
     @SubscribeEvent
     public void onMessageReactionAdd(MessageReactionAddEvent e) {
-        if(e.getUser() == null || e.getMember() == null) return;
-        if(e.getUser().isBot()) return;
-        if(e.getChannel() != TRANSFER_CHANNEL.query().first()) return;
-        if(inUse || selectionStep != Selection.WAITING) return;
+        if (e.getUser() == null || e.getMember() == null) return;
+        if (e.getUser().isBot()) return;
+        if (e.getChannel() != TRANSFER_CHANNEL.query().first()) return;
+        if (selectionStep != Selection.WAITING) return;
+        if (e.getMember().getRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase("Requested-Transfer"))) {
+            e.getReaction().removeReaction(e.getUser()).queue();
+            return;
+        }
 
         currentId = e.getUserId();
 
-        if(lastInstructions != null) lastInstructions.delete().queue();
+        if (lastInstructions != null) lastInstructions.delete().queue();
 
         List<String> purchases = TechDiscordBot.getSongodaPurchases().stream()
                 .filter(p -> p.getDiscord() != null && p.getDiscord().equals(e.getUser().getName() + "#" + e.getUser().getDiscriminator())).map(SongodaPurchase::getProduct).collect(Collectors.toList());
@@ -129,6 +130,20 @@ public class SongodaTransferModule extends Module {
                     .setText("We couldn't find a plugin connected to your discord.\n\nCould you please provide your email tied to your Songoda account?")
                     .send(TRANSFER_CHANNEL.query().first());
         }
+
+        new Thread(() -> {
+            try {
+                Thread.sleep(TimeUnit.MINUTES.toMillis(3));
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+            if (selectionStep == Selection.WAITING) return;
+            sendInstructions();
+            new TechEmbedBuilder("Songoda Account Transfer (" + e.getUser().getName() + ") - Error")
+                    .error()
+                    .setText("You took too long!")
+                    .sendTemporary(TRANSFER_CHANNEL.query().first(), 10);
+        }).start();
     }
 
     @SubscribeEvent

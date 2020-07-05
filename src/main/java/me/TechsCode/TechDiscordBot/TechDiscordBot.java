@@ -12,7 +12,6 @@ import me.TechsCode.TechDiscordBot.songoda.SongodaPurchase;
 import me.TechsCode.TechDiscordBot.songoda.SongodaPurchases;
 import me.TechsCode.TechDiscordBot.spigotmc.SpigotMC;
 import me.TechsCode.TechDiscordBot.util.ConsoleColor;
-import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
@@ -58,10 +57,10 @@ public class TechDiscordBot {
         try {
             i = this;
             try {
-                jda = new JDABuilder(AccountType.BOT)
+                jda = JDABuilder.createDefault(token)
                         .setEventManager(new AnnotatedEventManager())
                         .setActivity(Activity.listening("for help."))
-                        .setToken(token).build().awaitReady();
+                        .build().awaitReady();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
