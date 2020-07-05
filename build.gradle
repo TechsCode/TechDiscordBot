@@ -27,6 +27,7 @@ dependencies {
     shadow 'com.j2html:j2html:1.4.0'
     shadow "com.googlecode.json-simple:json-simple:1.1.1"
     shadow 'net.sourceforge.htmlunit:htmlunit:2.29'
+    shadow 'com.google.code.gson:gson:2.8.6'
 }
 
 def props = new Properties()
