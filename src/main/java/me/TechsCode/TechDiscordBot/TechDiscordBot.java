@@ -60,7 +60,7 @@ public class TechDiscordBot {
             try {
                 jda = new JDABuilder(AccountType.BOT)
                         .setEventManager(new AnnotatedEventManager())
-                        .setActivity(Activity.playing("in quarantine \uD83E\uDDA0\uD83D\uDE37"))
+                        .setActivity(Activity.listening("for help."))
                         .setToken(token).build().awaitReady();
             } catch (InterruptedException e) {
                 e.printStackTrace();

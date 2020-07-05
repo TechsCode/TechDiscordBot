@@ -408,9 +408,6 @@ public class TicketModule extends Module {
                         .setText("The ticket (" + e.getChannel().getName() + ") created by " + e.getAuthor().getAsMention() + " is now solved. Thanks for contacting us!")
                         .success()
                         .send(channel);
-                isSelection = false;
-                selectionUserId = null;
-                sendPriorityInstructions(null);
             } else {
                 if (!TechDiscordBot.isStaff(e.getMember())) {
                     new TechEmbedBuilder("Ticket")
@@ -447,21 +444,17 @@ public class TicketModule extends Module {
                             .setText("Your ticket (" + e.getChannel().getName() + ") has been closed!" + reasonSend)
                             .success()
                             .send(member);
-
-                    isSelection = false;
-                    selectionUserId = null;
-                    sendPriorityInstructions(null);
                 } else {
                     new TechEmbedBuilder("Closed Ticket")
                             .setText("The ticket (" + e.getChannel().getName() + ") from *member has left* has been closed!")
                             .success()
                             .send(channel);
 
-                    isSelection = false;
-                    selectionUserId = null;
-                    sendPriorityInstructions(null);
                 }
             }
+            isSelection = false;
+            selectionUserId = null;
+            sendPriorityInstructions(null);
         }
     }
 

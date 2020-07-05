@@ -44,7 +44,7 @@ public class SupportWrongChannelModule extends Module {
         super(bot);
     }
 
-    private HashMap<String, String> messages = new HashMap();
+    private HashMap<String, String> messages = new HashMap<>();
 
     @Override
     public void onEnable() {}
@@ -102,16 +102,16 @@ public class SupportWrongChannelModule extends Module {
                 String plugins = Plugin.getEmotesByList(pc.getStream().map(Purchase::getResourceName).collect(Collectors.toList()));
                 sb.append("Hello, ")
                         .append(member.getAsMention())
-                        .append("! It looks like you have bought ")
+                        .append("!\n\n It looks like you have bought ")
                         .append(pc.size() == 1 ? "this plugin" : "these plugins")
                         .append(" already: ")
                         .append(plugins)
-                        .append("\n\nHere are the corresponding channels:\n\n");
+                        .append("\nHere are the corresponding channels:\n\n");
 
                 StringBuilder channels = new StringBuilder();
-                pc.getStream().forEach(p -> {
-                    Plugin plugin = Plugin.byRoleName(p.getResourceName());
-                    channels.append("- ").append(Objects.requireNonNull(TechDiscordBot.getJDA().getTextChannelById(plugin.getChannelId())).getAsMention()).append("\n");
+                pc.getStream().filter(Objects::nonNull).forEach(p -> {
+                    Plugin plugin = Plugin.fromId(p.getResourceId());
+                    channels.append("- ").append(TechDiscordBot.getJDA().getTextChannelById(plugin.getChannelId()).getAsMention()).append("\n");
                 });
 
                 sb.append(channels.toString());
