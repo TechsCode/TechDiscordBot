@@ -39,7 +39,7 @@ public class RestartCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
-        new TechEmbedBuilder("Restartign")
+        new TechEmbedBuilder("Restarting")
                 .setText("The bot will now restarting!")
                 .send(channel);
         TechDiscordBot.getJDA().shutdownNow();
