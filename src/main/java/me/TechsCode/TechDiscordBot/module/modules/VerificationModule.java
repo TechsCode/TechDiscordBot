@@ -75,7 +75,7 @@ public class VerificationModule extends Module {
         TechEmbedBuilder errorMessage = new TechEmbedBuilder("Error (" + e.getAuthor().getName() + ")").error();
 
         if (!TechDiscordBot.getSpigotAPI().isAvailable()) {
-            errorMessage.setText("The API is currently offline. There is no ETA of when it will be back up. You will have to wait to verify until hen.").error().sendTemporary(channel, 10);
+            errorMessage.setText("**The API is currently offline.**\nThere is no ETA of when it will be back up.\nYou will have to wait to verify until then.").error().sendTemporary(channel, 10);
             return;
         }
 
