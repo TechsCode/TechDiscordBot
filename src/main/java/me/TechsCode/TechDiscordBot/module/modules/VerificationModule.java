@@ -48,51 +48,17 @@ public class VerificationModule extends Module {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if(lastInstructions != null) lastInstructions.delete().complete();
-            //if(apiNotAvailable != null) apiNotAvailable.delete().complete();
         }));
 
         sendInstructions();
-        //startAPIOfflineThread();
     }
 
     @Override
     public void onDisable() {
-        if(lastInstructions != null) lastInstructions.delete().submit();
-        //if(apiNotAvailable != null) apiNotAvailable.delete().complete();
+        if (lastInstructions != null) lastInstructions.delete().submit();
     }
 
-//    public void startAPIOfflineThread() {
-//        new Thread(() -> {
-//            while (true) {
-//                if(TechDiscordBot.getSpigotAPI().isAvailable()) {
-//                    if(apiNotAvailable != null) {
-//                        apiNotAvailable = null;
-//                        sendInstructions();
-//                    }
-//                } else {
-//                    if(apiNotAvailable == null) {
-//                        if(lastInstructions != null) lastInstructions.delete().complete();
-//                        TechEmbedBuilder message = new TechEmbedBuilder()
-//                                .setText("The Web API is currently unavailable. You cannot verify until it's online again!\n**Sorry for the inconvenience!**")
-//                                .error();
-//                        apiNotAvailable = message.send(channel);
-//                    }
-//                }
-//                try {
-//                    Thread.sleep(TimeUnit.SECONDS.toMillis(30));
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).start();
-//    }
-
     public void sendInstructions() {
-//        if(apiNotAvailable != null && TechDiscordBot.getSpigotAPI().isAvailable()) {
-//            apiNotAvailable.delete().complete();
-//            apiNotAvailable = null;
-//        }
-
         if(lastInstructions != null) lastInstructions.delete().complete();
         TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("How It Works").setText("Type your SpigotMC Username in this Chat to verify.\n\nVerification not working? Feel free to contact a staff member in <#311178000026566658>.");
         lastInstructions = howItWorksMessage.send(channel);
@@ -106,9 +72,12 @@ public class VerificationModule extends Module {
 
         e.getMessage().delete().complete();
 
-        if (!TechDiscordBot.getSpigotAPI().isAvailable()) return;
-
         TechEmbedBuilder errorMessage = new TechEmbedBuilder("Error (" + e.getAuthor().getName() + ")").error();
+
+        if (!TechDiscordBot.getSpigotAPI().isAvailable()) {
+            errorMessage.setText("The API is currently offline. There is no ETA of when it will be back up. You will have to wait to verify until hen.").error().sendTemporary(channel, 10);
+            return;
+        }
 
         if (verificationQueue.contains(e.getAuthor().getId())) {
             errorMessage.setText("Please follow the instruction above!").sendTemporary(channel, 15);
@@ -139,19 +108,6 @@ public class VerificationModule extends Module {
         String userId = purchases[0].getUserId();
         String avatarUrl = purchases[0].getAvatarUrl();
 
-        //Maybe icons work now (Cloudflare)?!!!?
-//        if(!avatarUrl.contains("https://static.spigotmc.org/") && !avatarUrl.startsWith("https://secure.gravatar.com/avatar/")) {
-//            String result = ImgurUploader.upload(avatarUrl);
-//            if (result == null) {
-//                //TechDiscordBot.log(ConsoleColor.RED + "An error has occurred while trying to upload the Imgur image. Defaulting to https://i.imgur.com/dcRYH0P.png");
-//                avatarUrl = "https://i.imgur.com/dcRYH0P.png";
-//            } else {
-//                avatarUrl = result;
-//            }
-//        } else if(!avatarUrl.startsWith("https://secure.gravatar.com/avatar/")) {
-//            avatarUrl = "https://i.imgur.com/dcRYH0P.png";
-//        }
-
         existingVerification = TechDiscordBot.getStorage().retrieveVerificationWithSpigot(userId);
         if(existingVerification != null) {
             Purchase purchase = TechDiscordBot.getSpigotAPI().getPurchases().userId(existingVerification.getUserId()).first();
@@ -168,7 +124,6 @@ public class VerificationModule extends Module {
         Message m = instructions.send(channel);
         verificationQueue.add(e.getAuthor().getId());
 
-        String finalAvatarUrl = avatarUrl;
         new Thread(() -> {
             long start = System.currentTimeMillis();
             while (System.currentTimeMillis() - start < TimeUnit.MINUTES.toMillis(3)) {
@@ -177,14 +132,14 @@ public class VerificationModule extends Module {
                         m.delete().complete();
                         new TechEmbedBuilder(e.getAuthor().getName() + "'s Verification Completed").success()
                                 .setText(e.getAuthor().getName() + " has successfully verified their SpigotMC Account!")
-                                .setThumbnail(finalAvatarUrl)
+                                .setThumbnail(avatarUrl)
                                 .send(channel);
                         sendInstructions();
                         verificationQueue.remove(e.getAuthor().getId());
                         TechDiscordBot.getStorage().createVerification(userId, e.getAuthor().getId());
                         new TechEmbedBuilder("Verification Complete!")
                                 .setText("You've been successfully verified!\n\nHere are your purchased plugins: " + Plugin.getMembersPluginsinEmojis(e.getMember()) + "\n\n*Your roles will be updated automatically from now on!*")
-                                .setThumbnail(finalAvatarUrl)
+                                .setThumbnail(avatarUrl)
                                 .send(e.getMember());
                         new TechEmbedBuilder()
                                 .setText("You may now delete the message on your profile! [Go to Comment](https://www.spigotmc.org/profile-posts/" + all.getCommentId() + ")")
