@@ -64,7 +64,7 @@ public class SongodaTransferModule extends Module {
 
     public void sendInstructions() {
         if(lastInstructions != null) lastInstructions.delete().queue();
-        TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("Transfer to SpigotMC from Songoda").setText("React to the emoji below to start the transfer to SpigotMC!\n\n*Only do this if you have a Songoda account and want to transfer your plugins to SpigotMC!*\n**Spamming/abusing this will result in a ban!**");
+        TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("Transfer to SpigotMC from Songoda").setText("React to the emoji below to start the transfer to SpigotMC!\n\n*Only do this if you have a Songoda account and want to transfer your plugins to SpigotMC!* **Spamming/abusing this will result in a ban!**");
         lastInstructions = howItWorksMessage.send(TRANSFER_CHANNEL.query().first());
         lastInstructions.addReaction(TechDiscordBot.getJDA().getEmoteById("433379431269138442")).queue();
 
@@ -76,7 +76,7 @@ public class SongodaTransferModule extends Module {
     }
 
     public void sendInstructionsAfter(Message message2) {
-        TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("Transfer to SpigotMC from Songoda").setText("React to the emoji below to start the transfer to SpigotMC!\n\n*Only do this if you have a Songoda account and want to transfer your plugins to SpigotMC!*\n**Spamming/abusing this will result in a ban!**");
+        TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("Transfer to SpigotMC from Songoda").setText("React to the emoji below to start the transfer to SpigotMC!\n\n*Only do this if you have a Songoda account and want to transfer your plugins to SpigotMC!* **Spamming/abusing this will result in a ban!**");
 
         howItWorksMessage.sendAfter(TRANSFER_CHANNEL.query().first(), 5, message -> {
             lastInstructions = message;
