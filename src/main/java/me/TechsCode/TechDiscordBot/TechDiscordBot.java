@@ -57,9 +57,9 @@ public class TechDiscordBot {
         try {
             i = this;
             try {
-                jda = JDABuilder.createDefault(token)
+                jda = new JDABuilder(token)
                         .setEventManager(new AnnotatedEventManager())
-                        .setActivity(Activity.listening("for help."))
+                        .setActivity(Activity.watching("for help."))
                         .build().awaitReady();
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -76,7 +76,7 @@ public class TechDiscordBot {
             return;
         }
 
-        guild = guilds.size() != 0 ? guilds.stream().filter(g -> g.getId().equals("311178000026566658")).findFirst().orElse(guild) : null;
+        guild = guilds.size() != 0 ? jda.getGuildById("311178000026566658") : null;
         self = guild != null ? guild.getSelfMember() : null;
 
         if(guild == null) {
