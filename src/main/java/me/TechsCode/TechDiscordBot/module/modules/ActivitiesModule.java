@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class ActivitiesChannel extends Module {
+public class ActivitiesModule extends Module {
 
     private final DefinedQuery<TextChannel> ACTIVITIES_CHANNEL = new DefinedQuery<TextChannel>() {
         @Override
@@ -27,7 +27,7 @@ public class ActivitiesChannel extends Module {
 
     private ArrayList<String> announcedIds;
 
-    public ActivitiesChannel(TechDiscordBot bot) {
+    public ActivitiesModule(TechDiscordBot bot) {
         super(bot);
     }
 
