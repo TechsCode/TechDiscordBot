@@ -49,13 +49,15 @@ public class UserInfoCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
-        User user = member.getUser();
+        Member member1 = TechDiscordBot.getMemberFromString(message, String.join(" ", args));
+        if(member1 == null) member1 = member;
+        User user = member1.getUser();
         new TechEmbedBuilder(user.getName() + "#" + user.getDiscriminator())
-                .addField("Status", member.getOnlineStatus().getKey().substring(0, 1).toUpperCase() + member.getOnlineStatus().getKey().substring(1), true)
+                .addField("Status", member1.getOnlineStatus().getKey().substring(0, 1).toUpperCase() + member1.getOnlineStatus().getKey().substring(1), true)
                 .addField("Created At", user.getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                .addField("Joined At", member.getTimeJoined().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
+                .addField("Joined At", member1.getTimeJoined().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                 .addField("Flags", user.getFlags().clone().stream().map(User.UserFlag::getName).collect(Collectors.joining(", ")) + ".", false)
-                .addField("Roles", member.getRoles().stream().map(Role::getAsMention).collect(Collectors.joining(", ")) + ".", false)
+                .addField("Roles", member1.getRoles().stream().map(Role::getAsMention).collect(Collectors.joining(", ")) + ".", false)
                 .setThumbnail(user.getAvatarUrl())
         .send(channel);
     }

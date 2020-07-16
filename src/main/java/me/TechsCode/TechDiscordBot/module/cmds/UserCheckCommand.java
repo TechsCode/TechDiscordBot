@@ -8,6 +8,7 @@ import me.TechsCode.TechDiscordBot.module.CommandModule;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
+import me.TechsCode.TechDiscordBot.util.Plugin;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -90,11 +91,11 @@ public class UserCheckCommand extends CommandModule {
                 String date = purchase.getTime().getHumanTime();
                 boolean hasBoughtAll = TechDiscordBot.getSpigotAPI().getResources().premium().size() == purchases.size();
                 StringBuilder sb = new StringBuilder();
-                for(Purchase p : purchases.get()) sb.append("- ").append(p.getResourceName()).append(" for ").append(p.getCost().getValue() == 0d ? "Free" : p.getCost().getValue() + p.getCost().getCurrency()).append(",\n ");
+                for(Purchase p : purchases.get()) sb.append("- ").append(Plugin.fromId(p.getResourceId()).getEmoji().getAsMention()).append(" ").append(p.getResourceName()).append(" for ").append(p.getCost() == null || p.getCost().getValue() == 0d ? "Free" : p.getCost().getValue() + p.getCost().getCurrency()).append(" on ").append((p.getTime().getHumanTime() != null ? "on " + p.getTime().getHumanTime() : "*too early to calculate*")).append(",\n ");
                 String purchasesString = sb.toString();
                 new TechEmbedBuilder(member.getEffectiveName() + "'s Purchases")
                         .success()
-                        .setText("Spigot URL: https://www.spigotmc.org/members/" + verification.getUserId() + "\n\n" + member.getAsMention() + " has bought " + (hasBoughtAll ? "**all** " : " ") + purchases.size() + " of Tech's Resources.\n\nTheir last purchase was on " + date + ".\n\n**Their purchases include:**\n" + purchasesString.substring(0, purchasesString.length() - 3) + ".")
+                        .setText("Spigot URL: https://www.spigotmc.org/members/" + verification.getUserId() + "\n\n" + member.getAsMention() + " has bought " + (hasBoughtAll ? "**all** " : " ") + purchases.size() + " of Tech's Resources.\n\n" + (date != null ? "Their last purchase was on " + date : "Too early to calculate their last purchase") + ".\n\n**Their purchases include:**\n" + purchasesString.substring(0, purchasesString.length() - 3) + ".")
                         .send(channel);
             }
         }
