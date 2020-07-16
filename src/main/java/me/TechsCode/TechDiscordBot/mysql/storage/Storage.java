@@ -88,37 +88,6 @@ public class Storage {
         mysql.update("INSERT INTO " + TRANSCRIPTS_TABLE + " (id, html, password) VALUES ('" + transcript.getChannelId() + "', '" + Base64.toBase64(transcript.getHtml()) + "', '" + transcript.getPassword() + "');");
     }
 
-    public void createServerUser(int userId, String discordId) {
-        mysql.update("INSERT INTO " + SERVERS_TABLE + " (user_id, discord_id) VALUES (" + userId + ", '" + discordId + "');");
-    }
-
-    public void removeServerUser(ServerUser serverUser) {
-        mysql.update("DELETE FROM " + SERVERS_TABLE + " WHERE `user_id`=" + serverUser.getUserId());
-    }
-
-    public ServerUser retrieveServerUserWithDiscord(User user) { return retrieveServerUserWithDiscord(user.getId()); }
-
-    public ServerUser retrieveServerUserWithDiscord(Member member) { return retrieveServerUserWithDiscord(member.getUser().getId()); }
-
-    public ServerUser retrieveServerUserWithDiscord(String discordId) { return retrieveServerUsers().stream().filter(serverUser -> serverUser.getDiscordId().equals(discordId)).findFirst().orElse(null); }
-
-    public ServerUser retrieveServerUserWithPteroId(int userId) { return retrieveServerUsers().stream().filter(serverUser -> serverUser.getUserId() == userId).findFirst().orElse(null); }
-
-    public Set<ServerUser> retrieveServerUsers() {
-        Set<ServerUser> ret = new HashSet<>();
-        try {
-            Connection connection = mysql.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + SERVERS_TABLE + ";");
-            ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()) ret.add(new ServerUser(this, rs.getInt("user_id"), rs.getString("discord_id")));
-            rs.close();
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return ret;
-    }
-
     public Set<Reminder> retrieveReminders() {
         Set<Reminder> ret = new HashSet<>();
         try {

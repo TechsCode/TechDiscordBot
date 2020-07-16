@@ -9,8 +9,6 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-    maven { url 'https://jitpack.io' }
-
     jcenter()
     mavenLocal()
     mavenCentral()
@@ -19,18 +17,17 @@ repositories {
 dependencies {
     shadow project(":SpigotAPI")
 
-    shadow ('net.dv8tion:JDA:4.1.1_155') {
+    shadow ('net.dv8tion:JDA:4.2.0_175') {
         exclude module: 'opus-java' //No audio.
     }
 
-    shadow files('libs/ImgurAPI-1.0.0.jar')
     shadow 'org.jsoup:jsoup:1.8.3'
     shadow 'org.apache.commons:commons-lang3:3.7'
     shadow 'mysql:mysql-connector-java:5.1.17'
     shadow 'com.j2html:j2html:1.4.0'
     shadow "com.googlecode.json-simple:json-simple:1.1.1"
-    shadow 'com.github.EazyFTW:Ptero4J:0.2.9-BETA'
     shadow 'net.sourceforge.htmlunit:htmlunit:2.29'
+    shadow 'com.google.code.gson:gson:2.8.6'
 }
 
 def props = new Properties()

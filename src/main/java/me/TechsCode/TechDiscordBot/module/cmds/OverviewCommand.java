@@ -1,7 +1,6 @@
 package me.TechsCode.TechDiscordBot.module.cmds;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
-import me.TechsCode.TechDiscordBot.imgur.ImgurUploader;
 import me.TechsCode.TechDiscordBot.module.CommandCategory;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
@@ -45,12 +44,6 @@ public class OverviewCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
-        if(args.length > 1 && args[0].equals("c")) {
-            String result = ImgurUploader.upload(args[1]);
-
-            TechDiscordBot.log(result);
-            return;
-        }
         if(!TechDiscordBot.getSpigotAPI().isAvailable()) {
             new TechEmbedBuilder("API").setText("The API has to be online to execute this command!").error().sendTemporary(channel, 5);
             return;
@@ -97,7 +90,7 @@ public class OverviewCommand extends CommandModule {
 
     public void showFeedback() {
         new TechEmbedBuilder("Feedback")
-                .setText("Would you like to suggest features for Tech's Plugins? You can do so by clicking here: https://feedback.techsco.de")
+                .setText("Would you like to suggest features for Tech's Plugins? You can do so by clicking here: https://feedback.techscode.de")
                 .setThumbnail("https://i.imgur.com/nzfiUTy.png")
                 .send(OVERVIEW_CHANNEL.query().first());
     }

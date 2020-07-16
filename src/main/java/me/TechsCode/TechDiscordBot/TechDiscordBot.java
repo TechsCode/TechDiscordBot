@@ -1,8 +1,6 @@
 package me.TechsCode.TechDiscordBot;
 
 import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.stanjg.ptero4j.PteroAdminAPI;
-import com.stanjg.ptero4j.PteroUserAPI;
 import me.TechsCode.SpigotAPI.client.SpigotAPIClient;
 import me.TechsCode.TechDiscordBot.module.ModulesManager;
 import me.TechsCode.TechDiscordBot.mysql.MySQLSettings;
@@ -14,7 +12,6 @@ import me.TechsCode.TechDiscordBot.songoda.SongodaPurchase;
 import me.TechsCode.TechDiscordBot.songoda.SongodaPurchases;
 import me.TechsCode.TechDiscordBot.spigotmc.SpigotMC;
 import me.TechsCode.TechDiscordBot.util.ConsoleColor;
-import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
@@ -37,7 +34,6 @@ public class TechDiscordBot {
     private static Member self;
 
     private static SpigotAPIClient spigotAPIClient;
-    //private static SongodaAPIClient songodaAPIClient;
     private static List<SongodaPurchase> songodaPurchases;
 
     private static Storage storage;
@@ -46,9 +42,6 @@ public class TechDiscordBot {
 
     private static ModulesManager modulesManager;
     private static ReminderManager remindersManager;
-
-    private static PteroAdminAPI pteroAdminAPI;
-    private static PteroUserAPI pteroUserAPI;
 
     public static void main(String[] args) {
         if (args.length < 10) {
@@ -64,10 +57,10 @@ public class TechDiscordBot {
         try {
             i = this;
             try {
-                jda = new JDABuilder(AccountType.BOT)
+                jda = new JDABuilder(token)
                         .setEventManager(new AnnotatedEventManager())
-                        .setActivity(Activity.playing("in quarantine \uD83E\uDDA0\uD83D\uDE37"))
-                        .setToken(token).build().awaitReady();
+                        .setActivity(Activity.watching("for help."))
+                        .build().awaitReady();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -83,7 +76,7 @@ public class TechDiscordBot {
             return;
         }
 
-        guild = guilds.size() != 0 ? guilds.stream().filter(g -> g.getId().equals("311178000026566658")).findFirst().orElse(guild) : null;
+        guild = guilds.size() != 0 ? jda.getGuildById("311178000026566658") : null;
         self = guild != null ? guild.getSelfMember() : null;
 
         if(guild == null) {
@@ -92,7 +85,6 @@ public class TechDiscordBot {
         }
 
         spigotAPIClient = new SpigotAPIClient("https://api.techscode.de", apiToken);
-        //songodaAPIClient = new SongodaAPIClient(songodaToken);
         songodaPurchases = SongodaPurchases.getPurchases();
 
         log("Initializing MySQL Storage " + mySQLSettings.getHost() + ":" + mySQLSettings.getPort() + "!");
@@ -118,8 +110,6 @@ public class TechDiscordBot {
         imgurClientSecret = iClientSecret;
 
         Logger.getLogger(OkHttpClient.class.getName()).setLevel(Level.OFF);
-        pteroAdminAPI = new PteroAdminAPI("https://servers.techscode.de", pteroApiKey);
-        pteroUserAPI = new PteroUserAPI("https://servers.techscode.de", pteroApiKey);
 
         log("Successfully loaded the bot and logged into " + guild.getName() + " as " + self.getEffectiveName() + "!");
 
@@ -139,7 +129,6 @@ public class TechDiscordBot {
 
         log("Songoda: ");
         log("  » Final Purchases: " + getSongodaPurchases().size());
-
 
         log("");
 
@@ -203,10 +192,6 @@ public class TechDiscordBot {
         return spigotAPIClient;
     }
 
-//    public static SongodaAPIClient getSongodaAPI() {
-//        return songodaAPIClient;
-//    }
-
     public static List<SongodaPurchase> getSongodaPurchases() {
         return songodaPurchases;
     }
@@ -217,14 +202,6 @@ public class TechDiscordBot {
 
     public static ReminderManager getRemindersManager() {
         return remindersManager;
-    }
-
-    public static PteroAdminAPI getPteroAdminAPI() {
-        return pteroAdminAPI;
-    }
-
-    public static PteroUserAPI getPteroUserAPI() {
-        return pteroUserAPI;
     }
 
     public Query<Role> getRoles(String... names) {

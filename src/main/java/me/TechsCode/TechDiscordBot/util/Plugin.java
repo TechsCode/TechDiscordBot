@@ -155,21 +155,8 @@ public enum Plugin {
                 TechDiscordBot.log(ConsoleColor.RED + "Could not find any SpigotMC plugins for " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator());
             }
 
-//            List<SongodaPurchase> purchases = null;
-//            try {
-//                purchases = TechDiscordBot.getSongodaAPI().getPurchases(member.getUser());
-//            } catch (NullPointerException ignored) {
-//                TechDiscordBot.log(ConsoleColor.RED + "Could not find any Songoda plugins for " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator());
-//            }
-
             List<Plugin> plugins = new ArrayList<>();
             if(pc != null) plugins = Arrays.stream(pc.get()).map(purchase -> fromId(purchase.getResourceId())).collect(Collectors.toList());
-//            if(purchases != null) {
-//                for (SongodaPurchase purchase : purchases) {
-//                    Plugin plugin = Plugin.byRoleName(purchase.getName());
-//                    if (plugin != null && !plugins.contains(plugin)) plugins.add(plugin);
-//                }
-//            }
 
             return plugins;
         } catch (NullPointerException ex) {

@@ -60,7 +60,7 @@ public class UserCheckCommand extends CommandModule {
             Member member = TechDiscordBot.getMemberFromString(message, args[0]);
 
             if(member == null) {
-                new TechEmbedBuilder("Tickets - Error")
+                new TechEmbedBuilder("Check - Error")
                         .setText("Cannot find the specified user!")
                         .error()
                         .send(channel);
@@ -84,7 +84,9 @@ public class UserCheckCommand extends CommandModule {
                         .setText(member.getAsMention() + " has not bought of any Tech's Resources!")
                         .send(channel);
             } else {
-                Purchase purchase = purchases.getStream().sorted(Comparator.comparingLong(p  -> p.getTime().getUnixTime())).skip(purchases.size() - 1).findFirst().get();
+                Purchase purchase = purchases.getStream().sorted(Comparator.comparingLong(p  -> p.getTime().getUnixTime())).skip(purchases.size() - 1).findFirst().orElse(null);
+                if(purchase == null) return;
+
                 String date = purchase.getTime().getHumanTime();
                 boolean hasBoughtAll = TechDiscordBot.getSpigotAPI().getResources().premium().size() == purchases.size();
                 StringBuilder sb = new StringBuilder();

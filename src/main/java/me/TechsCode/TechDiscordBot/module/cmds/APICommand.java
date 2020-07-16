@@ -50,8 +50,6 @@ public class APICommand extends CommandModule {
 
         APIScanner.APIStatus status = TechDiscordBot.getSpigotAPI().getStatus();
         APIScanner.APIStatus cacheStatus = TechDiscordBot.getSpigotAPI().getCacheStatus();
-//        APIScanner.APIStatus songodaStatus = TechDiscordBot.getSongodaAPI().getStatus();
-//        APIScanner.APIStatus songodaCachedStatus = TechDiscordBot.getSongodaAPI().getCacheStatus();
 
         String statusEmoji = online;
         if(status == APIScanner.APIStatus.WAITING) statusEmoji = waiting;
@@ -61,12 +59,6 @@ public class APICommand extends CommandModule {
         if(cacheStatus == APIScanner.APIStatus.WAITING) cachedStatusEmoji = waiting;
         if(cacheStatus == APIScanner.APIStatus.OFF) cachedStatusEmoji = offline;
 
-        String songodaStatusEmoji = online;
-        //if(songodaStatus == APIScanner.APIStatus.OFF) songodaStatusEmoji = offline;
-
-        String songodaCachedStatusEmoji = online;
-        //if(songodaCachedStatus == APIScanner.APIStatus.OFF) songodaCachedStatusEmoji = offline;
-
         StringBuilder sb = new StringBuilder();
         sb.append(statusEmoji).append(" **API Status** (").append(status.getName()).append(")\n").append(status.getDescription());
         sb.append("\n\n");
@@ -74,26 +66,7 @@ public class APICommand extends CommandModule {
         sb.append(cachedStatusEmoji).append(" **Cached API Status** (").append(cacheStatus.getName()).append(")\n").append(cacheStatus.getDescription());
         sb.append("\n\n");
 
-//        sb.append(songodaStatusEmoji).append(" **Songoda API Status** (").append(songodaStatus.getName()).append(")\n").append(songodaStatus.getDescription());
-//        sb.append("\n\n");
-//
-//        sb.append(songodaCachedStatusEmoji).append(" **Songoda Cached API Status** (").append(songodaCachedStatus.getName()).append(")\n").append(songodaCachedStatus.getDescription());
-//        sb.append("\n\n");
-
-//        if(cacheStatus == APIScanner.APIStatus.OK && songodaStatus == APIScanner.APIStatus.OK && member.getRoles().stream().anyMatch(r -> r.getName().equals("Staff"))) { //Make sure the member is staff.
-//            int purchases = TechDiscordBot.getSpigotAPI().getPurchases().size();
-//            int songodaPurchases = TechDiscordBot.getSongodaAPI().getPurchases().size();
-//            int reviews = TechDiscordBot.getSpigotAPI().getReviews().size();
-//            int updates = TechDiscordBot.getSpigotAPI().getUpdates().size();
-//            int resources = TechDiscordBot.getSpigotAPI().getResources().size();
-//
-//            sb.append("**Spigot/Songoda Purchases:** ").append(purchases).append(" / ").append(songodaPurchases).append("\n");
-//            sb.append("**Reviews:** ").append(reviews).append("\n");
-//            sb.append("**Updates:** ").append(updates).append("\n");
-//            sb.append("**Resources:** ").append(resources).append("\n\n");
-//            sb.append("*This information doesn't accurately depict if the API is currently running.*\n*This just shows if the bot has the information stored. (Cached)*");
-//        } else
-          if(cacheStatus == APIScanner.APIStatus.OK && member.getRoles().stream().anyMatch(r -> r.getName().equals("Staff"))) { //Make sure the member is staff.
+        if(cacheStatus == APIScanner.APIStatus.OK && member.getRoles().stream().anyMatch(r -> r.getName().equals("Staff"))) { //Make sure the member is staff.
             int purchases = TechDiscordBot.getSpigotAPI().getPurchases().size();
             int reviews = TechDiscordBot.getSpigotAPI().getReviews().size();
             int updates = TechDiscordBot.getSpigotAPI().getUpdates().size();
