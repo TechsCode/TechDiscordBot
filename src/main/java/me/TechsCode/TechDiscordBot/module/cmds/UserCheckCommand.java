@@ -55,20 +55,12 @@ public class UserCheckCommand extends CommandModule {
         if(args.length == 0) {
             new TechEmbedBuilder("Check")
                     .error()
-                    .setText("Please specify a user to check!")
+                    .setText("Please specify a user (id) to check!")
                     .sendTemporary(channel, 10, TimeUnit.SECONDS);
         } else {
             Member member = TechDiscordBot.getMemberFromString(message, args[0]);
 
-            if(member == null) {
-                new TechEmbedBuilder("Check - Error")
-                        .setText("Cannot find the specified user!")
-                        .error()
-                        .send(channel);
-                return;
-            }
-
-            if(!TechDiscordBot.getSpigotAPI().isAvailable()) {
+            if (!TechDiscordBot.getSpigotAPI().isAvailable()) {
                 new TechEmbedBuilder("API Offline")
                         .error()
                         .setText("The API is offline! I cannot check a user if it's offline!")
@@ -76,26 +68,34 @@ public class UserCheckCommand extends CommandModule {
                 return;
             }
 
-            Verification verification = TechDiscordBot.getStorage().retrieveVerificationWithDiscord(member.getUser().getId());
-            PurchaseCollection purchases = null;
-            if(verification != null) purchases = TechDiscordBot.getSpigotAPI().getPurchases().userId(verification.getUserId());
-            if(purchases == null || purchases.size() == 0) {
-                new TechEmbedBuilder(member.getEffectiveName() + "'s Purchases")
+            Verification verification = null;
+            if(member != null) verification = TechDiscordBot.getStorage().retrieveVerificationWithDiscord(member.getUser().getId());
+
+            PurchaseCollection purchases;
+            if (verification != null) {
+                purchases = TechDiscordBot.getSpigotAPI().getPurchases().userId(verification.getUserId());
+            } else {
+                purchases = TechDiscordBot.getSpigotAPI().getPurchases().userId(args[0]);
+            }
+
+            if (purchases == null || purchases.size() == 0) {
+                new TechEmbedBuilder((member == null ? args[0] : member.getEffectiveName()) + "'s Purchases")
                         .success()
-                        .setText(member.getAsMention() + " has not bought of any Tech's Resources!")
+                        .setText((member == null ? args[0] : member.getAsMention()) + " has not bought of any Tech's Resources!")
                         .send(channel);
             } else {
-                Purchase purchase = purchases.getStream().sorted(Comparator.comparingLong(p  -> p.getTime().getUnixTime())).skip(purchases.size() - 1).findFirst().orElse(null);
-                if(purchase == null) return;
+                Purchase purchase = purchases.getStream().sorted(Comparator.comparingLong(p -> p.getTime().getUnixTime())).skip(purchases.size() - 1).findFirst().orElse(null);
+                if (purchase == null) return;
 
                 String date = purchase.getTime().getHumanTime();
                 boolean hasBoughtAll = TechDiscordBot.getSpigotAPI().getResources().premium().size() == purchases.size();
                 StringBuilder sb = new StringBuilder();
-                for(Purchase p : purchases.get()) sb.append("- ").append(Plugin.fromId(p.getResourceId()).getEmoji().getAsMention()).append(" ").append(p.getResourceName()).append(" for ").append(p.getCost() == null || p.getCost().getValue() == 0d ? "Free" : p.getCost().getValue() + p.getCost().getCurrency()).append(" on ").append((p.getTime().getHumanTime() != null ? "on " + p.getTime().getHumanTime() : "*too early to calculate*")).append(",\n ");
+                for (Purchase p : purchases.get())
+                    sb.append("- ").append(Plugin.fromId(p.getResourceId()).getEmoji().getAsMention()).append(" ").append(p.getResourceName()).append(" for ").append(p.getCost() == null || p.getCost().getValue() == 0d ? "Free" : p.getCost().getValue() + p.getCost().getCurrency()).append(" on ").append((p.getTime().getHumanTime() != null ? "on " + p.getTime().getHumanTime() : "*too early to calculate*")).append(",\n ");
                 String purchasesString = sb.toString();
-                new TechEmbedBuilder(member.getEffectiveName() + "'s Purchases")
+                new TechEmbedBuilder((member == null ? purchases.get()[0].getUsername() + " (" + purchases.get()[0].getUserId() + ")" : member.getEffectiveName()) + "'s Purchases")
                         .success()
-                        .setText("Spigot URL: https://www.spigotmc.org/members/" + verification.getUserId() + "\n\n" + member.getAsMention() + " has bought " + (hasBoughtAll ? "**all** " : " ") + purchases.size() + " of Tech's Resources.\n\n" + (date != null ? "Their last purchase was on " + date : "Too early to calculate their last purchase") + ".\n\n**Their purchases include:**\n" + purchasesString.substring(0, purchasesString.length() - 3) + ".")
+                        .setText("Spigot URL: https://www.spigotmc.org/members/" + (verification == null ? args[0] : verification.getUserId()) + "\n\n" + (member == null ? purchases.get()[0].getUsername() + " (" + purchases.get()[0].getUserId() + ")" : member.getAsMention()) + " has bought " + (hasBoughtAll ? "**all** " : " ") + purchases.size() + " of Tech's Resources.\n\n" + (date != null ? "Their last purchase was on " + date : "Too early to calculate their last purchase") + ".\n\n**Their purchases include:**\n" + purchasesString.substring(0, purchasesString.length() - 3) + ".")
                         .send(channel);
             }
         }
