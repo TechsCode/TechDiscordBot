@@ -34,6 +34,11 @@ public class WikiCommand extends CommandModule {
     public CommandCategory getCategory() { return CommandCategory.INFO; }
 
     @Override
+    public int getCooldown() {
+        return 2;
+    }
+
+    @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
         if(args.length > 0 && args[0].equals("help")) {
             new TechEmbedBuilder("Wiki Help").setText("**Wiki Command Args**\n\n`!wiki` - *If in a plugin support channel, shows that Wiki, otherwise shows your owned plugin's wikis.*\n`!wiki -a` - *Shows all wikis.*\n`wiki -m` - *Shows your wikis if in a plugin support channel.*").send(channel);

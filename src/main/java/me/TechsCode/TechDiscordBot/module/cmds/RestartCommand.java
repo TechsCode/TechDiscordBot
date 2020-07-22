@@ -38,6 +38,11 @@ public class RestartCommand extends CommandModule {
     public CommandCategory getCategory() { return CommandCategory.ADMIN; }
 
     @Override
+    public int getCooldown() {
+        return 0;
+    }
+
+    @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
         new TechEmbedBuilder("Restarting")
                 .setText("The bot will now restarting!")

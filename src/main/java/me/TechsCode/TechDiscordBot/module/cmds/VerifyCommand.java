@@ -38,6 +38,11 @@ public class VerifyCommand extends CommandModule {
     public CommandCategory getCategory() { return CommandCategory.ADMIN; }
 
     @Override
+    public int getCooldown() {
+        return 0;
+    }
+
+    @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
         if(args.length > 1) {
             Member mem;

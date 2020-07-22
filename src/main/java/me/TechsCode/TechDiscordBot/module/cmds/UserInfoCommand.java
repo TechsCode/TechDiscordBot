@@ -48,6 +48,11 @@ public class UserInfoCommand extends CommandModule {
     }
 
     @Override
+    public int getCooldown() {
+        return 0;
+    }
+
+    @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
         Member member1 = TechDiscordBot.getMemberFromString(message, String.join(" ", args));
         if(member1 == null) member1 = member;

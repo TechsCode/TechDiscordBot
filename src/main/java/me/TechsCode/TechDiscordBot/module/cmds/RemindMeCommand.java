@@ -54,6 +54,11 @@ public class RemindMeCommand extends CommandModule {
     }
 
     @Override
+    public int getCooldown() {
+        return 0;
+    }
+
+    @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
         Reminder reminder = TechDiscordBot.getRemindersManager().createReminder(member.getUser(), channel, args);
 

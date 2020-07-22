@@ -51,6 +51,11 @@ public class UserCheckCommand extends CommandModule {
     public CommandCategory getCategory() { return CommandCategory.ADMIN; }
 
     @Override
+    public int getCooldown() {
+        return 0;
+    }
+
+    @Override
     public void onCommand(TextChannel channel, Message message, Member m, String[] args) {
         if(args.length == 0) {
             new TechEmbedBuilder("Check")

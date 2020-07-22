@@ -34,6 +34,11 @@ public class HelpCommand extends CommandModule {
     public CommandCategory getCategory() { return CommandCategory.INFO; }
 
     @Override
+    public int getCooldown() {
+        return 5;
+    }
+
+    @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
         if(args.length == 0) {
             listCommands(channel,"", canSeeStaffCommands(member), false);

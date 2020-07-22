@@ -35,6 +35,11 @@ public class PurgeCommand extends CommandModule {
     @Override public CommandCategory getCategory() { return null; }
 
     @Override
+    public int getCooldown() {
+        return 0;
+    }
+
+    @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
         if(args.length == 0) {
             new TechEmbedBuilder("Purge Cmd - Error")

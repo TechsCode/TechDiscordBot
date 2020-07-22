@@ -43,6 +43,11 @@ public class OverviewCommand extends CommandModule {
     public CommandCategory getCategory() { return CommandCategory.INFO; }
 
     @Override
+    public int getCooldown() {
+        return 0;
+    }
+
+    @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
         if(!TechDiscordBot.getSpigotAPI().isAvailable()) {
             new TechEmbedBuilder("API").setText("The API has to be online to execute this command!").error().sendTemporary(channel, 5);

@@ -41,6 +41,11 @@ public class UnverifyCommand extends CommandModule {
     public CommandCategory getCategory() { return CommandCategory.ADMIN; }
 
     @Override
+    public int getCooldown() {
+        return 0;
+    }
+
+    @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
         if(args.length == 0) {
             new TechEmbedBuilder("Unverify Command - Error")

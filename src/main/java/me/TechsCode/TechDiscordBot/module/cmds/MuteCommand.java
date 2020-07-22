@@ -44,6 +44,11 @@ public class MuteCommand extends CommandModule {
     public CommandCategory getCategory() { return CommandCategory.INFO; }
 
     @Override
+    public int getCooldown() {
+        return 0;
+    }
+
+    @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
         if(args.length == 0) {
             new TechEmbedBuilder("Mute Command").setText("Member is not found! Please specify a member in the arguments, either using their mention, name and discriminator, or user id.").error().send(channel);

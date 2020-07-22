@@ -1,6 +1,7 @@
 package me.TechsCode.TechDiscordBot.module;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
+import me.TechsCode.TechDiscordBot.objects.Cooldown;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.util.ConsoleColor;
@@ -10,11 +11,14 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class CommandModule {
+
+    private HashMap<String, Cooldown> cooldowns = new HashMap<>();
 
     protected TechDiscordBot bot;
     private boolean enabled;
@@ -28,7 +32,6 @@ public abstract class CommandModule {
                 .filter(requirement -> !requirement.check())
                 .collect(Collectors.toSet());
         if(failedRequirements.isEmpty()) {
-            //TechDiscordBot.log("Enabling Module " + getName() + "..");
             onEnable();
             enabled = true;
         } else {
@@ -72,4 +75,9 @@ public abstract class CommandModule {
 
     public abstract void onCommand(TextChannel channel, Message message, Member member, String[] args);
 
+    public abstract int getCooldown();
+
+    public HashMap<String, Cooldown> getCooldowns() {
+        return cooldowns;
+    }
 }

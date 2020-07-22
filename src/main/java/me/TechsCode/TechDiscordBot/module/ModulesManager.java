@@ -1,6 +1,7 @@
 package me.TechsCode.TechDiscordBot.module;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
+import me.TechsCode.TechDiscordBot.objects.Cooldown;
 import me.TechsCode.TechDiscordBot.util.Project;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
@@ -10,6 +11,7 @@ import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -67,6 +69,7 @@ public class ModulesManager {
 
     @SubscribeEvent
     public void onMessage(GuildMessageReceivedEvent e) {
+        if(e.getMember() == null) return;
         String first = e.getMessage().getContentDisplay().split(" ")[0];
 
         CommandModule cmd = cmdModules.stream().filter(cmdM -> cmdM.getCommand() != null && cmdM.getCommand().equalsIgnoreCase(first) || (cmdM.getAliases() != null && Arrays.asList(cmdM.getAliases()).contains(first))).findFirst().orElse(null);
@@ -86,6 +89,12 @@ public class ModulesManager {
             return;
         }
 
+        if(cmd.getCooldown() > 0 && cmd.getCooldowns().containsKey(e.getMember().getId())) {
+            boolean remaining = cmd.getCooldowns().get(e.getMember().getId()).isCooldownRemaining();
+            if(remaining) return;
+            cmd.getCooldowns().remove(e.getMember().getId());
+        }
+
         // Check if the message was sent in one of the restricted channels (if there are any)
         if (!restrictedChannels.isEmpty() && !restrictedChannels.contains(e.getChannel())) return;
 
@@ -95,7 +104,7 @@ public class ModulesManager {
         e.getMessage().delete().complete();
 
         cmd.onCommand(e.getChannel(), e.getMessage(), e.getMember(), args);
-
+        if(!cmd.getCooldowns().containsKey(e.getMember().getId())) cmd.getCooldowns().put(e.getMember().getId(), new Cooldown(OffsetDateTime.now().plusSeconds(cmd.getCooldown())));
     }
 
     public List<Module> getModules() {
