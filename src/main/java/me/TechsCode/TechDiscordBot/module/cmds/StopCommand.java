@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 
-public class RestartCommand extends CommandModule {
+public class StopCommand extends CommandModule {
 
     private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
         @Override
@@ -20,10 +20,10 @@ public class RestartCommand extends CommandModule {
         }
     };
 
-    public RestartCommand(TechDiscordBot bot) { super(bot); }
+    public StopCommand(TechDiscordBot bot) { super(bot); }
 
     @Override
-    public String getCommand() { return "!restart"; }
+    public String getCommand() { return "!stop"; }
 
     @Override
     public String[] getAliases() { return null; }
@@ -44,8 +44,8 @@ public class RestartCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
-        new TechEmbedBuilder("Restarting")
-                .setText("The bot will now restarting!")
+        new TechEmbedBuilder("Stop")
+                .setText("The bot will now stop!")
                 .send(channel);
         TechDiscordBot.getJDA().shutdownNow();
         System.exit(0);
