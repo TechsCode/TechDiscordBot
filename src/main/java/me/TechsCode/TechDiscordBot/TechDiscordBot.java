@@ -38,22 +38,22 @@ public class TechDiscordBot {
 
     private static Storage storage;
 
-    private static String imgurClientId, imgurClientSecret;
+    private static String githubToken;
 
     private static ModulesManager modulesManager;
     private static ReminderManager remindersManager;
 
     public static void main(String[] args) {
-        if (args.length < 10) {
+        if (args.length != 8) {
             log(ConsoleColor.RED + "Invalid start arguments. Consider using:");
-            log(ConsoleColor.WHITE_BOLD_BRIGHT + "java -jar TechPluginSupportBot.jar <Discord Bot Token> <Tech API Token> <Songoda Token> <MySQL Host> <MySQL Port> <MySQL Database> <MySQL Username> <MySQL Password> <Imgur Client ID> <Ptero API Key>");
+            log(ConsoleColor.WHITE_BOLD_BRIGHT + "java -jar TechPluginSupportBot.jar <Discord Bot Token> <Tech API Token> <MySQL Host> <MySQL Port> <MySQL Database> <MySQL Username> <MySQL Password> <Github Token>");
             return;
         }
 
-        new TechDiscordBot(args[0], args[1], args[2], MySQLSettings.of(args[3], args[4], args[5], args[6], args[7]), args[8], args[8], args[9]);
+        new TechDiscordBot(args[0], args[1], MySQLSettings.of(args[2], args[3], args[4], args[5], args[6]), args[7]);
     }
 
-    public TechDiscordBot(String token, String apiToken, String songodaToken, MySQLSettings mySQLSettings, String iClientId, String iClientSecret, String pteroApiKey) {
+    public TechDiscordBot(String token, String apiToken, MySQLSettings mySQLSettings, String githubTokenn) {
         try {
             i = this;
             try {
@@ -106,8 +106,7 @@ public class TechDiscordBot {
         jda.addEventListener(modulesManager);
         jda.addEventListener(remindersManager);
 
-        imgurClientId = iClientId;
-        imgurClientSecret = iClientSecret;
+        githubToken = githubTokenn;
 
         Logger.getLogger(OkHttpClient.class.getName()).setLevel(Level.OFF);
 
@@ -182,12 +181,6 @@ public class TechDiscordBot {
         return storage;
     }
 
-    public static String getImgurClientId() {
-        return imgurClientId;
-    }
-
-    public static String getImgurClientSecret() { return imgurClientSecret; }
-
     public static SpigotAPIClient getSpigotAPI() {
         return spigotAPIClient;
     }
@@ -258,5 +251,9 @@ public class TechDiscordBot {
 
     public static void log(String message) {
         System.out.println(ConsoleColor.PURPLE_BRIGHT + "[" + ConsoleColor.WHITE_BOLD_BRIGHT + "TechPluginSupport" + ConsoleColor.PURPLE_BRIGHT + "] " + ConsoleColor.RESET + message + ConsoleColor.RESET);
+    }
+
+    public static String getGithubToken() {
+        return githubToken;
     }
 }
