@@ -34,7 +34,7 @@ public class PluginLabModule extends Module {
         Objects.requireNonNull(TechDiscordBot.getJDA().getCategoryById("741760152570691665")).getTextChannels().stream().filter(Objects::nonNull).filter(channel -> channel.getName().endsWith("-lab")).forEach(channel -> {
             String pluginName;
             if(channel.getTopic() != null) {
-                pluginName = channel.getTopic().replace(" Lab", "");
+                pluginName = channel.getTopic().replace(" Lab", "").replace(" FREE", "");
             } else {
                 pluginName = channel.getName().replace("-lab", "").replace("-", "");
             }
@@ -80,7 +80,7 @@ public class PluginLabModule extends Module {
                 boolean canSeeChannel = false;
                 if(permOv != null) canSeeChannel = permOv.getAllowed().size() > 0 && permOv.getDenied().size() == 0;
 
-                if(roles.contains("Plugin Lab") && roles.contains(plugin) && !canSeeChannel) {
+                if(roles.contains("Plugin Lab") && (channel.getTopic().endsWith("Lab FREE") || roles.contains(plugin)) && !canSeeChannel) {
                     Collection<Permission> permissions = new ArrayList<>(Arrays.asList(Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_READ, Permission.MESSAGE_HISTORY));
                     channel.getManager().putPermissionOverride(member, permissions, new ArrayList<>()).queue();
                     TechDiscordBot.log("Plugin Lab » Added " + member.getEffectiveName() + " to the " + plugin + "'s Lab.");
@@ -123,7 +123,7 @@ public class PluginLabModule extends Module {
     public void uploadFile(TextChannel channel, GithubRelease release, String pluginName) {
         if(release.getAsset() != null && release.getRelease() != null && release.getFile() != null) {
             new TechEmbedBuilder("Ready to Test: " + WordUtils.capitalize(release.getRelease().getName().replace(".jar", "")))
-                    .setText("```" + (release.getRelease().getBody().isEmpty() ? "No changes specified." : release.getRelease().getBody()) + "```")
+                    .setText("```" + (release.getRelease().getBody().isEmpty() ? "No changes specified." : release.getRelease().getBody()).replace(" \\|\\| ", "\n") + "```")
                     .send(channel);
 
             channel.sendFile(release.getFile(), pluginName + ".jar").complete(); //Send File
