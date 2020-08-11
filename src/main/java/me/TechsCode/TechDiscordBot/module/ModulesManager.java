@@ -2,7 +2,7 @@ package me.TechsCode.TechDiscordBot.module;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.Cooldown;
-import me.TechsCode.TechDiscordBot.util.Project;
+import me.TechsCode.TechDiscordBot.util.ProjectUtil;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -24,7 +24,7 @@ public class ModulesManager {
     private List<Module> modules = new ArrayList<>();
 
     public void load() {
-        for (Class each : Project.getClasses("me.TechsCode.TechDiscordBot.module")) {
+        for (Class<?> each : ProjectUtil.getClasses("me.TechsCode.TechDiscordBot.module")) {
             if (CommandModule.class.isAssignableFrom(each) && !Modifier.isAbstract(each.getModifiers())) {
                 try {
                     CommandModule module = (CommandModule)each.getConstructor(TechDiscordBot.class).newInstance(TechDiscordBot.getBot());

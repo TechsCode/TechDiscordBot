@@ -9,12 +9,12 @@ import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class Project {
+public class ProjectUtil {
 
     public static String[] getFiles() {
         ArrayList<String> names = new ArrayList<>();
         try {
-            CodeSource src = Project.class.getProtectionDomain().getCodeSource();
+            CodeSource src = ProjectUtil.class.getProtectionDomain().getCodeSource();
             if (src != null) {
                 URL jar = src.getLocation();
                 ZipInputStream zip = new ZipInputStream(jar.openStream());

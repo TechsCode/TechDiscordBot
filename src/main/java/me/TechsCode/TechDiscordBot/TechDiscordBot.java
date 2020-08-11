@@ -84,6 +84,8 @@ public class TechDiscordBot {
             return;
         }
 
+        githubToken = githubTokenn;
+
         spigotAPIClient = new SpigotAPIClient("https://api.techscode.de", apiToken);
         songodaPurchases = SongodaPurchases.getPurchases();
 
@@ -105,8 +107,6 @@ public class TechDiscordBot {
 
         jda.addEventListener(modulesManager);
         jda.addEventListener(remindersManager);
-
-        githubToken = githubTokenn;
 
         Logger.getLogger(OkHttpClient.class.getName()).setLevel(Level.OFF);
 

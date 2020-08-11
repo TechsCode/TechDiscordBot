@@ -28,6 +28,7 @@ dependencies {
     shadow "com.googlecode.json-simple:json-simple:1.1.1"
     shadow 'net.sourceforge.htmlunit:htmlunit:2.29'
     shadow 'com.google.code.gson:gson:2.8.6'
+    shadow group: 'org.kohsuke', name: 'github-api', version: '1.115'
 }
 
 def props = new Properties()
