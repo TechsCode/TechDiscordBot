@@ -7,10 +7,7 @@ import me.TechsCode.TechDiscordBot.module.Module;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.PermissionOverride;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.*;
 import org.apache.commons.text.WordUtils;
 
 import java.io.IOException;
@@ -121,12 +118,15 @@ public class PluginLabModule extends Module {
     }
 
     public void uploadFile(TextChannel channel, GithubRelease release, String pluginName) {
+        List<Message> msgs = channel.getHistory().retrieveFuture(100).complete().stream().filter(msg -> msg.getAuthor().isBot() && msg.isPinned()).collect(Collectors.toList());
+        msgs.forEach(msg -> msg.unpin().queue());
+
         if(release.getAsset() != null && release.getRelease() != null && release.getFile() != null) {
             new TechEmbedBuilder("Ready to Test: " + WordUtils.capitalize(release.getRelease().getName().replace(".jar", "")))
                     .setText("```" + (release.getRelease().getBody().isEmpty() ? "No changes specified." : release.getRelease().getBody()).replace(" \\|\\| ", "\n") + "```")
                     .send(channel);
 
-            channel.sendFile(release.getFile(), pluginName + ".jar").complete(); //Send File
+            channel.sendFile(release.getFile(), pluginName + ".jar").complete().pin().queue(); //Send File
             release.getFile().delete(); //Delete file locally, as it's no longer needed.
         }
     }
