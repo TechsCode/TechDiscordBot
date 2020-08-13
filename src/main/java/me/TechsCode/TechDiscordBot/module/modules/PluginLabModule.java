@@ -80,8 +80,8 @@ public class PluginLabModule extends Module {
                 boolean canSeeChannel = false;
                 if(permOv != null) canSeeChannel = permOv.getAllowed().size() > 0 && permOv.getDenied().size() == 0;
 
-                if(roles.contains("Plugin Lab") && (channel.getTopic().endsWith("Lab FREE") || roles.contains(plugin)) && !canSeeChannel) {
-                    Collection<Permission> permissions = new ArrayList<>(Arrays.asList(Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_READ, Permission.MESSAGE_HISTORY));
+                if(roles.contains("Plugin Lab") && (channel.getTopic() != null && channel.getTopic().endsWith("Lab FREE") || roles.contains(plugin)) && !canSeeChannel) {
+                    Collection<Permission> permissions = new ArrayList<>(Arrays.asList(Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_READ, Permission.MESSAGE_HISTORY, Permission.MESSAGE_WRITE, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_EMBED_LINKS));
                     channel.getManager().putPermissionOverride(member, permissions, new ArrayList<>()).queue();
                     TechDiscordBot.log("Plugin Lab » Added " + member.getEffectiveName() + " to the " + plugin + "'s Lab.");
                 } else if(!roles.contains("Plugin Lab") && canSeeChannel) {
