@@ -1,7 +1,6 @@
 apply plugin: 'idea'
 apply plugin: 'java'
 apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'org.hidetake.ssh'
 
 group = "me.TechsCode"
 
@@ -12,10 +11,14 @@ repositories {
     jcenter()
     mavenLocal()
     mavenCentral()
+
+    maven { url 'https://www.jitpack.io' }
 }
 
 dependencies {
-    shadow project(":SpigotAPI")
+    dependencies {
+        implementation 'com.github.techscode:spigotapi:build-9'
+    }
 
     shadow ('net.dv8tion:JDA:4.2.0_175') {
         exclude module: 'opus-java' //No audio.
@@ -31,40 +34,12 @@ dependencies {
     shadow group: 'org.kohsuke', name: 'github-api', version: '1.115'
 }
 
-def props = new Properties()
-file("build.properties").withInputStream { props.load(it) }
-
-ssh.remotes {
-    server {
-        host = props.getProperty("host")
-        port = Integer.valueOf(props.getProperty("port"))
-        user = props.getProperty("user")
-        password = props.getProperty("password")
-    }
-}
-
-ssh.settings {
-    knownHosts = allowAnyHosts
-    dryRun = false
-}
-
-task uploadBot {
-    doLast {
-        ssh.run {
-            session(ssh.remotes.server) {
-                put from: files('build/TechDiscordBot.jar'), into: props.getProperty("location")
-            }
-        }
-    }
-}
-
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
-        classpath 'org.hidetake:gradle-ssh-plugin:2.10.1'
     }
 }
 
