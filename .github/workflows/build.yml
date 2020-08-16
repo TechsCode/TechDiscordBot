@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 env:
-  path: build/libs/TechDiscordBot.jar
+  path: build/TechDiscordBot.jar
   name: TechDiscordBot.jar
   build: build-${{ github.run_number }}
 
