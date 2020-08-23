@@ -1,4 +1,0 @@
-[submodule "SpigotAPI"]
-	path = SpigotAPI
-	url = https://github.com/TechsCode/SpigotAPI.git
-	branch = master

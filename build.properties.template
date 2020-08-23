@@ -1,8 +1,0 @@
-# SSH Credentials for direct uploading after compiling
-host=somehost.com
-port=22
-user=someuser
-password=somepassword
-
-# Export Location on Server
-location=/path/to/folder

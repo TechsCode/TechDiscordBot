@@ -18,6 +18,8 @@ public class GitHubUtil {
             GHRepository ghrepo = getGithub().getRepository("TechsCode/" + repo);
             GHRelease release = ghrepo.getLatestRelease();
 
+            if(release == null) return null;
+
             return new GithubRelease(release);
         } catch (IOException e) {
             e.printStackTrace();

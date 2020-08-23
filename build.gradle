@@ -1,61 +1,36 @@
-apply plugin: 'idea'
 apply plugin: 'java'
 apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'org.hidetake.ssh'
 
 group = "me.TechsCode"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+assemble.dependsOn shadowJar
+
 repositories {
     jcenter()
     mavenLocal()
     mavenCentral()
+
+    maven { url 'https://www.jitpack.io' }
 }
 
 dependencies {
-    shadow project(":SpigotAPI")
+    implementation 'com.github.techscode:spigotapi:build-9'
 
-    shadow ('net.dv8tion:JDA:4.2.0_175') {
+    implementation ('net.dv8tion:JDA:4.2.0_175') {
         exclude module: 'opus-java' //No audio.
     }
 
-    shadow 'org.jsoup:jsoup:1.8.3'
-    shadow 'org.apache.commons:commons-lang3:3.7'
-    shadow 'mysql:mysql-connector-java:5.1.17'
-    shadow 'com.j2html:j2html:1.4.0'
-    shadow "com.googlecode.json-simple:json-simple:1.1.1"
-    shadow 'net.sourceforge.htmlunit:htmlunit:2.29'
-    shadow 'com.google.code.gson:gson:2.8.6'
-    shadow group: 'org.kohsuke', name: 'github-api', version: '1.115'
-}
-
-def props = new Properties()
-file("build.properties").withInputStream { props.load(it) }
-
-ssh.remotes {
-    server {
-        host = props.getProperty("host")
-        port = Integer.valueOf(props.getProperty("port"))
-        user = props.getProperty("user")
-        password = props.getProperty("password")
-    }
-}
-
-ssh.settings {
-    knownHosts = allowAnyHosts
-    dryRun = false
-}
-
-task uploadBot {
-    doLast {
-        ssh.run {
-            session(ssh.remotes.server) {
-                put from: files('build/TechDiscordBot.jar'), into: props.getProperty("location")
-            }
-        }
-    }
+    implementation 'org.jsoup:jsoup:1.8.3'
+    implementation 'org.apache.commons:commons-lang3:3.7'
+    implementation 'mysql:mysql-connector-java:5.1.17'
+    implementation 'com.j2html:j2html:1.4.0'
+    implementation "com.googlecode.json-simple:json-simple:1.1.1"
+    implementation 'net.sourceforge.htmlunit:htmlunit:2.29'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation group: 'org.kohsuke', name: 'github-api', version: '1.115'
 }
 
 buildscript {
@@ -64,16 +39,12 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
-        classpath 'org.hidetake:gradle-ssh-plugin:2.10.1'
     }
 }
 
 shadowJar {
     archiveName = 'TechDiscordBot.jar'
-    destinationDir = file('build')
-
-    dependsOn 'build'
-    configurations = [project.configurations.shadow]
+    destinationDir = file("build")
 }
 
 jar {
@@ -81,8 +52,4 @@ jar {
         attributes 'Class-Path': '/libs/a.jar'
         attributes 'Main-Class': 'me.TechsCode.TechDiscordBot.TechDiscordBot'
     }
-}
-
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
 }
