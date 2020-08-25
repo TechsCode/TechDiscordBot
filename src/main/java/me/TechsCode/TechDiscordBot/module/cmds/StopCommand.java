@@ -44,10 +44,18 @@ public class StopCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
-        new TechEmbedBuilder("Stop")
+        if(args.length == 1 && args[0].equals("acTualLy sToP")) {
+            new TechEmbedBuilder("Stop")
                 .setText("The bot will now stop!")
                 .send(channel);
-        TechDiscordBot.getJDA().shutdownNow();
-        System.exit(0);
+            TechDiscordBot.getJDA().shutdownNow();
+            System.exit(0);
+        } else {
+            new TechEmbedBuilder("Stop")
+                    .setText("Hello, " + member.getAsMention() + "! I've detected that you're trying to stop the me!" +
+                            "\n\nI do not like that, especially that if I do stop, I will not be restarted! If you **REALLY** wish to stop me, type the following command:\n`!stop acTualLy sToP`")
+                    .send(channel);
+
+        }
     }
 }
