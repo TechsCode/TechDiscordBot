@@ -94,6 +94,11 @@ public class ActivitiesModule extends Module {
         ceb.addField("Download", "[Click Here](https://www.spigotmc.org/resources/" + update.getResourceId() + "/update?update=" + update.getId() + ")", true);
         ceb.setText(update.getDescription().trim().length() > 0 ? update.getTitle() + "```" + update.getDescription() + "```" : update.getTitle());
 
+        plugin.getChannel().ifPresent(channel -> {
+            new TechEmbedBuilder().setText("There's a new update for " + plugin.getEmoji().getAsMention() + " "  + plugin.getRoleName() + "! Make sure to download it [here](https://www.spigotmc.org/resources/" + update.getResourceId() + "/update?update=" + update.getId() + ")!" +
+                    "\n\nCheck out " + ACTIVITIES_CHANNEL.query().first().getAsMention() + " for more info!").send(channel);
+        });
+
         if(update.getImages() != null && update.getImages().length > 0 && !update.getImages()[0].isEmpty()) ceb.setImage(update.getImages()[0]);
         ceb.send(ACTIVITIES_CHANNEL.query().first());
         announcedIds.add((update.getId()));

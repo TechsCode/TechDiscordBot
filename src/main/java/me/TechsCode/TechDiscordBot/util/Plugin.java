@@ -8,10 +8,8 @@ import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
 import net.dv8tion.jda.api.entities.*;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public enum Plugin {
@@ -42,6 +40,10 @@ public enum Plugin {
 
     public String getChannelId() {
         return channelId;
+    }
+
+    public Optional<TextChannel> getChannel() {
+        return Optional.ofNullable(TechDiscordBot.getJDA().getTextChannelById(getChannelId()));
     }
 
     public String getRoleId() {
