@@ -9,8 +9,8 @@ import java.util.List;
 
 public class MySQL {
 
-    private List<String> errorMessages;
-    private MySQLSettings mySQLSettings;
+    private final List<String> errorMessages;
+    private final MySQLSettings mySQLSettings;
 
     private MySQL(MySQLSettings mySQLSettings) {
         this.errorMessages = new ArrayList<>();
@@ -42,7 +42,7 @@ public class MySQL {
     }
 
     public String getLatestErrorMessage() {
-        if(errorMessages == null || errorMessages.size() == 0) return "";
+        if(errorMessages.size() == 0) return "";
         return errorMessages.get(errorMessages.size() - 1);
     }
 

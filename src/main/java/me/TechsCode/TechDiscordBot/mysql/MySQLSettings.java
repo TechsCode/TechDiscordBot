@@ -2,7 +2,7 @@ package me.TechsCode.TechDiscordBot.mysql;
 
 public class MySQLSettings {
 
-    private String host, database, username, password, port;
+    private final String host, database, username, password, port;
 
     private MySQLSettings(String host, String port, String database, String username, String password) {
         this.host = host;
