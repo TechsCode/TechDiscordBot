@@ -56,6 +56,8 @@ public class RulesCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
+        RULES_CHANNEL.query().first().getHistory().retrievePast(100).complete().forEach(msg -> msg.delete().queue());
+
         showAll();
     }
 
@@ -115,7 +117,7 @@ public class RulesCommand extends CommandModule {
 
         int i = 0;
         for(Role role : Role.values()) {
-            if(i == 0) sBuilder.append("\n\n");
+            if(i != 0) sBuilder.append("\n\n");
 
             sBuilder.append(role.getAsMention()).append(": ").append(role.getDescription());
 
@@ -157,7 +159,7 @@ public class RulesCommand extends CommandModule {
     public enum Role {
 
         CODING_WIZARD("Coding Wizard", "311178859171282944", "It's Tech! The head of the operations."),
-        ASSISTANT("Assistant", "608113993038561325", "Is it Easy or Eazy?! Tech's Assistant, if tech is not online, he is in charge. Occasionally also helps with coding."),
+        ASSISTANT("Assistant", "608113993038561325", "Is it Easy or Eazy?! Tech's Assistant, if Tech is not online, he is in charge. Occasionally also helps with coding."),
         COMMUNITY_MANAGER("Community Manager", "677322840906924105", "The name says it all!"),
         STAFF("Staff", "608114002387533844", "They are here to help! Don't argue with Staff. If you think there is an issue, please contact <@&311178859171282944> or <@&608113993038561325>."),
         DONATOR("Donator", "311179148691505152", "These are amazing people who have donated to Tech!"),
