@@ -16,12 +16,10 @@ import java.util.Set;
 
 public class Storage {
 
-    private MySQL mysql;
+    private final MySQL mysql;
     private boolean connected;
 
     private final String VERIFICATIONS_TABLE = "Verifications";
-    private final String SERVERS_TABLE = "Servers";
-    private final String TRANSCRIPTS_TABLE = "Transcripts";
     private final String REMINDERS_TABLE = "Reminders";
 
     private Storage(MySQLSettings mySQLSettings) {
@@ -45,8 +43,6 @@ public class Storage {
 
     public void createDefault() {
         mysql.update("CREATE TABLE IF NOT EXISTS " + VERIFICATIONS_TABLE + " (userid VARCHAR(10), discordid VARCHAR(32));");
-        mysql.update("CREATE TABLE IF NOT EXISTS " + TRANSCRIPTS_TABLE + " (id VARCHAR(32), html LONGTEXT, password TEXT, PRIMARY KEY (id));");
-        mysql.update("CREATE TABLE IF NOT EXISTS " + SERVERS_TABLE + " (user_id int(64), discord_id VARCHAR(64));");
         mysql.update("CREATE TABLE IF NOT EXISTS " + REMINDERS_TABLE + " (user_id varchar(32), channel_id varchar(32), time varchar(32), type tinyint(1), reminder longtext);");
 
         this.connected = true;
@@ -90,6 +86,21 @@ public class Storage {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + REMINDERS_TABLE + ";");
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) ret.add(new Reminder(rs.getString("user_id"), rs.getString("channel_id"), Long.parseLong(rs.getString("time")), null, (rs.getInt("type") == 0 ? ReminderType.CHANNEL : ReminderType.DMs), rs.getString("reminder")));
+            rs.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
+    public Set<Preorder> getPreorders(String plugin) {
+        Set<Preorder> ret = new HashSet<>();
+        try {
+            Connection connection = mysql.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + plugin.replace(" ", "") + "Preorders;");
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) ret.add(new Preorder(plugin, rs.getString("email"), rs.getLong("discordId"), rs.getString("discordName"), rs.getString("transactionId")));
             rs.close();
             connection.close();
         } catch (SQLException e) {
