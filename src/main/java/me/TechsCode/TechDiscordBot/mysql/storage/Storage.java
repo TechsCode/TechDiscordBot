@@ -4,7 +4,6 @@ import me.TechsCode.TechDiscordBot.mysql.MySQL;
 import me.TechsCode.TechDiscordBot.mysql.MySQLSettings;
 import me.TechsCode.TechDiscordBot.reminders.Reminder;
 import me.TechsCode.TechDiscordBot.reminders.ReminderType;
-import me.TechsCode.TechDiscordBot.util.Base64;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 
@@ -82,10 +81,6 @@ public class Storage {
             e.printStackTrace();
         }
         return ret;
-    }
-
-    public void uploadTranscript(Transcript transcript) {
-        mysql.update("INSERT INTO " + TRANSCRIPTS_TABLE + " (id, html, password) VALUES ('" + transcript.getChannelId() + "', '" + Base64.toBase64(transcript.getHtml()) + "', '" + transcript.getPassword() + "');");
     }
 
     public Set<Reminder> retrieveReminders() {
