@@ -159,11 +159,11 @@ public class RulesCommand extends CommandModule {
     public enum Role {
 
         CODING_WIZARD("Coding Wizard", "311178859171282944", "It's Tech! The head of the operations."),
-        ASSISTANT("Assistant", "608113993038561325", "Is it Easy or Eazy?! Tech's Assistant, if Tech is not online, he is in charge. Occasionally also helps with coding."),
+        ASSISTANT("Assistant", "608113993038561325", "Is it Easy or Eazy?! Well, yes, it's also Tech's Assistant! If Tech is not online, he is in charge. Occasionally also helps with coding."),
         COMMUNITY_MANAGER("Community Manager", "677322840906924105", "The name says it all!"),
         STAFF("Staff", "608114002387533844", "They are here to help! Don't argue with Staff. If you think there is an issue, please contact <@&311178859171282944> or <@&608113993038561325>."),
         DONATOR("Donator", "311179148691505152", "These are amazing people who have donated to Tech!"),
-        VERIFIED_CREATOR("Knows how to Code", "195961770353885184", "A role given to people who have well known coding projects."),
+        VERIFIED_CREATOR("Knows how to Code", "435183665719541761", "A role given to people who have well known coding projects."),
         NITRO_BOOSTERS("Nitro Booster", "585559418008109075", "These people get are also **AMAZING** and get the same perks the Review Squad role."),
         REVIEW_SQUAD("Review Squad", "457934035549683713", "These people are the **AMAZING** people in the community who have review all of their plugin's owned by Tech. They're allowed to advertise in a special channel!"),
         VERIFIED("Verified", "416174015141642240", "This role is given to members who have successfully verified that they've purchased *as least* one of Tech's resources.");
