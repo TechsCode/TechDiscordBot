@@ -61,7 +61,7 @@ public class OverviewCommand extends CommandModule {
     public void showAll() {
         showInfo();
         showFeedback();
-        showRules();
+        //showRules();
         showPlugins();
         showInvite();
         //showVerify();
