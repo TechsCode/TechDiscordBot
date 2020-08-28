@@ -53,6 +53,7 @@ public class OverviewCommand extends CommandModule {
             new TechEmbedBuilder("API").setText("The API has to be online to execute this command!").error().sendTemporary(channel, 5);
             return;
         }
+
         OVERVIEW_CHANNEL.query().first().getHistory().retrievePast(100).complete().forEach(msg -> msg.delete().queue());
         showAll();
     }
@@ -63,7 +64,7 @@ public class OverviewCommand extends CommandModule {
         showRules();
         showPlugins();
         showInvite();
-        showVerify();
+        //showVerify();
     }
 
     public void showVerify() {
