@@ -100,7 +100,13 @@ public class Storage {
             Connection connection = mysql.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + plugin.replace(" ", "") + "Preorders;");
             ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()) ret.add(new Preorder(plugin, rs.getString("email"), rs.getLong("discordId"), rs.getString("discordName"), rs.getString("transactionId")));
+            while (rs.next()){
+                String transactionId = rs.getString("transactionId");
+
+                if(!transactionId.equals("NONE")){
+                    ret.add(new Preorder(plugin, rs.getString("email"), rs.getLong("discordId"), rs.getString("discordName"), transactionId));
+                }
+            }
             rs.close();
             connection.close();
         } catch (SQLException e) {
