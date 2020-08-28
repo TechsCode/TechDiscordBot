@@ -44,7 +44,7 @@ public class PreorderModule extends Module {
     }
 
     public void updateRoles() {
-        roles = TechDiscordBot.getJDA().getRoles().stream().filter(role -> role.getName().endsWith(" Preorders")).map(Role::getName).collect(Collectors.toList());
+        roles = TechDiscordBot.getJDA().getRoles().stream().filter(role -> role.getName().endsWith(" Preorder")).map(Role::getName).collect(Collectors.toList());
     }
 
     public void updateRolesMembers() {
