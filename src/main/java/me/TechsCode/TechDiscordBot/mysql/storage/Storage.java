@@ -94,7 +94,7 @@ public class Storage {
         return ret;
     }
 
-    public Set<Preorder> getPreorders(String plugin) {
+    public Set<Preorder> getPreorders(String plugin, boolean all) {
         Set<Preorder> ret = new HashSet<>();
         try {
             Connection connection = mysql.getConnection();
@@ -103,7 +103,7 @@ public class Storage {
             while (rs.next()){
                 String transactionId = rs.getString("transactionId");
 
-                if(!transactionId.equals("NONE")){
+                if(!transactionId.equals("NONE") || all) {
                     ret.add(new Preorder(plugin, rs.getString("email"), rs.getLong("discordId"), rs.getString("discordName"), transactionId));
                 }
             }

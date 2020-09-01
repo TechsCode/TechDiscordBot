@@ -54,7 +54,7 @@ public class PreorderModule extends Module {
             if(!bot.getRoles(roleS).hasAny()) continue;
             String pluginName = roleS.replace(" Preorder", "");
 
-            List<Preorder> preorders = new ArrayList<>(TechDiscordBot.getStorage().getPreorders(pluginName));
+            List<Preorder> preorders = new ArrayList<>(TechDiscordBot.getStorage().getPreorders(pluginName, false));
 
             for(Preorder preorder : preorders) {
                 Member member = bot.getMember(String.valueOf(preorder.getDiscordId()));
