@@ -77,7 +77,7 @@ public class PreorderCommand extends CommandModule {
                 .success()
                 .addField("Email", showEmail ? preorder.getEmail() : obfuscateEmail(preorder.getEmail()), true)
                 .addField("Transaction ID", showTransactionId ? preorder.getTransactionId() : obfuscateTransactionId(preorder.getTransactionId()), true)
-                .addField("Plugin", (query.hasAny() ? query.first() + " " : "") + preorder.getPlugin(), true)
+                .addField("Plugin", (query.hasAny() ? query.first().getAsMention() + " " : "") + preorder.getPlugin(), true)
                 .addField("Discord Name", preorder.getDiscordName() + " (" + selectedMember.getAsMention() + ")", true)
                 .send(channel);
     }
@@ -88,14 +88,21 @@ public class PreorderCommand extends CommandModule {
         int index = email.indexOf("@");
         if(index == -1) return email;
 
+        StringBuilder length = new StringBuilder();
+        for(int i = 0; i < index - 1; i++) length.append("*");
+
         StringBuilder sb = new StringBuilder(email);
-        sb.replace(0, index - 1, "*");
+        sb.replace(0, index - 1, length.toString());
         return sb.toString();
     }
 
     public String obfuscateTransactionId(String transactionId) {
         StringBuilder sb = new StringBuilder(transactionId);
-        sb.replace(0, (int)(transactionId.length() / 1.5d), "*");
+
+        StringBuilder length = new StringBuilder();
+        for(int i = 0; i < (int)(transactionId.length() / 1.5d); i++) length.append("*");
+
+        sb.replace(0, (int)(transactionId.length() / 1.5d), length.toString());
         return sb.toString();
     }
 
