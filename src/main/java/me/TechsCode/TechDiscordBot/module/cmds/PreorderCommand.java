@@ -59,7 +59,8 @@ public class PreorderCommand extends CommandModule {
         Member selectedMember = TechDiscordBot.getMemberFromString(message, args.length > 0 ? args[0] : "");
         if(selectedMember == null) selectedMember = member;
 
-        Preorder preorder = TechDiscordBot.getStorage().getPreorders(getRoles().get(0).replace(" Preorder", ""), false).stream().filter(po -> po.getDiscordId() == member.getUser().getIdLong()).findFirst().orElse(null);
+        Member finalSelectedMember = selectedMember;
+        Preorder preorder = TechDiscordBot.getStorage().getPreorders(getRoles().get(0).replace(" Preorder", ""), false).stream().filter(po -> po.getDiscordId() == finalSelectedMember.getUser().getIdLong()).findFirst().orElse(null);
         if(preorder == null) {
             new TechEmbedBuilder("Preorder Cmd - Error")
                     .error()
@@ -83,16 +84,16 @@ public class PreorderCommand extends CommandModule {
     }
 
     public String obfuscateEmail(String email) {
-        if(email.equals("notAvailable") || email.equals("ManuallyAdded")) return "Unknown";
+        if(email.equals("notAvailable") || email.equals("ManuallyAdded") || email.equals("NONE") || email.equals("something")) return "Unknown";
 
         int index = email.indexOf("@");
         if(index == -1) return email;
 
         StringBuilder length = new StringBuilder();
-        for(int i = 0; i < index - 1; i++) length.append("*");
+        for(int i = 0; i < index; i++) length.append("*");
 
         StringBuilder sb = new StringBuilder(email);
-        sb.replace(0, index - 1, length.toString());
+        sb.replace(0, index, length.toString());
         return sb.toString();
     }
 
