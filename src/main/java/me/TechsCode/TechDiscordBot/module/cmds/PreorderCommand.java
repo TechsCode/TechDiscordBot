@@ -61,8 +61,11 @@ public class PreorderCommand extends CommandModule {
 
         Preorder preorder = TechDiscordBot.getStorage().getPreorders(getRoles().get(0).replace(" Preorder", ""), false).stream().filter(po -> po.getDiscordId() == member.getUser().getIdLong()).findFirst().orElse(null);
         if(preorder == null) {
+            new TechEmbedBuilder("Preorder Cmd - Error")
+                    .error()
+                    .setText("Could not find a preorder that belongs to " + selectedMember.getAsMention() + "!")
+                    .sendTemporary(channel, 10);
             return;
-
         }
 
         boolean showEmail = isArg(args, "showEmail") && (preorder.getDiscordId() == selectedMember.getUser().getIdLong() || isStaff(member));
