@@ -59,7 +59,7 @@ public class PreorderCommand extends CommandModule {
         Member selectedMember = TechDiscordBot.getMemberFromString(message, args.length > 0 ? args[0] : "");
         if(selectedMember == null) selectedMember = member;
 
-        Preorder preorder = TechDiscordBot.getStorage().getPreorders(getRoles().get(0), false).stream().filter(po -> po.getDiscordId() == member.getUser().getIdLong()).findFirst().orElse(null);
+        Preorder preorder = TechDiscordBot.getStorage().getPreorders(getRoles().get(0).replace(" Preorder", ""), false).stream().filter(po -> po.getDiscordId() == member.getUser().getIdLong()).findFirst().orElse(null);
         if(preorder == null) {
             return;
 
