@@ -70,8 +70,8 @@ public class PreorderCommand extends CommandModule {
             return;
         }
 
-        boolean showEmail = isArg(args, "showEmail") && (preorder.getDiscordId() == selectedMember.getUser().getIdLong() || isStaff(member));
-        boolean showTransactionId = isArg(args, "showTransactionId") && (preorder.getDiscordId() == selectedMember.getUser().getIdLong() || isStaff(member));
+        boolean showEmail = isArg(args, "showEmail") && (preorder.getDiscordId() == member.getUser().getIdLong() || isStaff(member));
+        boolean showTransactionId = isArg(args, "showTransactionId") && (preorder.getDiscordId() == member.getUser().getIdLong() || isStaff(member));
 
         Query<Emote> query = bot.getEmotes(preorder.getPlugin().replace(" ", ""));
 
