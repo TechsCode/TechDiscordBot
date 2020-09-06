@@ -46,4 +46,16 @@ public class ProjectUtil {
                 .filter(Objects::nonNull)
                 .toArray(Class[]::new);
     }
+
+    public static String removeFront(String s, int am) {
+        return s.substring(am);
+    }
+
+    public static String removeEnd(String s, int am) {
+        return s.substring(0, s.length() - am);
+    }
+
+    public static String removeBoth(String s, int am) {
+        return s.substring(am, s.length() - am);
+    }
 }

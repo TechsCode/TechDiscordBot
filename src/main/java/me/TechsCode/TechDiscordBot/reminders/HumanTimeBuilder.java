@@ -1,6 +1,6 @@
 package me.TechsCode.TechDiscordBot.reminders;
 
-import org.apache.commons.lang3.StringUtils;
+import me.TechsCode.TechDiscordBot.util.ProjectUtil;
 
 public class HumanTimeBuilder {
 
@@ -66,7 +66,7 @@ public class HumanTimeBuilder {
         }
 
         String string = sb.toString();
-        if(string.endsWith(",")) string = StringUtils.chop(string);
+        if(string.endsWith(",")) string = ProjectUtil.removeEnd(string, 1) + ".";
         return string;
     }
 
