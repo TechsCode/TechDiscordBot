@@ -6,12 +6,12 @@ import net.dv8tion.jda.api.entities.User;
 
 public class Reminder {
 
-    private String userId;
-    private String channelId;
-    private long time;
-    private String humanTime;
-    private ReminderType type;
-    private String reminder;
+    private final String userId;
+    private final String channelId;
+    private final long time;
+    private final String humanTime;
+    private final ReminderType type;
+    private final String reminder;
 
     public Reminder(String userId, String channelId, long time, String humanTime, ReminderType type, String reminder) {
         this.userId = userId;

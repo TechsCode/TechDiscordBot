@@ -2,9 +2,9 @@ package me.TechsCode.TechDiscordBot.reminders;
 
 public class ReminderArgResponse {
 
-    private long time;
-    private int amountOfArgs;
-    private String timeHuman;
+    private final long time;
+    private final int amountOfArgs;
+    private final String timeHuman;
 
     public ReminderArgResponse(long time, int amountOfArgs, String timeHuman) {
         this.time = time;

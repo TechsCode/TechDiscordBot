@@ -1,16 +1,17 @@
 package me.TechsCode.TechDiscordBot.spigotmc;
 
-import java.util.logging.*;
-import com.gargoylesoftware.htmlunit.html.*;
-import java.net.*;
 import com.gargoylesoftware.htmlunit.*;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 
-import java.io.*;
+import java.io.IOException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class VirtualBrowser {
 
-    private WebClient webClient;
+    private final WebClient webClient;
 
     public VirtualBrowser() {
         this.webClient = new WebClient(BrowserVersion.CHROME);

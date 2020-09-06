@@ -12,9 +12,9 @@ public enum ReminderTimeType {
     MINUTE(TimeUnit.MINUTES, 1, "min", "mins", "minutes", "minute"),
     SECOND(TimeUnit.SECONDS, 1, "sec", "secs", "seconds", "second");
 
-    private String[] names;
-    private int multiplier;
-    private TimeUnit timeUnit;
+    private final String[] names;
+    private final int multiplier;
+    private final TimeUnit timeUnit;
 
     ReminderTimeType(TimeUnit unit, int multiplier, String... names) {
         this.names = names;

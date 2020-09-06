@@ -2,7 +2,7 @@ package me.TechsCode.TechDiscordBot.spigotmc;
 
 public class ProfileComment {
 
-    private String commentId, userId, message;
+    private final String commentId, userId, message;
 
     public ProfileComment(String commentId, String userId, String message) {
         this.commentId = commentId;

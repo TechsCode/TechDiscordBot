@@ -5,7 +5,7 @@ public enum ReminderType {
     CHANNEL(0),
     DMs(1);
 
-    private int i;
+    private final int i;
 
     ReminderType(int i) {
         this.i = i;

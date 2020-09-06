@@ -4,7 +4,7 @@ public enum TicketPriority {
 
     LOW(0), MEDIUM(1), HIGH(2);
 
-    private int i;
+    private final int i;
 
     TicketPriority(int i) {
         this.i = i;

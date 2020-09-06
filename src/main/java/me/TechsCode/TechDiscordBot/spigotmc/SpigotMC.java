@@ -3,7 +3,6 @@ package me.TechsCode.TechDiscordBot.spigotmc;
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import me.TechsCode.SpigotAPI.client.objects.User;
-import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -14,7 +13,7 @@ import java.util.List;
 
 public class SpigotMC {
 
-    private static VirtualBrowser browser = new VirtualBrowser();
+    private final static VirtualBrowser browser = new VirtualBrowser();
 
     public static ProfileComment[] getComments(final String userId) {
         Document doc = doc("https://spigotmc.org/members/" + userId);

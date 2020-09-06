@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class ReminderManager {
 
-    private List<Reminder> reminders = new ArrayList<>();
+    private final List<Reminder> reminders = new ArrayList<>();
 
     public void load() {
         this.reminders.addAll(TechDiscordBot.getStorage().retrieveReminders());
