@@ -27,10 +27,10 @@ public class ProjectUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return names.toArray(new String[names.size()]);
+        return names.toArray(new String[0]);
     }
 
-    public static Class[] getClasses(String prefix) {
+    public static Class<?>[] getClasses(String prefix) {
         return Arrays.stream(getFiles())
                 .filter(fileName -> fileName.endsWith(".class"))
                 .map(className -> className.replace("/", ".").replace(".class", ""))
