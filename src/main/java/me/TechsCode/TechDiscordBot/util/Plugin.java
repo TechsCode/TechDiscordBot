@@ -7,31 +7,35 @@ import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
 import net.dv8tion.jda.api.entities.*;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
-import java.util.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public enum Plugin {
 
-    ULTRA_PERMISSIONS("Ultra Permissions","42678", "416194311080771596", "330053303050436608", new Color(0,235,229), "UltraPermissions", "https://ultrapermissions.com/wiki", "https://www.spigotmc.org/data/resource_icons/42/42678.jpg?75455775"),
-    ULTRA_CUSTOMIZER("Ultra Customizer", "49330", "416194287567372298", "380133603683860480", new Color(184, 103, 243), "UltraCustomizer", "https://ultracustomizer.com/wiki", "https://www.spigotmc.org/data/resource_icons/49/49330.jpg?575757457475"),
-    ULTRA_REGIONS("Ultra Regions", "58317", "465975554101739520", "465975795433734155", new Color(57, 135, 153), "UltraRegions", "https://ultraregions.com/wiki", "https://www.spigotmc.org/data/resource_icons/58/58317.jpg?5775757457"),
-    ULTRA_PUNISHMENTS("Ultra Punishments", "63511", "531255363505487872", "531251918291599401", new Color(247, 119, 39), "UltraPunishments", "https://ultrapunishments.com/wiki", "https://www.spigotmc.org/data/resource_icons/63/63511.jpg?1597561836"),
-    INSANE_SHOPS("Insane Shops", "67352", "531255363505487872", "576813543698202624", new Color(114, 185, 77), "InsaneShops", "https://insaneshops.com/wiki", "https://www.spigotmc.org/data/resource_icons/67/67352.jpg?1597561788"),
-    ULTRA_ECONOMY("Ultra Economy", "83374", "749034791936196649", "737773631198986240", new Color(255, 198, 10), "UltraEconomy", "https://ultraeconomy.com/wiki", "https://www.spigotmc.org/data/resource_icons/83/83374.jpg?1598896895");
+    ULTRA_PERMISSIONS("Ultra Permissions","42678", "416194311080771596", "330053303050436608", new Color(0,235,229), "UltraPermissions", "https://www.spigotmc.org/data/resource_icons/42/42678.jpg?75455775"),
+    ULTRA_CUSTOMIZER("Ultra Customizer", "49330", "416194287567372298", "380133603683860480", new Color(184, 103, 243), "UltraCustomizer", "https://www.spigotmc.org/data/resource_icons/49/49330.jpg?575757457475"),
+    ULTRA_REGIONS("Ultra Regions", "58317", "465975554101739520", "465975795433734155", new Color(57, 135, 153), "UltraRegions", "https://www.spigotmc.org/data/resource_icons/58/58317.jpg?5775757457"),
+    ULTRA_PUNISHMENTS("Ultra Punishments", "63511", "531255363505487872", "531251918291599401", new Color(247, 119, 39), "UltraPunishments", "https://www.spigotmc.org/data/resource_icons/63/63511.jpg?1597561836"),
+    INSANE_SHOPS("Insane Shops", "67352", "531255363505487872", "576813543698202624", new Color(114, 185, 77), "InsaneShops", "https://www.spigotmc.org/data/resource_icons/67/67352.jpg?1597561788"),
+    ULTRA_ECONOMY("Ultra Economy", "83374", "749034791936196649", "737773631198986240", new Color(255, 198, 10), "UltraEconomy", "https://www.spigotmc.org/data/resource_icons/83/83374.jpg?1598896895");
 
-    private final String resourceId, channelId, roleName, roleId, emojiName, wiki, logo;
+    private final String resourceId, channelId, roleName, roleId, emojiName, logo;
     private final Color color;
 
-    Plugin(String roleName, String resourceId, String roleId, String channelId, Color color, String emojiName, String wiki, String logo) {
+    Plugin(String roleName, String resourceId, String roleId, String channelId, Color color, String emojiName, String logo) {
         this.roleName = roleName;
         this.resourceId = resourceId;
         this.channelId = channelId;
         this.roleId = roleId;
         this.color = color;
         this.emojiName = emojiName;
-        this.wiki = wiki;
         this.logo = logo;
     }
 
@@ -80,11 +84,29 @@ public enum Plugin {
     }
 
     public String getWiki() {
-        return wiki;
+        return "https://" + getRoleName().toLowerCase() + "/wiki";
     }
 
     public boolean hasWiki() {
-        return !wiki.isEmpty();
+        return true;
+    }
+
+    public String getBanner() {
+        return "https://" + getRoleName().toLowerCase() + "/banner.png";
+    }
+
+    public File getBannerAsFile() {
+        try {
+            BufferedImage image = ImageIO.read(new URL(getBanner()));
+            File file = new File(getRoleName().toLowerCase() + "_banner.png");
+
+            ImageIO.write(image, "png", file);
+            return file;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public Resource getResource() {

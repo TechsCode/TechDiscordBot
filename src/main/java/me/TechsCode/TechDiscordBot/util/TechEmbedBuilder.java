@@ -100,6 +100,8 @@ public class TechEmbedBuilder extends EmbedBuilder {
 
     @Override
     public TechEmbedBuilder setColor(Color color) {
+        if(color == null) return this;
+
         super.setColor(color);
         return this;
     }
