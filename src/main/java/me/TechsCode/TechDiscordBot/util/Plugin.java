@@ -99,9 +99,10 @@ public enum Plugin {
         try {
             BufferedImage image = ImageIO.read(new URL(getBanner()));
 
-            Image scaled = image.getScaledInstance(960, 540, Image.SCALE_SMOOTH);
-            BufferedImage bufferedImage = new BufferedImage(960, 540, BufferedImage.TYPE_INT_ARGB);
+            Dimension dim = getScaledDimension(new Dimension(image.getWidth(), image.getHeight()), new Dimension(960, 540));
+            Image scaled = image.getScaledInstance((int)dim.getWidth(), (int)dim.getHeight(), Image.SCALE_SMOOTH);
 
+            BufferedImage bufferedImage = new BufferedImage(960, 540, BufferedImage.TYPE_INT_ARGB);
             Graphics2D bGr = bufferedImage.createGraphics();
             bGr.drawImage(scaled, 0, 0, null);
             bGr.dispose();
@@ -115,6 +116,15 @@ public enum Plugin {
         }
 
         return null;
+    }
+
+    private Dimension getScaledDimension(Dimension imageSize, Dimension boundary) {
+        double widthRatio = boundary.getWidth() / imageSize.getWidth();
+        double heightRatio = boundary.getHeight() / imageSize.getHeight();
+        double ratio = Math.min(widthRatio, heightRatio);
+
+        return new Dimension((int) (imageSize.width  * ratio),
+                (int) (imageSize.height * ratio));
     }
 
     public Resource getResource() {
