@@ -41,7 +41,8 @@ public class BannerModule extends Module {
             current++;
             if(current >= plugins.length) current = 0;
         } catch (Exception ex) {
-            ServerLogs.log(ex.getMessage());
+            ex.printStackTrace();
+            ServerLogs.error(ex.getMessage());
         }
     }
 

@@ -15,20 +15,15 @@ public class ServerLogs {
 
 
     public static boolean error(String error) {
-        return sendChannel("Error", error, new Color(178,34,34));
+        return sendChannel("Error", "```" + error + "```", new Color(178,34,34));
     }
 
     private static boolean sendChannel(String title, String msg, Color color) {
         try {
-            TechDiscordBot
-                    .getJDA()
-                    .getTextChannelById(CHANNEL_ID)
-                    .sendMessage(
-                            new TechEmbedBuilder(title)
-                                    .setText(msg)
-                                    .setColor(color)
-                                    .build()
-                    ).queue();
+            new TechEmbedBuilder(title)
+                .setText(msg)
+                .setColor(color)
+                .send(TechDiscordBot.getJDA().getTextChannelById(CHANNEL_ID));
 
             return true;
         } catch (Exception ex) {
