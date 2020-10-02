@@ -98,9 +98,17 @@ public enum Plugin {
     public File getBannerAsFile() {
         try {
             BufferedImage image = ImageIO.read(new URL(getBanner()));
+
+            Image scaled = image.getScaledInstance(960, 540, Image.SCALE_SMOOTH);
+            BufferedImage bufferedImage = new BufferedImage(960, 540, BufferedImage.TYPE_INT_ARGB);
+
+            Graphics2D bGr = bufferedImage.createGraphics();
+            bGr.drawImage(scaled, 0, 0, null);
+            bGr.dispose();
+
             File file = new File(getRoleName().toLowerCase() + "_banner.png");
 
-            ImageIO.write(image, "png", file);
+            ImageIO.write(bufferedImage, "png", file);
             return file;
         } catch (IOException e) {
             e.printStackTrace();
