@@ -84,7 +84,7 @@ public enum Plugin {
     }
 
     public String getWiki() {
-        return "https://" + getRoleName().toLowerCase() + "/wiki";
+        return "https://" + getRoleName().toLowerCase() + ".com/wiki";
     }
 
     public boolean hasWiki() {
@@ -92,7 +92,7 @@ public enum Plugin {
     }
 
     public String getBanner() {
-        return "https://" + getRoleName().toLowerCase() + "/banner.png";
+        return "https://" + getRoleName().toLowerCase().replace(" ", "") + ".com/banner.png";
     }
 
     public File getBannerAsFile() {

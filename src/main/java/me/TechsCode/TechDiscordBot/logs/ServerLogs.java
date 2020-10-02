@@ -2,6 +2,7 @@ package me.TechsCode.TechDiscordBot.logs;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.awt.*;
 
@@ -13,6 +14,9 @@ public class ServerLogs {
         return sendChannel("Log", msg, null);
     }
 
+    public static boolean error(Exception ex) {
+        return sendChannel("Error", "```" + ExceptionUtils.getMessage(ex) + "```", new Color(178,34,34));
+    }
 
     public static boolean error(String error) {
         return sendChannel("Error", "```" + error + "```", new Color(178,34,34));
