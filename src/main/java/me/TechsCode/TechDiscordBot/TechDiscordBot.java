@@ -143,8 +143,7 @@ public class TechDiscordBot {
 
         log("");
         log("Startup Completed! The bot has successfully started!");
-
-        Logger.getLogger("ImgurApi").setLevel(Level.OFF);
+        
         startSpigotCloudflareBypass();
     }
 
