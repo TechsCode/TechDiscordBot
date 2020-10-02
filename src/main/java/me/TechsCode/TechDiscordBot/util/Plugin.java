@@ -104,7 +104,9 @@ public enum Plugin {
 
             BufferedImage bufferedImage = new BufferedImage(960, 540, BufferedImage.TYPE_INT_ARGB);
             Graphics2D bGr = bufferedImage.createGraphics();
-            bGr.drawImage(scaled, 0, (int) Math.round(540 - dim.getHeight()), null);
+
+            int yOffset = 10; // Moving it up 10 pixels
+            bGr.drawImage(scaled, 0, (int) Math.round(540 - dim.getHeight() - yOffset), null);
             bGr.dispose();
 
             File file = new File(getRoleName().toLowerCase() + "_banner.png");
