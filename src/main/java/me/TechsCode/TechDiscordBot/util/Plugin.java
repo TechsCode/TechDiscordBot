@@ -105,7 +105,7 @@ public enum Plugin {
             BufferedImage bufferedImage = new BufferedImage(960, 540, BufferedImage.TYPE_INT_ARGB);
             Graphics2D bGr = bufferedImage.createGraphics();
 
-            int yOffset = 50; // Moving it up 50 pixels
+            int yOffset = 35; // Moving it up 35 pixels
             bGr.drawImage(scaled, 0, (int) Math.round(540 - dim.getHeight() - yOffset), null);
             bGr.dispose();
 
