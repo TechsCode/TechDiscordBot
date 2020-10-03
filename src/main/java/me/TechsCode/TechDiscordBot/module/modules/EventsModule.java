@@ -17,9 +17,7 @@ public class EventsModule extends Module {
     }
 
     @Override
-    public void onEnable() {
-
-    }
+    public void onEnable() {}
 
     @SubscribeEvent
     public void memberJoin(GuildMemberJoinEvent e) {

@@ -25,11 +25,11 @@ public class ChatLogModule extends Module {
         }
     };
 
-    private HashMap<String, Message> cachedMessages = new HashMap<>();
+    private final HashMap<String, Message> cachedMessages = new HashMap<>();
 
     private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
         @Override
-        protected Query newQuery() {
+        protected Query<Role> newQuery() {
             return bot.getRoles("Staff");
         }
     };

@@ -191,18 +191,21 @@ public class SongodaTransferModule extends Module {
                 SongodaPurchase purchase = TechDiscordBot.getSongodaPurchases().stream()
                         .filter(p -> p.getEmail() != null && p.getEmail().equals(e.getMessage().getContentDisplay())).findFirst().orElse(null);
 
-                email = purchase.getEmail();
-                username = purchase.getUsername();
+                if(purchase != null) {
+                    email = purchase.getEmail();
+                    username = purchase.getUsername();
 
-                lastInstructions = new TechEmbedBuilder("Transfer to SpigotMC from Songoda (" + e.getAuthor().getName() + ")")
-                        .setText("We've detected that you've bought " + plugins + " using your linked discord account.\n\nCould you please provide your Spigot Username?")
-                        .send(TRANSFER_CHANNEL.query().first());
+                    lastInstructions = new TechEmbedBuilder("Transfer to SpigotMC from Songoda (" + e.getAuthor().getName() + ")")
+                            .setText("We've detected that you've bought " + plugins + " using your linked discord account.\n\nCould you please provide your Spigot Username?")
+                            .send(TRANSFER_CHANNEL.query().first());
+                }
             }
         }
     }
 
     public void sendTransferRequest(String songodaEmail, String songodaUsername, String spigotUsername, Member member) {
         member.getGuild().addRoleToMember(member, member.getGuild().getRolesByName("Requested-Transfer", true).get(0)).queue();
+
         new TechEmbedBuilder("Songoda Transfer Request")
                 .setText("Request by " + member.getAsMention() + "\n\nPlugins - " + plugins + "\nSpigot Username - " + spigotUsername + "\n\nSongoda Email - " + (songodaEmail == null ? "N/A" : songodaEmail) + "\nSongoda Username - " + (songodaUsername == null ? "N/A" : songodaUsername))
                 .send(TRANSFER_STAFF_CHANNEL.query().first());

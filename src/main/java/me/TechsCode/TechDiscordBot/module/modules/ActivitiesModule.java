@@ -1,6 +1,5 @@
 package me.TechsCode.TechDiscordBot.module.modules;
 
-import me.TechsCode.SpigotAPI.client.objects.Resource;
 import me.TechsCode.SpigotAPI.client.objects.Review;
 import me.TechsCode.SpigotAPI.client.objects.Update;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
@@ -41,14 +40,15 @@ public class ActivitiesModule extends Module {
                     TechDiscordBot.getSpigotAPI().getReviews().getStream().forEach(x -> announcedIds.add(x.getId()));
                     TechDiscordBot.getSpigotAPI().getUpdates().getStream().forEach(x -> announcedIds.add(x.getId()));
                 }
-                for(Resource resource : TechDiscordBot.getSpigotAPI().getResources().get()) {
+
+                Arrays.stream(TechDiscordBot.getSpigotAPI().getResources().get()).forEach(resource -> {
                     Plugin plugin = Plugin.fromId(resource.getId());
-                    if(plugin == null) continue;
+                    if (plugin == null) return;
                     Review[] newReviews = resource.getReviews().getStream().filter(x -> !announcedIds.contains(x.getId())).toArray(Review[]::new);
                     Update[] newUpdates = resource.getUpdates().getStream().filter(x -> !announcedIds.contains(x.getId())).toArray(Update[]::new);
                     Arrays.stream(newReviews).forEach(review -> printReview(plugin, review));
                     Arrays.stream(newUpdates).forEach(update -> printUpdate(plugin, update));
-                }
+                });
             }
         }).start();
     }

@@ -44,6 +44,7 @@ public class WikiCommand extends CommandModule {
             new TechEmbedBuilder("Wiki Help").setText("**Wiki Command Args**\n\n`!wiki` - *If in a plugin support channel, shows that Wiki, otherwise shows your owned plugin's wikis.*\n`!wiki -a` - *Shows all wikis.*\n`wiki -m` - *Shows your wikis if in a plugin support channel.*").send(channel);
             return;
         }
+
         if(Plugin.isPluginChannel(channel)) {
             if(args.length == 0) {
                 showCurrentChannel(channel);
@@ -72,6 +73,7 @@ public class WikiCommand extends CommandModule {
                 new TechEmbedBuilder("Wikis").error().setText(plugin.getEmoji().getAsMention() + " " + plugin.getRoleName() + " unfortunately does not have a wiki!").sendTemporary(channel, 10);
                 return;
             }
+
             new TechEmbedBuilder("Wikis").setText("*Showing the wiki of the support channel you're in.*\n\n" + plugin.getEmoji().getAsMention() + " " + plugin.getWiki() + "\n\nFor more info please execute the command `wiki help`.").send(channel);
         }
     }
@@ -80,20 +82,27 @@ public class WikiCommand extends CommandModule {
         boolean apiIsUp = TechDiscordBot.getSpigotAPI().isAvailable();
         List<Plugin> plugins = Plugin.allWithWiki();
         if(apiIsUp) plugins = Plugin.fromUser(member).stream().filter(Plugin::hasWiki).collect(Collectors.toList());
+
         StringBuilder sb = new StringBuilder();
-        if(!apiIsUp) sb.append(TechDiscordBot.getBot().getEmotes("offline").first().getAsMention()).append(" **The API is not online, showing all plugins with a wiki.**\n\n");
-        if(apiIsUp) sb.append("*Showing all wikis of the plugins you own!*\n\n");
-        if(plugins.isEmpty()) sb.append("**You do not own of any of Tech's plugins, showing all wikis!**\n\n");
-        if(plugins.isEmpty()) plugins = Plugin.allWithWiki();
+        if(!apiIsUp)
+            sb.append(TechDiscordBot.getBot().getEmotes("offline").first().getAsMention()).append(" **The API is not online, showing all plugins with a wiki.**\n\n");
+        if(apiIsUp)
+            sb.append("*Showing all wikis of the plugins you own!*\n\n");
+        if(plugins.isEmpty())
+            sb.append("**You do not own of any of Tech's plugins, showing all wikis!**\n\n");
+        if(plugins.isEmpty())
+            plugins = Plugin.allWithWiki();
+
         plugins.forEach(p -> sb.append(p.getEmoji().getAsMention()).append(" ").append(p.getWiki()).append("\n"));
-        new TechEmbedBuilder("Wikis").setText(sb.toString().substring(0, sb.toString().length() - 1)).send(channel);
+        new TechEmbedBuilder("Wikis").setText(sb.substring(0, sb.toString().length() - 1)).send(channel);
     }
 
     public void showAll(TextChannel channel) {
         List<Plugin> plugins = Plugin.allWithWiki();
         StringBuilder sb = new StringBuilder();
         sb.append("*Showing all wikis!*\n\n");
+
         plugins.forEach(p -> sb.append(p.getEmoji().getAsMention()).append(" ").append(p.getWiki()).append("\n"));
-        new TechEmbedBuilder("Wikis").setText(sb.toString().substring(0, sb.toString().length() - 1)).send(channel);
+        new TechEmbedBuilder("Wikis").setText(sb.substring(0, sb.toString().length() - 1)).send(channel);
     }
 }

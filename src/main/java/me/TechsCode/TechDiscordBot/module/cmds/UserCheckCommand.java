@@ -26,12 +26,6 @@ public class UserCheckCommand extends CommandModule {
             return bot.getRoles("Staff");
         }
     };
-    private final DefinedQuery<TextChannel> STAFF_CHANNEL = new DefinedQuery<TextChannel>() {
-        @Override
-        protected Query<TextChannel> newQuery() {
-            return bot.getChannels("staff-chat");
-        }
-    };
 
     public UserCheckCommand(TechDiscordBot bot) { super(bot); }
 
@@ -45,7 +39,7 @@ public class UserCheckCommand extends CommandModule {
     public DefinedQuery<Role> getRestrictedRoles() { return STAFF_ROLE; }
 
     @Override
-    public DefinedQuery<TextChannel> getRestrictedChannels() { return STAFF_CHANNEL; }
+    public DefinedQuery<TextChannel> getRestrictedChannels() { return null; }
 
     @Override
     public CommandCategory getCategory() { return CommandCategory.ADMIN; }

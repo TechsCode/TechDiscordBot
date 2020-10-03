@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.entities.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class PreorderCommand extends CommandModule {
 
@@ -102,10 +103,9 @@ public class PreorderCommand extends CommandModule {
         if(transactionId.equals("NONE") || transactionId.equals("something")) return "Unknown";
         StringBuilder sb = new StringBuilder(transactionId);
 
-        StringBuilder length = new StringBuilder();
-        for(int i = 0; i < (int)(transactionId.length() / 1.5d); i++) length.append("\\*");
+        String length = IntStream.range(0, (int) (transactionId.length() / 1.5d)).mapToObj(i -> "\\*").collect(Collectors.joining());
 
-        sb.replace(0, (int)(transactionId.length() / 1.5d), length.toString());
+        sb.replace(0, (int)(transactionId.length() / 1.5d), length);
         return sb.toString();
     }
 

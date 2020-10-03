@@ -30,7 +30,7 @@ public class VerificationModule extends Module {
     };
 
     private TextChannel channel;
-    private Message lastInstructions, apiNotAvailable;
+    private Message lastInstructions;
 
     private List<String> verificationQueue;
 
@@ -43,7 +43,6 @@ public class VerificationModule extends Module {
         channel = VERIFICATION_CHANNEL.query().first();
 
         lastInstructions = null;
-        //apiNotAvailable = null;
         verificationQueue = new ArrayList<>();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -60,6 +59,7 @@ public class VerificationModule extends Module {
 
     public void sendInstructions() {
         if(lastInstructions != null) lastInstructions.delete().complete();
+
         TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("How It Works").setText("Type your SpigotMC Username in this Chat to verify.\n\nVerification not working? Feel free to contact a staff member in <#311178000026566658>.");
         lastInstructions = howItWorksMessage.send(channel);
     }
@@ -134,9 +134,11 @@ public class VerificationModule extends Module {
                                 .setText(e.getAuthor().getName() + " has successfully verified their SpigotMC Account!")
                                 .setThumbnail(avatarUrl)
                                 .send(channel);
+
                         sendInstructions();
                         verificationQueue.remove(e.getAuthor().getId());
                         TechDiscordBot.getStorage().createVerification(userId, e.getAuthor().getId());
+
                         new TechEmbedBuilder("Verification Complete!")
                                 .setText("You've been successfully verified!\n\nHere are your purchased plugins: " + Plugin.getMembersPluginsinEmojis(e.getMember()) + "\n\n*Your roles will be updated automatically from now on!*")
                                 .setThumbnail(avatarUrl)

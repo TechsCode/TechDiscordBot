@@ -191,6 +191,7 @@ public class TicketModule extends Module {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
             if(this.selectionUserId == null || userId == null) return;
             if(this.selectionUserId.equals(userId) && isSelection) {
                 new TechEmbedBuilder("Ticket - Error")
@@ -284,8 +285,9 @@ public class TicketModule extends Module {
             sendIssueInstructions(e.getMember());
         } else {
             String ezMention = TechDiscordBot.getJDA().getUserById("130340486920667136").getAsMention();
+
             new TechEmbedBuilder("Ticket Creation - Error")
-                    .setText("This shouldn't be happening. Contact " + ezMention + " (EazyFTW#0001) immediately!")
+                    .setText("This shouldn't be happening. Contact " + ezMention + " (ItsEazy#0001) immediately!")
                     .error()
                     .sendTemporary(channel, 10);
             isSelection = false;
