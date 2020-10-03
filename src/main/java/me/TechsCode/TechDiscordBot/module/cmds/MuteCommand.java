@@ -54,6 +54,12 @@ public class MuteCommand extends CommandModule {
             new TechEmbedBuilder("Mute Command").setText("Member is not found! Please specify a member in the arguments, either using their mention, name and discriminator, or user id.").error().send(channel);
         } else if(TechDiscordBot.getMemberFromString(message, args[0]) != null) {
             Member memberS = TechDiscordBot.getMemberFromString(message, args[0]);
+
+            if(memberS == null) {
+                new TechEmbedBuilder("Mute Command - Error").error().setText(args[0] + " is not a member!").success().send(channel);
+                return;
+            }
+
             if(memberHasMutedRole(memberS)) {
                 memberS.getGuild().removeRoleFromMember(memberS, MUTED_ROLE.query().first()).queue();
                 new TechEmbedBuilder("Mute Command").setText(memberS.getAsMention() + " is no longer muted!").success().send(channel);

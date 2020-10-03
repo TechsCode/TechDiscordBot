@@ -9,7 +9,7 @@ import java.io.IOException;
 public class GithubRelease {
 
     private File file = null;
-    private GHRelease release;
+    private final GHRelease release;
     private GHAsset asset = null;
 
     public GithubRelease(GHRelease release) throws IOException {

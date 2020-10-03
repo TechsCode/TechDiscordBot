@@ -69,8 +69,11 @@ public class Storage {
         try {
             Connection connection = mysql.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + VERIFICATIONS_TABLE + ";");
+
             ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()) ret.add(new Verification(this, rs.getString("userid"), rs.getString("discordid")));
+            while (rs.next())
+                ret.add(new Verification(this, rs.getString("userid"), rs.getString("discordid")));
+
             rs.close();
             connection.close();
         } catch (SQLException e) {
@@ -85,7 +88,10 @@ public class Storage {
             Connection connection = mysql.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + REMINDERS_TABLE + ";");
             ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()) ret.add(new Reminder(rs.getString("user_id"), rs.getString("channel_id"), Long.parseLong(rs.getString("time")), null, (rs.getInt("type") == 0 ? ReminderType.CHANNEL : ReminderType.DMs), rs.getString("reminder")));
+
+            while (rs.next())
+                ret.add(new Reminder(rs.getString("user_id"), rs.getString("channel_id"), Long.parseLong(rs.getString("time")), null, (rs.getInt("type") == 0 ? ReminderType.CHANNEL : ReminderType.DMs), rs.getString("reminder")));
+
             rs.close();
             connection.close();
         } catch (SQLException e) {
@@ -100,6 +106,7 @@ public class Storage {
             Connection connection = mysql.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + plugin.replace(" ", "") + "Preorders;");
             ResultSet rs = preparedStatement.executeQuery();
+
             while (rs.next()){
                 String transactionId = rs.getString("transactionId");
 
@@ -107,6 +114,7 @@ public class Storage {
                     ret.add(new Preorder(plugin, rs.getString("email"), rs.getLong("discordId"), rs.getString("discordName"), transactionId));
                 }
             }
+
             rs.close();
             connection.close();
         } catch (SQLException e) {

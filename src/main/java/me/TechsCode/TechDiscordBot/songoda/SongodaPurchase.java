@@ -2,20 +2,8 @@ package me.TechsCode.TechDiscordBot.songoda;
 
 public class SongodaPurchase {
 
-    private String order_number;
-    private String transaction_id;
-    private String product;
-    private String status;
-    private String amount;
-    private String currency;
-    private String fee;
-    private String email;
-    private String first_name;
-    private String last_name;
-    private String username;
-    private String discord;
-    private int created_at;
-    private int updated_at;
+    private String order_number, transaction_id, product, status, amount, currency, fee, email, first_name, last_name, username, discord;
+    private int created_at, updated_at;
 
     public String getAmount() {
         return amount;

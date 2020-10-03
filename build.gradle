@@ -19,14 +19,13 @@ repositories {
 dependencies {
     implementation 'com.github.techscode:spigotapi:build-9'
 
-    implementation ('net.dv8tion:JDA:4.2.0_175') {
+    implementation ('net.dv8tion:JDA:4.2.0_207') {
         exclude module: 'opus-java' //No audio.
     }
 
     implementation 'org.jsoup:jsoup:1.8.3'
     implementation 'org.apache.commons:commons-lang3:3.7'
     implementation 'mysql:mysql-connector-java:5.1.17'
-    implementation 'com.j2html:j2html:1.4.0'
     implementation "com.googlecode.json-simple:json-simple:1.1.1"
     implementation 'net.sourceforge.htmlunit:htmlunit:2.29'
     implementation 'com.google.code.gson:gson:2.8.6'

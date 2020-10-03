@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public abstract class CommandModule {
 
-    private HashMap<String, Cooldown> cooldowns = new HashMap<>();
+    private final HashMap<String, Cooldown> cooldowns = new HashMap<>();
 
     protected TechDiscordBot bot;
     private boolean enabled;
@@ -31,6 +31,7 @@ public abstract class CommandModule {
         Set<Requirement> failedRequirements = Arrays.stream(getRequirements())
                 .filter(requirement -> !requirement.check())
                 .collect(Collectors.toSet());
+
         if(failedRequirements.isEmpty()) {
             onEnable();
             enabled = true;
@@ -58,8 +59,12 @@ public abstract class CommandModule {
 
     public Requirement[] getRequirements() {
         Set<Requirement> requirements = new HashSet<>();
-        if(getRestrictedRoles() != null) requirements.add(new Requirement(getRestrictedRoles(), 1, "No Roles found which are suitable for running this Command (Missing Restricted Roles)"));
-        if(getRestrictedChannels() != null) requirements.add(new Requirement(getRestrictedChannels(), 1, "No Channels found which are suitable for running this Command (Missing Restricted Channels)"));
+
+        if(getRestrictedRoles() != null)
+            requirements.add(new Requirement(getRestrictedRoles(), 1, "No Roles found which are suitable for running this Command (Missing Restricted Roles)"));
+        if(getRestrictedChannels() != null)
+            requirements.add(new Requirement(getRestrictedChannels(), 1, "No Channels found which are suitable for running this Command (Missing Restricted Channels)"));
+
         return requirements.toArray(new Requirement[0]);
     }
 

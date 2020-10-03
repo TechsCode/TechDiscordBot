@@ -3,6 +3,7 @@ package me.TechsCode.TechDiscordBot.module.modules;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.github.GitHubUtil;
 import me.TechsCode.TechDiscordBot.github.GithubRelease;
+import me.TechsCode.TechDiscordBot.logs.ServerLogs;
 import me.TechsCode.TechDiscordBot.module.Module;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
@@ -30,6 +31,7 @@ public class PluginLabModule extends Module {
 
         Objects.requireNonNull(TechDiscordBot.getJDA().getCategoryById("741760152570691665")).getTextChannels().stream().filter(Objects::nonNull).filter(channel -> channel.getName().endsWith("-lab")).forEach(channel -> {
             String pluginName;
+
             if(channel.getTopic() != null) {
                 pluginName = channel.getTopic().replace(" Lab", "").replace(" FREE", "");
             } else {
@@ -80,10 +82,14 @@ public class PluginLabModule extends Module {
                 if(roles.contains("Plugin Lab") && (channel.getTopic() != null && channel.getTopic().endsWith("Lab FREE") || roles.contains(plugin)) && !canSeeChannel) {
                     Collection<Permission> permissions = new ArrayList<>(Arrays.asList(Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_READ, Permission.MESSAGE_HISTORY, Permission.MESSAGE_WRITE, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_EMBED_LINKS));
                     channel.getManager().putPermissionOverride(member, permissions, new ArrayList<>()).queue();
+
                     TechDiscordBot.log("Plugin Lab » Added " + member.getEffectiveName() + " to the " + plugin + "'s Lab.");
+                    ServerLogs.log("Plugin Lab", "Added " + member.getAsMention() + " to the " + plugin + "'s Lab.");
                 } else if(!roles.contains("Plugin Lab") && canSeeChannel) {
                     channel.getManager().removePermissionOverride(member).queue();
+
                     TechDiscordBot.log("Plugin Lab » Removed " + plugin + " Lab from (" + member.getEffectiveName() + ")");
+                    ServerLogs.log("Plugin Lab", "Removed " + plugin + " Lab from (" + member.getAsMention() + ")");
                 }
             });
         }

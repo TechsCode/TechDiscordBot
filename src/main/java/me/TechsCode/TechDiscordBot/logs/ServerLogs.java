@@ -5,10 +5,15 @@ import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class ServerLogs {
 
     private static final long CHANNEL_ID = 761382066633572373L;
+
+    public static boolean log(String title, String msg) {
+        return sendChannel(title, msg, null);
+    }
 
     public static boolean log(String msg) {
         return sendChannel("Log", msg, null);
@@ -27,7 +32,7 @@ public class ServerLogs {
             new TechEmbedBuilder(title)
                 .setText(msg)
                 .setColor(color)
-                .send(TechDiscordBot.getJDA().getTextChannelById(CHANNEL_ID));
+                .send(Objects.requireNonNull(TechDiscordBot.getJDA().getTextChannelById(CHANNEL_ID)));
 
             return true;
         } catch (Exception ex) {

@@ -11,11 +11,13 @@ public class SongodaPurchases {
 
     public static List<SongodaPurchase> getPurchases() {
         Gson gson = new Gson();
+
         try {
             return gson.fromJson(new FileReader("songodaPurchases.json"), SongodaGson.class).getData();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
         return new ArrayList<>();
     }
 }

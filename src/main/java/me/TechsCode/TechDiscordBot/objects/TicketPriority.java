@@ -2,7 +2,9 @@ package me.TechsCode.TechDiscordBot.objects;
 
 public enum TicketPriority {
 
-    LOW(0), MEDIUM(1), HIGH(2);
+    LOW(0),
+    MEDIUM(1),
+    HIGH(2);
 
     private final int i;
 

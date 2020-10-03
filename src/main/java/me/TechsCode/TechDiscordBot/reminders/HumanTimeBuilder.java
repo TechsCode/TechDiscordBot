@@ -46,21 +46,27 @@ public class HumanTimeBuilder {
         if(years > 0) {
             sb.append(years).append(" year").append(plural(years, true));
         }
+
         if(months > 0) {
             sb.append(months).append(" month").append(plural(months, true));
         }
+
         if(weeks > 0) {
             sb.append(weeks).append(" week").append(plural(weeks, true));
         }
+
         if(days > 0) {
             sb.append(days).append(" day").append(plural(days, true));
         }
+
         if(hours > 0) {
             sb.append(hours).append(" hour").append(plural(hours, true));
         }
+
         if(minutes > 0) {
             sb.append(minutes).append(" minute").append(plural(minutes, true));
         }
+
         if(seconds > 0) {
             sb.append(seconds).append(" second").append(plural(seconds, false));
         }

@@ -28,6 +28,7 @@ public class MySQL {
             p.execute();
             connection.close();
             p.close();
+
             return "Success";
         } catch(SQLException ex) {
             ex.printStackTrace();

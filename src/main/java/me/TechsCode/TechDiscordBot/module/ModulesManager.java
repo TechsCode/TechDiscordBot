@@ -20,8 +20,8 @@ import java.util.concurrent.TimeUnit;
 
 public class ModulesManager {
 
-    private List<CommandModule> cmdModules = new ArrayList<>();
-    private List<Module> modules = new ArrayList<>();
+    private final List<CommandModule> cmdModules = new ArrayList<>();
+    private final List<Module> modules = new ArrayList<>();
 
     public void load() {
         for (Class<?> each : ProjectUtil.getClasses("me.TechsCode.TechDiscordBot.module")) {

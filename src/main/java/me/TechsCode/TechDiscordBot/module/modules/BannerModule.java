@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 public class BannerModule extends Module {
 
-    private Plugin[] plugins = Plugin.values();
+    private final Plugin[] plugins = Plugin.values();
     private int current = 0;
 
     public BannerModule(TechDiscordBot bot) {

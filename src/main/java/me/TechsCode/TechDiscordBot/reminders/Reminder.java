@@ -6,12 +6,9 @@ import net.dv8tion.jda.api.entities.User;
 
 public class Reminder {
 
-    private final String userId;
-    private final String channelId;
+    private final String userId, channelId, humanTime, reminder;
     private final long time;
-    private final String humanTime;
     private final ReminderType type;
-    private final String reminder;
 
     public Reminder(String userId, String channelId, long time, String humanTime, ReminderType type, String reminder) {
         this.userId = userId;
@@ -55,6 +52,7 @@ public class Reminder {
         if(user != null) {
             ReminderType type = this.type;
             TextChannel channel = TechDiscordBot.getJDA().getTextChannelById(channelId);
+
             if(channel == null) type = ReminderType.DMs;
 
             if(type == ReminderType.DMs) {

@@ -2,8 +2,8 @@ package me.TechsCode.TechDiscordBot.mysql.storage;
 
 public class Verification {
 
-    private Storage storage;
-    private String userId, discordId;
+    private final Storage storage;
+    private final String userId, discordId;
 
     public Verification(Storage storage, String userId, String discordId) {
         this.storage = storage;

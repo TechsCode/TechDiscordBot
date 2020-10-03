@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import okhttp3.OkHttpClient;
 
 import javax.security.auth.login.LoginException;
@@ -50,24 +51,23 @@ public class TechDiscordBot {
             return;
         }
 
-        new TechDiscordBot(args[0], args[1], MySQLSettings.of(args[2], args[3], args[4], args[5], args[6]), args[7]);
-    }
-
-    public TechDiscordBot(String token, String apiToken, MySQLSettings mySQLSettings, String githubTokenn) {
         try {
-            i = this;
-            try {
-                jda = new JDABuilder(token)
-                        .setEventManager(new AnnotatedEventManager())
-                        .setActivity(Activity.watching("for help."))
-                        .build().awaitReady();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            new TechDiscordBot(args[0], args[1], MySQLSettings.of(args[2], args[3], args[4], args[5], args[6]), args[7]);
         } catch (LoginException e) {
             e.printStackTrace();
-            return;
         }
+    }
+
+    public TechDiscordBot(String token, String apiToken, MySQLSettings mySQLSettings, String githubTokenn) throws LoginException {
+        i = this;
+
+        JDABuilder builder = JDABuilder.createDefault(token);
+        builder.enableIntents(GatewayIntent.GUILD_MEMBERS);
+
+        builder.setActivity(Activity.watching("for help."));
+        builder.setEventManager(new AnnotatedEventManager());
+
+        builder.build();
 
         List<Guild> guilds = jda.getGuilds();
 

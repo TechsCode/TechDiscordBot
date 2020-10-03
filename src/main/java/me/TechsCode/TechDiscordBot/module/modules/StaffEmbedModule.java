@@ -14,7 +14,7 @@ public class StaffEmbedModule extends Module {
 
     private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
         @Override
-        protected Query newQuery() {
+        protected Query<Role> newQuery() {
             return bot.getRoles("Staff");
         }
     };

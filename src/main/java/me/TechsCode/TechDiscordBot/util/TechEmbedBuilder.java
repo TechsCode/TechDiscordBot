@@ -67,7 +67,7 @@ public class TechEmbedBuilder extends EmbedBuilder {
     public Message send(User user) {
         try {
             return user.openPrivateChannel().complete().sendMessage(build()).complete();
-        } catch (ErrorResponseException ignore) {} //Ignore if user doesn't have DMs open.
+        } catch (ErrorResponseException ignore) {}
         return null;
     }
 

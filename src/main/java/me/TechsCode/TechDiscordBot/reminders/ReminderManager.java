@@ -4,7 +4,9 @@ import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class ReminderManager {
@@ -67,6 +69,7 @@ public class ReminderManager {
         long time = System.currentTimeMillis();
         int argsAm = 0;
         int i = 0;
+
         for(String arg : args) {
             for(ReminderTimeType rtt : ReminderTimeType.values()) {
                 if(Arrays.stream(rtt.getNames()).anyMatch(n -> n.equalsIgnoreCase(arg))) {

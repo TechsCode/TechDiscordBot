@@ -8,6 +8,7 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
 public class GitHubUtil {
 
@@ -15,7 +16,7 @@ public class GitHubUtil {
 
     public static GithubRelease getLatestRelease(String repo) {
         try {
-            GHRepository ghrepo = getGithub().getRepository("TechsCode/" + repo);
+            GHRepository ghrepo = Objects.requireNonNull(getGithub()).getRepository("TechsCode/" + repo);
             GHRelease release = ghrepo.getLatestRelease();
 
             if(release == null) return null;

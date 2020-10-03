@@ -126,7 +126,7 @@ public class SupportWrongChannelModule extends Module {
         }
 
         if (message != null) {
-            message.addReaction("❌").queue();
+            message.addReaction("\u274C").queue();
             messages.put(message.getId(), member.getId());
         }
     }

@@ -1,6 +1,9 @@
 package me.TechsCode.TechDiscordBot.spigotmc;
 
-import com.gargoylesoftware.htmlunit.*;
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 
@@ -22,6 +25,7 @@ public class VirtualBrowser {
         this.webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         this.webClient.getOptions().setThrowExceptionOnScriptError(false);
         this.webClient.getOptions().setPrintContentOnFailingStatusCode(false);
+
         Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF);
     }
 
@@ -31,25 +35,18 @@ public class VirtualBrowser {
             final HtmlPage htmlPage = this.webClient.getPage(wr);
             if (htmlPage.asText().contains("DDoS protection by Cloudflare")) {
                 TechDiscordBot.log("Cloudflare » Bypassing Cloud Flare!");
+
                 try {
                     Thread.sleep(9000L);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+
                 if(!tryAgain) return null;
                 return this.request(url, httpMethod);
             }
-            return htmlPage;
-        } catch (IOException e2) {
-            e2.printStackTrace();
-            return null;
-        }
-    }
 
-    public Page request2(final String url, final HttpMethod httpMethod) {
-        try {
-            final WebRequest wr = new WebRequest(new URL(url), httpMethod);
-            return this.webClient.getPage(wr);
+            return htmlPage;
         } catch (IOException e2) {
             e2.printStackTrace();
             return null;
