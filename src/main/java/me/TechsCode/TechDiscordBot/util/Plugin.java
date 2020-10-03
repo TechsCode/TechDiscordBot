@@ -84,7 +84,7 @@ public enum Plugin {
     }
 
     public String getWiki() {
-        return "https://" + getRoleName().toLowerCase() + ".com/wiki";
+        return "https://" + getRoleName().toLowerCase().replace(" ", "") + ".com/wiki";
     }
 
     public boolean hasWiki() {
