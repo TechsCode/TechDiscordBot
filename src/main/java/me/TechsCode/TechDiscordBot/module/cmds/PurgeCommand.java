@@ -67,7 +67,7 @@ public class PurgeCommand extends CommandModule {
                 return;
             }
 
-            channel.getHistory().retrievePast(amount).complete().forEach(msg -> msg.delete().queue());
+            channel.getHistory().retrievePast(amount).queue(success -> success.forEach(msg -> msg.delete().queue()));
 
             new TechEmbedBuilder("Pure Cmd - Success")
                     .setText("Successfully purged " + amount + " messages!")
