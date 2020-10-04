@@ -67,7 +67,7 @@ public class TechDiscordBot {
         builder.setActivity(Activity.watching("for help."));
         builder.setEventManager(new AnnotatedEventManager());
 
-        builder.build();
+        jda = builder.build();
 
         List<Guild> guilds = jda.getGuilds();
 
