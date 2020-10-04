@@ -53,12 +53,12 @@ public class TechDiscordBot {
 
         try {
             new TechDiscordBot(args[0], args[1], MySQLSettings.of(args[2], args[3], args[4], args[5], args[6]), args[7]);
-        } catch (LoginException e) {
+        } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    public TechDiscordBot(String token, String apiToken, MySQLSettings mySQLSettings, String githubTokenn) throws LoginException {
+    public TechDiscordBot(String token, String apiToken, MySQLSettings mySQLSettings, String githubTokenn) throws LoginException, InterruptedException {
         i = this;
 
         JDABuilder builder = JDABuilder.createDefault(token);
@@ -67,7 +67,7 @@ public class TechDiscordBot {
         builder.setActivity(Activity.watching("for help."));
         builder.setEventManager(new AnnotatedEventManager());
 
-        jda = builder.build();
+        jda = builder.build().awaitReady();
 
         List<Guild> guilds = jda.getGuilds();
 
