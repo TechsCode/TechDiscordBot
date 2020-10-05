@@ -11,6 +11,7 @@ import me.TechsCode.TechDiscordBot.reminders.ReminderManager;
 import me.TechsCode.TechDiscordBot.songoda.SongodaPurchase;
 import me.TechsCode.TechDiscordBot.songoda.SongodaPurchases;
 import me.TechsCode.TechDiscordBot.spigotmc.SpigotMC;
+import me.TechsCode.TechDiscordBot.spigotmc.api.APIStatus;
 import me.TechsCode.TechDiscordBot.util.ConsoleColor;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -115,13 +116,13 @@ public class TechDiscordBot {
         log("");
 
         log("Spigot:");
-        if(getSpigotAPI().isAvailable()) {
+        if(getStatus().isUsable()) {
             log("  » Purchases: " + getSpigotAPI().getPurchases().size());
             log("  » Resources: " + getSpigotAPI().getResources().size());
             log("  » Updates: " + getSpigotAPI().getUpdates().size());
             log("  » Reviews: " + getSpigotAPI().getReviews().size());
         } else {
-            log("  » " + ConsoleColor.RED + "Could not connect. Cannot show info!");
+            log("  » " + ConsoleColor.RED + "API is not usable!");
         }
 
         log("");
@@ -254,5 +255,9 @@ public class TechDiscordBot {
 
     public static String getGithubToken() {
         return githubToken;
+    }
+
+    public APIStatus getStatus() {
+        return APIStatus.getStatus(getSpigotAPI());
     }
 }

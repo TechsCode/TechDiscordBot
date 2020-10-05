@@ -123,4 +123,8 @@ public class TechEmbedBuilder extends EmbedBuilder {
         super.addBlankField(inline);
         return this;
     }
+
+    public String getText() {
+        return super.getDescriptionBuilder().toString();
+    }
 }

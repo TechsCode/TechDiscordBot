@@ -1,8 +1,8 @@
 package me.TechsCode.TechDiscordBot.util;
 
-import me.TechsCode.SpigotAPI.client.collections.PurchaseCollection;
-import me.TechsCode.SpigotAPI.client.objects.Resource;
-import me.TechsCode.SpigotAPI.client.objects.Update;
+import me.TechsCode.SpigotAPI.data.Resource;
+import me.TechsCode.SpigotAPI.data.Update;
+import me.TechsCode.SpigotAPI.data.lists.PurchasesList;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
 import net.dv8tion.jda.api.entities.*;
@@ -134,7 +134,7 @@ public enum Plugin {
     }
 
     public Update getLatestUpdate() {
-        return TechDiscordBot.getSpigotAPI().getUpdates().resourceId(getResourceId()).get()[TechDiscordBot.getSpigotAPI().getUpdates().resourceId(getResourceId()).size() - 1];
+        return TechDiscordBot.getSpigotAPI().getUpdates().resource(getResourceId()).get(TechDiscordBot.getSpigotAPI().getUpdates().resource(getResourceId()).size() - 1);
     }
 
     public static List<Plugin> allWithWiki() {
@@ -143,6 +143,7 @@ public enum Plugin {
 
     public static String getEmotesByList(List<String> plugins) {
         String sb = plugins.stream().map(Plugin::byRoleName).filter(Objects::nonNull).map(plugin -> plugin.getEmoji().getAsMention() + " ").collect(Collectors.joining());
+
         if(sb.length() < 4) return "";
         return sb.substring(0, sb.length() - 1);
     }
@@ -192,7 +193,7 @@ public enum Plugin {
         try {
             Verification verification = TechDiscordBot.getStorage().retrieveVerificationWithDiscord(member.getUser().getId());
 
-            PurchaseCollection pc = null;
+            PurchasesList pc = null;
             try {
                 pc = TechDiscordBot.getSpigotAPI().getPurchases().userId(verification.getUserId());
             } catch (NullPointerException ignored) {
@@ -200,7 +201,7 @@ public enum Plugin {
             }
 
             List<Plugin> plugins = new ArrayList<>();
-            if(pc != null) plugins = Arrays.stream(pc.get()).map(purchase -> fromId(purchase.getResourceId())).collect(Collectors.toList());
+            if(pc != null) plugins = pc.stream().map(purchase -> fromId(purchase.getResource().getId())).collect(Collectors.toList());
 
             return plugins;
         } catch (NullPointerException ex) {

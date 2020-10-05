@@ -79,14 +79,15 @@ public class WikiCommand extends CommandModule {
     }
 
     public void showYourPlugins(Member member, TextChannel channel) {
-        boolean apiIsUp = TechDiscordBot.getSpigotAPI().isAvailable();
+        boolean apiIsUsable = TechDiscordBot.getBot().getStatus().isUsable();
+
         List<Plugin> plugins = Plugin.allWithWiki();
-        if(apiIsUp) plugins = Plugin.fromUser(member).stream().filter(Plugin::hasWiki).collect(Collectors.toList());
+        if(apiIsUsable) plugins = Plugin.fromUser(member).stream().filter(Plugin::hasWiki).collect(Collectors.toList());
 
         StringBuilder sb = new StringBuilder();
-        if(!apiIsUp)
+        if(!apiIsUsable)
             sb.append(TechDiscordBot.getBot().getEmotes("offline").first().getAsMention()).append(" **The API is not online, showing all plugins with a wiki.**\n\n");
-        if(apiIsUp)
+        if(apiIsUsable)
             sb.append("*Showing all wikis of the plugins you own!*\n\n");
         if(plugins.isEmpty())
             sb.append("**You do not own of any of Tech's plugins, showing all wikis!**\n\n");

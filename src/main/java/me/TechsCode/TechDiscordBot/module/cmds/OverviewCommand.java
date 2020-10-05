@@ -49,8 +49,8 @@ public class OverviewCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
-        if(!TechDiscordBot.getSpigotAPI().isAvailable()) {
-            new TechEmbedBuilder("API").setText("The API has to be online to execute this command!").error().sendTemporary(channel, 5);
+        if(!TechDiscordBot.getBot().getStatus().isUsable()) {
+            new TechEmbedBuilder("API").setText("The API has to be usable to execute this command!").error().sendTemporary(channel, 5);
             return;
         }
 
@@ -79,7 +79,7 @@ public class OverviewCommand extends CommandModule {
     public void onReactAdd(GuildMessageReactionAddEvent e) {
         if(e.getChannel() != OVERVIEW_CHANNEL.query().first()) return;
         if(e.getUser().isBot()) return;
-        if(e.getUser().isFake()) return;
+
         Emote emote = bot.getEmotes("TechSupport").first();
         if(e.getReaction().getReactionEmote().isEmote() && e.getReaction().getReactionEmote().getEmote() == emote) {
             if(e.getMember().getRoles().stream().anyMatch(r -> r.getName().equals("Member"))) return;

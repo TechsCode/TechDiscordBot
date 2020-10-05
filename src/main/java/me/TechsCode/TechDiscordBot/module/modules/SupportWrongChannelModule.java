@@ -1,7 +1,7 @@
 package me.TechsCode.TechDiscordBot.module.modules;
 
-import me.TechsCode.SpigotAPI.client.collections.PurchaseCollection;
-import me.TechsCode.SpigotAPI.client.objects.Purchase;
+import me.TechsCode.SpigotAPI.data.Purchase;
+import me.TechsCode.SpigotAPI.data.lists.PurchasesList;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.Module;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
@@ -94,11 +94,12 @@ public class SupportWrongChannelModule extends Module {
         Message message;
         Verification verification = TechDiscordBot.getStorage().retrieveVerificationWithDiscord(member);
         if (verification != null) {
-            PurchaseCollection pc = TechDiscordBot.getSpigotAPI().getPurchases().userId(verification.getUserId());
+            PurchasesList pc = TechDiscordBot.getSpigotAPI().getPurchases().userId(verification.getUserId());
+
             if (pc.size() > 0) {
                 StringBuilder sb = new StringBuilder();
 
-                String plugins = Plugin.getEmotesByList(pc.getStream().map(Purchase::getResourceName).collect(Collectors.toList()));
+                String plugins = Plugin.getEmotesByList(pc.stream().map(p -> p.getResource().getName()).collect(Collectors.toList()));
                 sb.append("Hello, ")
                         .append(member.getAsMention())
                         .append("!\n\n It looks like you have bought ")
@@ -108,8 +109,8 @@ public class SupportWrongChannelModule extends Module {
                         .append("\nHere are the corresponding channels:\n\n");
 
                 StringBuilder channels = new StringBuilder();
-                pc.getStream().filter(Objects::nonNull).forEach(p -> {
-                    Plugin plugin = Plugin.fromId(p.getResourceId());
+                pc.stream().filter(Objects::nonNull).forEach(p -> {
+                    Plugin plugin = Plugin.fromId(p.getResource().getId());
                     channels.append("- ").append(TechDiscordBot.getJDA().getTextChannelById(plugin.getChannelId()).getAsMention()).append("\n");
                 });
 

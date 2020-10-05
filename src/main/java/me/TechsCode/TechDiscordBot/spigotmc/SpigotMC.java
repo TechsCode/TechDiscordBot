@@ -2,7 +2,7 @@ package me.TechsCode.TechDiscordBot.spigotmc;
 
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import me.TechsCode.SpigotAPI.client.objects.User;
+import me.TechsCode.SpigotAPI.data.User;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,12 +17,15 @@ public class SpigotMC {
 
     public static ProfileComment[] getComments(final String userId) {
         Document doc = doc("https://spigotmc.org/members/" + userId);
-        final List<ProfileComment> comments = new ArrayList<ProfileComment>();
-        int pages = 1;
+
+        final List<ProfileComment> comments = new ArrayList<>();
         final Elements pageCounter = doc.getElementsByClass("pageNavHeader");
+        int pages = 1;
+
         if (!pageCounter.isEmpty()) {
             pages = Integer.parseInt(pageCounter.first().text().split("of ")[1]);
         }
+
         for (int page = 1; page <= pages; ++page) {
             doc = doc("https://spigotmc.org/members/" + userId + "?page=" + page);
             if (doc != null) {
@@ -43,6 +46,7 @@ public class SpigotMC {
                 }
             }
         }
+
         return comments.toArray(new ProfileComment[0]);
     }
 
@@ -50,7 +54,8 @@ public class SpigotMC {
         href = href.replace("members/", "").replace("/", "");
         final String username = href.split("[.]")[0];
         final String id = href.split("[.]")[1];
-        return new User(null, id, username, null);
+
+        return new User(id, username, null);
     }
 
     private static Document doc(final String url) {

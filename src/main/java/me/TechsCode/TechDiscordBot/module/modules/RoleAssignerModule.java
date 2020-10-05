@@ -1,8 +1,8 @@
 package me.TechsCode.TechDiscordBot.module.modules;
 
-import me.TechsCode.SpigotAPI.client.objects.Purchase;
-import me.TechsCode.SpigotAPI.client.objects.Resource;
-import me.TechsCode.SpigotAPI.client.objects.Review;
+import me.TechsCode.SpigotAPI.data.Purchase;
+import me.TechsCode.SpigotAPI.data.Resource;
+import me.TechsCode.SpigotAPI.data.Review;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.Module;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
@@ -80,7 +80,7 @@ public class RoleAssignerModule extends Module {
 
 
     public void loop() {
-        if(!TechDiscordBot.getSpigotAPI().isAvailable()) return;
+        if(!TechDiscordBot.getBot().getStatus().isUsable()) return;
 
         Role verificationRole = VERIFICATION_ROLE.query().first();
         Role reviewSquad = REVIEW_SQUAD_ROLE.query().first();
@@ -91,14 +91,14 @@ public class RoleAssignerModule extends Module {
         possibleRoles.add(reviewSquad);
         possibleRoles.addAll(RESOURCE_ROLES.query().all());
 
-        Resource[] resources = TechDiscordBot.getSpigotAPI().getResources().premium().get();
+        Resource[] resources = TechDiscordBot.getSpigotAPI().getResources().stream().filter(Resource::isPremium).toArray(Resource[]::new);
 
         HashMap<String, List<String>> resourcePurchaserIds = new HashMap<>();
         HashMap<String, List<String>> resourceReviewerIds = new HashMap<>();
 
-        TechDiscordBot.getSpigotAPI().getResources().premium().getStream().forEach(resource -> {
-            resourcePurchaserIds.put(resource.getId(), resource.getPurchases().getStream().map(Purchase::getUserId).collect(Collectors.toList()));
-            resourceReviewerIds.put(resource.getId(), resource.getReviews().getStream().map(Review::getUserId).collect(Collectors.toList()));
+        Arrays.stream(resources).forEach(resource -> {
+            resourcePurchaserIds.put(resource.getId(), resource.getPurchases().stream().map(p -> p.getUser().getUserId()).collect(Collectors.toList()));
+            resourceReviewerIds.put(resource.getId(), resource.getReviews().stream().map(Review::getId).collect(Collectors.toList()));
         });
 
         for(Member all : TechDiscordBot.getGuild().getMembers()) {

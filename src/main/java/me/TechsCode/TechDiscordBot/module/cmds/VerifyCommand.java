@@ -59,19 +59,19 @@ public class VerifyCommand extends CommandModule {
             }
 
             if(TechDiscordBot.getStorage().retrieveVerificationWithDiscord(member.getId()) != null || TechDiscordBot.getStorage().retrieveVerificationWithSpigot(args[0]) != null) {
-                new TechEmbedBuilder("Verify Cmd - Error").error().setText(mem.getAsMention() + " (" + mem.getAsMention() + ") is already verified!").sendTemporary(channel, 10);
+                new TechEmbedBuilder("Verify Cmd - Error").error().setText(args[0] + " (" + mem.getAsMention() + ") is already verified!").sendTemporary(channel, 10);
                 return;
             }
 
             if(TechDiscordBot.getSpigotAPI().getPurchases().userId(args[0]).size() == 0) {
-                new TechEmbedBuilder("Verify Cmd - Error").error().setText(mem.getAsMention() + " (" + mem.getAsMention() + ") does not own any of Tech's Plugins!").sendTemporary(channel, 10);
+                new TechEmbedBuilder("Verify Cmd - Error").error().setText(args[0] + " (" + mem.getAsMention() + ") does not own any of Tech's Plugins!").sendTemporary(channel, 10);
                 return;
             }
 
             TechDiscordBot.getStorage().createVerification(args[0], mem.getId());
             new TechEmbedBuilder("Verify Cmd - Success").success().setText("Successfully verified " + mem.getAsMention() + "! (" + mem.getAsMention() + ")").send(channel);
         } else {
-            new TechEmbedBuilder("Verify Cmd - Error").error().setText("!update <spigotId> <discordId>").sendTemporary(channel, 10);
+            new TechEmbedBuilder("Verify Cmd - Error").error().setText("!verify <spigotId> <discordId>").sendTemporary(channel, 10);
         }
     }
 }

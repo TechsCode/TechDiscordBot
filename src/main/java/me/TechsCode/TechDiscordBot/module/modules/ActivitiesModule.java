@@ -1,7 +1,7 @@
 package me.TechsCode.TechDiscordBot.module.modules;
 
-import me.TechsCode.SpigotAPI.client.objects.Review;
-import me.TechsCode.SpigotAPI.client.objects.Update;
+import me.TechsCode.SpigotAPI.data.Review;
+import me.TechsCode.SpigotAPI.data.Update;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.Module;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
@@ -35,17 +35,19 @@ public class ActivitiesModule extends Module {
         announcedIds = new ArrayList<>();
         new Thread(() -> {
             while (true) {
-                if(!TechDiscordBot.getSpigotAPI().isAvailable()) continue;
+                if(!TechDiscordBot.getBot().getStatus().isUsable()) continue;
+
                 if(announcedIds.isEmpty()) {
-                    TechDiscordBot.getSpigotAPI().getReviews().getStream().forEach(x -> announcedIds.add(x.getId()));
-                    TechDiscordBot.getSpigotAPI().getUpdates().getStream().forEach(x -> announcedIds.add(x.getId()));
+                    TechDiscordBot.getSpigotAPI().getReviews().forEach(x -> announcedIds.add(x.getResource().getId()));
+                    TechDiscordBot.getSpigotAPI().getUpdates().forEach(x -> announcedIds.add(x.getId()));
                 }
 
-                Arrays.stream(TechDiscordBot.getSpigotAPI().getResources().get()).forEach(resource -> {
+                TechDiscordBot.getSpigotAPI().getResources().forEach(resource -> {
                     Plugin plugin = Plugin.fromId(resource.getId());
                     if (plugin == null) return;
-                    Review[] newReviews = resource.getReviews().getStream().filter(x -> !announcedIds.contains(x.getId())).toArray(Review[]::new);
-                    Update[] newUpdates = resource.getUpdates().getStream().filter(x -> !announcedIds.contains(x.getId())).toArray(Update[]::new);
+
+                    Review[] newReviews = resource.getReviews().stream().filter(x -> !announcedIds.contains(x.getId())).toArray(Review[]::new);
+                    Update[] newUpdates = resource.getUpdates().stream().filter(x -> !announcedIds.contains(x.getId())).toArray(Update[]::new);
                     Arrays.stream(newReviews).forEach(review -> printReview(plugin, review));
                     Arrays.stream(newUpdates).forEach(update -> printUpdate(plugin, update));
                 });
@@ -71,23 +73,23 @@ public class ActivitiesModule extends Module {
     public void printReview(Plugin plugin, Review review) {
         StringBuilder ratingSB = new StringBuilder();
         for(int i = 0; i < review.getRating(); ++i) ratingSB.append(":star:");
-        Verification verification = TechDiscordBot.getStorage().retrieveVerificationWithSpigot(review.getUserId());
+        Verification verification = TechDiscordBot.getStorage().retrieveVerificationWithSpigot(review.getUser().getUserId());
 
         boolean isVerified = verification != null;
         boolean isMemberInDiscord = (isVerified && TechDiscordBot.getBot().getMember(verification.getDiscordId()) != null);
-        String usernameOrAt = (isMemberInDiscord ? TechDiscordBot.getBot().getMember(verification.getDiscordId()).getAsMention() : review.getUsername());
+        String usernameOrAt = (isMemberInDiscord ? TechDiscordBot.getBot().getMember(verification.getDiscordId()).getAsMention() : review.getUser().getUsername());
 
-        new TechEmbedBuilder("Review from " + review.getUsername())
+        new TechEmbedBuilder("Review from " + review.getUser().getUsername())
                 .setColor(plugin.getColor())
                 .setThumbnail(review.getResource().getIcon())
                 .addField("Rating", ratingSB.toString(), true)
                 .setText("```" + review.getText() + "```\nThanks to " + usernameOrAt + " for making this review!")
                 .send(ACTIVITIES_CHANNEL.query().first());
-        announcedIds.add((review.getId()));
+        announcedIds.add(review.getResource().getId() + "-" + review.getUser().getUserId());
     }
 
     public void printUpdate(Plugin plugin, Update update) {
-        TechEmbedBuilder ceb = new TechEmbedBuilder("Update for " + update.getResourceName())
+        TechEmbedBuilder ceb = new TechEmbedBuilder("Update for " + update.getResource().getName())
                 .setColor(plugin.getColor())
                 .setThumbnail(plugin.getResourceLogo());
         ceb.addField("Version", update.getResource().getVersion(), true);

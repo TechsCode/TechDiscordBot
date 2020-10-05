@@ -1,15 +1,19 @@
 package me.TechsCode.TechDiscordBot.module.cmds;
 
-import me.TechsCode.SpigotAPI.client.APIScanner;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.CommandCategory;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
+import me.TechsCode.TechDiscordBot.spigotmc.api.APIStatus;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class APICommand extends CommandModule {
 
@@ -44,34 +48,18 @@ public class APICommand extends CommandModule {
 
     @Override
     public int getCooldown() {
-        return 0;
+        return 2;
     }
 
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
-        String online = channel.getGuild().getEmotesByName("low_priority", true).get(0).getAsMention();
-        String waiting = channel.getGuild().getEmotesByName("medium_priority", true).get(0).getAsMention();
-        String offline = channel.getGuild().getEmotesByName("high_priority", true).get(0).getAsMention();
-
-        APIScanner.APIStatus status = TechDiscordBot.getSpigotAPI().getStatus();
-        APIScanner.APIStatus cacheStatus = TechDiscordBot.getSpigotAPI().getCacheStatus();
-
-        String statusEmoji = online;
-        if(status == APIScanner.APIStatus.WAITING) statusEmoji = waiting;
-        if(status == APIScanner.APIStatus.OFF) statusEmoji = offline;
-
-        String cachedStatusEmoji = online;
-        if(cacheStatus == APIScanner.APIStatus.WAITING) cachedStatusEmoji = waiting;
-        if(cacheStatus == APIScanner.APIStatus.OFF) cachedStatusEmoji = offline;
+        APIStatus status = bot.getStatus();
 
         StringBuilder sb = new StringBuilder();
-        sb.append(statusEmoji).append(" **API Status** (").append(status.getName()).append(")\n").append(status.getDescription());
+        sb.append(status.getEmoji()).append(" **API Status** (").append(status.getStatus()).append(")\n").append(status.getDescription());
         sb.append("\n\n");
 
-        sb.append(cachedStatusEmoji).append(" **Cached API Status** (").append(cacheStatus.getName()).append(")\n").append(cacheStatus.getDescription());
-        sb.append("\n\n");
-
-        if(cacheStatus == APIScanner.APIStatus.OK && member.getRoles().stream().anyMatch(r -> r.getName().equals("Staff"))) { //Make sure the member is staff.
+        if(status.isUsable() && member.getRoles().stream().anyMatch(r -> r.getName().equals("Staff"))) { //Make sure the member is staff.
             int purchases = TechDiscordBot.getSpigotAPI().getPurchases().size();
             int reviews = TechDiscordBot.getSpigotAPI().getReviews().size();
             int updates = TechDiscordBot.getSpigotAPI().getUpdates().size();
@@ -81,8 +69,17 @@ public class APICommand extends CommandModule {
             sb.append("**Reviews:** ").append(reviews).append("\n");
             sb.append("**Updates:** ").append(updates).append("\n");
             sb.append("**Resources:** ").append(resources).append("\n\n");
-            sb.append("*This information doesn't accurately depict if the API is currently running.*\n*This just shows if the bot has the information stored. (Cached)*");
         }
+
+        String lastUpdatedFormatted;
+        if(status.isUsable()) {
+            DateFormat dateTimeInstance = new SimpleDateFormat("EEE MMM dd, hh:mm:ss a z");
+            lastUpdatedFormatted = dateTimeInstance.format(Calendar.getInstance().getTime());
+        } else {
+            lastUpdatedFormatted = "Never";
+        }
+
+        sb.append("\n\n**Last Fetched**: ").append(lastUpdatedFormatted);
 
         new TechEmbedBuilder("API Status")
                 .setText(sb.toString())

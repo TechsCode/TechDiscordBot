@@ -1,6 +1,6 @@
 package me.TechsCode.TechDiscordBot.module.modules;
 
-import me.TechsCode.SpigotAPI.client.objects.Purchase;
+import me.TechsCode.SpigotAPI.data.Purchase;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.Module;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
@@ -9,6 +9,7 @@ import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.spigotmc.ProfileComment;
 import me.TechsCode.TechDiscordBot.spigotmc.SpigotMC;
+import me.TechsCode.TechDiscordBot.spigotmc.api.APIStatus;
 import me.TechsCode.TechDiscordBot.util.Plugin;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -74,7 +75,7 @@ public class VerificationModule extends Module {
 
         TechEmbedBuilder errorMessage = new TechEmbedBuilder("Error (" + e.getAuthor().getName() + ")").error();
 
-        if (!TechDiscordBot.getSpigotAPI().isAvailable()) {
+        if (!TechDiscordBot.getBot().getStatus().isUsable()) {
             errorMessage.setText("**The API is currently offline.**\nThere is no ETA of when it will be back up.\nYou will have to wait to verify until then.").error().sendTemporary(channel, 10);
             return;
         }
@@ -97,21 +98,27 @@ public class VerificationModule extends Module {
             return;
         }
 
-        Purchase[] purchases = TechDiscordBot.getSpigotAPI().getPurchases().username(username).get();
+        Purchase[] purchases = TechDiscordBot.getSpigotAPI().getPurchases().username(username).toArray(new Purchase[0]);
 
         if (purchases.length == 0) {
-            errorMessage.setText("The user '" + username + "' does not own any of Tech's Plugins!\n\n*It may take up to 20 minutes for the bot to recognize new purchases.*\n\n*This could also be an issue with the api. If you believe this is a mistake, please contact a staff member!*").sendTemporary(channel, 10);
+            errorMessage.setText("The user '" + username + "' does not own any of Tech's Plugins!\n\n*It may take up to 20 minutes for the bot to recognize new purchases.*\n\n*This could also be an issue with the api. If you believe this is a mistake, please contact a staff member!*");
+
+            if (TechDiscordBot.getBot().getStatus() == APIStatus.NOT_FETCHING) errorMessage.setText(errorMessage.getText() + "\n\n**The API is currently not fetching new information, this could also be the issue.");
+            errorMessage.error().sendTemporary(channel, 10);
+
             return;
         }
 
-        username = purchases[0].getUsername();
-        String userId = purchases[0].getUserId();
-        String avatarUrl = purchases[0].getAvatarUrl();
+        username = purchases[0].getUser().getUsername();
+        String userId = purchases[0].getUser().getUserId();
+        String avatarUrl = purchases[0].getUser().getAvatar();
 
         existingVerification = TechDiscordBot.getStorage().retrieveVerificationWithSpigot(userId);
+
         if(existingVerification != null) {
-            Purchase purchase = TechDiscordBot.getSpigotAPI().getPurchases().userId(existingVerification.getUserId()).first();
-            errorMessage.setText("The SpigotMC User " + username + " is already linked with " + purchase.getUsername() + ". If you believe this is a mistake, please contact a Staff Member.").sendTemporary(channel, 10);
+            Purchase purchase = TechDiscordBot.getSpigotAPI().getPurchases().userId(existingVerification.getUserId()).get(0);
+
+            errorMessage.setText("The SpigotMC User " + username + " is already linked with " + purchase.getUser().getUsername() + ". If you believe this is a mistake, please contact a Staff Member.").sendTemporary(channel, 10);
             return;
         }
 
