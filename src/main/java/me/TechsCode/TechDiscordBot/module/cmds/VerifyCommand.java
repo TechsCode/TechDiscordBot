@@ -69,7 +69,7 @@ public class VerifyCommand extends CommandModule {
             }
 
             TechDiscordBot.getStorage().createVerification(args[0], mem.getId());
-            new TechEmbedBuilder("Verify Cmd - Success").success().setText("Successfully verified " + mem.getAsMention() + "! (" + mem.getAsMention() + ")").send(channel);
+            new TechEmbedBuilder("Verify Cmd - Success").success().setText("Successfully verified " + args[0] + "! (" + mem.getAsMention() + ")").send(channel);
         } else {
             new TechEmbedBuilder("Verify Cmd - Error").error().setText("!verify <spigotId> <discordId>").sendTemporary(channel, 10);
         }
