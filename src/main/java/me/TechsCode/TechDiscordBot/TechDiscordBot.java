@@ -18,6 +18,9 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.ChunkingFilter;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import okhttp3.OkHttpClient;
 
 import javax.security.auth.login.LoginException;
@@ -62,13 +65,15 @@ public class TechDiscordBot {
     public TechDiscordBot(String token, String apiToken, MySQLSettings mySQLSettings, String githubTokenn) throws LoginException, InterruptedException {
         i = this;
 
-        JDABuilder builder = JDABuilder.createDefault(token);
-        builder.enableIntents(GatewayIntent.GUILD_MEMBERS);
-
-        builder.setActivity(Activity.watching("for help."));
-        builder.setEventManager(new AnnotatedEventManager());
-
-        jda = builder.build().awaitReady();
+        jda = JDABuilder.createDefault(token)
+                .setEnabledIntents(GatewayIntent.getIntents(GatewayIntent.DEFAULT | GatewayIntent.GUILD_MEMBERS.getRawValue() | GatewayIntent.GUILD_BANS.getRawValue()))
+                .setDisabledIntents(GatewayIntent.DIRECT_MESSAGE_TYPING, GatewayIntent.GUILD_MESSAGE_TYPING)
+                .disableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE)
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
+                .setChunkingFilter(ChunkingFilter.ALL)
+                .setActivity(Activity.watching("for help."))
+                .setEventManager(new AnnotatedEventManager())
+                .build().awaitReady();
 
         List<Guild> guilds = jda.getGuilds();
 
