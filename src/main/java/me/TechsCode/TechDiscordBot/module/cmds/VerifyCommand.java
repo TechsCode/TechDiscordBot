@@ -58,7 +58,7 @@ public class VerifyCommand extends CommandModule {
                 return;
             }
 
-            if(TechDiscordBot.getStorage().retrieveVerificationWithDiscord(member.getId()) != null || TechDiscordBot.getStorage().retrieveVerificationWithSpigot(args[0]) != null) {
+            if(TechDiscordBot.getStorage().retrieveVerificationWithDiscord(mem.getId()) != null || TechDiscordBot.getStorage().retrieveVerificationWithSpigot(args[0]) != null) {
                 new TechEmbedBuilder("Verify Cmd - Error").error().setText(args[0] + " (" + mem.getAsMention() + ") is already verified!").sendTemporary(channel, 10);
                 return;
             }
