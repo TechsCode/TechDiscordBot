@@ -79,7 +79,7 @@ public class APICommand extends CommandModule {
             lastUpdatedFormatted = "Never";
         }
 
-        sb.append("\n\n**Last Fetched**: ").append(lastUpdatedFormatted);
+        sb.append("**Last Fetched**: ").append(lastUpdatedFormatted);
 
         new TechEmbedBuilder("API Status")
                 .setText(sb.toString())
