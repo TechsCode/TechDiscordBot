@@ -38,16 +38,16 @@ public class ActivitiesModule extends Module {
                 if(!TechDiscordBot.getBot().getStatus().isUsable()) continue;
 
                 if(announcedIds.isEmpty()) {
-                    TechDiscordBot.getSpigotAPI().getReviews().forEach(x -> announcedIds.add(x.getResource().getId()));
-                    TechDiscordBot.getSpigotAPI().getUpdates().forEach(x -> announcedIds.add(x.getId()));
+                    TechDiscordBot.getSpigotAPI().getReviews().forEach(r -> announcedIds.add(r.getId()));
+                    TechDiscordBot.getSpigotAPI().getUpdates().forEach(u -> announcedIds.add(u.getId()));
                 }
 
                 TechDiscordBot.getSpigotAPI().getResources().forEach(resource -> {
                     Plugin plugin = Plugin.fromId(resource.getId());
                     if (plugin == null) return;
 
-                    Review[] newReviews = resource.getReviews().stream().filter(x -> !announcedIds.contains(x.getId())).toArray(Review[]::new);
-                    Update[] newUpdates = resource.getUpdates().stream().filter(x -> !announcedIds.contains(x.getId())).toArray(Update[]::new);
+                    Review[] newReviews = resource.getReviews().stream().filter(r -> !announcedIds.contains(r.getId())).toArray(Review[]::new);
+                    Update[] newUpdates = resource.getUpdates().stream().filter(u -> !announcedIds.contains(u.getId())).toArray(Update[]::new);
                     Arrays.stream(newReviews).forEach(review -> printReview(plugin, review));
                     Arrays.stream(newUpdates).forEach(update -> printUpdate(plugin, update));
                 });
