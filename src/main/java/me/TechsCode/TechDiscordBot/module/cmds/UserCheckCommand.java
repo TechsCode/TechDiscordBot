@@ -96,9 +96,14 @@ public class UserCheckCommand extends CommandModule {
                     sb.append("- ").append(Plugin.fromId(p.getResource().getId()).getEmoji().getAsMention()).append(" ").append(p.getResource().getId()).append(" ").append(!p.getCost().isPresent() ? "as a Gift/Free" : "for " + p.getCost().get().getValue() + p.getCost().get().getCurrency()).append(" on").append((p.getTime().getHumanTime() != null ? " " + p.getTime().getHumanTime() : " Unknown (*too early to calculate*)")).append(",\n ");
 
                 String purchasesString = sb.toString();
-                new TechEmbedBuilder((member == null ? purchases.get(0).getUser().getUsername() + " (" + purchases.get(0).getUser().getUserId() + ")" : member.getEffectiveName()) + "'s Purchases")
+                new TechEmbedBuilder((member == null ? purchase.getUser().getUsername() + " (" + purchase.getUser().getUserId() + ")" : member.getEffectiveName()) + "'s Purchases")
                         .success()
-                        .setText("Spigot URL: https://www.spigotmc.org/members/" + (verification == null ? args[0] : verification.getUserId()) + "\n\n" + (member == null ? purchases.get(0).getUser().getUsername() + " (" + purchases.get(0).getUser().getUserId() + ")" : member.getAsMention()) + " has bought " + (hasBoughtAll ? "**all** " : " ") + purchases.size() + " of Tech's Resources.\n\n" + (date != null ? "Their last purchase was on " + date : "*Too early to calculate their last purchase.*") + ".\n\n**Their purchases include:**\n" + purchasesString.substring(0, purchasesString.length() - 3) + ".")
+                        .setThumbnail(purchase.getUser().getAvatar())
+                        .setText("Showing " + (member == null ? purchase.getUser().getUsername(): member.getAsMention()) + "'s Spigot Information.")
+                        .addField("Username / ID", "[" + purchase.getUser().getUsername() + "." + purchase.getUser().getUserId() + ")[https://www.spigotmc.org/members/" + purchase.getUser().getUsername().toLowerCase() + "." + purchase.getUser().getUserId() + "]", true)
+                        .addField("Purchases Amount", purchases.size() + "**/**" + TechDiscordBot.getSpigotAPI().getResources().premium().size() + " purchases" + (hasBoughtAll ? " **ALL**" : ""), true)
+                        .addField("Last Purchase", (date != null ? "Their last purchase was on " + date + "!": "Unknown\n*or cannot calculate*."), true)
+                        .addField("Purchases", purchasesString.substring(0, purchasesString.length() - 3) + ".", false)
                         .send(channel);
             }
         }
