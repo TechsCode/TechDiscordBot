@@ -1,7 +1,6 @@
 package me.TechsCode.TechDiscordBot.module.cmds;
 
 import me.TechsCode.SpigotAPI.data.Purchase;
-import me.TechsCode.SpigotAPI.data.Resource;
 import me.TechsCode.SpigotAPI.data.lists.PurchasesList;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.CommandCategory;
@@ -18,7 +17,6 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class UserCheckCommand extends CommandModule {
 
@@ -35,7 +33,7 @@ public class UserCheckCommand extends CommandModule {
     public String getCommand() { return "!check"; }
 
     @Override
-    public String[] getAliases() { return new String[]{"!verified"}; }
+    public String[] getAliases() { return new String[]{"!verified", "!suserinfo", "!sinfo"}; }
 
     @Override
     public DefinedQuery<Role> getRestrictedRoles() { return STAFF_ROLE; }
