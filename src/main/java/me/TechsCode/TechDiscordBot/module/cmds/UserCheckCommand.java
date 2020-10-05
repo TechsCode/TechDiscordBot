@@ -89,13 +89,16 @@ public class UserCheckCommand extends CommandModule {
                 if (purchase == null) return;
 
                 String date = purchase.getTime().getHumanTime();
-                boolean hasBoughtAll = (int)TechDiscordBot.getSpigotAPI().getResources().premium().size() == purchases.size();
+                boolean hasBoughtAll = TechDiscordBot.getSpigotAPI().getResources().premium().size() == purchases.size();
+                StringBuilder sb = new StringBuilder();
 
-                String pString = purchases.stream().map(p -> "- " + Plugin.fromId(p.getResource().getId()).getEmoji().getAsMention() + " " + p.getResource().getName() + " for " + (p.getResource().isFree() || !p.getCost().isPresent() ? "Free" : p.getCost().get().getValue() + p.getCost().get().getCurrency() + " on " + (p.getTime().getHumanTime() != null ? "on " + p.getTime().getHumanTime() : "*too early to calculate*") + ",\n ")).collect(Collectors.joining());
+                for (Purchase p : purchases)
+                    sb.append("- ").append(Plugin.fromId(p.getResource().getId()).getEmoji().getAsMention()).append(" ").append(p.getResource().getId()).append(" ").append(!p.getCost().isPresent() ? "as a Gift/Free" : "for " + p.getCost().get().getValue() + p.getCost().get().getCurrency()).append(" on").append((p.getTime().getHumanTime() != null ? " " + p.getTime().getHumanTime() : " Unknown (*too early to calculate*)")).append(",\n ");
 
-                new TechEmbedBuilder((member == null ? purchases.get(0).getUser().getUsername() + " (" + purchases.get(0).getUser().getUsername() + ")" : member.getEffectiveName()) + "'s Purchases")
+                String purchasesString = sb.toString();
+                new TechEmbedBuilder((member == null ? purchases.get(0).getUser().getUsername() + " (" + purchases.get(0).getUser().getUserId() + ")" : member.getEffectiveName()) + "'s Purchases")
                         .success()
-                        .setText("Spigot URL: https://www.spigotmc.org/members/" + (verification == null ? args[0] : verification.getUserId()) + "\n\n" + (member == null ? purchases.get(0).getUser().getUsername() + " (" + purchases.get(0).getUser().getUserId() + ")" : member.getAsMention()) + " has bought " + (hasBoughtAll ? "**all** " : " ") + purchases.size() + " of Tech's Resources.\n\n" + (date != null ? "Their last purchase was on " + date : "Too early to calculate their last purchase") + ".\n\n**Their purchases include:**\n" + pString.substring(0, pString.length() - 3) + ".")
+                        .setText("Spigot URL: https://www.spigotmc.org/members/" + (verification == null ? args[0] : verification.getUserId()) + "\n\n" + (member == null ? purchases.get(0).getUser().getUsername() + " (" + purchases.get(0).getUser().getUserId() + ")" : member.getAsMention()) + " has bought " + (hasBoughtAll ? "**all** " : " ") + purchases.size() + " of Tech's Resources.\n\n" + (date != null ? "Their last purchase was on " + date : "*Too early to calculate their last purchase.*") + ".\n\n**Their purchases include:**\n" + purchasesString.substring(0, purchasesString.length() - 3) + ".")
                         .send(channel);
             }
         }
