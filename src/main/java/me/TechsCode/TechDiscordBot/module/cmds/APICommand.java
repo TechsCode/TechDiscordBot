@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class APICommand extends CommandModule {
 
@@ -74,7 +75,7 @@ public class APICommand extends CommandModule {
         String lastUpdatedFormatted;
         if(status.isUsable()) {
             DateFormat dateTimeInstance = new SimpleDateFormat("EEE MMM dd, hh:mm:ss a z");
-            lastUpdatedFormatted = dateTimeInstance.format(Calendar.getInstance().getTime());
+            lastUpdatedFormatted = dateTimeInstance.format(new Date(TechDiscordBot.getSpigotAPI().getRefreshTime()));
         } else {
             lastUpdatedFormatted = "Never";
         }
