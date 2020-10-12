@@ -39,11 +39,11 @@ public enum APIStatus {
         APIStatus status;
 
         if(client.getData().isPresent() && client.getRefreshTime() != 0L) {
-            status = OFFLINE;
-        } else if(client.getRefreshTime() > 0 && System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(25) > client.getRefreshTime()) {
+            status = ONLINE;
+        } else if(client.getRefreshTime() > 0 && System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(25) < client.getRefreshTime()) {
             status = NOT_FETCHING;
         } else {
-            status = ONLINE;
+            status = OFFLINE;
         }
 
         return status;
