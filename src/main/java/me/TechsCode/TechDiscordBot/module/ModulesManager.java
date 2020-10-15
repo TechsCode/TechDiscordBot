@@ -82,7 +82,7 @@ public class ModulesManager {
 
         // Check if the player has at least one of the restricted roles
         if(!restrictedRoles.isEmpty() && Collections.disjoint(e.getMember().getRoles(), restrictedRoles)) {
-            new TechEmbedBuilder("No Permissions")
+            new TechEmbedBuilder("Not Enough Perms")
                     .error()
                     .setText("You don't have enough permissions to execute this command!")
                     .sendTemporary(e.getChannel(), 5, TimeUnit.SECONDS);
