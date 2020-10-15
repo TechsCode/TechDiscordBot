@@ -72,15 +72,19 @@ public class APICommand extends CommandModule {
             sb.append("**Resources:** ").append(resources).append("\n\n");
         }
 
-        String lastUpdatedFormatted;
+        String lastUpdatedFormatted = "Never";
+        String botLastParsed = "Never";
+
         if(status.isUsable()) {
-            DateFormat dateTimeInstance = new SimpleDateFormat("EEE MMM dd, hh:mm:ss a z");
-            lastUpdatedFormatted = dateTimeInstance.format(new Date(TechDiscordBot.getSpigotAPI().getRefreshTime()));
-        } else {
-            lastUpdatedFormatted = "Never";
+            DateFormat dateTimeInstanceRT = new SimpleDateFormat("EEE MMM dd, hh:mm:ss a z");
+            lastUpdatedFormatted = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSpigotAPI().getRefreshTime()));
+
+            DateFormat dateTimeInstanceLP = new SimpleDateFormat("EEE MMM dd, hh:mm:ss a z");
+            botLastParsed = dateTimeInstanceLP.format(new Date(TechDiscordBot.getSpigotAPI().getLastParsed()));
         }
 
         sb.append("**Last Fetched**: ").append(lastUpdatedFormatted);
+        sb.append("\n**Bot Last Parsed**: ").append(botLastParsed);
 
         new TechEmbedBuilder("API Status")
                 .setText(sb.toString())
