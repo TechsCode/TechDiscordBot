@@ -72,7 +72,7 @@ public class UserCheckCommand extends CommandModule {
             if(verification == null) {
                 new TechEmbedBuilder((member == null ? args[0] : member.getEffectiveName()) + " Is Not Verified!")
                         .setText((member == null ? args[0] : member.getAsMention()) + " has not verified themselves!")
-                        .success().send(channel);
+                        .error().send(channel);
                 return;
             }
 
@@ -86,13 +86,13 @@ public class UserCheckCommand extends CommandModule {
             if(!canView) {
                 new TechEmbedBuilder("Not Enough Perms")
                         .setText("You have to either be Staff or be viewing your self to execute this command!")
-                        .success().send(channel);
+                        .error().send(channel);
                 return;
             }
 
             if (member == null || purchases == null || purchases.size() == 0) {
                 new TechEmbedBuilder((member == null ? args[0] : member.getEffectiveName()) + "'s Purchases")
-                        .success()
+                        .error()
                         .setText((member == null ? args[0] : member.getAsMention()) + " has not bought of any Tech's Resources!")
                         .send(channel);
                 return;
