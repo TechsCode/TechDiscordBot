@@ -47,7 +47,7 @@ public class UserCheckCommand extends CommandModule {
         if(args.length == 0) {
             new TechEmbedBuilder("Check")
                     .error()
-                    .setText("Please specify a user (id) to check!")
+                    .setText("Please specify a spigot/user (id) to check!")
                     .sendTemporary(channel, 10, TimeUnit.SECONDS);
         } else {
             Member member = TechDiscordBot.getMemberFromString(message, args[0]);
@@ -67,6 +67,13 @@ public class UserCheckCommand extends CommandModule {
                 verification = TechDiscordBot.getStorage().retrieveVerificationWithDiscord(member.getUser().getId());
             } else {
                 verification = TechDiscordBot.getStorage().retrieveVerificationWithSpigot(args[0]);
+            }
+
+            if(verification == null) {
+                new TechEmbedBuilder((member == null ? args[0] : member.getEffectiveName()) + " Is Not Verified!")
+                        .setText((member == null ? args[0] : member.getAsMention()) + " has not verified themselves!")
+                        .success().send(channel);
+                return;
             }
 
             if(verification.getDiscordId().equals(m.getId()) && !canView)
