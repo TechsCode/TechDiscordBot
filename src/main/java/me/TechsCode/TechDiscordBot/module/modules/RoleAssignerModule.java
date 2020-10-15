@@ -52,6 +52,7 @@ public class RoleAssignerModule extends Module {
         new Thread(() -> {
             while (true) {
                 loop();
+
                 try {
                     sleep(TimeUnit.SECONDS.toMillis(3));
                 } catch (InterruptedException e) {
@@ -98,7 +99,7 @@ public class RoleAssignerModule extends Module {
 
         Arrays.stream(resources).forEach(resource -> {
             resourcePurchaserIds.put(resource.getId(), resource.getPurchases().stream().map(p -> p.getUser().getUserId()).collect(Collectors.toList()));
-            resourceReviewerIds.put(resource.getId(), resource.getReviews().stream().map(Review::getId).collect(Collectors.toList()));
+            resourceReviewerIds.put(resource.getId(), resource.getReviews().stream().map(r -> r.getUser().getUserId()).collect(Collectors.toList()));
         });
 
         for(Member all : TechDiscordBot.getGuild().getMembers()) {
