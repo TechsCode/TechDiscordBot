@@ -35,11 +35,13 @@ public class BannerModule extends Module {
     }
 
     public void updateBanner() {
+        if(!TechDiscordBot.getGuild().getFeatures().contains("BANNER")) return;
+
         try {
             TechDiscordBot.getGuild().getManager().setBanner(Icon.from(Objects.requireNonNull(plugins[current].getBannerAsFile()))).queue();
 
             current++;
-            if(current >= plugins.length) current = 0;
+            if (current >= plugins.length) current = 0;
         } catch (Exception ex) {
             ex.printStackTrace();
             ServerLogs.error(ex.getMessage());
