@@ -103,7 +103,7 @@ public class VerificationModule extends Module {
         if (purchases.length == 0) {
             errorMessage.setText("The user '" + username + "' does not own any of Tech's Plugins!\n\n*It may take up to 20 minutes for the bot to recognize new purchases.*\n\n*This could also be an issue with the api. If you believe this is a mistake, please contact a staff member!*");
 
-            if (TechDiscordBot.getBot().getStatus() == APIStatus.NOT_FETCHING) errorMessage.setText(errorMessage.getText() + "\n\n**The API is currently not fetching new information, this could also be the issue.");
+            //if (TechDiscordBot.getBot().getStatus() == APIStatus.OFFLINE) errorMessage.setText(errorMessage.getText() + "\n\n**The API is currently not fetching new information, this could also be the issue.");
             errorMessage.error().sendTemporary(channel, 10);
 
             return;
