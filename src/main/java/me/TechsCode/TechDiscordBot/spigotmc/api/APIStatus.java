@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 public enum APIStatus {
 
     ONLINE("Online", "The api is online and running!", "low_priority"),
-    NOT_FETCHING("Not Fetching", "The api is online but isn't fetching new info!", "medium_priority"),
+    //NOT_FETCHING("Not Fetching", "The api is online but isn't fetching new info!", "medium_priority"),
     OFFLINE("Offline", "The api has no information. Something bad must've happened.", "high_priority");
 
     private final String status, description, emojiName;
@@ -28,7 +28,7 @@ public enum APIStatus {
     }
 
     public boolean isUsable() {
-        return this == ONLINE || this == NOT_FETCHING;
+        return this == ONLINE;
     }
 
     public String getEmoji() {
@@ -40,8 +40,6 @@ public enum APIStatus {
 
         if(client.getData().isPresent() && client.getRefreshTime() != 0L) {
             status = ONLINE;
-        } else if(client.getRefreshTime() > 0 && System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(25) > client.getRefreshTime()) {
-            status = NOT_FETCHING;
         } else {
             status = OFFLINE;
         }
