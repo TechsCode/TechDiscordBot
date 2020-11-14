@@ -37,6 +37,36 @@ public class MySQL {
         }
     }
 
+    public String update(String query, Object... objs) {
+        try {
+            Connection connection = getConnection();
+            PreparedStatement p = connection.prepareStatement(query);
+
+            int i = 1;
+            for(Object obj : objs) {
+                if(obj instanceof String) {
+                    p.setString(i, (String) obj);
+                } else if(obj instanceof Boolean) {
+                    p.setBoolean(i, (Boolean)obj);
+                } else {
+                    p.setObject(i, obj);
+                }
+
+                i++;
+            }
+
+            p.execute();
+            connection.close();
+            p.close();
+
+            return "Success";
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+            errorMessages.add(ex.getMessage());
+            return ex.getMessage();
+        }
+    }
+
     public Connection getConnection() throws SQLException {
         String connectString = "jdbc:mysql://" + mySQLSettings.getHost() + ":" + mySQLSettings.getPort() + "/" + mySQLSettings.getDatabase() + "?useSSL=false&characterEncoding=utf-8&serverTimezone=UTC";
         return DriverManager.getConnection(connectString, mySQLSettings.getUsername(), mySQLSettings.getPassword());

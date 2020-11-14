@@ -21,6 +21,7 @@ public class Storage {
 
     private final String VERIFICATIONS_TABLE = "Verifications";
     private final String REMINDERS_TABLE = "Reminders";
+    private final String MUTES_TABLE = "Mutes";
 
     private Storage(MySQLSettings mySQLSettings) {
         this.connected = false;
@@ -42,12 +43,14 @@ public class Storage {
     }
 
     public void createDefault() {
-        mysql.update("CREATE TABLE IF NOT EXISTS " + VERIFICATIONS_TABLE + " (userid VARCHAR(10), discordid VARCHAR(32));");
+        mysql.update("CREATE TABLE IF NOT EXISTS " + VERIFICATIONS_TABLE + " (userid varchar(10), discordid varchar(32));");
+        mysql.update("CREATE TABLE IF NOT EXISTS " + MUTES_TABLE + " (memberId varchar(32), reason longtext, end varchar(32), expired tinyint(1));");
         mysql.update("CREATE TABLE IF NOT EXISTS " + REMINDERS_TABLE + " (user_id varchar(32), channel_id varchar(32), time varchar(32), type tinyint(1), reminder longtext);");
 
         this.connected = true;
     }
 
+    //Verification
     public void createVerification(String userId, String discordId) {
         mysql.update("INSERT INTO " + VERIFICATIONS_TABLE + " (userid, discordid) VALUES ('" + userId + "', '" + discordId + "');");
     }
@@ -66,6 +69,7 @@ public class Storage {
 
     public Set<Verification> retrieveVerifications() {
         Set<Verification> ret = new HashSet<>();
+
         try {
             Connection connection = mysql.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + VERIFICATIONS_TABLE + ";");
@@ -79,11 +83,77 @@ public class Storage {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return ret;
     }
 
+    //Mutes
+    public Set<Mute> getMutes(Member member) {
+        Set<Mute> ret = new HashSet<>();
+
+        try {
+            Connection connection = mysql.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + MUTES_TABLE + (member == null ? ";" : " WHERE memberId='" + member.getId() + "';"));
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next())
+                ret.add(new Mute(rs.getString("memberId"), rs.getString("reason"), Long.parseLong(rs.getString("time")), rs.getBoolean("expired")));
+
+            rs.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return ret;
+    }
+
+    public Mute muteExpired(Mute mute, boolean expired) {
+        if(mute.getId() == -1) return mute;
+
+        mysql.update("UPDATE " + MUTES_TABLE + " SET expired=? WHERE ", expired);
+
+        return new Mute(mute.getId(), mute.getMemberId(), mute.getReason(), mute.getEnd(), expired);
+    }
+
+    public Mute uploadMute(Mute mute) {
+        int id = getMutes(null).size() + 1;
+
+        mysql.update("INSERT INTO " + MUTES_TABLE + " (memberId, reason, end, expired) VALUES (?, ?, ?, ?);", mute.getMemberId(), mute.getReason(), mute.getEnd(), mute.isExpired());
+
+        return new Mute(id, mute.getMemberId(), mute.getReason(), mute.getEnd(), mute.isExpired());
+    }
+
+    //Preorders
+    public Set<Preorder> getPreorders(String plugin, boolean all) {
+        Set<Preorder> ret = new HashSet<>();
+
+        try {
+            Connection connection = mysql.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + plugin.replace(" ", "") + "Preorders;");
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                String transactionId = rs.getString("transactionId");
+
+                if(!transactionId.equals("NONE") || all) {
+                    ret.add(new Preorder(plugin, rs.getString("email"), rs.getLong("discordId"), rs.getString("discordName"), transactionId));
+                }
+            }
+
+            rs.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return ret;
+    }
+
+    //Reminders
     public Set<Reminder> retrieveReminders() {
         Set<Reminder> ret = new HashSet<>();
+
         try {
             Connection connection = mysql.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + REMINDERS_TABLE + ";");
@@ -97,29 +167,7 @@ public class Storage {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return ret;
-    }
 
-    public Set<Preorder> getPreorders(String plugin, boolean all) {
-        Set<Preorder> ret = new HashSet<>();
-        try {
-            Connection connection = mysql.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + plugin.replace(" ", "") + "Preorders;");
-            ResultSet rs = preparedStatement.executeQuery();
-
-            while (rs.next()){
-                String transactionId = rs.getString("transactionId");
-
-                if(!transactionId.equals("NONE") || all) {
-                    ret.add(new Preorder(plugin, rs.getString("email"), rs.getLong("discordId"), rs.getString("discordName"), transactionId));
-                }
-            }
-
-            rs.close();
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
         return ret;
     }
 
