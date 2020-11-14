@@ -10,6 +10,8 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
+import java.awt.*;
+
 public class StaffEmbedModule extends Module {
 
     private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
@@ -51,11 +53,20 @@ public class StaffEmbedModule extends Module {
             }
 
             if(arguments.length == 3) {
-                new TechEmbedBuilder(arguments[0])
-                        .setFooter("Posted by " + e.getAuthor().getName())
-                        .setText(arguments[1])
-                        .setThumbnail(arguments[2])
-                        .send(e.getChannel());
+                if (arguments[2].trim().startsWith("#")) {
+                    new TechEmbedBuilder(arguments[0])
+                            .setFooter("Posted by " + e.getAuthor().getName())
+                            .setText(arguments[1])
+                            .setColor(Color.decode(arguments[2].trim()))
+                            .send(e.getChannel());
+                } else {
+                    new TechEmbedBuilder(arguments[0])
+                            .setFooter("Posted by " + e.getAuthor().getName())
+                            .setText(arguments[1])
+                            .setThumbnail(arguments[2])
+                            .send(e.getChannel());
+                }
+
             } else {
                 new TechEmbedBuilder(arguments[0])
                         .setFooter("Posted by " + e.getAuthor().getName())
