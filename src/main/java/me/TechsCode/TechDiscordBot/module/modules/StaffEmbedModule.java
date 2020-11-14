@@ -53,11 +53,11 @@ public class StaffEmbedModule extends Module {
             }
 
             if(arguments.length == 3) {
-                if (arguments[2].startsWith("#")) {
+                if (arguments[2].trim().startsWith("#")) {
                     new TechEmbedBuilder(arguments[0])
                             .setFooter("Posted by " + e.getAuthor().getName())
                             .setText(arguments[1])
-                            .setColor(Color.decode(arguments[2].substring(1)))
+                            .setColor(Color.decode(arguments[2].trim().substring(1)))
                             .send(e.getChannel());
                 } else {
                     new TechEmbedBuilder(arguments[0])
