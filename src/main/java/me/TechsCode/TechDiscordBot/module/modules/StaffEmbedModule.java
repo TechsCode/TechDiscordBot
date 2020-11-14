@@ -57,7 +57,7 @@ public class StaffEmbedModule extends Module {
                     new TechEmbedBuilder(arguments[0])
                             .setFooter("Posted by " + e.getAuthor().getName())
                             .setText(arguments[1])
-                            .setColor(Color.decode(arguments[2].trim().substring(1)))
+                            .setColor(Color.decode(arguments[2].trim()))
                             .send(e.getChannel());
                 } else {
                     new TechEmbedBuilder(arguments[0])
