@@ -51,7 +51,7 @@ public class StaffEmbedModule extends Module {
                 new TechEmbedBuilder("Invalid Arguments").setText("Usage: ^ Title ^ Message ^ (Optional) Thumbnail ^").error().sendTemporary(e.getChannel(), 5);
                 return;
             }
-
+            e.getChannel().sendMessage(System.getProperty("user.name")).queue();
             if(arguments.length == 3) {
                 if (arguments[2].trim().startsWith("#")) {
                     new TechEmbedBuilder(arguments[0])
