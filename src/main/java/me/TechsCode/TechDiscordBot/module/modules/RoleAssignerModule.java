@@ -123,7 +123,10 @@ public class RoleAssignerModule extends Module {
                 if(purchases != 0 && purchases == reviews) rolesToKeep.add(reviewSquad);
             }
 
-            Set<Role> rolesToRemove = possibleRoles.stream()
+            Set<Role> rolesToRemove = new HashSet<>();
+
+            if(all.getRoles().stream().map(Role::getName).noneMatch(r -> r.equals("Keep Roles")))
+                rolesToRemove = possibleRoles.stream()
                     .filter(role -> !rolesToKeep.contains(role))
                     .filter(role -> all.getRoles().contains(role))
                     .collect(Collectors.toSet());
