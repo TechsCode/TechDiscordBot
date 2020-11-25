@@ -19,7 +19,7 @@ repositories {
 dependencies {
     implementation 'com.github.techscode:spigotapi:build-21'
 
-    implementation ('net.dv8tion:JDA:4.2.0_218') {
+    implementation ('net.dv8tion:JDA:4.2.0_222') {
         exclude module: 'opus-java' //No audio.
     }
 
@@ -29,7 +29,7 @@ dependencies {
     implementation "com.googlecode.json-simple:json-simple:1.1.1"
     implementation 'net.sourceforge.htmlunit:htmlunit:2.29'
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation group: 'org.kohsuke', name: 'github-api', version: '1.115'
+    implementation 'org.kohsuke:github-api:1.115'
 }
 
 buildscript {
