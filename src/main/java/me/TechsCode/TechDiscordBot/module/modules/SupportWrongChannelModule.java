@@ -38,7 +38,7 @@ public class SupportWrongChannelModule extends Module {
         @Override
         protected Query<TextChannel> newQuery() { return bot.getChannels("coding-help"); } };
 
-    public String[] triggerWords = new String[]{"ultra", "how can i", "help me", "youtube bridge", "youtubebridge", "how do i", "how does", "uperms", "ucustomizer", "customizer", "permissions", "regions"};
+    public String[] triggerWords = new String[]{"ultra", "how can i", "help me", "youtube bridge", "youtubebridge", "how do i", "how does", "uperms", "ucustomizer", "customizer", "permissions", "regions", "economy", "insane shops", "insaneshops", "can i"};
 
     public SupportWrongChannelModule(TechDiscordBot bot) {
         super(bot);
