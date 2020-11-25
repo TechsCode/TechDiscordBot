@@ -64,6 +64,23 @@ public class TechEmbedBuilder extends EmbedBuilder {
 
     public Message sendAfter(TextChannel textChannel, TimeUnit unit, int amount) { return textChannel.sendMessage(build()).completeAfter(amount, unit); }
 
+    public Message reply(Message message) {
+        return reply(message, true);
+    }
+
+    public Message reply(Message message, boolean mention) {
+        return message.reply(build()).mentionRepliedUser(mention).complete();
+    }
+
+    public void replyTemporary(Message message, int duration, TimeUnit timeUnit) {
+        replyTemporary(message, true, duration, timeUnit);
+    }
+
+    public void replyTemporary(Message message, boolean mention, int duration, TimeUnit timeUnit) {
+        Message msg = message.reply(build()).mentionRepliedUser(mention).complete();
+        msg.delete().submitAfter(duration, timeUnit);
+    }
+
     public Message send(User user) {
         try {
             return user.openPrivateChannel().complete().sendMessage(build()).complete();
