@@ -65,7 +65,7 @@ public class SupportWrongChannelModule extends Module {
 
         if (e.getChannel().getId().equals(GENERAL_CHANNEL.query().first().getId()) || e.getChannel().getId().equals(PLUGIN_DISCUSSION_CHANNEL.query().first().getId()) || e.getChannel().getId().equals(CODING_HELP.query().first().getId())) {
             if (Arrays.stream(triggerWords).anyMatch(word -> e.getMessage().getContentDisplay().toLowerCase().contains(word))) {
-                triggerMessage(e.getChannel(), e.getMember());
+                triggerMessage(e.getMessage(), e.getMember());
             }
         }
     }
@@ -84,7 +84,7 @@ public class SupportWrongChannelModule extends Module {
         }
     }
 
-    public void triggerMessage(TextChannel channel, Member member) {
+    public void triggerMessage(Message sentMessage, Member member) {
         if (messages.containsValue(member.getId())) return;
         TextChannel verificationChannel = bot.getChannel("695493411117072425");
 
@@ -117,12 +117,12 @@ public class SupportWrongChannelModule extends Module {
                 sb.append(channels.toString());
                 sb.append("\nPlease use the corresponding plugin channel above to get support.\nThis channel is **not** a support channel.\n\n*If you are not trying to get help, you can delete this message by reacting to it!*");
 
-                message = new TechEmbedBuilder().setText(sb.toString()).error().send(channel);
+                message = new TechEmbedBuilder().setText(sb.toString()).error().reply(sentMessage);
             } else {
-                message = teb.send(channel);
+                message = teb.reply(sentMessage);
             }
         } else {
-            message = teb.send(channel);
+            message = teb.reply(sentMessage);
         }
 
         if (message != null) {
