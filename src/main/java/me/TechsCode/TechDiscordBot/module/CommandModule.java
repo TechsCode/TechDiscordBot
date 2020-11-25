@@ -41,6 +41,10 @@ public abstract class CommandModule {
         }
     }
 
+    public boolean deleteCommandMsg() {
+        return true;
+    }
+
     public boolean isEnabled() {
         return enabled;
     }

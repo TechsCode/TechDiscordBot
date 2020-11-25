@@ -1,17 +1,19 @@
 package me.TechsCode.TechDiscordBot.reminders;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
 public class Reminder {
 
-    private final String userId, channelId, humanTime, reminder;
+    private final String userId, channelId, messageId, humanTime, reminder;
     private final long time;
     private final ReminderType type;
 
-    public Reminder(String userId, String channelId, long time, String humanTime, ReminderType type, String reminder) {
+    public Reminder(String userId, String channelId, String messageId, long time, String humanTime, ReminderType type, String reminder) {
         this.userId = userId;
+        this.messageId = messageId;
         this.channelId = channelId;
         this.time = time;
         this.humanTime = humanTime;
@@ -25,6 +27,10 @@ public class Reminder {
 
     public String getChannelId() {
         return channelId;
+    }
+
+    public String getMessageId() {
+        return messageId;
     }
 
     public long getTime() {
@@ -49,6 +55,7 @@ public class Reminder {
 
     public void send() {
         User user = TechDiscordBot.getJDA().getUserById(userId);
+
         if(user != null) {
             ReminderType type = this.type;
             TextChannel channel = TechDiscordBot.getJDA().getTextChannelById(channelId);
@@ -59,14 +66,30 @@ public class Reminder {
                 try {
                     user.openPrivateChannel().complete().sendMessage("**Reminder**: " + reminder).queue();
                 } catch(Exception ex) {
-                    if(channel != null) {
-                        channel.sendMessage("**Reminder for " + user.getAsMention() + "**: " + reminder).queue();
-                    }
+                    if(channel == null)
+                        return;
+
+                    sendReminder(user, channel);
                 }
             } else {
-                channel.sendMessage("**Reminder for " + user.getAsMention() + "**: " + reminder).queue();
+                sendReminder(user, channel);
             }
         }
+
         delete();
+    }
+
+    private void sendReminder(User user, TextChannel channel) {
+        Message message = null;
+
+        try {
+            message = channel.retrieveMessageById(messageId).complete();
+        } catch (Exception ignored) {}
+
+        if(message != null) {
+            message.reply("**Reminder**: " + reminder).mentionRepliedUser(true).queue();
+        } else {
+            channel.sendMessage("**Reminder for " + user.getAsMention() + "**: " + reminder).queue();
+        }
     }
 }

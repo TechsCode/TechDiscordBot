@@ -1,6 +1,7 @@
 package me.TechsCode.TechDiscordBot.reminders;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
@@ -40,7 +41,7 @@ public class ReminderManager {
         return this.reminders.stream().filter(reminder -> reminder.getUserId().equals(user.getId())).collect(Collectors.toList());
     }
 
-    public Reminder createReminder(User user, TextChannel channel, String[] args) {
+    public Reminder createReminder(User user, Message message, TextChannel channel, String[] args) {
         ReminderArgResponse argResponse = argsToTime(args);
         if(argResponse == null) return null;
 
@@ -57,8 +58,10 @@ public class ReminderManager {
 
             args2 = args2.subList(argResponse.getAmountOfArgs(), args2.size());
             if(args2.size() == 0) return null;
-            Reminder reminder = new Reminder(user.getId(), channel.getId(), argResponse.getTime(), argResponse.getTimeHuman(), (isDM ? ReminderType.DMs : ReminderType.CHANNEL), String.join(" ", args2));
+
+            Reminder reminder = new Reminder(user.getId(), channel.getId(), message.getId(), argResponse.getTime(), argResponse.getTimeHuman(), (isDM ? ReminderType.DMs : ReminderType.CHANNEL), String.join(" ", args2));
             this.reminders.add(reminder);
+
             TechDiscordBot.getStorage().saveReminder(reminder);
             return reminder;
         }
@@ -89,6 +92,7 @@ public class ReminderManager {
             }
             i++;
         }
+
         return new ReminderArgResponse(time, argsAm, bhb.toString());
     }
 

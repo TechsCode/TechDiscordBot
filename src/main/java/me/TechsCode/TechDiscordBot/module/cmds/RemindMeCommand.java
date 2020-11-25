@@ -59,8 +59,13 @@ public class RemindMeCommand extends CommandModule {
     }
 
     @Override
+    public boolean deleteCommandMsg() {
+        return false;
+    }
+
+    @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
-        Reminder reminder = TechDiscordBot.getRemindersManager().createReminder(member.getUser(), channel, args);
+        Reminder reminder = TechDiscordBot.getRemindersManager().createReminder(member.getUser(), message, channel, args);
 
         if(reminder == null) {
             new TechEmbedBuilder("Reminder - Error")

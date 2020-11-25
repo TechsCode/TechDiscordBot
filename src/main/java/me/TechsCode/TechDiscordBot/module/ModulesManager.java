@@ -101,7 +101,8 @@ public class ModulesManager {
         String message = e.getMessage().getContentDisplay();
         String[] args = Arrays.copyOfRange(message.split(" "), 1, message.split(" ").length);
 
-        e.getMessage().delete().complete();
+        if(cmd.deleteCommandMsg())
+            e.getMessage().delete().complete();
 
         cmd.onCommand(e.getChannel(), e.getMessage(), e.getMember(), args);
         if(!cmd.getCooldowns().containsKey(e.getMember().getId())) cmd.getCooldowns().put(e.getMember().getId(), new Cooldown(OffsetDateTime.now().plusSeconds(cmd.getCooldown())));
