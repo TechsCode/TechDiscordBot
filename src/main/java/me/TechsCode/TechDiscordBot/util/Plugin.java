@@ -96,6 +96,11 @@ public enum Plugin {
     }
 
     public File getBannerAsFile() {
+        File bFile = new File(getRoleName().toLowerCase() + "_banner.png");
+
+        if(bFile.exists())
+            return bFile;
+
         try {
             BufferedImage image = ImageIO.read(new URL(getBanner()));
 
