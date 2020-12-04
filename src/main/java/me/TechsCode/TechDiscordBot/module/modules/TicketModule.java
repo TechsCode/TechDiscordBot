@@ -215,9 +215,10 @@ public class TicketModule extends Module {
     }
 
     public Member getMemberFromTicket(TextChannel channel) {
-        if(channel == null || channel.getTopic() == null) return null;
-        String id = channel.getTopic().split("<")[1].split(">")[0].replace("@", "");
-        return channel.getGuild().getMemberById(id);
+        if(channel == null || channel.getTopic() == null)
+            return null;
+
+        return channel.getGuild().getMemberById(channel.getTopic().split("<")[1].split(">")[0].replace("@", "").replace("!", ""));
     }
 
     public Category getCategoryByTicketPriority(TicketPriority priority) {
