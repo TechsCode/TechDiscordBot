@@ -158,8 +158,8 @@ public class RulesCommand extends CommandModule {
 
     public enum Role {
 
-        CODING_WIZARD("Coding Wizard", "311178859171282944", "It's Tech! The head of the operations."),
-        ASSISTANT("Assistant", "608113993038561325", "Is it Easy or Eazy?! Well, yes, it's also Tech's Assistant! If Tech is not online, he is in charge. Occasionally also helps with coding."),
+        CODING_WIZARD("Coding Wizard", "311178859171282944", "It's Tech! The former head of the operations."),
+        ASSISTANT("Developer", "774690360836096062", "They are the future developers of Tech's plugins."),
         COMMUNITY_MANAGER("Community Manager", "677322840906924105", "The name says it all!"),
         STAFF("Staff", "608114002387533844", "They are here to help! Don't argue with Staff. If you think there is an issue, please contact <@&311178859171282944> or <@&608113993038561325>."),
         DONATOR("Donator", "311179148691505152", "These are amazing people who have donated to Tech!"),
