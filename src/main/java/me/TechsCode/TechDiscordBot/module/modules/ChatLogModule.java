@@ -62,8 +62,8 @@ public class ChatLogModule extends Module {
 
         new TechEmbedBuilder("Message Edited")
                 .setText("Message Edited by " + e.getMember().getAsMention() + " in " + e.getMessage().getTextChannel().getAsMention() + ".")
-                .addField("From", oldMessage.getContentDisplay(), false)
-                .addField("To", e.getMessage().getContentDisplay(), false)
+                .addField("From", oldMessage.getContentRaw(), false)
+                .addField("To", e.getMessage().getContentRaw(), false)
                 .send(CHATLOGS_CHANNEL.query().first());
 
         cachedMessages.put(e.getMessageId(), e.getMessage());
@@ -80,7 +80,7 @@ public class ChatLogModule extends Module {
         new TechEmbedBuilder("Message Deleted")
                 .setText("Message by " + message.getMember().getAsMention() + " was deleted.")
                 .addField("Text Channel", e.getChannel().getAsMention(), true)
-                .addField("Message", message.getContentDisplay(), true)
+                .addField("Message", message.getContentRaw(), true)
                 .send(CHATLOGS_CHANNEL.query().first());
 
         cachedMessages.remove(e.getMessageId());
