@@ -1,7 +1,5 @@
 package me.TechsCode.TechDiscordBot.module.modules;
 
-import me.TechsCode.SpigotAPI.data.Purchase;
-import me.TechsCode.SpigotAPI.data.lists.PurchasesList;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.Module;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
@@ -19,7 +17,7 @@ import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Objects;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class SupportWrongChannelModule extends Module {
@@ -44,7 +42,7 @@ public class SupportWrongChannelModule extends Module {
         super(bot);
     }
 
-    private HashMap<String, String> messages = new HashMap<>();
+    private final HashMap<String, String> messages = new HashMap<>();
 
     @Override
     public void onEnable() {}
@@ -94,12 +92,12 @@ public class SupportWrongChannelModule extends Module {
         Message message;
         Verification verification = TechDiscordBot.getStorage().retrieveVerificationWithDiscord(member);
         if (verification != null) {
-            PurchasesList pc = TechDiscordBot.getSpigotAPI().getPurchases().userId(verification.getUserId());
+            List<Plugin> pc = Arrays.stream(Plugin.values()).filter(p -> member.getRoles().stream().anyMatch(r -> r.getName().equals(p.getRoleName()))).collect(Collectors.toList());
 
             if (pc.size() > 0) {
                 StringBuilder sb = new StringBuilder();
+                String plugins = Plugin.getEmotesByList(pc.stream().map(Plugin::getRoleName).collect(Collectors.toList()));
 
-                String plugins = Plugin.getEmotesByList(pc.stream().map(p -> p.getResource().getName()).collect(Collectors.toList()));
                 sb.append("Hello, ")
                         .append(member.getAsMention())
                         .append("!\n\n It looks like you have bought ")
@@ -109,10 +107,7 @@ public class SupportWrongChannelModule extends Module {
                         .append("\nHere are the corresponding channels:\n\n");
 
                 StringBuilder channels = new StringBuilder();
-                pc.stream().filter(Objects::nonNull).forEach(p -> {
-                    Plugin plugin = Plugin.fromId(p.getResource().getId());
-                    channels.append("- ").append(TechDiscordBot.getJDA().getTextChannelById(plugin.getChannelId()).getAsMention()).append("\n");
-                });
+                pc.forEach(p -> channels.append("- ").append(TechDiscordBot.getJDA().getTextChannelById(p.getChannelId()).getAsMention()).append("\n"));
 
                 sb.append(channels.toString());
                 sb.append("\nPlease use the corresponding plugin channel above to get support.\nThis channel is **not** a support channel.\n\n*If you are not trying to get help, you can delete this message by reacting to it!*");
