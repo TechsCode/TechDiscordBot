@@ -60,8 +60,11 @@ public class HumanTimeBuilder {
             sb.append(seconds).append(" second").append(plural(seconds, false));
 
         String string = sb.toString();
-        if(string.endsWith(",")) string = ProjectUtil.removeEnd(string, 1) + ".";
-        return string;
+
+        while(string.endsWith(",") || string.endsWith(".") || string.endsWith(" "))
+            string = ProjectUtil.removeEnd(string, 1);
+
+        return string + ".";
     }
 
     public String plural(int am, boolean space) {
