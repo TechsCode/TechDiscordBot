@@ -261,24 +261,17 @@ public class TicketModule extends Module {
             startTimeout(e.getMember().getId());
         } else if(selectionStep == 2) {
             Plugin plugin = Plugin.byEmote(e.getReactionEmote().getEmote());
-            if (plugin == null || e.getMember().getRoles().stream().noneMatch(r -> r.getName().contains("Verified"))) {
-                new TechEmbedBuilder("Ticket - Error")
-                        .error()
-                        .setText("You do not own any of Tech's Plugins!")
-                        .sendTemporary(channel, 10);
 
-                e.getReaction().removeReaction(e.getUser()).queue();
-                sendPriorityInstructions(null);
+            if (plugin == null)
                 return;
-            }
 
             if(e.getMember().getRoles().stream().noneMatch(r -> r.getName().equals(plugin.getRoleName()))) {
                 new TechEmbedBuilder("Ticket - Error")
                         .error()
                         .setText("You do not own " + plugin.getRoleName() + "!")
                         .sendTemporary(channel, 10);
-
                 e.getReaction().removeReaction(e.getUser()).queue();
+
                 return;
             }
 
