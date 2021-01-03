@@ -24,7 +24,7 @@ public class ServerLogs {
     }
 
     public static boolean error(Exception ex) {
-        return sendChannel("Error", "```" + ExceptionUtils.getMessage(ex) + "```", new Color(178,34,34));
+        return sendChannel("Error", "```" + ex.getMessage() + "```", new Color(178,34,34));
     }
 
     public static boolean error(String error) {
