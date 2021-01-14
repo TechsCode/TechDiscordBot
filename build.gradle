@@ -19,7 +19,7 @@ repositories {
 dependencies {
     implementation 'com.github.techscode:spigotapi:build-21'
 
-    implementation ('net.dv8tion:JDA:4.2.0_222') {
+    implementation ('net.dv8tion:JDA:4.2.0_225') {
         exclude module: 'opus-java' //No audio.
     }
 
