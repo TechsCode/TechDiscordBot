@@ -92,7 +92,7 @@ public class TechDiscordBot {
 
         githubToken = githubTokenn;
 
-        spigotAPIClient = new SpigotAPIClient("https://api.techscode.de", apiToken);
+        spigotAPIClient = new SpigotAPIClient("http://api.techscode.de", apiToken);
         songodaPurchases = SongodaPurchases.getPurchases();
 
         log("Initializing MySQL Storage " + mySQLSettings.getHost() + ":" + mySQLSettings.getPort() + "!");
