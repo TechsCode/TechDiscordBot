@@ -52,7 +52,6 @@ public class VerifyCommand extends CommandModule {
                 new TechEmbedBuilder("Verify Cmd - Error").error().setText("Please provide a valid discord id!").sendTemporary(channel, 10);
                 return;
             }
-            System.out.println( mem + " Verified by " + message.getAuthor().getName());
 
             if(mem == null) {
                 new TechEmbedBuilder("Verify Cmd - Error").error().setText(args[1] + " is not a valid member id!").sendTemporary(channel, 10);

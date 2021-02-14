@@ -62,7 +62,7 @@ public class TechDiscordBot {
         }
     }
 
-    public TechDiscordBot(String token, String apiToken, MySQLSettings mySQLSettings,String githubTokenn) throws LoginException, InterruptedException {
+    public TechDiscordBot(String token, String apiToken, MySQLSettings mySQLSettings, String githubTokenn) throws LoginException, InterruptedException {
         i = this;
 
         jda = JDABuilder.createDefault(token)
@@ -89,10 +89,10 @@ public class TechDiscordBot {
             log(ConsoleColor.RED + "The bot is not a member of any guild. Please join a guild!");
             return;
         }
+
         githubToken = githubTokenn;
 
-
-        spigotAPIClient = new SpigotAPIClient("http://api.techscode.de/", apiToken);
+        spigotAPIClient = new SpigotAPIClient("http://api.techscode.de", apiToken);
         songodaPurchases = SongodaPurchases.getPurchases();
 
         log("Initializing MySQL Storage " + mySQLSettings.getHost() + ":" + mySQLSettings.getPort() + "!");
@@ -128,10 +128,6 @@ public class TechDiscordBot {
             log("  » Reviews: " + getSpigotAPI().getReviews().size());
         } else {
             log("  » " + ConsoleColor.RED + "API is not usable!");
-            log("  » Purchases: " + getSpigotAPI().getPurchases().size());
-            log("  » Resources: " + getSpigotAPI().getResources().size());
-            log("  » Updates: " + getSpigotAPI().getUpdates().size());
-            log("  » Reviews: " + getSpigotAPI().getReviews().size());
         }
 
         log("");
@@ -154,9 +150,21 @@ public class TechDiscordBot {
         log("");
         log("Startup Completed! The bot has successfully started!");
         
+        startSpigotCloudflareBypass();
     }
 
-
+    private void startSpigotCloudflareBypass() {
+        new Thread(() -> {
+            while(true) {
+                SpigotMC.getBrowser().request("https://spigotmc.org", HttpMethod.GET, false);
+                try {
+                    Thread.sleep(300000L);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
 
     public static JDA getJDA() {
         return jda;

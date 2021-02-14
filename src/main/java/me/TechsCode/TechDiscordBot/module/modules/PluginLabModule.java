@@ -70,7 +70,6 @@ public class PluginLabModule extends Module {
 
     public void updatePermissions() {
         for(Member member : TechDiscordBot.getGuild().getMembers()) {
-
             List<String> roles = member.getRoles().stream().map(Role::getName).collect(Collectors.toList());
             if(roles.contains("Staff")) continue; //Skip staff.
             if(!roles.contains("Verified")) continue; //Skip non-verified users.
