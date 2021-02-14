@@ -9,6 +9,7 @@ import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.spigotmc.ProfileComment;
 import me.TechsCode.TechDiscordBot.spigotmc.SpigotMC;
+import me.TechsCode.TechDiscordBot.spigotmc.VirtualBrowser;
 import me.TechsCode.TechDiscordBot.spigotmc.api.APIStatus;
 import me.TechsCode.TechDiscordBot.util.Plugin;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
@@ -57,21 +58,21 @@ public class VerificationModule extends Module {
     public void onDisable() {
         if (lastInstructions != null) lastInstructions.delete().submit();
     }
-
     public void sendInstructions() {
         if(lastInstructions != null) lastInstructions.delete().complete();
 
         TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("How It Works").setText("Type your SpigotMC Username in this Chat to verify.\n\nVerification not working? Feel free to contact a staff member in <#311178000026566658>.");
         lastInstructions = howItWorksMessage.send(channel);
     }
+     String code = UUID.randomUUID().toString().split("-")[0];
 
     @SubscribeEvent
     public void onMessage(GuildMessageReceivedEvent e) {
         if (e.getMember() == null) return;
         if (e.getAuthor().isBot()) return;
         if (!e.getChannel().equals(channel)) return;
+        new VirtualBrowser().st = false;
 
-        e.getMessage().delete().complete();
 
         TechEmbedBuilder errorMessage = new TechEmbedBuilder("Error (" + e.getAuthor().getName() + ")").error();
 
@@ -123,11 +124,10 @@ public class VerificationModule extends Module {
             return;
         }
 
-        String code = UUID.randomUUID().toString().split("-")[0];
 
         TechEmbedBuilder instructions = new TechEmbedBuilder("Verify " + e.getAuthor().getName())
                 .setThumbnail(avatarUrl)
-                .setText("Now go to your SpigotMC Profile and post `TechVerification." + code + "`\n\nLink to your Profile:\nhttps://www.spigotmc.org/members/" + username.toLowerCase() + "." + userId + "\n\n**Please verify yourself within 3 Minutes!**");
+                .setText("Now go to your SpigotMC Profile and post `TechVerification." +  code + "`\n\nLink to your Profile:\nhttps://www.spigotmc.org/members/" + username.toLowerCase() + "." + userId + "\n\n**Please verify yourself within 3 Minutes!**");
 
         Message m = instructions.send(channel);
         verificationQueue.add(e.getAuthor().getId());
@@ -135,8 +135,13 @@ public class VerificationModule extends Module {
         new Thread(() -> {
             long start = System.currentTimeMillis();
             while (System.currentTimeMillis() - start < TimeUnit.MINUTES.toMillis(3)) {
-                for(ProfileComment all : SpigotMC.getComments(userId)) {
-                    if(all.getUserId().equals(userId) && (all.getText().equals("TechVerification." + code))) {
+                try {
+                    new VirtualBrowser().collectResources(userId, code, e.getAuthor().getName());
+                } catch (InterruptedException interruptedException) {
+                    interruptedException.printStackTrace();
+                }
+                System.out.println(new VirtualBrowser().st);
+                if((VirtualBrowser.st) == true) {
                         m.delete().complete();
                         new TechEmbedBuilder(e.getAuthor().getName() + "'s Verification Completed").success()
                                 .setText(e.getAuthor().getName() + " has successfully verified their SpigotMC Account!")
@@ -152,12 +157,11 @@ public class VerificationModule extends Module {
                                 .setThumbnail(avatarUrl)
                                 .send(e.getMember());
                         new TechEmbedBuilder()
-                                .setText("You may now delete the message on your profile! [Go to Comment](https://www.spigotmc.org/profile-posts/" + all.getCommentId() + ")")
+                                .setText("You may now delete the message on your profile!")
                                 .send(e.getMember());
                         return;
                     }
                 }
-            }
 
             m.delete().complete();
             verificationQueue.remove(e.getAuthor().getId());

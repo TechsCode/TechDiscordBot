@@ -2,6 +2,7 @@ package me.TechsCode.TechDiscordBot.module.modules;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.Module;
+import me.TechsCode.TechDiscordBot.module.cmds.StateCommand;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
@@ -84,11 +85,17 @@ public class SupportWrongChannelModule extends Module {
 
     public void triggerMessage(Message sentMessage, Member member) {
         if (messages.containsValue(member.getId())) return;
+
         TextChannel verificationChannel = bot.getChannel("695493411117072425");
+        TechEmbedBuilder teb;
+        if(StateCommand.SpigotBanned) {
+            teb = new TechEmbedBuilder().setText("Hello, " + member.getAsMention() + "! I've detected that you might be trying to get help in this channel! Please DM a staff member with the following to verify, a link to your spigotmc profile and a screenshot off your [SpigotMC purchased page](https://www.spigotmc.org/resources/purchased)")
+                    .error();
 
-        TechEmbedBuilder teb = new TechEmbedBuilder().setText("Hello, " + member.getAsMention() + "! I've detected that you might be trying to get help in this channel! Please verify in " + verificationChannel.getAsMention() + " in order to get help, thanks!\n\n*If you are not trying to get help, you can delete this message by reacting to it!*")
-                .error();
-
+        }else {
+            teb = new TechEmbedBuilder().setText("Hello, " + member.getAsMention() + "! I've detected that you might be trying to get help in this channel! Please verify in " + verificationChannel.getAsMention() + " in order to get help, thanks!\n\n*If you are not trying to get help, you can delete this message by reacting to it!*")
+                    .error();
+        }
         Message message;
         Verification verification = TechDiscordBot.getStorage().retrieveVerificationWithDiscord(member);
         if (verification != null) {
