@@ -15,7 +15,11 @@ repositories {
 
     maven { url 'https://www.jitpack.io' }
 }
+compileJava.options.encoding = 'UTF-8'
 
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
 dependencies {
     implementation 'com.github.techscode:spigotapi:build-21'
 
@@ -30,6 +34,9 @@ dependencies {
     implementation 'net.sourceforge.htmlunit:htmlunit:2.29'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'org.kohsuke:github-api:1.115'
+    implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
+    implementation("io.github.bonigarcia:webdrivermanager:4.2.2")
+
 }
 
 buildscript {
