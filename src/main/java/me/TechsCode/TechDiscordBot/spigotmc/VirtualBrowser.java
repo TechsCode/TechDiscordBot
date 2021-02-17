@@ -1,27 +1,15 @@
 package me.TechsCode.TechDiscordBot.spigotmc;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import me.TechsCode.SpigotAPI.data.Purchase;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
-import me.TechsCode.TechDiscordBot.module.modules.VerificationModule;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.Collections;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class VirtualBrowser {
 
@@ -69,14 +57,14 @@ public class VirtualBrowser {
         return (OS.contains("mac"));
     }
 
-    public void navigate(String url) throws InterruptedException {
+    public Document navigate(String url) {
         driver.get(url);
 
         // Bypass Cloudflare
         int i = 0;
         while (driver.getPageSource().contains("This process is automatic. Your browser will redirect to your requested content shortly.")) {
             if (i == 0)
-                System.out.println("Cloudflare detected. Bypassing it now...");
+                TechDiscordBot.log("Cloudflare detected. Bypassing it now...");
 
             sleep(1000);
 
@@ -94,45 +82,22 @@ public class VirtualBrowser {
         if (i > 10 || driver.getPageSource().contains("ERR_TOO_MANY_REDIRECTS")) {
             sleep(5000);
 
-            System.out.println("Taking too long... retrying to access " + url);
+            TechDiscordBot.log("Taking too long... retrying to access " + url);
             navigate(url);
         }
+
+        return Jsoup.parse(driver.getPageSource());
     }
 
     public void close() {
         driver.close();
     }
-    public static final String BASE = "https://www.spigotmc.org";
-    public static boolean st = false;
 
-    public void collectResources(String id , String Code, String username) throws InterruptedException {
-        System.out.println(Code);
-        navigate(BASE + "/members/"+ id+"/");
-
-        Document resourcesPage = Jsoup.parse(driver.getPageSource());
-
-        for (Element item : resourcesPage.getElementsByClass("messageSimple")) {
-            String name = item.getElementsByClass("username poster").text();
-            String comment = item.getElementsByClass("ugc baseHtml").text();
-
-
-            if (comment.equals("TechVerification."+Code)) {
-                Purchase[] purchases = TechDiscordBot.getSpigotAPI().getPurchases().userId(id).toArray(new Purchase[0]);
-                for (Purchase p : purchases) {
-                    st = true;
-                    System.out.println(p.getResource().getName());
-                }
-
-                return;
-            }
-            else{
-                st = false;
-            }
+    public void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-    }
-
-
-    public void sleep(long millis) throws InterruptedException {
-        Thread.sleep(millis);
     }
 }

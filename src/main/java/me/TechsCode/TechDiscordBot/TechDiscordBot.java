@@ -1,6 +1,5 @@
 package me.TechsCode.TechDiscordBot;
 
-import com.gargoylesoftware.htmlunit.HttpMethod;
 import me.TechsCode.SpigotAPI.client.SpigotAPIClient;
 import me.TechsCode.TechDiscordBot.module.ModulesManager;
 import me.TechsCode.TechDiscordBot.mysql.MySQLSettings;
@@ -10,7 +9,6 @@ import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.reminders.ReminderManager;
 import me.TechsCode.TechDiscordBot.songoda.SongodaPurchase;
 import me.TechsCode.TechDiscordBot.songoda.SongodaPurchases;
-import me.TechsCode.TechDiscordBot.spigotmc.SpigotMC;
 import me.TechsCode.TechDiscordBot.spigotmc.api.APIStatus;
 import me.TechsCode.TechDiscordBot.util.ConsoleColor;
 import net.dv8tion.jda.api.JDA;
@@ -62,7 +60,7 @@ public class TechDiscordBot {
         }
     }
 
-    public TechDiscordBot(String token, String apiToken, MySQLSettings mySQLSettings,String githubTokenn) throws LoginException, InterruptedException {
+    public TechDiscordBot(String token, String apiToken, MySQLSettings mySQLSettings, String githubToken) throws LoginException, InterruptedException {
         i = this;
 
         jda = JDABuilder.createDefault(token)
@@ -89,8 +87,8 @@ public class TechDiscordBot {
             log(ConsoleColor.RED + "The bot is not a member of any guild. Please join a guild!");
             return;
         }
-        githubToken = githubTokenn;
 
+        TechDiscordBot.githubToken = githubToken;
 
         spigotAPIClient = new SpigotAPIClient("http://api.techscode.de/", apiToken);
         songodaPurchases = SongodaPurchases.getPurchases();
@@ -121,19 +119,13 @@ public class TechDiscordBot {
         log("");
 
         log("Spigot:");
-        if(getStatus().isUsable()) {
-            log("  » Purchases: " + getSpigotAPI().getPurchases().size());
-            log("  » Resources: " + getSpigotAPI().getResources().size());
-            log("  » Updates: " + getSpigotAPI().getUpdates().size());
-            log("  » Reviews: " + getSpigotAPI().getReviews().size());
-        } else {
+        if(!getStatus().isUsable())
             log("  » " + ConsoleColor.RED + "API is not usable!");
-            log("  » Purchases: " + getSpigotAPI().getPurchases().size());
-            log("  » Resources: " + getSpigotAPI().getResources().size());
-            log("  » Updates: " + getSpigotAPI().getUpdates().size());
-            log("  » Reviews: " + getSpigotAPI().getReviews().size());
-        }
 
+        log("  » Purchases: " + getSpigotAPI().getPurchases().size());
+        log("  » Resources: " + getSpigotAPI().getResources().size());
+        log("  » Updates: " + getSpigotAPI().getUpdates().size());
+        log("  » Reviews: " + getSpigotAPI().getReviews().size());
         log("");
 
         log("Songoda: ");
@@ -153,10 +145,7 @@ public class TechDiscordBot {
 
         log("");
         log("Startup Completed! The bot has successfully started!");
-        
     }
-
-
 
     public static JDA getJDA() {
         return jda;

@@ -46,13 +46,13 @@ public class VerifyCommand extends CommandModule {
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
         if(args.length > 1) {
             Member mem;
+
             try {
                 mem = TechDiscordBot.getMemberFromString(message, args[1]);
             } catch (NumberFormatException ex) {
                 new TechEmbedBuilder("Verify Cmd - Error").error().setText("Please provide a valid discord id!").sendTemporary(channel, 10);
                 return;
             }
-            System.out.println( mem + " Verified by " + message.getAuthor().getName());
 
             if(mem == null) {
                 new TechEmbedBuilder("Verify Cmd - Error").error().setText(args[1] + " is not a valid member id!").sendTemporary(channel, 10);

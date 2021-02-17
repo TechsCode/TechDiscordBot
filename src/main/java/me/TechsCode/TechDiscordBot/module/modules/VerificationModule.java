@@ -58,21 +58,22 @@ public class VerificationModule extends Module {
     public void onDisable() {
         if (lastInstructions != null) lastInstructions.delete().submit();
     }
+
     public void sendInstructions() {
         if(lastInstructions != null) lastInstructions.delete().complete();
 
         TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("How It Works").setText("Type your SpigotMC Username in this Chat to verify.\n\nVerification not working? Feel free to contact a staff member in <#311178000026566658>.");
         lastInstructions = howItWorksMessage.send(channel);
     }
-     String code = UUID.randomUUID().toString().split("-")[0];
 
     @SubscribeEvent
     public void onMessage(GuildMessageReceivedEvent e) {
         if (e.getMember() == null) return;
         if (e.getAuthor().isBot()) return;
         if (!e.getChannel().equals(channel)) return;
-        new VirtualBrowser().st = false;
 
+        String username = e.getMessage().getContentDisplay();
+        e.getMessage().delete().complete();
 
         TechEmbedBuilder errorMessage = new TechEmbedBuilder("Error (" + e.getAuthor().getName() + ")").error();
 
@@ -88,11 +89,9 @@ public class VerificationModule extends Module {
 
         Verification existingVerification = TechDiscordBot.getStorage().retrieveVerificationWithDiscord(e.getAuthor().getId());
         if (existingVerification != null) {
-            errorMessage.setText("You're already linked to your SpigotMC Account and your roles will be updated automatically!").sendTemporary(channel, 15);
+            errorMessage.setText("You've already linked to your SpigotMC Account and your roles will be updated automatically!").sendTemporary(channel, 15);
             return;
         }
-
-        String username = e.getMessage().getContentDisplay();
 
         if (username.contains(" ")) {
             errorMessage.setText("Please type in your SpigotMC Username!").sendTemporary(channel, 5);
@@ -124,24 +123,21 @@ public class VerificationModule extends Module {
             return;
         }
 
+        String code = UUID.randomUUID().toString().split("-")[0];
 
         TechEmbedBuilder instructions = new TechEmbedBuilder("Verify " + e.getAuthor().getName())
                 .setThumbnail(avatarUrl)
                 .setText("Now go to your SpigotMC Profile and post `TechVerification." +  code + "`\n\nLink to your Profile:\nhttps://www.spigotmc.org/members/" + username.toLowerCase() + "." + userId + "\n\n**Please verify yourself within 3 Minutes!**");
 
-        Message m = instructions.send(channel);
+        Message m = e.getMessage().getChannel().sendMessage(instructions.build()).complete();
         verificationQueue.add(e.getAuthor().getId());
 
         new Thread(() -> {
             long start = System.currentTimeMillis();
+
             while (System.currentTimeMillis() - start < TimeUnit.MINUTES.toMillis(3)) {
-                try {
-                    new VirtualBrowser().collectResources(userId, code, e.getAuthor().getName());
-                } catch (InterruptedException interruptedException) {
-                    interruptedException.printStackTrace();
-                }
-                System.out.println(new VirtualBrowser().st);
-                if((VirtualBrowser.st) == true) {
+                for(ProfileComment all : SpigotMC.getComments(userId)) {
+                    if(all.getUserId().equals(userId) && (all.getText().equals("TechVerification." + code))) {
                         m.delete().complete();
                         new TechEmbedBuilder(e.getAuthor().getName() + "'s Verification Completed").success()
                                 .setText(e.getAuthor().getName() + " has successfully verified their SpigotMC Account!")
@@ -157,15 +153,18 @@ public class VerificationModule extends Module {
                                 .setThumbnail(avatarUrl)
                                 .send(e.getMember());
                         new TechEmbedBuilder()
-                                .setText("You may now delete the message on your profile!")
+                                .setText("You may now delete the message on your profile! [Go to Comment](https://www.spigotmc.org/profile-posts/" + all.getCommentId() + ")")
                                 .send(e.getMember());
                         return;
                     }
                 }
+            }
 
-            m.delete().complete();
             verificationQueue.remove(e.getAuthor().getId());
-            errorMessage.setText("**You took too long!**\n\nThe Verification process has timed out! Please try again.").sendTemporary(channel, 15);
+            m.editMessage(errorMessage.setText("**You took too long!**\n\nThe Verification process has timed out! Please try again.").build())
+                    .complete()
+                    .delete()
+                    .queueAfter(10, TimeUnit.SECONDS);
         }).start();
     }
 
