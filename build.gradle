@@ -5,6 +5,7 @@ group = "me.TechsCode"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+compileJava.options.encoding = 'UTF-8'
 
 assemble.dependsOn shadowJar
 
@@ -15,18 +16,11 @@ repositories {
 
     maven { url 'https://www.jitpack.io' }
 }
-compileJava.options.encoding = 'UTF-8'
 
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
 dependencies {
+    implementation ('net.dv8tion:JDA:4.2.0_228') { exclude module: 'opus-java' }
+
     implementation 'com.github.techscode:spigotapi:build-21'
-
-    implementation ('net.dv8tion:JDA:4.2.0_225') {
-        exclude module: 'opus-java' //No audio.
-    }
-
     implementation 'org.jsoup:jsoup:1.8.3'
     implementation 'org.apache.commons:commons-lang3:3.7'
     implementation 'mysql:mysql-connector-java:5.1.17'
@@ -34,9 +28,8 @@ dependencies {
     implementation 'net.sourceforge.htmlunit:htmlunit:2.29'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'org.kohsuke:github-api:1.115'
-    implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
-    implementation("io.github.bonigarcia:webdrivermanager:4.2.2")
-
+    implementation 'org.seleniumhq.selenium:selenium-java:3.141.59'
+    implementation 'io.github.bonigarcia:webdrivermanager:4.2.2'
 }
 
 buildscript {
@@ -58,4 +51,8 @@ jar {
         attributes 'Class-Path': '/libs/a.jar'
         attributes 'Main-Class': 'me.TechsCode.TechDiscordBot.TechDiscordBot'
     }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }
