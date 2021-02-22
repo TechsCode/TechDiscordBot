@@ -62,7 +62,7 @@ public class VerificationModule extends Module {
     public void sendInstructions() {
         if(lastInstructions != null) lastInstructions.delete().complete();
 
-        TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("How It Works").setText("Type your SpigotMC Username in this Chat to verify.\n\nVerification not working? Feel free to contact a staff member in <#311178000026566658>.");
+        TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("How It Works").setText("Type your SpigotMC Username in this Chat to verify.\nTo verify your MC-Market purchases please contact a staff member.\n\nVerification is not working? Also feel free to contact a staff member in <#311178000026566658>.");
         lastInstructions = howItWorksMessage.send(channel);
     }
 
