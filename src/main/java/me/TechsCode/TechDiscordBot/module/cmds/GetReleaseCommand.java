@@ -57,7 +57,7 @@ public class GetReleaseCommand extends CommandModule {
                 channel.sendMessage("**Failed!** Could not get the release!\n\n**Possible reasons:**\n- The repo isn't valid.\n- There is no release in the reop.\n- Github died.").complete();
             } else if (release.getFile() != null) {
                 new TechEmbedBuilder(release.getRelease().getName())
-                    .setText(release.getRelease().getBody())
+                    .setText("```" + (release.getRelease().getBody().isEmpty() ? "No changes specified." : release.getRelease().getBody().replaceAll(" \\|\\| ", "\n")) + "```")
                     .send(channel);
 
 
@@ -76,6 +76,6 @@ public class GetReleaseCommand extends CommandModule {
 
     @Override
     public int getCooldown() {
-        return 0;
+        return 4;
     }
 }
