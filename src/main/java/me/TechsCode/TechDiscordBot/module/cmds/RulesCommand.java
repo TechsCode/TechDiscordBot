@@ -160,8 +160,8 @@ public class RulesCommand extends CommandModule {
 
         CODING_WIZARD("Coding Wizard", "311178859171282944", "It's Tech! The former head of the operations."),
         DEVELOPER("Developer", "774690360836096062", "They are the future developers of Tech's plugins."),
-        COMMUNITY_MANAGER("Community Manager", "677322840906924105", "The name says it all!"),
         ASSISTANT("Assistant", "608113993038561325", "This is the Developers Assistant! If the Developers are not online, he is in charge. Occasionally also helps with coding."),
+        TEAM_MANAGER("Team Manager", "842350337880227872", "It's all in the name! He is in charge of recruiting staff, training them, and ensuring that the staff structure is in place."),
         STAFF("Staff", "608114002387533844", "They are here to help! Don't argue with Staff. If you think there is an issue, please contact <@&774690360836096062>."),
         PATREON("Patreon", "795101981051977788", "These are our incredible Patreon supporters who getting rewarded by us for their monthly support with various rewards, additions and exclusive stuff."),
         DONATOR("Donator", "311179148691505152", "These are amazing people who have donated to Tech!"),
