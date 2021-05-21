@@ -43,14 +43,15 @@ public class ReactionModule extends Module {
   public void reaction() {
     this
       
-      .reactionMessage = (new TechEmbedBuilder("Reaction Roles")).setText(":Ename: For plugin updates\n".replace(":Ename:", update().getAsMention()) + "When there is a new update, you will be notified.\n\n" + ":Ename: for announcement\n".replace(":Ename:", announcement().getAsMention()) + "When there is an announcement, you will receive a ping.\n\n" + ":Ename: for giveaways\n".replace(":Ename:", giveaway().getAsMention()) + "When there is a giveaway, you will be notified.\n\n" + ":Ename: for nathan's pings\n".replace(":Ename:", nathan().getAsMention()) + "Get ping for quick giveaways, announcements, and Nathan's messages.").send((TextChannel)this.react_CHANNEL.query().first());
+      .reactionMessage = (new TechEmbedBuilder("Reaction Roles"))
+            .setText(":Ename: For plugin updates\n".replace(":Ename:", update().getAsMention()) + "When there is a new update, you will be notified.\n\n" + ":Ename: for announcement\n".replace(":Ename:", announcement().getAsMention()) + "When there is an announcement, you will receive a ping.\n\n" + ":Ename: for giveaways\n".replace(":Ename:", giveaway().getAsMention()) + "When there is a giveaway, you will be notified.")
+            .send((TextChannel)this.react_CHANNEL.query().first());
   }
   
   public void resetreactions() {
     this.reactionMessage.addReaction(update()).complete();
     this.reactionMessage.addReaction(announcement()).complete();
     this.reactionMessage.addReaction(giveaway()).complete();
-    this.reactionMessage.addReaction(nathan()).complete();
   }
   
   public Emote announcement() {
@@ -60,35 +61,33 @@ public class ReactionModule extends Module {
   public Emote update() {
     return TechDiscordBot.getJDA().getEmoteById("837724632739217418");
   }
-  
-  public Emote nathan() {
-    return TechDiscordBot.getJDA().getEmoteById("837724632672239646");
-  }
-  
+
   public Emote giveaway() {
     return TechDiscordBot.getJDA().getEmoteById("837724632529895486");
   }
   
   @SubscribeEvent
   public void onReactionAdd(MessageReactionAddEvent e) {
-    if (e.getUser() == null || e.getMember() == null)
-      return; 
-    if (e.getUser().isBot())
-      return; 
+    if (e.getUser() == null || e.getMember() == null) {
+      return;
+    }
+    if (e.getUser().isBot()) {
+      return;
+    }
     if (e.getMessageId().equals(this.reactionMessage.getId())) {
       if (this.Roles.contains(e.getReactionEmote().getName()))
-        if (e.getMember().getRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase(e.getReactionEmote().getName()))) {
-          e.getGuild().removeRoleFromMember(e.getMember(), RemoveRole(e.getReactionEmote().getName())).queue();
-          (new TechEmbedBuilder("Reaction Roles"))
+      if (e.getMember().getRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase(e.getReactionEmote().getName()))) {
+        e.getGuild().removeRoleFromMember(e.getMember(), RemoveRole(e.getReactionEmote().getName())).queue();
+        (new TechEmbedBuilder("Reaction Roles"))
             .setText("The {Role} has been removed, you will not be notified whenever there is a {Role}.\nSimply react to add the {Role} role again, and it will be added.".replace("{Role}", e.getReactionEmote().getName())).send(e.getMember());
         } else {
-          e.getGuild().addRoleToMember(e.getMember(), GiveRole(e.getReactionEmote().getName())).queue();
-          (new TechEmbedBuilder("Reaction Roles"))
+        e.getGuild().addRoleToMember(e.getMember(), GiveRole(e.getReactionEmote().getName())).queue();
+        (new TechEmbedBuilder("Reaction Roles"))
             .setText("The {Role} has been added, you will now be notified whenever there are {Role}.\nSimply react to remove the {Role} role again, and it will be removed.".replace("{Role}", e.getReactionEmote().getName())).send(e.getMember());
-        }  
+        }
       e.getReaction().removeReaction(e.getUser()).complete();
       resetreactions();
-    } 
+    }
   }
   
   public Role RemoveRole(String Role) {
