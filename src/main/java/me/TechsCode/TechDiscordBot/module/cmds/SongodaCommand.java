@@ -44,7 +44,7 @@ public class SongodaCommand extends CommandModule {
     @Override
     public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
         new TechEmbedBuilder("Songoda")
-                .setText("We have removed all of our plugins from Songoda.com, this was put in place on June 6th, 2020. We do not provide support or updates on Songoda since then, if you are a client please seek #songoda-transfer. The reasoning for our decision on migrating off of Songoda is for a plethora of reasons. If you refer to this [Reddit Post](https://www.reddit.com/r/admincraft/comments/hqibzi/is_songoda_bad/). You can see some of the things brought to light by the community. After the initial removal of our plugins, we were [contacted](https://media.discordapp.net/attachments/346344529651040268/739882619545845811/unknown.png) by Brianna (Songoda Owner). This furthers our point of removing our plugins from Songoda is the best for our plugins.\n\n- Brooke (<@740067104564183151>)")
+                .setText("Hey {username}!,\n".replace("{username}", member.getEffectiveName()) + "You can browse their marketplace at [marketplace](https://songoda.com/marketplace)")
                 .send(channel);
     }
 
