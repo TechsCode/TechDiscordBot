@@ -17,23 +17,25 @@ import net.dv8tion.jda.api.hooks.SubscribeEvent;
 public class ReactionModule extends Module {
   private final DefinedQuery<TextChannel> react_CHANNEL;
   
-  private ArrayList<String> Roles;
+  private ArrayList<String> roles;
   
   public Message reactionMessage;
   
   public ReactionModule(TechDiscordBot bot) {
     super(bot);
+
     this.react_CHANNEL = new DefinedQuery<TextChannel>() {
         protected Query<TextChannel> newQuery() {
           return (Query<TextChannel>)ReactionModule.this.bot.getChannels(new String[] { "react" });
         }
       };
-    this.Roles = new ArrayList<>();
+
+    this.roles = new ArrayList<>();
   }
   
   public void onEnable() {
     reaction();
-    resetreactions();
+    resetReactions();
   }
   
   public void onDisable() {
@@ -41,14 +43,12 @@ public class ReactionModule extends Module {
   }
   
   public void reaction() {
-    this
-      
-      .reactionMessage = (new TechEmbedBuilder("Reaction Roles"))
+    this.reactionMessage = (new TechEmbedBuilder("Reaction Roles"))
             .setText(":Ename: For plugin updates\n".replace(":Ename:", update().getAsMention()) + "When there is a new update, you will be notified.\n\n" + ":Ename: for announcement\n".replace(":Ename:", announcement().getAsMention()) + "When there is an announcement, you will receive a ping.\n\n" + ":Ename: for giveaways\n".replace(":Ename:", giveaway().getAsMention()) + "When there is a giveaway, you will be notified.")
             .send((TextChannel)this.react_CHANNEL.query().first());
   }
   
-  public void resetreactions() {
+  public void resetReactions() {
     this.reactionMessage.addReaction(update()).complete();
     this.reactionMessage.addReaction(announcement()).complete();
     this.reactionMessage.addReaction(giveaway()).complete();
@@ -74,19 +74,22 @@ public class ReactionModule extends Module {
     if (e.getUser().isBot()) {
       return;
     }
+
     if (e.getMessageId().equals(this.reactionMessage.getId())) {
-      if (this.Roles.contains(e.getReactionEmote().getName()))
-      if (e.getMember().getRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase(e.getReactionEmote().getName()))) {
-        e.getGuild().removeRoleFromMember(e.getMember(), RemoveRole(e.getReactionEmote().getName())).queue();
-        (new TechEmbedBuilder("Reaction Roles"))
-            .setText("The {Role} has been removed, you will not be notified whenever there is a {Role}.\nSimply react to add the {Role} role again, and it will be added.".replace("{Role}", e.getReactionEmote().getName())).send(e.getMember());
+        if (e.getMember().getRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase(e.getReactionEmote().getName()))) {
+          e.getGuild().removeRoleFromMember(e.getMember(), RemoveRole(e.getReactionEmote().getName())).queue();
+          TechDiscordBot.log("Reaction Role » Removed " + e.getReactionEmote().getName() + " (" + e.getMember().getEffectiveName() + ")");
+          (new TechEmbedBuilder("Reaction Roles"))
+                  .setText("The {Role} has been removed, you will not be notified whenever there is a {Role}.\nSimply react to add the {Role} role again, and it will be added.".replace("{Role}", e.getReactionEmote().getName())).send(e.getMember());
         } else {
-        e.getGuild().addRoleToMember(e.getMember(), GiveRole(e.getReactionEmote().getName())).queue();
-        (new TechEmbedBuilder("Reaction Roles"))
-            .setText("The {Role} has been added, you will now be notified whenever there are {Role}.\nSimply react to remove the {Role} role again, and it will be removed.".replace("{Role}", e.getReactionEmote().getName())).send(e.getMember());
+          e.getGuild().addRoleToMember(e.getMember(), GiveRole(e.getReactionEmote().getName())).queue();
+          TechDiscordBot.log("Reaction Role » Added " + e.getReactionEmote().getName() + " (" + e.getMember().getEffectiveName() + ")");
+          (new TechEmbedBuilder("Reaction Roles"))
+                  .setText("The {Role} has been added, you will now be notified whenever there are {Role}.\nSimply react to remove the {Role} role again, and it will be removed.".replace("{Role}", e.getReactionEmote().getName())).send(e.getMember());
         }
+
       e.getReaction().removeReaction(e.getUser()).complete();
-      resetreactions();
+      resetReactions();
     }
   }
   
