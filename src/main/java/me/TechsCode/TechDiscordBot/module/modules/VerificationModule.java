@@ -79,12 +79,17 @@ public class VerificationModule extends Module {
 
     if (!TechDiscordBot.getBot().getStatus().isUsable()) {
       errorMessage.setText("**The API is currently offline.**\nThere is no ETA of when it will be back up.\nYou will have to wait to verify until then.").error().sendTemporary(channel, 10);
+
+      String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + "Tried to verify but the the api is down!";
+
       (new TechEmbedBuilder())
               .setText("OI the api is offline and someone tried verifying")
               .send(e.getJDA().getUserById("619084935655063552"));
+
       (new TechEmbedBuilder())
               .setText("OI the api is offline and someone tried verifying")
               .send(e.getJDA().getUserById("319429800009662468"));
+
       return;
     }
 
@@ -107,17 +112,25 @@ public class VerificationModule extends Module {
     Purchase[] purchases = TechDiscordBot.getSpigotAPI().getPurchases().username(username).toArray(new Purchase[0]);
 
     if (purchases.length == 0) {
-      errorMessage.setText("The user '" + username + "' does not own any of Tech's Plugins!\n\n*It may take up to 20 minutes for the bot to recognize new purchases.*\n\n*This could also be an issue with the api. If you believe this is a mistake, please contact a staff member!*");
+      errorMessage.setText("User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " does not own any of Tech's Plugins!\n\n*It may take up to 20 minutes for the bot to recognize new purchases.*\n\n*This could also be an issue with the api. If you believe this is a mistake, please contact a staff member!*");
 
-      if (TechDiscordBot.getBot().getStatus() == APIStatus.NOT_FETCHING)
+      if (TechDiscordBot.getBot().getStatus() == APIStatus.NOT_FETCHING) {
         errorMessage.setText(errorMessage.getText() + "\n\n**The API is currently not fetching new information, this could also be the issue.");
+
+        String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + "Tried to verify but the the api is down!";
+
+                (new TechEmbedBuilder())
+                .setText(msg)
+                .send(e.getJDA().getUserById("619084935655063552"));
+
+        (new TechEmbedBuilder())
+                .setText(msg)
+                .send(e.getJDA().getUserById("319429800009662468"));
+
+        return;
+      }
       errorMessage.error().sendTemporary(channel, 10);
-      (new TechEmbedBuilder())
-              .setText("OI the api is offline and someone tried verifying")
-              .send(e.getJDA().getUserById("619084935655063552"));
-      (new TechEmbedBuilder())
-              .setText("OI the api is offline and someone tried verifying")
-              .send(e.getJDA().getUserById("319429800009662468"));
+
 
       return;
     }
@@ -133,11 +146,17 @@ public class VerificationModule extends Module {
 
       Purchase purchase = TechDiscordBot.getSpigotAPI().getPurchases().userId(existingVerification.getUserId()).get(0);
 
-      String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " Has tried to verify as https://www.spigotmc.org/members/" + finalUsername.toLowerCase() + "." + userId + "But this user is already verified!";
+      String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " Has tried to verify as https://www.spigotmc.org/members/" + finalUsername.toLowerCase() + "." + userId + " But this user is already verified!";
       errorMessage.setText("The SpigotMC User " + username + " is already linked with " + purchase.getUser().getUsername() + ". If you believe this is a mistake, please contact a Staff Member.").sendTemporary(channel, 10);
 
-      (new TechEmbedBuilder()).setText(msg).send(e.getJDA().getUserById("619084935655063552"));
-      (new TechEmbedBuilder()).setText(msg).send(e.getJDA().getUserById("319429800009662468"));
+      (new TechEmbedBuilder())
+              .setText(msg)
+              .send(e.getJDA().getUserById("619084935655063552"));
+
+      (new TechEmbedBuilder())
+              .setText(msg)
+              .send(e.getJDA().getUserById("319429800009662468"));
+
       return;
     }
 
@@ -164,8 +183,15 @@ public class VerificationModule extends Module {
 
               (new TechEmbedBuilder(e.getAuthor().getName() + "'s Verification Completed")).success().setText(e.getAuthor().getName() + " has successfully verified their SpigotMC Account!").setThumbnail(avatarUrl).send(this.channel);
 
-              (new TechEmbedBuilder()).setText(msg).send(e.getJDA().getUserById("619084935655063552"));
-              (new TechEmbedBuilder()).setText(msg).send(e.getJDA().getUserById("319429800009662468"));
+
+              (new TechEmbedBuilder())
+                      .setText(msg)
+                      .send(e.getJDA().getUserById("619084935655063552"));
+
+              (new TechEmbedBuilder())
+                      .setText(msg)
+                      .send(e.getJDA().getUserById("319429800009662468"));
+
             }
 
             sendInstructions();
@@ -188,8 +214,14 @@ public class VerificationModule extends Module {
 
               ((Message)m.editMessage(errorMessage.setText("Please verify your own account.").build()).complete()).delete().queueAfter(10L, TimeUnit.SECONDS);
 
-              (new TechEmbedBuilder()).setText(msg).send(e.getJDA().getUserById("619084935655063552"));
-              (new TechEmbedBuilder()).setText(msg).send(e.getJDA().getUserById("319429800009662468"));
+              (new TechEmbedBuilder())
+                      .setText(msg)
+                      .send(e.getJDA().getUserById("619084935655063552"));
+
+              (new TechEmbedBuilder())
+                      .setText(msg)
+                      .send(e.getJDA().getUserById("319429800009662468"));
+
               try {
                 throw new Exception(msg);
               } catch (Exception ae) {
