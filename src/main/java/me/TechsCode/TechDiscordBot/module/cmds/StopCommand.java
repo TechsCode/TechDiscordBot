@@ -10,6 +10,12 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
 public class StopCommand extends CommandModule {
 
@@ -23,19 +29,31 @@ public class StopCommand extends CommandModule {
     public StopCommand(TechDiscordBot bot) { super(bot); }
 
     @Override
-    public String getCommand() { return "!stop"; }
+    public String getName() {
+        return "stop";
+    }
 
     @Override
-    public String[] getAliases() { return null; }
+    public String getDescription() {
+        return "Stop the bot";
+    }
 
     @Override
-    public DefinedQuery<Role> getRestrictedRoles() { return STAFF_ROLE; }
+    public CommandPrivilege[] getCommandPrivileges() {
+        return new CommandPrivilege[] { CommandPrivilege.enable(STAFF_ROLE.query().first()) };
+    }
 
     @Override
-    public DefinedQuery<TextChannel> getRestrictedChannels() { return null; }
+    public OptionData[] getOptions() {
+        return new OptionData[] {
+                new OptionData(OptionType.STRING, "confirm", "Confirm to stop the bot.", false)
+        };
+    }
 
     @Override
-    public CommandCategory getCategory() { return CommandCategory.ADMIN; }
+    public boolean isEphemeral() {
+        return false;
+    }
 
     @Override
     public int getCooldown() {
@@ -43,19 +61,23 @@ public class StopCommand extends CommandModule {
     }
 
     @Override
-    public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
-        if(args.length == 2 && args[0].equals("acTualLy") && args[1].equals("sToP")) {
-            new TechEmbedBuilder("Stop")
-                .setText("The bot will now stop!")
-                .send(channel);
+    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+        OptionMapping confirmOption = e.getOption("confirm");
+        String confirm = confirmOption == null ? "" : confirmOption.getAsString();
+
+        if(confirm.equals("cOnFirM")) {
+            e.replyEmbeds(new TechEmbedBuilder("Stop")
+                    .setText("The bot will now stop!")
+                    .build()
+            ).queue();
+
             TechDiscordBot.getJDA().shutdownNow();
             System.exit(0);
         } else {
-            new TechEmbedBuilder("Stop")
-                    .setText("Hello, " + member.getAsMention() + "! I've detected that you're trying to stop me!" +
-                            "\n\nI do not like that, especially that if I do stop, I will not be restarted!\nIf you **REALLY** wish to stop me, type the following command:\n`!stop acTualLy sToP`")
-                    .send(channel);
-
+            e.replyEmbeds(new TechEmbedBuilder("Stop")
+                    .setText("Hello, " + m.getAsMention() + "! I've detected that you're trying to stop me!\n\nI do not like that, especially that if I do stop, I will not be restarted!\nIf you **REALLY** wish to stop me, type the following command:\n`!stop cOnFirM`")
+                    .build()
+            ).queue();
         }
     }
 }

@@ -9,20 +9,18 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
-public class LogsCommand extends CommandModule {
+public class TrelloCommand extends CommandModule {
 
-    public LogsCommand(TechDiscordBot bot) {
+    public TrelloCommand(TechDiscordBot bot) {
         super(bot);
     }
 
     @Override
-    public String getName() {
-        return "logs";
-    }
+    public String getName() { return "trello"; }
 
     @Override
     public String getDescription() {
-        return "An amazing image depicting logs!";
+        return "Returns the trello website!";
     }
 
     @Override
@@ -42,11 +40,11 @@ public class LogsCommand extends CommandModule {
 
     @Override
     public int getCooldown() {
-        return 25;
+        return 5;
     }
 
     @Override
     public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
-        e.reply("https://cdn.discordapp.com/attachments/346344529651040268/812466654768398357/send_logs.jpg").queue();
+        e.reply("https://trello.com/techsplugins").queue();
     }
 }

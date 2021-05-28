@@ -10,6 +10,11 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
 public class VerifyCommand extends CommandModule {
 
@@ -20,59 +25,57 @@ public class VerifyCommand extends CommandModule {
         }
     };
 
-    public VerifyCommand(TechDiscordBot bot) { super(bot); }
-
-    @Override
-    public String getCommand() { return "!verify"; }
-
-    @Override
-    public String[] getAliases() { return new String[]{"!link", "!update"}; }
-
-    @Override
-    public DefinedQuery<Role> getRestrictedRoles() { return STAFF_ROLE; }
-
-    @Override
-    public DefinedQuery<TextChannel> getRestrictedChannels() { return null; }
-
-    @Override
-    public CommandCategory getCategory() { return CommandCategory.ADMIN; }
-
-    @Override
-    public int getCooldown() {
-        return 0;
+    public VerifyCommand(TechDiscordBot bot) {
+        super(bot);
     }
 
     @Override
-    public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
-        if(args.length > 1) {
-            Member mem;
+    public String getName() { return "verify"; }
 
-            try {
-                mem = TechDiscordBot.getMemberFromString(message, args[1]);
-            } catch (NumberFormatException ex) {
-                new TechEmbedBuilder("Verify Cmd - Error").error().setText("Please provide a valid discord id!").sendTemporary(channel, 10);
-                return;
-            }
+    @Override
+    public String getDescription() {
+        return "Verify a member.";
+    }
 
-            if(mem == null) {
-                new TechEmbedBuilder("Verify Cmd - Error").error().setText(args[1] + " is not a valid member id!").sendTemporary(channel, 10);
-                return;
-            }
+    @Override
+    public CommandPrivilege[] getCommandPrivileges() {
+        return new CommandPrivilege[] { CommandPrivilege.enable(STAFF_ROLE.query().first()) };
+    }
 
-            if(TechDiscordBot.getStorage().retrieveVerificationWithDiscord(mem.getId()) != null || TechDiscordBot.getStorage().retrieveVerificationWithSpigot(args[0]) != null) {
-                new TechEmbedBuilder("Verify Cmd - Error").error().setText(args[0] + " (" + mem.getAsMention() + ") is already verified!").sendTemporary(channel, 10);
-                return;
-            }
+    @Override
+    public OptionData[] getOptions() {
+        return new OptionData[] {
+                new OptionData(OptionType.MENTIONABLE, "member", "Member to verify.", true),
+                new OptionData(OptionType.STRING, "spigotId", "The member's spigot id.", true)
+        };
+    }
 
-            if(TechDiscordBot.getSpigotAPI().getPurchases().userId(args[0]).size() == 0) {
-                new TechEmbedBuilder("Verify Cmd - Error").error().setText(args[0] + " (" + mem.getAsMention() + ") does not own any of Tech's Plugins!").sendTemporary(channel, 10);
-                return;
-            }
+    @Override
+    public boolean isEphemeral() {
+        return false;
+    }
 
-            TechDiscordBot.getStorage().createVerification(args[0], mem.getId());
-            new TechEmbedBuilder("Verify Cmd - Success").success().setText("Successfully verified " + args[0] + "! (" + mem.getAsMention() + ")").send(channel);
-        } else {
-            new TechEmbedBuilder("Verify Cmd - Error").error().setText("!verify <spigotId> <discordId>").sendTemporary(channel, 10);
+    @Override
+    public int getCooldown() {
+        return 5;
+    }
+
+    @Override
+    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+        String spigotId = e.getOption("spigotId").getAsString();
+        Member member = e.getOption("member").getAsMember();
+
+        if(TechDiscordBot.getStorage().retrieveVerificationWithDiscord(member) != null || TechDiscordBot.getStorage().retrieveVerificationWithSpigot(spigotId) != null) {
+            e.reply(spigotId + " (" + member.getAsMention() + ") is already verified!").queue();
+            return;
         }
+
+        if(TechDiscordBot.getSpigotAPI().getPurchases().userId(spigotId).size() == 0) {
+            e.reply(spigotId + " (" + member.getAsMention() + ") does not own any of Tech's Plugins!").queue();
+            return;
+        }
+
+        TechDiscordBot.getStorage().createVerification(spigotId, member.getId());
+        e.reply("Successfully verified " + spigotId + "! (" + member.getAsMention() + ")").queue();
     }
 }

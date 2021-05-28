@@ -8,8 +8,12 @@ import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.util.Plugin;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
 import java.util.Arrays;
 
@@ -19,42 +23,56 @@ public class OverviewCommand extends CommandModule {
         @Override
         protected Query<Role> newQuery() { return bot.getRoles("Staff"); }
     };
-
     private final DefinedQuery<TextChannel> OVERVIEW_CHANNEL = new DefinedQuery<TextChannel>() {
         @Override
         protected Query<TextChannel> newQuery() { return bot.getChannels("overview"); }
     };
 
-    public OverviewCommand(TechDiscordBot bot) { super(bot); }
-
-    @Override
-    public String getCommand() { return "!overview"; }
-
-    @Override
-    public String[] getAliases() { return new String[]{"!o"}; }
-
-    @Override
-    public DefinedQuery<Role> getRestrictedRoles() { return STAFF_ROLE; }
-
-    @Override
-    public DefinedQuery<TextChannel> getRestrictedChannels() { return null; }
-
-    @Override
-    public CommandCategory getCategory() { return CommandCategory.INFO; }
-
-    @Override
-    public int getCooldown() {
-        return 0;
+    public OverviewCommand(TechDiscordBot bot) {
+        super(bot);
     }
 
     @Override
-    public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
+    public String getName() {
+        return "overview";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Resend the #overview messages.";
+    }
+
+    @Override
+    public CommandPrivilege[] getCommandPrivileges() {
+        return new CommandPrivilege[] { CommandPrivilege.enable(STAFF_ROLE.query().first()) };
+    }
+
+    @Override
+    public OptionData[] getOptions() {
+        return new OptionData[0];
+    }
+
+    @Override
+    public boolean isEphemeral() {
+        return false;
+    }
+
+    @Override
+    public int getCooldown() {
+        return 10;
+    }
+
+    @Override
+    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
         if(!TechDiscordBot.getBot().getStatus().isUsable()) {
             new TechEmbedBuilder("API").setText("The API has to be usable to execute this command!").error().sendTemporary(channel, 5);
             return;
         }
 
-        OVERVIEW_CHANNEL.query().first().getHistory().retrievePast(100).complete().forEach(msg -> msg.delete().queue());
+        OVERVIEW_CHANNEL.query().first().getIterableHistory()
+                .takeAsync(200)
+                .thenAccept(channel::purgeMessages);
+
         showAll();
     }
 

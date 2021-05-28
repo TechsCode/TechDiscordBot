@@ -3,74 +3,84 @@ package me.TechsCode.TechDiscordBot.module.cmds;
 import me.TechsCode.SpigotAPI.data.Purchase;
 import me.TechsCode.SpigotAPI.data.lists.PurchasesList;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
-import me.TechsCode.TechDiscordBot.module.CommandCategory;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
-import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
-import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.util.Plugin;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
 import java.util.Comparator;
-import java.util.concurrent.TimeUnit;
 
-public class UserCheckCommand extends CommandModule {
+public class MemberCheckCommand extends CommandModule {
 
-    public UserCheckCommand(TechDiscordBot bot) { super(bot); }
-
-    @Override
-    public String getCommand() { return "!check"; }
-
-    @Override
-    public String[] getAliases() { return new String[]{"!verified", "!suserinfo", "!sinfo"}; }
-
-    @Override
-    public DefinedQuery<Role> getRestrictedRoles() { return null; }
-
-    @Override
-    public DefinedQuery<TextChannel> getRestrictedChannels() { return null; }
-
-    @Override
-    public CommandCategory getCategory() { return CommandCategory.ADMIN; }
-
-    @Override
-    public int getCooldown() {
-        return 0;
+    public MemberCheckCommand(TechDiscordBot bot) {
+        super(bot);
     }
 
     @Override
-    public void onCommand(TextChannel channel, Message message, Member m, String[] args) {
-        Member member;
-        if(args.length == 0) {
+    public String getName() {
+        return "check";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Check a member's Purchases & Spigot Info.";
+    }
+
+    @Override
+    public CommandPrivilege[] getCommandPrivileges() {
+        return new CommandPrivilege[0];
+    }
+
+    @Override
+    public OptionData[] getOptions() {
+        return new OptionData[] {
+                new OptionData(OptionType.MENTIONABLE, "member", "Member to check."),
+                new OptionData(OptionType.STRING, "spigotId", "Member's spigot id.")
+        };
+    }
+
+    @Override
+    public boolean isEphemeral() {
+        return false;
+    }
+
+    @Override
+    public int getCooldown() {
+        return 5;
+    }
+
+    @Override
+    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+        Member member = e.getOption("member") == null ? null : e.getOption("member").getAsMember();
+        String spigotId = e.getOption("spigotId") == null ? null : e.getOption("spigotId").getAsString();
+
+        if(member == null && spigotId == null)
             member = m;
-        } else {
-            member = TechDiscordBot.getMemberFromString(message, args[0]);
-        }
 
         if (!TechDiscordBot.getBot().getStatus().isUsable()) {
-            new TechEmbedBuilder("API Not Usable")
+            e.replyEmbeds(
+                new TechEmbedBuilder("API Not Usable")
                     .error()
                     .setText("The API does not contain any information! I cannot check a user if it's offline!")
-                    .sendTemporary(channel, 10, TimeUnit.SECONDS);
+                    .build()
+            ).queue();
             return;
         }
 
         boolean canView = m.getRoles().stream().anyMatch(r -> r.getName().equals("Staff"));
 
-        Verification verification;
-        if(member != null) {
-            verification = TechDiscordBot.getStorage().retrieveVerificationWithDiscord(member.getUser().getId());
-        } else {
-            verification = TechDiscordBot.getStorage().retrieveVerificationWithSpigot(args[0]);
-        }
+        Verification verification = spigotId == null ? TechDiscordBot.getStorage().retrieveVerificationWithDiscord(member.getUser().getId()) : TechDiscordBot.getStorage().retrieveVerificationWithSpigot(spigotId);
 
         if(verification == null) {
-            new TechEmbedBuilder((member == null ? args[0] : member.getEffectiveName()) + " Is Not Verified!")
-                    .setText((member == null ? args[0] : member.getAsMention()) + " has not verified themselves!")
+            new TechEmbedBuilder((spigotId != null ? spigotId : member.getEffectiveName()) + " Is Not Verified!")
+                    .setText((spigotId != null ? spigotId : member.getAsMention()) + " has not verified themselves!")
                     .error().send(channel);
             return;
         }
@@ -78,7 +88,8 @@ public class UserCheckCommand extends CommandModule {
         if(verification.getDiscordId().equals(m.getId()) && !canView)
             canView = true;
 
-        member = bot.getMember(verification.getDiscordId());
+        if(member == null)
+            member = bot.getMember(verification.getDiscordId());
 
         PurchasesList purchases = TechDiscordBot.getSpigotAPI().getPurchases().userId(verification.getUserId());
 
@@ -90,15 +101,16 @@ public class UserCheckCommand extends CommandModule {
         }
 
         if (member == null || purchases == null || purchases.size() == 0) {
-            new TechEmbedBuilder((member == null ? args[0] : member.getEffectiveName()) + "'s Purchases")
+            new TechEmbedBuilder((spigotId != null ? spigotId : member.getEffectiveName()) + "'s Purchases")
                     .error()
-                    .setText((member == null ? args[0] : member.getAsMention()) + " has not bought of any Tech's Resources!")
+                    .setText((member != null ? spigotId : member.getAsMention()) + " has not bought of any Tech's Resources!")
                     .send(channel);
             return;
         }
 
         Purchase purchase = purchases.stream().sorted(Comparator.comparingLong(p -> p.getTime().getUnixTime())).skip(purchases.size() - 1).findFirst().orElse(null);
-        if (purchase == null) return;
+        if (purchase == null)
+            return;
 
         String date = purchase.getTime().getHumanTime();
         boolean hasBoughtAll = TechDiscordBot.getSpigotAPI().getResources().premium().size() == purchases.size();

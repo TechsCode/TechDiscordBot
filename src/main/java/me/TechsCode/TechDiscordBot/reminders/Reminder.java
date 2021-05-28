@@ -7,13 +7,12 @@ import net.dv8tion.jda.api.entities.User;
 
 public class Reminder {
 
-    private final String userId, channelId, messageId, humanTime, reminder;
+    private final String userId, channelId, humanTime, reminder;
     private final long time;
     private final ReminderType type;
 
-    public Reminder(String userId, String channelId, String messageId, long time, String humanTime, ReminderType type, String reminder) {
+    public Reminder(String userId, String channelId, long time, String humanTime, ReminderType type, String reminder) {
         this.userId = userId;
-        this.messageId = messageId;
         this.channelId = channelId;
         this.time = time;
         this.humanTime = humanTime;
@@ -27,10 +26,6 @@ public class Reminder {
 
     public String getChannelId() {
         return channelId;
-    }
-
-    public String getMessageId() {
-        return messageId;
     }
 
     public long getTime() {
@@ -80,16 +75,6 @@ public class Reminder {
     }
 
     private void sendReminder(User user, TextChannel channel) {
-        Message message = null;
-
-        try {
-            message = channel.retrieveMessageById(messageId).complete();
-        } catch (Exception ignored) {}
-
-        if(message != null) {
-            message.reply("**Reminder**: " + reminder).mentionRepliedUser(true).queue();
-        } else {
-            channel.sendMessage("**Reminder for " + user.getAsMention() + "**: " + reminder).queue();
-        }
+        channel.sendMessage("**Reminder for " + user.getAsMention() + "**: " + reminder).queue();
     }
 }

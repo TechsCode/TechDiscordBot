@@ -9,6 +9,10 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
 public class SongodaCommand extends CommandModule {
 
@@ -17,39 +21,37 @@ public class SongodaCommand extends CommandModule {
     }
 
     @Override
-    public String getCommand() {
-        return "!songoda";
+    public String getName() {
+        return "songoda";
     }
 
     @Override
-    public String[] getAliases() {
-        return new String[0];
+    public String getDescription() {
+        return "Returns Songoda's website.";
     }
 
     @Override
-    public DefinedQuery<Role> getRestrictedRoles() {
-        return null;
+    public CommandPrivilege[] getCommandPrivileges() {
+        return new CommandPrivilege[0];
     }
 
     @Override
-    public DefinedQuery<TextChannel> getRestrictedChannels() {
-        return null;
+    public OptionData[] getOptions() {
+        return new OptionData[0];
     }
 
     @Override
-    public CommandCategory getCategory() {
-        return CommandCategory.INFO;
-    }
-
-    @Override
-    public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
-        new TechEmbedBuilder("Songoda")
-                .setText("Hey {username}!,\n".replace("{username}", member.getEffectiveName()) + "You can browse their marketplace at [marketplace](https://songoda.com/marketplace)")
-                .send(channel);
+    public boolean isEphemeral() {
+        return false;
     }
 
     @Override
     public int getCooldown() {
         return 10;
+    }
+
+    @Override
+    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+        e.reply("https://songoda.com/marketplace").queue();
     }
 }

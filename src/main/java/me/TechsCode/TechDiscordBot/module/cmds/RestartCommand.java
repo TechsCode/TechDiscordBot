@@ -11,6 +11,10 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
 
 import java.io.IOException;
@@ -21,7 +25,7 @@ import java.util.List;
 
 public class RestartCommand extends CommandModule {
 
-    private final DefinedQuery<Role> STAFF = new DefinedQuery<Role>() {
+    private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
         @Override
         protected Query<Role> newQuery() {
             return bot.getRoles("Staff");
@@ -33,28 +37,28 @@ public class RestartCommand extends CommandModule {
     }
 
     @Override
-    public String getCommand() {
-        return "!restart";
+    public String getName() {
+        return "restart";
     }
 
     @Override
-    public String[] getAliases() {
-        return new String[]{"!restart"};
+    public String getDescription() {
+        return "Restart the bot.";
     }
 
     @Override
-    public DefinedQuery<Role> getRestrictedRoles() {
-        return STAFF;
+    public CommandPrivilege[] getCommandPrivileges() {
+        return new CommandPrivilege[] { CommandPrivilege.enable(STAFF_ROLE.query().first()) };
     }
 
     @Override
-    public DefinedQuery<TextChannel> getRestrictedChannels() {
-        return null;
+    public OptionData[] getOptions() {
+        return new OptionData[0];
     }
 
     @Override
-    public CommandCategory getCategory() {
-        return CommandCategory.ADMIN;
+    public boolean isEphemeral() {
+        return true;
     }
 
     @Override
@@ -63,12 +67,7 @@ public class RestartCommand extends CommandModule {
     }
 
     @Override
-    public boolean deleteCommandMsg() {
-        return true;
-    }
-
-    @Override
-    public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
+    public void onCommand(TextChannel channel, Member member, InteractionHook hook, SlashCommandEvent e) {
         try {
             List<Message> messages = new ArrayList<>();
 
@@ -85,8 +84,8 @@ public class RestartCommand extends CommandModule {
             Thread.sleep(1000);
 
             System.exit(0);
-        } catch (InterruptedException | IOException e) {
-            e.printStackTrace();
+        } catch (InterruptedException | IOException ex) {
+            ex.printStackTrace();
         }
     }
 }

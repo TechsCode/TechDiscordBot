@@ -1,7 +1,6 @@
 package me.TechsCode.TechDiscordBot.module.cmds;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
-import me.TechsCode.TechDiscordBot.module.CommandCategory;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
@@ -11,6 +10,11 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,80 +27,56 @@ public class UnverifyCommand extends CommandModule {
         }
     };
 
-    public UnverifyCommand(TechDiscordBot bot) { super(bot); }
+    public UnverifyCommand(TechDiscordBot bot) {
+        super(bot);
+    }
 
     @Override
-    public String getCommand() { return "!unverify"; }
+    public String getName() {
+        return "unverify";
+    }
 
     @Override
-    public String[] getAliases() { return new String[]{"!unlink"}; }
+    public String getDescription() {
+        return "Unverify a member.";
+    }
 
     @Override
-    public DefinedQuery<Role> getRestrictedRoles() { return STAFF_ROLE; }
+    public CommandPrivilege[] getCommandPrivileges() {
+        return new CommandPrivilege[] { CommandPrivilege.enable(STAFF_ROLE.query().first()) };
+    }
 
     @Override
-    public DefinedQuery<TextChannel> getRestrictedChannels() { return null; }
+    public OptionData[] getOptions() {
+        return new OptionData[] {
+                new OptionData(OptionType.STRING, "type", "The type of value.", true)
+                    .addChoice("User ID", "offlineId")
+                    .addChoice("Spigot Name", "spigot"),
+                new OptionData(OptionType.STRING, "data", "The user id or spigot name.", true),
+        };
+    }
 
     @Override
-    public CommandCategory getCategory() { return CommandCategory.ADMIN; }
+    public boolean isEphemeral() {
+        return false;
+    }
 
     @Override
     public int getCooldown() {
-        return 0;
+        return 4;
     }
 
     @Override
-    public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
-        if(args.length == 0) {
-            new TechEmbedBuilder("Unverify Command - Error")
-                    .error()
-                    .setText("Please specify a user to unverify!")
-                    .sendTemporary(channel, 10, TimeUnit.SECONDS);
+    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+        String type = e.getOption("type").getAsString();
+        String data = e.getOption("data").getAsString();
+
+        if(type.equals("offlineId")) {
+            process(data, channel);
+        } else if(type.equals("spigot")) {
+            processSpigotId(data, channel);
         } else {
-            if(args[0].equals("offlineid")) {
-                if(args.length > 1) {
-                    process(args[1], channel);
-                } else {
-                    new TechEmbedBuilder("Unverify Command - Error")
-                            .error()
-                            .setText("Please specify a userid to unverify!")
-                            .sendTemporary(channel, 10, TimeUnit.SECONDS);
-                }
-            } else if(args[0].equals("spigot")) {
-                if(args.length > 1) {
-                    processSpigotId(args[1], channel);
-                } else {
-                    new TechEmbedBuilder("Unverify Command - Error")
-                            .error()
-                            .setText("Please specify a spigot id to unverify!")
-                            .sendTemporary(channel, 10, TimeUnit.SECONDS);
-                }
-            }
-            if(message.getMentionedMembers().size() > 0) {
-                Member member1 = message.getMentionedMembers().get(0);
-                process(member1, channel);
-            } else if (TechDiscordBot.getGuild().getMembers().stream().anyMatch(mem -> (mem.getUser().getName() + "#" + mem.getUser().getDiscriminator()).equalsIgnoreCase(args[0]) || mem.getUser().getId().equalsIgnoreCase(args[0]))) {
-                Member member1 = TechDiscordBot.getGuild().getMembers().stream().filter(mem -> (mem.getUser().getName() + "#" + mem.getUser().getDiscriminator()).equalsIgnoreCase(args[0]) || mem.getUser().getId().equalsIgnoreCase(args[0])).findFirst().orElse(null);
-                process(member1, channel);
-            }
-        }
-    }
-
-    public void process(Member member, TextChannel channel) {
-        Verification verification = TechDiscordBot.getStorage().retrieveVerificationWithDiscord(member.getUser().getId());
-
-        if(verification == null) {
-            new TechEmbedBuilder("Unverify Command - Error")
-                    .error()
-                    .setText(member.getAsMention() + " is not verified!")
-                    .sendTemporary(channel, 10, TimeUnit.SECONDS);
-        } else {
-            verification.delete();
-
-            new TechEmbedBuilder("Unverify Command - Success")
-                    .success()
-                    .setText("Successfully removed " + member.getAsMention() + "'s verification!")
-                    .send(channel);
+            e.reply("Invalid type!").queue();
         }
     }
 

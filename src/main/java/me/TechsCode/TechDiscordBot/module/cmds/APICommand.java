@@ -10,10 +10,14 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 public class APICommand extends CommandModule {
@@ -23,28 +27,28 @@ public class APICommand extends CommandModule {
     }
 
     @Override
-    public String getCommand() {
-        return "!api";
+    public String getName() {
+        return "api";
     }
 
     @Override
-    public String[] getAliases() {
-        return new String[]{"!status"};
+    public String getDescription() {
+        return "Fetches the API's status.";
     }
 
     @Override
-    public DefinedQuery<Role> getRestrictedRoles() {
-        return null;
+    public CommandPrivilege[] getCommandPrivileges() {
+        return new CommandPrivilege[0];
     }
 
     @Override
-    public DefinedQuery<TextChannel> getRestrictedChannels() {
-        return null;
+    public OptionData[] getOptions() {
+        return new OptionData[0];
     }
 
     @Override
-    public CommandCategory getCategory() {
-        return CommandCategory.INFO;
+    public boolean isEphemeral() {
+        return false;
     }
 
     @Override
@@ -53,14 +57,14 @@ public class APICommand extends CommandModule {
     }
 
     @Override
-    public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
+    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
         APIStatus status = bot.getStatus();
 
         StringBuilder sb = new StringBuilder();
         sb.append(status.getEmoji()).append(" **API Status** (").append(status.getStatus()).append(")\n").append(status.getDescription());
         sb.append("\n\n");
 
-        if(status.isUsable() && member.getRoles().stream().anyMatch(r -> r.getName().equals("Staff"))) { //Make sure the member is staff.
+        if(status.isUsable() && m.getRoles().stream().anyMatch(r -> r.getName().equals("Staff"))) { //Make sure the member is staff.
             int purchases = TechDiscordBot.getSpigotAPI().getPurchases().size();
             int reviews = TechDiscordBot.getSpigotAPI().getReviews().size();
             int updates = TechDiscordBot.getSpigotAPI().getUpdates().size();

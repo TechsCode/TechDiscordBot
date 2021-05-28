@@ -1,32 +1,44 @@
 package me.TechsCode.TechDiscordBot.module.cmds;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
-import me.TechsCode.TechDiscordBot.module.CommandCategory;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
-import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
 public class PatreonCommand extends CommandModule {
 
-    public PatreonCommand(TechDiscordBot bot) { super(bot); }
+    public PatreonCommand(TechDiscordBot bot) {
+        super(bot);
+    }
 
     @Override
-    public String getCommand() { return "!patreon"; }
+    public String getName() {
+        return "patreon";
+    }
 
     @Override
-    public String[] getAliases() { return null; }
+    public String getDescription() {
+        return "Returns the patreon website!";
+    }
 
     @Override
-    public DefinedQuery<Role> getRestrictedRoles() { return null; }
+    public CommandPrivilege[] getCommandPrivileges() {
+        return new CommandPrivilege[0];
+    }
 
     @Override
-    public DefinedQuery<TextChannel> getRestrictedChannels() { return null; }
+    public OptionData[] getOptions() {
+        return new OptionData[0];
+    }
 
     @Override
-    public CommandCategory getCategory() { return CommandCategory.INFO; }
+    public boolean isEphemeral() {
+        return false;
+    }
 
     @Override
     public int getCooldown() {
@@ -34,9 +46,9 @@ public class PatreonCommand extends CommandModule {
     }
 
     @Override
-    public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
-        boolean isPatron = member.getRoles().stream().anyMatch(r -> r.getName().equals("Patreon"));
+    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+        boolean isPatron = m.getRoles().stream().anyMatch(r -> r.getName().equals("Patreon"));
 
-        channel.sendMessage((isPatron ? "Thank you for being a Patron!\n\n" : "") + "https://patreon.com/TechsCode").queue();
+        e.reply((isPatron ? "Thank you for being a Patron!\n\n" : "") + "https://patreon.com/TechsCode").queue();
     }
 }

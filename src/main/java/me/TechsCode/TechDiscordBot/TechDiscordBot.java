@@ -111,8 +111,8 @@ public class TechDiscordBot {
         log("Loading reminders..");
         remindersManager.load();
 
-        jda.addEventListener(new Object[] { modulesManager });
-        jda.addEventListener(new Object[] { remindersManager });
+        jda.addEventListener(modulesManager);
+        jda.addEventListener(remindersManager);
 
         Logger.getLogger(OkHttpClient.class.getName()).setLevel(Level.OFF);
 

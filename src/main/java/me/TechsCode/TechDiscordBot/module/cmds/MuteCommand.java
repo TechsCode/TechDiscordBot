@@ -1,15 +1,17 @@
 package me.TechsCode.TechDiscordBot.module.cmds;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
-import me.TechsCode.TechDiscordBot.module.CommandCategory;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
-import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
 public class MuteCommand extends CommandModule {
 
@@ -26,64 +28,53 @@ public class MuteCommand extends CommandModule {
         }
     };
 
-    public MuteCommand(TechDiscordBot bot) { super(bot); }
-
-    @Override
-    public String getCommand() { return "!mute"; }
-
-    @Override
-    public String[] getAliases() { return null; }
-
-    @Override
-    public DefinedQuery<Role> getRestrictedRoles() { return STAFF_ROLE; }
-
-    @Override
-    public DefinedQuery<TextChannel> getRestrictedChannels() { return null; }
-
-    @Override
-    public CommandCategory getCategory() { return CommandCategory.INFO; }
-
-    @Override
-    public int getCooldown() {
-        return 0;
+    public MuteCommand(TechDiscordBot bot) {
+        super(bot);
     }
 
     @Override
-    public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
-        TechEmbedBuilder builder = new TechEmbedBuilder("Mute Command").error();
+    public String getName() {
+        return "mute";
+    }
 
-        if(args.length == 0) {
-            builder.setText("Member is not found! Please specify a member in the arguments, either using their mention, name and discriminator, or user id.");
-            builder.send(channel);
-            return;
+    @Override
+    public String getDescription() {
+        return "Mute/unmute a member from this guild.";
+    }
+
+    @Override
+    public CommandPrivilege[] getCommandPrivileges() {
+        return new CommandPrivilege[] { CommandPrivilege.enable(STAFF_ROLE.query().first()) };
+    }
+
+    @Override
+    public OptionData[] getOptions() {
+        return new OptionData[] {
+                new OptionData(OptionType.MENTIONABLE, "member", "The member to mute.", true)
+        };
+    }
+
+    @Override
+    public boolean isEphemeral() {
+        return false;
+    }
+
+    @Override
+    public int getCooldown() {
+        return 2;
+    }
+
+    @Override
+    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+        Member member = e.getOption("member").getAsMember();
+
+        if(memberHasMutedRole(member)) {
+            e.getGuild().removeRoleFromMember(member, MUTED_ROLE.query().first()).queue();
+            e.reply(member.getAsMention() + " is no longer muted!").queue();
+        } else {
+            e.getGuild().addRoleToMember(member, MUTED_ROLE.query().first()).queue();
+            e.reply(member.getAsMention() + " is now muted!").queue();
         }
-
-        if(TechDiscordBot.getMemberFromString(message, args[0]) == null) {
-            builder.setText("Member is not found!");
-            builder.send(channel);
-            return;
-        }
-
-        Member target = TechDiscordBot.getMemberFromString(message, args[0]);
-
-        if(target == null) {
-            builder.setText(args[0] + " is not a member!");
-            builder.success().send(channel);
-            return;
-        }
-
-        if(memberHasMutedRole(target)) {
-            target.getGuild().removeRoleFromMember(target, MUTED_ROLE.query().first()).queue();
-
-            builder.setText(target.getAsMention() + " is no longer muted!");
-            builder.success().send(channel);
-            return;
-        }
-
-        target.getGuild().addRoleToMember(target, MUTED_ROLE.query().first()).queue();
-
-        builder.setText(target.getAsMention() + " is now muted!");
-        builder.success().send(channel);
     }
 
     public boolean memberHasMutedRole(Member member) {

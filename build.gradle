@@ -18,10 +18,10 @@ repositories {
 }
 
 dependencies {
-    implementation ('net.dv8tion:JDA:4.2.0_228') { exclude module: 'opus-java' }
+    implementation ('com.github.DV8FromTheWorld:JDA:757de9b') { exclude module: 'opus-java' }
 
-    implementation 'com.github.techscode:spigotapi:build-21'
-    implementation 'org.jsoup:jsoup:1.8.3'
+    implementation 'com.github.techscode:spigotapi:build-25'
+    implementation 'org.jsoup:jsoup:1.13.1'
     implementation 'org.apache.commons:commons-lang3:3.7'
     implementation 'mysql:mysql-connector-java:5.1.17'
     implementation "com.googlecode.json-simple:json-simple:1.1.1"

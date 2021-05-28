@@ -41,14 +41,14 @@ public class ReminderManager {
         return this.reminders.stream().filter(reminder -> reminder.getUserId().equals(user.getId())).collect(Collectors.toList());
     }
 
-    public Reminder createReminder(User user, Message message, TextChannel channel, String[] args) {
-        ReminderArgResponse argResponse = argsToTime(args);
+    public Reminder createReminder(User user, String time, String remind, TextChannel channel) {
+        ReminderArgResponse argResponse = argsToTime(time.split(" "));
         if(argResponse == null) return null;
 
         if(argResponse.getAmountOfArgs() == 0) {
             return null;
         } else {
-            List<String> reminder = new ArrayList<>(Arrays.asList(args));
+            List<String> reminder = new ArrayList<>(Arrays.asList(remind.split(" ")));
             boolean isDM = false;
 
             if(reminder.get(reminder.size() - 1).equalsIgnoreCase("dms") || reminder.get(reminder.size() - 1).equalsIgnoreCase("dm")) {
@@ -59,7 +59,7 @@ public class ReminderManager {
             reminder = reminder.subList(argResponse.getAmountOfArgs(), reminder.size());
             if(reminder.size() == 0) return null;
 
-            Reminder r = new Reminder(user.getId(), channel.getId(), message.getId(), argResponse.getTime(), argResponse.getTimeHuman(), (isDM ? ReminderType.DMs : ReminderType.CHANNEL), String.join(" ", reminder));
+            Reminder r = new Reminder(user.getId(), channel.getId(), argResponse.getTime(), argResponse.getTimeHuman(), (isDM ? ReminderType.DMs : ReminderType.CHANNEL), String.join(" ", reminder));
             this.reminders.add(r);
 
             TechDiscordBot.getStorage().saveReminder(r);

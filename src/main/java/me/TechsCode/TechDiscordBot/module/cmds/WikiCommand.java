@@ -10,28 +10,48 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class WikiCommand extends CommandModule {
 
-    public WikiCommand(TechDiscordBot bot) { super(bot); }
+    public WikiCommand(TechDiscordBot bot) {
+        super(bot);
+    }
 
     @Override
-    public String getCommand() { return "!wiki"; }
+    public String getName() {
+        return "wiki";
+    }
 
     @Override
-    public String[] getAliases() { return new String[]{"!w"}; }
+    public String getDescription() {
+        return "Returns the wiki website!";
+    }
 
     @Override
-    public DefinedQuery<Role> getRestrictedRoles() { return null; }
+    public CommandPrivilege[] getCommandPrivileges() {
+        return new CommandPrivilege[0];
+    }
 
     @Override
-    public DefinedQuery<TextChannel> getRestrictedChannels() { return null; }
+    public OptionData[] getOptions() {
+        return new OptionData[] {
+                new OptionData(OptionType.BOOLEAN, "all", "Show all plugins"),
+                new OptionData(OptionType.BOOLEAN, "mine", "Show your plugins"),
+        };
+    }
 
     @Override
-    public CommandCategory getCategory() { return CommandCategory.INFO; }
+    public boolean isEphemeral() {
+        return false;
+    }
 
     @Override
     public int getCooldown() {
@@ -39,34 +59,30 @@ public class WikiCommand extends CommandModule {
     }
 
     @Override
-    public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
-        if(args.length > 0 && args[0].equals("help")) {
-            new TechEmbedBuilder("Wiki Help").setText("**Wiki Command Args**\n\n`!wiki` - *If in a plugin support channel, shows that Wiki, otherwise shows your owned plugin's wikis.*\n`!wiki -a` - *Shows all wikis.*\n`wiki -m` - *Shows your wikis if in a plugin support channel.*").send(channel);
-            return;
-        }
+    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+        boolean all = e.getOption("all") != null && e.getOption("all").getAsBoolean();
+        boolean mine = e.getOption("mine") != null && e.getOption("mine").getAsBoolean();
 
         if(Plugin.isPluginChannel(channel)) {
-            if(args.length == 0) {
-                showCurrentChannel(channel);
+            if(!all && !mine) {
+                showCurrentChannel(e, channel);
             } else {
-                if(args[0].equals("-a")) {
-                    showAll(channel);
-                } else if (args[0].equals("-m")) {
-                    showYourPlugins(member, channel);
+                if(all) {
+                    showAll(e);
+                } else if (mine) {
+                    showYourPlugins(e, m);
                 }
             }
         } else {
-            if(args.length == 0) {
-                showYourPlugins(member, channel);
-            } else {
-                if(args[0].equals("-a")) {
-                    showAll(channel);
-                }
+            if(!all && !mine) {
+                showYourPlugins(e, m);
+            } else if(all) {
+                showAll(e);
             }
         }
     }
 
-    public void showCurrentChannel(TextChannel channel) {
+    public void showCurrentChannel(SlashCommandEvent e, TextChannel channel) {
         if(Plugin.isPluginChannel(channel)) {
             Plugin plugin = Plugin.byChannel(channel);
             if(!plugin.hasWiki()) {
@@ -74,11 +90,15 @@ public class WikiCommand extends CommandModule {
                 return;
             }
 
-            new TechEmbedBuilder("Wikis").setText("*Showing the wiki of the support channel you're in.*\n\n" + plugin.getEmoji().getAsMention() + " " + plugin.getWiki() + "\n\nFor more info please execute the command `wiki help`.").send(channel);
+            e.replyEmbeds(
+                    new TechEmbedBuilder("Wikis")
+                        .setText("*Showing the wiki of the support channel you're in.*\n\n" + plugin.getEmoji().getAsMention() + " " + plugin.getWiki() + "\n\nFor more info please execute the command `wiki help`.")
+                        .build()
+            ).queue();
         }
     }
 
-    public void showYourPlugins(Member member, TextChannel channel) {
+    public void showYourPlugins(SlashCommandEvent e, Member member) {
         boolean apiIsUsable = TechDiscordBot.getBot().getStatus().isUsable();
 
         List<Plugin> plugins = Plugin.allWithWiki();
@@ -93,17 +113,26 @@ public class WikiCommand extends CommandModule {
             sb.append("**You do not own of any of Tech's plugins, showing all wikis!**\n\n");
         if(plugins.isEmpty())
             plugins = Plugin.allWithWiki();
-
         plugins.forEach(p -> sb.append(p.getEmoji().getAsMention()).append(" ").append(p.getWiki()).append("\n"));
-        new TechEmbedBuilder("Wikis").setText(sb.substring(0, sb.toString().length() - 1)).send(channel);
+
+        e.replyEmbeds(
+            new TechEmbedBuilder("Wikis")
+                .setText(sb.substring(0, sb.toString().length() - 1))
+                .build()
+        ).queue();
     }
 
-    public void showAll(TextChannel channel) {
+    public void showAll(SlashCommandEvent e) {
         List<Plugin> plugins = Plugin.allWithWiki();
         StringBuilder sb = new StringBuilder();
-        sb.append("*Showing all wikis!*\n\n");
 
+        sb.append("*Showing all wikis!*\n\n");
         plugins.forEach(p -> sb.append(p.getEmoji().getAsMention()).append(" ").append(p.getWiki()).append("\n"));
-        new TechEmbedBuilder("Wikis").setText(sb.substring(0, sb.toString().length() - 1)).send(channel);
+
+        e.replyEmbeds(
+            new TechEmbedBuilder("Wikis")
+                .setText(sb.substring(0, sb.toString().length() - 1))
+                .build()
+        ).queue();
     }
 }

@@ -7,63 +7,66 @@ import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
 public class UserInfoCommand extends CommandModule {
 
-    private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
-        @Override
-        protected Query<Role> newQuery() {
-            return bot.getRoles("Staff");
-        }
-    };
-
     public UserInfoCommand(TechDiscordBot bot) {
         super(bot);
     }
 
     @Override
-    public String getCommand() {
-        return "!userinfo";
+    public String getName() {
+        return "info";
     }
 
     @Override
-    public String[] getAliases() {
-        return new String[]{"!uinfo"};
+    public String getDescription() {
+        return "Get information about a specific user.";
     }
 
     @Override
-    public DefinedQuery<Role> getRestrictedRoles() { return STAFF_ROLE; }
-
-    @Override
-    public DefinedQuery<TextChannel> getRestrictedChannels() {
-        return null;
+    public CommandPrivilege[] getCommandPrivileges() {
+        return new CommandPrivilege[0];
     }
 
     @Override
-    public CommandCategory getCategory() {
-        return CommandCategory.INFO;
+    public OptionData[] getOptions() {
+        return new OptionData[] {
+                new OptionData(OptionType.MENTIONABLE, "member", "Member to get info about. (Default: You)")
+        };
+    }
+
+    @Override
+    public boolean isEphemeral() {
+        return false;
     }
 
     @Override
     public int getCooldown() {
-        return 0;
+        return 5;
     }
 
     @Override
-    public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
-        Member member1 = TechDiscordBot.getMemberFromString(message, String.join(" ", args));
-        if(member1 == null) member1 = member;
-        User user = member1.getUser();
-        new TechEmbedBuilder(user.getName() + "#" + user.getDiscriminator())
-                .addField("Status", member1.getOnlineStatus().getKey().substring(0, 1).toUpperCase() + member1.getOnlineStatus().getKey().substring(1), true)
+    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+        Member member = e.getOption("member") == null ? m : e.getOption("member").getAsMember();
+        User user = member.getUser();
+
+        e.replyEmbeds(new TechEmbedBuilder(user.getName() + "#" + user.getDiscriminator())
+                .addField("Status", member.getOnlineStatus().getKey().substring(0, 1).toUpperCase() + member.getOnlineStatus().getKey().substring(1), true)
                 .addField("Created At", user.getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                .addField("Joined At", member1.getTimeJoined().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
+                .addField("Joined At", member.getTimeJoined().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                 .addField("Flags", user.getFlags().clone().stream().map(User.UserFlag::getName).collect(Collectors.joining(", ")) + ".", false)
-                .addField("Roles", member1.getRoles().stream().map(Role::getAsMention).collect(Collectors.joining(", ")) + ".", false)
+                .addField("Roles", member.getRoles().stream().map(Role::getAsMention).collect(Collectors.joining(", ")) + ".", false)
                 .setThumbnail(user.getAvatarUrl())
-        .send(channel);
+                .build()
+        ).queue();
     }
 }

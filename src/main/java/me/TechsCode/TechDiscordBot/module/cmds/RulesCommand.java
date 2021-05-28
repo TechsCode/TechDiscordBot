@@ -9,6 +9,10 @@ import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +23,6 @@ public class RulesCommand extends CommandModule {
         @Override
         protected Query<net.dv8tion.jda.api.entities.Role> newQuery() { return bot.getRoles("Staff"); }
     };
-
     private final DefinedQuery<TextChannel> RULES_CHANNEL = new DefinedQuery<TextChannel>() {
         @Override
         protected Query<TextChannel> newQuery() { return bot.getChannels("rules"); }
@@ -30,33 +33,40 @@ public class RulesCommand extends CommandModule {
     }
 
     @Override
-    public String getCommand() {
-        return "!rules";
+    public String getName() {
+        return "rules";
     }
 
     @Override
-    public String[] getAliases() {
-        return new String[0];
+    public String getDescription() {
+        return "Resend the #rules messages.";
     }
 
     @Override
-    public DefinedQuery<net.dv8tion.jda.api.entities.Role> getRestrictedRoles() {
-        return STAFF_ROLE;
+    public CommandPrivilege[] getCommandPrivileges() {
+        return new CommandPrivilege[0];
     }
 
     @Override
-    public DefinedQuery<TextChannel> getRestrictedChannels() {
-        return null;
+    public OptionData[] getOptions() {
+        return new OptionData[0];
     }
 
     @Override
-    public CommandCategory getCategory() {
-        return CommandCategory.ADMIN;
+    public boolean isEphemeral() {
+        return false;
     }
 
     @Override
-    public void onCommand(TextChannel channel, Message message, Member member, String[] args) {
-        RULES_CHANNEL.query().first().getHistory().retrievePast(100).complete().forEach(msg -> msg.delete().queue());
+    public int getCooldown() {
+        return 10;
+    }
+
+    @Override
+    public void onCommand(TextChannel channel, Member member, InteractionHook hook, SlashCommandEvent e) {
+        RULES_CHANNEL.query().first().getIterableHistory()
+                .takeAsync(200)
+                .thenAccept(channel::purgeMessages);
 
         showAll();
     }
@@ -117,7 +127,8 @@ public class RulesCommand extends CommandModule {
 
         int i = 0;
         for(Role role : Role.values()) {
-            if(i != 0) sBuilder.append("\n\n");
+            if(i != 0)
+                sBuilder.append("\n\n");
 
             sBuilder.append(role.getAsMention()).append(": ").append(role.getDescription());
 
@@ -125,13 +136,8 @@ public class RulesCommand extends CommandModule {
         }
 
         new TechEmbedBuilder("Roles")
-                .setText(sBuilder.toString() + "\n\nPlease don't ask to be Staff, it's annoying.")
+                .setText(sBuilder + "\n\nPlease don't ask to be Staff, it's annoying.")
                 .send(RULES_CHANNEL.query().first());
-    }
-
-    @Override
-    public int getCooldown() {
-        return 0;
     }
 
     public enum Rule {
