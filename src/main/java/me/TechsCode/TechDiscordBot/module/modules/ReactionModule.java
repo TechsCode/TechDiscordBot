@@ -32,7 +32,7 @@ public class ReactionModule extends Module {
 
     public void sendMessage() {
         this.reactionMessage = new TechEmbedBuilder("Reaction Roles")
-                .setText(getUpdateEmote().getAsMention() + " **For Plugin Updates**\nWhen there is a new update, you will be notified.\n\n" + getAnnouncementEmote().getAsMention() + " For Announcements\nWhen there is an announcement, you will receive a ping.\n\n" + getGiveawayEmote().getAsMention() + " For Giveaways\nWhen there is a giveaway, you will be notified.")
+                .setText(getUpdateEmote().getAsMention() + " **For Plugin Updates**\nWhen there is a new update, you will be notified.\n\n" + getAnnouncementEmote().getAsMention() + " **For Announcements**\nWhen there is an announcement, you will receive a ping.\n\n" + getGiveawayEmote().getAsMention() + " **For Giveaways**\nWhen there is a giveaway, you will be notified.")
                 .send(ROLES_CHANNEL);
     }
 
