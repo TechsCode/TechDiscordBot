@@ -42,7 +42,7 @@ public class MemberCheckCommand extends CommandModule {
     public OptionData[] getOptions() {
         return new OptionData[] {
                 new OptionData(OptionType.MENTIONABLE, "member", "Member to check."),
-                new OptionData(OptionType.STRING, "spigotId", "Member's spigot id.")
+                new OptionData(OptionType.STRING, "spigot-id", "Member's spigot id.")
         };
     }
 
@@ -59,7 +59,7 @@ public class MemberCheckCommand extends CommandModule {
     @Override
     public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
         Member member = e.getOption("member") == null ? null : e.getOption("member").getAsMember();
-        String spigotId = e.getOption("spigotId") == null ? null : e.getOption("spigotId").getAsString();
+        String spigotId = e.getOption("spigot-id") == null ? null : e.getOption("spigotId").getAsString();
 
         if(member == null && spigotId == null)
             member = m;

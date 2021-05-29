@@ -27,7 +27,9 @@ public class VerifyCommand extends CommandModule {
     }
 
     @Override
-    public String getName() { return "verify"; }
+    public String getName() {
+        return "verify";
+    }
 
     @Override
     public String getDescription() {
@@ -43,7 +45,7 @@ public class VerifyCommand extends CommandModule {
     public OptionData[] getOptions() {
         return new OptionData[] {
                 new OptionData(OptionType.MENTIONABLE, "member", "Member to verify.", true),
-                new OptionData(OptionType.STRING, "spigotId", "The member's spigot id.", true)
+                new OptionData(OptionType.STRING, "spigot-id", "The member's spigot id.", true)
         };
     }
 
@@ -59,7 +61,7 @@ public class VerifyCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
-        String spigotId = e.getOption("spigotId").getAsString();
+        String spigotId = e.getOption("spigot-id").getAsString();
         Member member = e.getOption("member").getAsMember();
 
         if(TechDiscordBot.getStorage().retrieveVerificationWithDiscord(member) != null || TechDiscordBot.getStorage().retrieveVerificationWithSpigot(spigotId) != null) {
