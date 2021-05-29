@@ -54,7 +54,7 @@ public class ModulesManager {
             }
         }
 
-        commands.queue();
+        commands.complete();
 
         TechDiscordBot.getJDA().retrieveCommands().complete().forEach(command -> {
             CommandPrivilege[] privilege = cmdModules.stream().filter(c -> c.getName().equals(command.getName())).map(CommandModule::getCommandPrivileges).findFirst().orElse(new CommandPrivilege[] {});
