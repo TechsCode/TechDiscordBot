@@ -35,8 +35,7 @@ public class ModulesManager {
 
                     CommandData cmdData = new CommandData(module.getName(), module.getDescription() == null ? "No description set." : module.getDescription())
                             .addOptions(module.getOptions())
-                            .setDefaultEnabled(module.getCommandPrivileges().length == 0)
-                            .addSubcommands();
+                            .setDefaultEnabled(module.getCommandPrivileges().length == 0);
 
                     commands.addCommands(cmdData);
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
