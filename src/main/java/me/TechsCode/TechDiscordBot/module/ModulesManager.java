@@ -3,11 +3,7 @@ package me.TechsCode.TechDiscordBot.module;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.objects.Cooldown;
 import me.TechsCode.TechDiscordBot.util.ProjectUtil;
-import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -16,13 +12,9 @@ import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.function.BooleanSupplier;
 
 public class ModulesManager {
 
@@ -43,6 +35,7 @@ public class ModulesManager {
 
                     CommandData cmdData = new CommandData(module.getName(), module.getDescription() == null ? "No description set." : module.getDescription())
                             .addOptions(module.getOptions())
+                            .setDefaultEnabled(module.getCommandPrivileges().length == 0)
                             .addSubcommands();
 
                     commands.addCommands(cmdData);

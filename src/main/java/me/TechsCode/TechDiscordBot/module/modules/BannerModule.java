@@ -1,7 +1,6 @@
 package me.TechsCode.TechDiscordBot.module.modules;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
-import me.TechsCode.TechDiscordBot.logs.ServerLogs;
 import me.TechsCode.TechDiscordBot.module.Module;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.util.Plugin;

@@ -1,12 +1,9 @@
 package me.TechsCode.TechDiscordBot.module.cmds;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
-import me.TechsCode.TechDiscordBot.module.CommandCategory;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
-import me.TechsCode.TechDiscordBot.reminders.Reminder;
-import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
@@ -15,12 +12,9 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
-import net.dv8tion.jda.api.requests.restaction.MessageAction;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class RestartCommand extends CommandModule {

@@ -1,7 +1,5 @@
 package me.TechsCode.TechDiscordBot.spigotmc;
 
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import me.TechsCode.SpigotAPI.data.User;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

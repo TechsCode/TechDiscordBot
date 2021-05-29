@@ -2,7 +2,6 @@ package me.TechsCode.TechDiscordBot.logs;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.awt.*;
 import java.util.Objects;

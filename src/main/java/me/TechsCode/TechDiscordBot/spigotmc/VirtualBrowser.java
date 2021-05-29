@@ -1,6 +1,5 @@
 package me.TechsCode.TechDiscordBot.spigotmc;
 
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import org.jsoup.Jsoup;

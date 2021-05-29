@@ -1,7 +1,6 @@
 package me.TechsCode.TechDiscordBot.reminders;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 

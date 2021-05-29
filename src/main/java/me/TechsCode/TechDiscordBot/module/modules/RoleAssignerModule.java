@@ -1,8 +1,6 @@
 package me.TechsCode.TechDiscordBot.module.modules;
 
-import me.TechsCode.SpigotAPI.data.Purchase;
 import me.TechsCode.SpigotAPI.data.Resource;
-import me.TechsCode.SpigotAPI.data.Review;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.Module;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
