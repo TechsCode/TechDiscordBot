@@ -10,6 +10,7 @@ import me.TechsCode.TechDiscordBot.util.Plugin;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
@@ -155,7 +156,7 @@ public class TicketModule extends Module {
 
         TextChannel ticketChannel = TechDiscordBot.getGuild().createTextChannel(name)
                 .setParent(getCategoryByTicketPriority(priority))
-                .setTopic(member.getAsMention() + "'s Ticket | Problem Solved? Please type in !close")
+                .setTopic(member.getAsMention() + "'s Ticket | Problem Solved? Please execute /ticket close.")
                 .complete();
 
         ticketChannel.getManager().clearOverridesAdded().complete();
@@ -311,132 +312,103 @@ public class TicketModule extends Module {
     }
 
     @SubscribeEvent
-    public void onMessageCmd(GuildMessageReceivedEvent e) {
-        if(e.getAuthor().isBot()) return;
-        if(!isTicketChat(e.getChannel())) return;
-        if(e.getMember() == null) return;
+    public void onSlashCommand(SlashCommandEvent e) {
+        if(e.getMember() == null || e.getMember().getUser().isBot()) return;
+        if(!isTicketChat(e.getTextChannel())) {
+            e.reply("This channel is not a ticket!").setEphemeral(true).queue();
+            return;
+        }
 
-        String[] args = Arrays.copyOfRange(e.getMessage().getContentDisplay().split(" "), 1, e.getMessage().getContentDisplay().split(" ").length);
-        boolean isTicketCreator = e.getChannel().getTopic() != null && e.getChannel().getTopic().contains(e.getAuthor().getAsMention());
+        boolean isTicketCreator = e.getTextChannel().getTopic() != null && e.getTextChannel().getTopic().contains(e.getMember().getAsMention());
 
-        if(e.getMessage().getContentDisplay().startsWith("!add ")) {
-            Member memberToAdd = TechDiscordBot.getMemberFromString(e.getMessage(), args[0]);
-
-            e.getMessage().delete().queue();
-
+        if(e.getName().equals("ticket") && e.getSubcommandName() != null) {
             if(!isTicketCreator && !TechDiscordBot.isStaff(e.getMember())) {
-                new TechEmbedBuilder("Not Enough Perms")
-                        .setText("You have to be the ticket creator or a staff member to add someone!")
-                        .error()
-                        .send(e.getChannel());
+                e.reply("You have ot be the ticket creator or a staff member to add someone!").setEphemeral(true).queue();
                 return;
             }
 
-            if(memberToAdd == null) {
-                new TechEmbedBuilder("Tickets - Error")
-                        .setText("Cannot find the specified user!")
-                        .error()
-                        .send(e.getChannel());
-            } else if(e.getMember() == memberToAdd && isTicketCreator) {
-                new TechEmbedBuilder("Tickets - Error")
-                        .setText("You cannot be added to a ticket you're already in!")
-                        .error()
-                        .send(e.getChannel());
-            } else {
-                new TechEmbedBuilder("Ticket - Added User")
-                        .success()
-                        .setText("Successfully added " + memberToAdd.getAsMention() + " to the ticket!")
-                        .send(e.getChannel());
-
-                Collection<Permission> permissionsAllow = new ArrayList<>(Arrays.asList(Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_HISTORY));
-                e.getChannel().getManager().putPermissionOverride(memberToAdd, permissionsAllow, new ArrayList<>()).queue();
-            }
-        } else if(e.getMessage().getContentDisplay().startsWith("!remove ")) {
-            Member memberToRemove = TechDiscordBot.getMemberFromString(e.getMessage(), args[0]);
-
-            e.getMessage().delete().queue();
-
-            if(!isTicketCreator && !TechDiscordBot.isStaff(e.getMember())) {
-                new TechEmbedBuilder("Not Enough Perms")
-                        .setText("You have to be the ticket creator or a staff member to remove someone!")
-                        .success().send(e.getChannel());
+            Member member = e.getOption("member").getAsMember();
+            if(member == null) {
+                e.reply("*Member is invalid!** This probably shouldn't be happening...").setEphemeral(true).queue();
                 return;
             }
 
-            boolean isTicketCreator2 = (memberToRemove != null && (e.getChannel().getTopic() != null && e.getChannel().getTopic().contains(memberToRemove.getAsMention())));
-            if(memberToRemove == null) {
-                new TechEmbedBuilder("Tickets - Error")
-                        .setText("Cannot find the specified user!")
-                        .error()
-                        .send(e.getChannel());
-            } else if(TechDiscordBot.isStaff(memberToRemove) || isTicketCreator2) {
-                new TechEmbedBuilder("Tickets - Error")
-                        .setText(memberToRemove.getAsMention() + " cannot be removed from the ticket!")
-                        .error()
-                        .send(e.getChannel());
-            } else {
-                new TechEmbedBuilder("Ticket - Removed User")
-                        .success()
-                        .setText("Successfully removed " + memberToRemove.getAsMention() + " from the ticket!")
-                        .send(e.getChannel());
-
-                Collection<Permission> permissionsDeny = new ArrayList<>(Arrays.asList(Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_HISTORY));
-                e.getChannel().getManager().putPermissionOverride(memberToRemove, new ArrayList<>(), permissionsDeny).queue();
-            }
-        } else if(e.getMessage().getContentDisplay().startsWith("!close")) {
-            e.getMessage().delete().submit();
-            if (isTicketCreator) {
-
-                new TechEmbedBuilder("Ticket")
-                        .setText("Thank you for contacting us " + e.getAuthor().getAsMention() + ". Consider writing a review if you enjoyed the support!")
-                        .send(e.getChannel());
-
-                e.getChannel().delete().completeAfter(15, TimeUnit.SECONDS);
-
-                new TechEmbedBuilder("Solved Ticket")
-                        .setText("The ticket (" + e.getChannel().getName() + ") created by " + e.getAuthor().getAsMention() + " is now solved. Thanks for contacting us!")
-                        .success()
-                        .send(channel);
-            } else {
-                if (!TechDiscordBot.isStaff(e.getMember())) {
-                    new TechEmbedBuilder("Ticket")
-                            .setText("You cannot close this ticket!")
-                            .error()
-                            .send(e.getChannel());
+            if(e.getSubcommandName().equals("add")) {
+                if(e.getMember().equals(member)) {
+                    e.reply("You can't be added to a ticket you're already in.").setEphemeral(true).queue();
                     return;
                 }
 
-                Member member = getMemberFromTicket(e.getChannel());
-                boolean hasReason = e.getMessage().getContentDisplay().split(" ").length > 1;
-                String[] reasons = e.getMessage().getContentDisplay().split(" ");
-                String reason = String.join(" ", Arrays.copyOfRange(reasons, 1, reasons.length));
-                String reasonSend = (hasReason ? " \n \n**Reason**: " + reason : "");
+                e.reply("Successfully added " + member.getAsMention() + " to this ticket!").queue();
 
-                new TechEmbedBuilder("Ticket")
-                        .setText(e.getAuthor().getAsMention() + " has closed this support ticket." + reasonSend)
-                        .send(e.getChannel());
+                Collection<Permission> permissionsAllow = new ArrayList<>(Arrays.asList(Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_HISTORY));
+                e.getTextChannel().getManager().putPermissionOverride(member, permissionsAllow, new ArrayList<>()).queue();
+            } else if (e.getSubcommandName().equals("remove")) {
+                boolean isTicketCreator2 = e.getTextChannel().getTopic() != null && e.getTextChannel().getTopic().contains(member.getAsMention());
 
-                e.getChannel().delete().completeAfter(15, TimeUnit.SECONDS);
-                if (member != null) {
-                    new TechEmbedBuilder("Closed Ticket")
-                            .setText("The ticket (" + e.getChannel().getName() + ") from " + member.getAsMention() + " has been closed!")
-                            .success()
-                            .send(channel);
-                    new TechEmbedBuilder("Closed Ticket")
-                            .setText("Your ticket (" + e.getChannel().getName() + ") has been closed!" + reasonSend)
-                            .success()
-                            .send(member);
-                } else {
-                    new TechEmbedBuilder("Closed Ticket")
-                            .setText("The ticket (" + e.getChannel().getName() + ") from *member has left* has been closed!")
-                            .success()
-                            .send(channel);
-
+                if(TechDiscordBot.isStaff(member) || isTicketCreator2) {
+                    e.reply(member.getAsMention() + " can't be removed from this ticket!").setEphemeral(true).queue();
+                    return;
                 }
+
+                e.reply("Successfully removed " + member.getAsMention() + " from this ticket!").queue();
+
+                Collection<Permission> permissionsDeny = new ArrayList<>(Arrays.asList(Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_HISTORY));
+                e.getTextChannel().getManager().putPermissionOverride(member, new ArrayList<>(), permissionsDeny).queue();
+            } else if (e.getSubcommandName().equals("close")) {
+                if(isTicketCreator) {
+                    e.replyEmbeds(
+                        new TechEmbedBuilder("Ticket")
+                            .setText("Thank you for contacting us " + e.getMember().getAsMention() + ". Consider writing a review if you enjoyed the support!")
+                            .build()
+                    ).queue();
+
+                    e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS);
+
+                    new TechEmbedBuilder("Solved Ticket")
+                            .setText("The ticket (" + e.getTextChannel().getName() + ") created by " + e.getMember().getAsMention() + " is now solved. Thanks for contacting us!")
+                            .success()
+                            .queueAfter(channel, 15, TimeUnit.SECONDS);
+                } else {
+                    if(!TechDiscordBot.isStaff(e.getMember())) {
+                        e.reply("You cannot close this ticket!").setEphemeral(true).queue();
+                        return;
+                    }
+
+                    String reason = e.getOption("reason") == null ? null : e.getOption("reason").getAsString();
+
+                    boolean hasReason = reason != null;
+                    String reasonSend = (hasReason ? " \n \n**Reason**: " + reason : "");
+
+                    new TechEmbedBuilder("Ticket")
+                            .setText(e.getMember().getAsMention() + " has closed this support ticket." + reasonSend)
+                            .send(e.getTextChannel());
+
+                    e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS);
+                    if (e.getMember() != null) {
+                        new TechEmbedBuilder("Closed Ticket")
+                                .setText("The ticket (" + e.getTextChannel().getName() + ") from " + e.getMember().getAsMention() + " has been closed!")
+                                .success()
+                                .queueAfter(channel, 15, TimeUnit.SECONDS);
+                        new TechEmbedBuilder("Closed Ticket")
+                                .setText("Your ticket (" + e.getTextChannel().getName() + ") has been closed!" + reasonSend)
+                                .success()
+                                .send(e.getMember());
+                    } else {
+                        new TechEmbedBuilder("Closed Ticket")
+                                .setText("The ticket (" + e.getTextChannel().getName() + ") from *member has left* has been closed!")
+                                .success()
+                                .queueAfter(channel, 15, TimeUnit.SECONDS);
+
+                    }
+                }
+
+                isSelection = false;
+                selectionUserId = null;
+                sendPriorityInstructions(null);
+            } else {
+                e.reply("Could not recognize this sub command!").setEphemeral(true).queue();
             }
-            isSelection = false;
-            selectionUserId = null;
-            sendPriorityInstructions(null);
         }
     }
 

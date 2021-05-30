@@ -42,7 +42,7 @@ public class BanCommand extends CommandModule {
     @Override
     public OptionData[] getOptions() {
         return new OptionData[] {
-                new OptionData(OptionType.MENTIONABLE, "member", "The member to ban.", true),
+                new OptionData(OptionType.USER, "member", "The member to ban.", true),
                 new OptionData(OptionType.STRING, "reason", "The reason to ban the member.", false)
         };
     }
@@ -54,7 +54,7 @@ public class BanCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
-        Member member = (Member) e.getOption("member").getAsMentionable();
+        Member member = e.getOption("member").getAsMember();
         String reason = e.getOption("reason").getAsString();
 
         Member selfMember = e.getGuild().getSelfMember();

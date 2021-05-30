@@ -42,7 +42,7 @@ public class KickCommand extends CommandModule {
     @Override
     public OptionData[] getOptions() {
         return new OptionData[] {
-                new OptionData(OptionType.MENTIONABLE, "member", "The member to kick.", true),
+                new OptionData(OptionType.USER, "member", "The member to kick.", true),
                 new OptionData(OptionType.STRING, "reason", "The reason to kick the member.", false)
         };
     }
@@ -54,7 +54,7 @@ public class KickCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
-        Member member = (Member) e.getOption("member").getAsMentionable();
+        Member member = e.getOption("member").getAsMember();
         String reason = e.getOption("reason").getAsString();
 
         member.kick(reason).queue();

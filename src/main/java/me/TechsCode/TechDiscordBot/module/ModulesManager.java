@@ -5,7 +5,10 @@ import me.TechsCode.TechDiscordBot.objects.Cooldown;
 import me.TechsCode.TechDiscordBot.util.ProjectUtil;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
 
@@ -51,6 +54,24 @@ public class ModulesManager {
                 }
             }
         }
+
+        commands.addCommands(
+            new CommandData("ticket", "Manage tickets.")
+                .addSubcommands(
+                    new SubcommandData("add", "Add a member to a ticket.")
+                        .addOptions(
+                            new OptionData(OptionType.USER, "member", "Member to add.", true)
+                    ),
+                    new SubcommandData("remove", "Remove a member from a ticket.")
+                        .addOptions(
+                            new OptionData(OptionType.USER, "member", "Member to remove.", true)
+                    ),
+                    new SubcommandData("close", "Close a ticket.")
+                        .addOptions(
+                            new OptionData(OptionType.STRING, "reason", "Reason to close the ticket. (Optional)")
+                        )
+                )
+        );
 
         commands.complete();
 

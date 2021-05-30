@@ -49,7 +49,7 @@ public class MuteCommand extends CommandModule {
     @Override
     public OptionData[] getOptions() {
         return new OptionData[] {
-                new OptionData(OptionType.MENTIONABLE, "member", "The member to mute.", true)
+                new OptionData(OptionType.USER, "member", "The member to mute.", true)
         };
     }
 
@@ -60,7 +60,7 @@ public class MuteCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
-        Member member = (Member) e.getOption("member").getAsMentionable();
+        Member member = e.getOption("member").getAsMember();
 
         if(memberHasMutedRole(member)) {
             e.getGuild().removeRoleFromMember(member, MUTED_ROLE.query().first()).queue();

@@ -60,9 +60,17 @@ public class TechEmbedBuilder extends EmbedBuilder {
         return this;
     }
 
-    public Message send(TextChannel textChannel) { return textChannel.sendMessage(build()).complete(); }
+    public Message send(TextChannel textChannel) {
+        return textChannel.sendMessage(build()).complete();
+    }
 
-    public Message sendAfter(TextChannel textChannel, TimeUnit unit, int amount) { return textChannel.sendMessage(build()).completeAfter(amount, unit); }
+    public Message sendAfter(TextChannel textChannel, int delay, TimeUnit unit) {
+        return textChannel.sendMessage(build()).completeAfter(delay, unit);
+    }
+
+    public void queueAfter(TextChannel textChannel, int delay, TimeUnit unit) {
+        textChannel.sendMessage(build()).queueAfter(delay, unit);
+    }
 
     public Message reply(Message message) {
         return reply(message, true);
@@ -81,15 +89,21 @@ public class TechEmbedBuilder extends EmbedBuilder {
         msg.delete().submitAfter(duration, timeUnit);
     }
 
+    public void queueAfter(User user, int delay, TimeUnit time) {
+        try {
+            user.openPrivateChannel().complete().sendMessage(build()).queueAfter(delay, time);
+        } catch (ErrorResponseException ignore) {}
+    }
+
+    public Message send(Member member) {
+        return send(member.getUser());
+    }
+
     public Message send(User user) {
         try {
             return user.openPrivateChannel().complete().sendMessage(build()).complete();
         } catch (ErrorResponseException ignore) {}
         return null;
-    }
-
-    public Message send(Member member) {
-        return send(member.getUser());
     }
 
     public void sendTemporary(TextChannel textChannel, int duration, TimeUnit timeUnit) {

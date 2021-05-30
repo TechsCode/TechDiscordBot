@@ -43,7 +43,7 @@ public class VerifyCommand extends CommandModule {
     @Override
     public OptionData[] getOptions() {
         return new OptionData[] {
-                new OptionData(OptionType.MENTIONABLE, "member", "Member to verify.", true),
+                new OptionData(OptionType.USER, "member", "Member to verify.", true),
                 new OptionData(OptionType.STRING, "spigot-id", "The member's spigot id.", true)
         };
     }
@@ -56,7 +56,7 @@ public class VerifyCommand extends CommandModule {
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         String spigotId = e.getOption("spigot-id").getAsString();
-        Member member = (Member) e.getOption("member").getAsMentionable();
+        Member member = e.getOption("member").getAsMember();
 
         if(TechDiscordBot.getStorage().retrieveVerificationWithDiscord(member) != null || TechDiscordBot.getStorage().retrieveVerificationWithSpigot(spigotId) != null) {
             e.reply(spigotId + " (" + member.getAsMention() + ") is already verified!").setEphemeral(true).queue();

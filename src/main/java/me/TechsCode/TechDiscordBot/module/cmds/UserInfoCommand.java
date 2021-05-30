@@ -39,7 +39,7 @@ public class UserInfoCommand extends CommandModule {
     @Override
     public OptionData[] getOptions() {
         return new OptionData[] {
-                new OptionData(OptionType.MENTIONABLE, "member", "Member to get info about. (Default: You)")
+                new OptionData(OptionType.USER, "member", "Member to get info about. (Default: You)")
         };
     }
 
@@ -50,7 +50,7 @@ public class UserInfoCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
-        Member member = e.getOption("member") == null ? m : (Member) e.getOption("member").getAsMentionable();
+        Member member = e.getOption("member") == null ? m : e.getOption("member").getAsMember();
         User user = member.getUser();
 
         e.replyEmbeds(new TechEmbedBuilder(user.getName() + "#" + user.getDiscriminator())
