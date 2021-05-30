@@ -60,7 +60,7 @@ public class MuteCommand extends CommandModule {
     }
 
     @Override
-    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+    public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         Member member = e.getOption("member").getAsMember();
 
         if(memberHasMutedRole(member)) {

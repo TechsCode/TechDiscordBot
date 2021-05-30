@@ -60,7 +60,7 @@ public class GetReleaseCommand extends CommandModule {
     }
 
     @Override
-    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+    public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         e.deferReply().queue();
         String plugin = e.getOption("plugin").getAsString();
 
@@ -74,7 +74,7 @@ public class GetReleaseCommand extends CommandModule {
                     .build()
             ).queue();
 
-            hook.sendFile(release.getFile(), plugin + ".jar").complete();
+            channel.sendFile(release.getFile(), plugin + ".jar").complete();
 
             release.getFile().delete();
         } else {

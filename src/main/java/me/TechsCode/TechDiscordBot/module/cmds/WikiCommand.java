@@ -50,7 +50,7 @@ public class WikiCommand extends CommandModule {
     }
 
     @Override
-    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+    public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         boolean all = e.getOption("all") != null && e.getOption("all").getAsBoolean();
         boolean mine = e.getOption("mine") != null && e.getOption("mine").getAsBoolean();
 

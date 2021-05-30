@@ -47,7 +47,7 @@ public class APICommand extends CommandModule {
     }
 
     @Override
-    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+    public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         APIStatus status = bot.getStatus();
 
         StringBuilder sb = new StringBuilder();

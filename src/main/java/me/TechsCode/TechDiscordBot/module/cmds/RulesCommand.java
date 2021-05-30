@@ -56,7 +56,7 @@ public class RulesCommand extends CommandModule {
     }
 
     @Override
-    public void onCommand(TextChannel channel, Member member, InteractionHook hook, SlashCommandEvent e) {
+    public void onCommand(TextChannel channel, Member member, SlashCommandEvent e) {
         RULES_CHANNEL.query().first().getIterableHistory()
                 .takeAsync(200)
                 .thenAccept(channel::purgeMessages);

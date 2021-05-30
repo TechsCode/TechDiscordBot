@@ -41,7 +41,7 @@ public class PatreonCommand extends CommandModule {
     }
 
     @Override
-    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+    public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         boolean isPatron = m.getRoles().stream().anyMatch(r -> r.getName().equals("Patreon"));
 
         e.reply((isPatron ? "Thank you for being a Patron!\n\n" : "") + "https://patreon.com/TechsCode").queue();

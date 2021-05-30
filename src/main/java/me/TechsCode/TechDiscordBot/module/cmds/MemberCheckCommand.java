@@ -52,7 +52,7 @@ public class MemberCheckCommand extends CommandModule {
     }
 
     @Override
-    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+    public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         Member member = e.getOption("member") == null ? null : e.getOption("member").getAsMember();
         String spigotId = e.getOption("spigot-id") == null ? null : e.getOption("spigotId").getAsString();
 

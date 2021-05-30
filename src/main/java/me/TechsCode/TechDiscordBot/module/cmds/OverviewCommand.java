@@ -57,7 +57,7 @@ public class OverviewCommand extends CommandModule {
     }
 
     @Override
-    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+    public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         if(!TechDiscordBot.getBot().getStatus().isUsable()) {
             new TechEmbedBuilder("API").setText("The API has to be usable to execute this command!").error().sendTemporary(channel, 5);
             return;

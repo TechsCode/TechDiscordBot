@@ -60,7 +60,7 @@ public class RemindMeCommand extends CommandModule {
     }
 
     @Override
-    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+    public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         String time = e.getOption("time").getAsString();
         String reminder = e.getOption("reminder").getAsString();
 

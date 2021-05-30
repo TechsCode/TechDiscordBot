@@ -41,7 +41,7 @@ public class SongodaCommand extends CommandModule {
     }
 
     @Override
-    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+    public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         e.reply("https://songoda.com/marketplace").queue();
     }
 }

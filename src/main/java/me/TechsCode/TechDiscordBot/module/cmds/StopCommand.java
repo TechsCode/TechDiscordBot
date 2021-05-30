@@ -54,7 +54,7 @@ public class StopCommand extends CommandModule {
     }
 
     @Override
-    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+    public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         OptionMapping confirmOption = e.getOption("confirm");
         String confirm = confirmOption == null ? "" : confirmOption.getAsString();
 

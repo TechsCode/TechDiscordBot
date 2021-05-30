@@ -57,7 +57,7 @@ public class PurgeCommand extends CommandModule {
     }
 
     @Override
-    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+    public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         String userId = e.getUser().getId();
         OptionMapping amountOption = e.getOption("amount");
 

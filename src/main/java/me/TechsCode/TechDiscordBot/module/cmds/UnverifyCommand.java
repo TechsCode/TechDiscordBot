@@ -61,7 +61,7 @@ public class UnverifyCommand extends CommandModule {
     }
 
     @Override
-    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+    public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         String type = e.getOption("type").getAsString();
         String data = e.getOption("data").getAsString();
 

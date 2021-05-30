@@ -56,7 +56,7 @@ public class RestartCommand extends CommandModule {
     }
 
     @Override
-    public void onCommand(TextChannel channel, Member member, InteractionHook hook, SlashCommandEvent e) {
+    public void onCommand(TextChannel channel, Member member, SlashCommandEvent e) {
         try {
             List<Message> messages = new ArrayList<>();
 

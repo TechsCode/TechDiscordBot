@@ -38,6 +38,6 @@ public abstract class CommandModule {
         return cooldowns;
     }
 
-    public abstract void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e);
+    public abstract void onCommand(TextChannel channel, Member m, SlashCommandEvent e);
 
 }

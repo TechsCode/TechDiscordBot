@@ -55,7 +55,7 @@ public class VerifyCommand extends CommandModule {
     }
 
     @Override
-    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+    public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         String spigotId = e.getOption("spigot-id").getAsString();
         Member member = e.getOption("member").getAsMember();
 

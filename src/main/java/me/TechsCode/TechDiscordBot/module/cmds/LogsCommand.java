@@ -41,7 +41,7 @@ public class LogsCommand extends CommandModule {
     }
 
     @Override
-    public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+    public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         e.reply("https://cdn.discordapp.com/attachments/346344529651040268/812466654768398357/send_logs.jpg").queue();
     }
 }
