@@ -53,7 +53,7 @@ public class MemberCheckCommand extends CommandModule {
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         Member member = e.getOption("member") == null ? null : (Member) e.getOption("member").getAsMentionable();
-        String spigotId = e.getOption("spigot-id") == null ? null : e.getOption("spigotId").getAsString();
+        String spigotId = e.getOption("spigot-id") == null ? null : e.getOption("spigot-id").getAsString();
 
         if(member == null && spigotId == null)
             member = m;
