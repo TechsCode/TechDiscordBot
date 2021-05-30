@@ -102,7 +102,7 @@ public class ModulesManager {
 
         if(cmd.isHook()) {
             hook = e.getHook();
-            hook.setEphemeral(cmd.isEphemeral(e));
+            hook.setEphemeral(true);
         }
 
         cmd.onCommand(e.getTextChannel(), e.getMember(), hook, e);
