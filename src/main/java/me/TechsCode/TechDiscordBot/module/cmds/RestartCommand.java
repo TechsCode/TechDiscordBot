@@ -51,11 +51,6 @@ public class RestartCommand extends CommandModule {
     }
 
     @Override
-    public boolean isEphemeral() {
-        return true;
-    }
-
-    @Override
     public int getCooldown() {
         return 0;
     }
@@ -71,7 +66,7 @@ public class RestartCommand extends CommandModule {
 
             messages.forEach(m -> m.delete().complete());
 
-            channel.sendMessage("Bot Restarting").complete();
+            e.reply("Bot Restarting").setEphemeral(true).complete();
             Thread.sleep(500);
 
             Runtime.getRuntime().exec("cmd.exe /c start C:\\Users\\Administrator\\Desktop\\Discord-Bot\\start.bat");

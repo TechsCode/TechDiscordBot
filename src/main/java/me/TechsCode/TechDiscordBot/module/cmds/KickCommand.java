@@ -49,11 +49,6 @@ public class KickCommand extends CommandModule {
     }
 
     @Override
-    public boolean isEphemeral() {
-        return false;
-    }
-
-    @Override
     public int getCooldown() {
         return 4;
     }
@@ -65,9 +60,11 @@ public class KickCommand extends CommandModule {
 
         member.kick(reason).queue();
 
-        new TechEmbedBuilder("Kicked " + member.getUser().getName() + "#" + member.getUser().getDiscriminator())
+        e.replyEmbeds(
+            new TechEmbedBuilder("Kicked " + member.getUser().getName() + "#" + member.getUser().getDiscriminator())
                 .success()
                 .setText("Successfully kicked " + member.getAsMention() + (reason == null ? "!" : " for `" + reason + "`!"))
-                .send(channel);
+                .build()
+        ).queue();
     }
 }

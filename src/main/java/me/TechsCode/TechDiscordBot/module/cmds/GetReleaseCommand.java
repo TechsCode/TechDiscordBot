@@ -50,11 +50,6 @@ public class GetReleaseCommand extends CommandModule {
     }
 
     @Override
-    public boolean isEphemeral() {
-        return false;
-    }
-
-    @Override
     public int getCooldown() {
         return 4;
     }
@@ -66,11 +61,12 @@ public class GetReleaseCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, InteractionHook hook, SlashCommandEvent e) {
+        e.deferReply().queue();
         String plugin = e.getOption("plugin").getAsString();
 
         GithubRelease release = GitHubUtil.getLatestRelease(plugin);
         if(release == null) {
-            e.reply("**Failed!** Could not get the release!\n\n**Possible reasons:**\n- The repo isn't valid.\n- There is no release in the reop.\n- Github died.").complete();
+            e.reply("**Failed!** Could not get the release!\n\n**Possible reasons:**\n- The repo isn't valid.\n- There is no release in the reop.\n- Github died.").queue();
         } else if (release.getFile() != null) {
             e.replyEmbeds(
                 new TechEmbedBuilder(release.getRelease().getName())
@@ -82,7 +78,7 @@ public class GetReleaseCommand extends CommandModule {
 
             release.getFile().delete();
         } else {
-            e.reply("**Failed!** Could not get the file!\n\n**Possible reasons:**\n- Eazy fucked up.\n- The release has no files for some reason.\n- GitHub died.").complete();
+            e.reply("**Failed!** Could not get the file!\n\n**Possible reasons:**\n- Eazy messed up.\n- The release has no files for some reason.\n- GitHub died.").queue();
         }
     }
 }

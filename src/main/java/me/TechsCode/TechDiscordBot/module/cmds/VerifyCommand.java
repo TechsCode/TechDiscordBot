@@ -50,11 +50,6 @@ public class VerifyCommand extends CommandModule {
     }
 
     @Override
-    public boolean isEphemeral() {
-        return false;
-    }
-
-    @Override
     public int getCooldown() {
         return 5;
     }
@@ -65,12 +60,12 @@ public class VerifyCommand extends CommandModule {
         Member member = e.getOption("member").getAsMember();
 
         if(TechDiscordBot.getStorage().retrieveVerificationWithDiscord(member) != null || TechDiscordBot.getStorage().retrieveVerificationWithSpigot(spigotId) != null) {
-            e.reply(spigotId + " (" + member.getAsMention() + ") is already verified!").queue();
+            e.reply(spigotId + " (" + member.getAsMention() + ") is already verified!").setEphemeral(true).queue();
             return;
         }
 
         if(TechDiscordBot.getSpigotAPI().getPurchases().userId(spigotId).size() == 0) {
-            e.reply(spigotId + " (" + member.getAsMention() + ") does not own any of Tech's Plugins!").queue();
+            e.reply(spigotId + " (" + member.getAsMention() + ") does not own any of Tech's Plugins!").setEphemeral(true).queue();
             return;
         }
 

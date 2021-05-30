@@ -42,11 +42,6 @@ public class APICommand extends CommandModule {
     }
 
     @Override
-    public boolean isEphemeral() {
-        return false;
-    }
-
-    @Override
     public int getCooldown() {
         return 2;
     }
@@ -85,8 +80,10 @@ public class APICommand extends CommandModule {
         sb.append("**Last Fetched**: ").append(lastUpdatedFormatted);
         sb.append("\n**Bot Last Parsed**: ").append(botLastParsed);
 
-        new TechEmbedBuilder("API Status")
+        e.replyEmbeds(
+            new TechEmbedBuilder("API Status")
                 .setText(sb.toString())
-                .send(channel);
+                .build()
+        ).queue();
     }
 }

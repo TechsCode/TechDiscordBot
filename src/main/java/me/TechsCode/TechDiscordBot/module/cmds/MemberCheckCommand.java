@@ -47,11 +47,6 @@ public class MemberCheckCommand extends CommandModule {
     }
 
     @Override
-    public boolean isEphemeral() {
-        return false;
-    }
-
-    @Override
     public int getCooldown() {
         return 5;
     }
@@ -79,9 +74,12 @@ public class MemberCheckCommand extends CommandModule {
         Verification verification = spigotId == null ? TechDiscordBot.getStorage().retrieveVerificationWithDiscord(member.getUser().getId()) : TechDiscordBot.getStorage().retrieveVerificationWithSpigot(spigotId);
 
         if(verification == null) {
-            new TechEmbedBuilder((spigotId != null ? spigotId : member.getEffectiveName()) + " Is Not Verified!")
+            e.replyEmbeds(
+                new TechEmbedBuilder((spigotId != null ? spigotId : member.getEffectiveName()) + " Is Not Verified!")
                     .setText((spigotId != null ? spigotId : member.getAsMention()) + " has not verified themselves!")
-                    .error().send(channel);
+                    .error()
+                    .build()
+            ).queue();
             return;
         }
 
@@ -94,17 +92,22 @@ public class MemberCheckCommand extends CommandModule {
         PurchasesList purchases = TechDiscordBot.getSpigotAPI().getPurchases().userId(verification.getUserId());
 
         if(!canView) {
-            new TechEmbedBuilder("Not Enough Perms")
+            e.replyEmbeds(
+                new TechEmbedBuilder("Not Enough Perms")
                     .setText("You have to either be Staff or be viewing your self to execute this command!")
-                    .error().send(channel);
+                    .error()
+                    .build()
+            ).setEphemeral(true).queue();
             return;
         }
 
         if (member == null || purchases == null || purchases.size() == 0) {
-            new TechEmbedBuilder((spigotId != null ? spigotId : member.getEffectiveName()) + "'s Purchases")
+            e.replyEmbeds(
+                new TechEmbedBuilder((spigotId != null ? spigotId : member.getEffectiveName()) + "'s Purchases")
                     .error()
                     .setText((member != null ? spigotId : member.getAsMention()) + " has not bought of any Tech's Resources!")
-                    .send(channel);
+                    .build()
+            ).queue();
             return;
         }
 
@@ -120,7 +123,8 @@ public class MemberCheckCommand extends CommandModule {
             sb.append("- ").append(Plugin.fromId(p.getResource().getId()).getEmoji().getAsMention()).append(" ").append(p.getResource().getName()).append(" ").append(!p.getCost().isPresent() ? "as a Gift/Free" : "for " + p.getCost().get().getValue() + p.getCost().get().getCurrency()).append(" on").append((p.getTime().getHumanTime() != null ? " " + p.getTime().getHumanTime() : " Unknown (*too early to calculate*)")).append(",\n ");
 
         String purchasesString = sb.toString();
-        new TechEmbedBuilder(member.getEffectiveName())
+        e.replyEmbeds(
+            new TechEmbedBuilder(member.getEffectiveName())
                 .success()
                 .setThumbnail(purchase.getUser().getAvatar())
                 .setText("Showing " + member.getAsMention() + "'s Spigot Information.")
@@ -128,6 +132,7 @@ public class MemberCheckCommand extends CommandModule {
                 .addField("Purchases Amount", hasBoughtAll ? " **All** " + purchases.size() + " plugins purchased!" : purchases.size() + "**/**" + TechDiscordBot.getSpigotAPI().getResources().premium().size() + " purchased.", true)
                 .addField("Last Purchase", Plugin.fromId(purchase.getResource().getId()).getEmoji().getAsMention() + " " + (date != null ? date + ".": "Unknown\n*or cannot calculate*."), true)
                 .addField("Purchases", purchasesString.substring(0, purchasesString.length() - 3) + ".", false)
-                .send(channel);
+                .build()
+        ).queue();
     }
 }

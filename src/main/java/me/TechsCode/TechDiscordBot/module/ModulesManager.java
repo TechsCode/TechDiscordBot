@@ -97,14 +97,12 @@ public class ModulesManager {
             cmd.getCooldowns().remove(e.getMember().getId());
         }
 
-        e.deferReply(cmd.isEphemeral()).queue();
-
         // This is a special webhook that allows you to send messages without having permissions in the channel and also allows ephemeral messages.
         InteractionHook hook = null;
 
         if(cmd.isHook()) {
             hook = e.getHook();
-            hook.setEphemeral(cmd.isEphemeral());
+            hook.setEphemeral(cmd.isEphemeral(e));
         }
 
         cmd.onCommand(e.getTextChannel(), e.getMember(), hook, e);

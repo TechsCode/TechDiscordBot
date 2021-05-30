@@ -28,8 +28,6 @@ public abstract class CommandModule {
 
     public abstract OptionData[] getOptions();
 
-    public abstract boolean isEphemeral();
-
     public abstract int getCooldown();
 
     public boolean isHook() {

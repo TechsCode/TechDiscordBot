@@ -56,11 +56,6 @@ public class UnverifyCommand extends CommandModule {
     }
 
     @Override
-    public boolean isEphemeral() {
-        return false;
-    }
-
-    @Override
     public int getCooldown() {
         return 4;
     }
@@ -71,48 +66,54 @@ public class UnverifyCommand extends CommandModule {
         String data = e.getOption("data").getAsString();
 
         if(type.equals("offlineId")) {
-            process(data, channel);
+            process(e, data, channel);
         } else if(type.equals("spigot")) {
-            processSpigotId(data, channel);
-        } else {
-            e.reply("Invalid type!").queue();
+            processSpigotId(e, data, channel);
         }
     }
 
-    public void processSpigotId(String spigotId, TextChannel channel) {
+    public void processSpigotId(SlashCommandEvent e, String spigotId, TextChannel channel) {
         Verification verification = TechDiscordBot.getStorage().retrieveVerificationWithSpigot(spigotId);
 
         if(verification == null) {
-            new TechEmbedBuilder("Unverify Command - Error")
+            e.replyEmbeds(
+                new TechEmbedBuilder("Unverify Command - Error")
                     .error()
                     .setText("The spigot id '" + spigotId + "' is not verified!")
-                    .sendTemporary(channel, 10, TimeUnit.SECONDS);
+                    .build()
+            ).setEphemeral(true).queue();
         } else {
             boolean isUserOnline = TechDiscordBot.getGuild().getMemberById(verification.getDiscordId()) != null;
 
-            new TechEmbedBuilder("Unverify Command - Success")
+            e.replyEmbeds(
+                new TechEmbedBuilder("Unverify Command - Success")
                     .success()
                     .setText("Successfully removed " + (isUserOnline ? TechDiscordBot.getGuild().getMemberById(verification.getDiscordId()).getAsMention() : verification.getDiscordId()) + "'s verification!")
-                    .send(channel);
+                    .build()
+            ).queue();
             verification.delete();
         }
     }
 
-    public void process(String member, TextChannel channel) {
+    public void process(SlashCommandEvent e, String member, TextChannel channel) {
         Verification verification = TechDiscordBot.getStorage().retrieveVerificationWithDiscord(member);
 
         if(verification == null) {
-            new TechEmbedBuilder("Unverify Command - Error")
+            e.replyEmbeds(
+                new TechEmbedBuilder("Unverify Command - Error")
                     .error()
                     .setText(member + " is not verified!")
-                    .sendTemporary(channel, 10, TimeUnit.SECONDS);
+                    .build()
+            ).setEphemeral(true).queue();
         } else {
             verification.delete();
 
-            new TechEmbedBuilder("Unverify Command - Success")
+            e.replyEmbeds(
+                new TechEmbedBuilder("Unverify Command - Success")
                     .success()
                     .setText("Successfully removed " + member + "'s verification!")
-                    .send(channel);
+                    .build()
+            ).queue();
         }
     }
 }

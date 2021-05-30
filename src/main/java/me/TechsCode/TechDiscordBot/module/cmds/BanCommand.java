@@ -49,11 +49,6 @@ public class BanCommand extends CommandModule {
     }
 
     @Override
-    public boolean isEphemeral() {
-        return false;
-    }
-
-    @Override
     public int getCooldown() {
         return 0;
     }
@@ -71,9 +66,11 @@ public class BanCommand extends CommandModule {
 
         member.ban(0, reason).queue();
 
-        new TechEmbedBuilder("Banned " + member.getUser().getName() + "#" + member.getUser().getDiscriminator())
+        e.replyEmbeds(
+            new TechEmbedBuilder("Banned " + member.getUser().getName() + "#" + member.getUser().getDiscriminator())
                 .success()
                 .setText("Successfully banned " + member.getAsMention() + (reason == null ? "!" : " for `" + reason + "`!"))
-                .send(channel);
+                .build()
+        ).queue();
     }
 }

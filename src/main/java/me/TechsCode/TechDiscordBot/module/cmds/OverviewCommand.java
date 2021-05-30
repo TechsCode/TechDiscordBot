@@ -52,11 +52,6 @@ public class OverviewCommand extends CommandModule {
     }
 
     @Override
-    public boolean isEphemeral() {
-        return false;
-    }
-
-    @Override
     public int getCooldown() {
         return 10;
     }
@@ -72,6 +67,7 @@ public class OverviewCommand extends CommandModule {
                 .takeAsync(200)
                 .thenAccept(channel::purgeMessages);
 
+        e.deferReply().queue();
         showAll();
     }
 

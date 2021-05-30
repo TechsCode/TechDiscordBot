@@ -49,11 +49,6 @@ public class StopCommand extends CommandModule {
     }
 
     @Override
-    public boolean isEphemeral() {
-        return false;
-    }
-
-    @Override
     public int getCooldown() {
         return 0;
     }
@@ -67,7 +62,7 @@ public class StopCommand extends CommandModule {
             e.replyEmbeds(new TechEmbedBuilder("Stop")
                     .setText("The bot will now stop!")
                     .build()
-            ).queue();
+            ).setEphemeral(true).queue();
 
             TechDiscordBot.getJDA().shutdownNow();
             System.exit(0);
@@ -75,7 +70,7 @@ public class StopCommand extends CommandModule {
             e.replyEmbeds(new TechEmbedBuilder("Stop")
                     .setText("Hello, " + m.getAsMention() + "! I've detected that you're trying to stop me!\n\nI do not like that, especially that if I do stop, I will not be restarted!\nIf you **REALLY** wish to stop me, type the following command:\n`!stop cOnFirM`")
                     .build()
-            ).queue();
+            ).setEphemeral(true).queue();
         }
     }
 }
