@@ -5,7 +5,6 @@ import me.TechsCode.TechDiscordBot.objects.Cooldown;
 import me.TechsCode.TechDiscordBot.util.ProjectUtil;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;

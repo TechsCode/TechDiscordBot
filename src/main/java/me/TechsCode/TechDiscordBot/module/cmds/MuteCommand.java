@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
@@ -61,7 +60,7 @@ public class MuteCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
-        Member member = e.getOption("member").getAsMember();
+        Member member = (Member) e.getOption("member").getAsMentionable();
 
         if(memberHasMutedRole(member)) {
             e.getGuild().removeRoleFromMember(member, MUTED_ROLE.query().first()).queue();
