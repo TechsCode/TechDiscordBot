@@ -71,9 +71,7 @@ public class ModulesManager {
                             new OptionData(OptionType.STRING, "reason", "Reason to close the ticket. (Optional)")
                         )
                 )
-        );
-
-        commands.complete();
+        ).complete();
 
         TechDiscordBot.getJDA().retrieveCommands().complete().forEach(command -> {
             CommandPrivilege[] privilege = cmdModules.stream().filter(c -> c.getName().equals(command.getName())).map(CommandModule::getCommandPrivileges).findFirst().orElse(new CommandPrivilege[] {});
