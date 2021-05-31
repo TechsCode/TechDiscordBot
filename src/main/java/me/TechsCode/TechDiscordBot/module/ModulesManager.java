@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
-import net.dv8tion.jda.api.requests.restaction.CommandUpdateAction;
+import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
@@ -24,7 +24,7 @@ public class ModulesManager {
     private final List<Module> modules = new ArrayList<>();
 
     public void load() {
-        CommandUpdateAction commands = TechDiscordBot.getJDA().updateCommands();
+        CommandListUpdateAction commands = TechDiscordBot.getJDA().updateCommands();
 
         for (Class<?> each : ProjectUtil.getClasses("me.TechsCode.TechDiscordBot.module")) {
             if (CommandModule.class.isAssignableFrom(each) && !Modifier.isAbstract(each.getModifiers())) {
@@ -77,7 +77,7 @@ public class ModulesManager {
             CommandPrivilege[] privilege = cmdModules.stream().filter(c -> c.getName().equals(command.getName())).map(CommandModule::getCommandPrivileges).findFirst().orElse(new CommandPrivilege[] {});
 
             if(privilege.length > 0)
-                TechDiscordBot.getGuild().updateCommandPrivileges(command.getId(), Arrays.asList(privilege)).queue();
+                TechDiscordBot.getGuild().updateCommandPrivilegesById(command.getId(), Arrays.asList(privilege)).queue();
         });
 
         TechDiscordBot.getJDA().addEventListener(modules.toArray());
