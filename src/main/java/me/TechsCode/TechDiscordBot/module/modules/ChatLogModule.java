@@ -46,7 +46,7 @@ public class ChatLogModule extends Module {
 
     @SubscribeEvent
     public void onMessage(GuildMessageReceivedEvent e) {
-        if(e.getMember() == null) return;
+        if(e.getMember() == null || e.getMember().getUser().isBot()) return;
         if(e.getMember().getRoles().stream().anyMatch(r -> r.getName().equals("Staff"))) return;
 
         cachedMessages.put(e.getMessageId(), e.getMessage());
@@ -54,7 +54,7 @@ public class ChatLogModule extends Module {
 
     @SubscribeEvent
     public void onMessageEdit(GuildMessageUpdateEvent e) {
-        if(e.getMember() == null) return;
+        if(e.getMember() == null || e.getMember().getUser().isBot()) return;
         if(e.getMember().getRoles().stream().anyMatch(r -> r.getName().equals("Staff"))) return;
 
         Message oldMessage = cachedMessages.get(e.getMessageId());
@@ -74,7 +74,7 @@ public class ChatLogModule extends Module {
         Message message = cachedMessages.get(e.getMessageId());
         if(message == null) return;
 
-        if(message.getMember() == null) return;
+        if(message.getMember() == null || message.getMember().getUser().isBot()) return;
         if(message.getMember().getRoles().stream().anyMatch(r -> r.getName().equals("Staff"))) return;
 
         new TechEmbedBuilder("Message Deleted")
