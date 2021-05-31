@@ -134,9 +134,9 @@ public class PluginLabModule extends Module {
                     .setText("```" + (release.getRelease().getBody().isEmpty() ? "No changes specified." : release.getRelease().getBody().replaceAll(" \\|\\| ", "\n")) + "```")
                     .send(channel);
 
-            channel.sendFile(release.getFile(), pluginName + ".jar").complete().pin().queueAfter(3, TimeUnit.SECONDS, (s) -> {
-                release.getFile().delete();
-            }); //Send File
+            channel.sendFile(release.getFile(), pluginName + ".jar").complete().pin().queueAfter(3, TimeUnit.SECONDS);
+            release.getFile().delete();
+            //Send File
         }
     }
 
