@@ -17,14 +17,14 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 import net.dv8tion.jda.api.interactions.components.Button;
 
-public class PurgeCommand extends CommandModule {
+public class PruneCommand extends CommandModule {
 
     private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
         @Override
         protected Query<Role> newQuery() { return bot.getRoles("Staff"); }
     };
 
-    public PurgeCommand(TechDiscordBot bot) {
+    public PruneCommand(TechDiscordBot bot) {
         super(bot);
     }
 
