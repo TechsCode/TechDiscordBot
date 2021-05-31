@@ -114,7 +114,7 @@ public class PluginLabModule extends Module {
                     } else {
                         lastUpload.put(plugin, date.getTime());
                     }
-                } catch (IOException | InterruptedException ex) {
+                } catch (IOException ex) {
                     TechDiscordBot.log("Could not get the last release date from the " + plugin + " repo!");
                 }
             } else {
@@ -123,7 +123,7 @@ public class PluginLabModule extends Module {
         });
     }
 
-    public void uploadFile(TextChannel channel, GithubRelease release, String pluginName) throws InterruptedException {
+    public void uploadFile(TextChannel channel, GithubRelease release, String pluginName) {
         try {
             List<Message> msgs = channel.getHistory().retrieveFuture(100).complete().stream().filter(msg -> msg.getAuthor().isBot() && msg.isPinned()).collect(Collectors.toList());
             msgs.forEach(msg -> msg.unpin().queue());
@@ -134,10 +134,9 @@ public class PluginLabModule extends Module {
                     .setText("```" + (release.getRelease().getBody().isEmpty() ? "No changes specified." : release.getRelease().getBody().replaceAll(" \\|\\| ", "\n")) + "```")
                     .send(channel);
 
-            TimeUnit.SECONDS.sleep(3);
-
-            channel.sendFile(release.getFile(), pluginName + ".jar").complete().pin().queue(); //Send File
-            release.getFile().delete(); //Delete file locally, as it's no longer needed.
+            channel.sendFile(release.getFile(), pluginName + ".jar").complete().pin().queueAfter(3, TimeUnit.SECONDS, (s) -> {
+                release.getFile().delete();
+            }); //Send File
         }
     }
 
