@@ -81,7 +81,7 @@ public class APICommand extends CommandModule {
 
         e.replyEmbeds(
             new TechEmbedBuilder("API Status")
-                .setText(sb.toString())
+                .text(sb.toString())
                 .build()
         ).queue();
     }

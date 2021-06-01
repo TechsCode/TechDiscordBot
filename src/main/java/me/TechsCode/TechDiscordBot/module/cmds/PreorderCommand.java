@@ -61,7 +61,7 @@ public class PreorderCommand extends CommandModule {
             e.replyEmbeds(
                 new TechEmbedBuilder("Preorder Command - Error")
                     .error()
-                    .setText("Looks like there are currently no pre orders!")
+                    .text("Looks like there are currently no pre orders!")
                     .build()
             ).setEphemeral(true).queue();
             return;
@@ -77,7 +77,7 @@ public class PreorderCommand extends CommandModule {
             e.replyEmbeds(
                 new TechEmbedBuilder("Preorder Command - Error")
                     .error()
-                    .setText("Could not find a preorder that belongs to " + member.getAsMention() + "!")
+                    .text("Could not find a preorder that belongs to " + member.getAsMention() + "!")
                     .build()
             ).setEphemeral(true).queue();
             return;
@@ -91,10 +91,10 @@ public class PreorderCommand extends CommandModule {
         e.replyEmbeds(
             new TechEmbedBuilder("Preorder - " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator())
                 .success()
-                .addField("Email", (showEmail ? preorder.getEmail() : obfuscateEmail(preorder.getEmail())), true)
-                .addField("Transaction ID", (showTransactionId ? preorder.getTransactionId() : obfuscateTransactionId(preorder.getTransactionId())), true)
-                .addField("Plugin", (query.hasAny() ? query.first().getAsMention() + " " : "") + preorder.getPlugin(), true)
-                .addField("Discord Name", preorder.getDiscordName() + " (" + member.getAsMention() + ")", true)
+                .field("Email", (showEmail ? preorder.getEmail() : obfuscateEmail(preorder.getEmail())), true)
+                .field("Transaction ID", (showTransactionId ? preorder.getTransactionId() : obfuscateTransactionId(preorder.getTransactionId())), true)
+                .field("Plugin", (query.hasAny() ? query.first().getAsMention() + " " : "") + preorder.getPlugin(), true)
+                .field("Discord Name", preorder.getDiscordName() + " (" + member.getAsMention() + ")", true)
                 .build()
         ).queue();
     }

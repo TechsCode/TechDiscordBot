@@ -69,7 +69,7 @@ public class GetReleaseCommand extends CommandModule {
         } else if (release.getFile() != null) {
             e.replyEmbeds(
                 new TechEmbedBuilder(release.getRelease().getName())
-                    .setText("```" + (release.getRelease().getBody().isEmpty() ? "No changes specified." : release.getRelease().getBody().replaceAll(" \\|\\| ", "\n")) + "```")
+                    .text("```" + (release.getRelease().getBody().isEmpty() ? "No changes specified." : release.getRelease().getBody().replaceAll(" \\|\\| ", "\n")) + "```")
                     .build()
             ).queue();
 

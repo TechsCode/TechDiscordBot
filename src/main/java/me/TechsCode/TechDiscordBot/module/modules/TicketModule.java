@@ -112,12 +112,15 @@ public class TicketModule extends Module {
 
         if(lastInstructions != null) lastInstructions.delete().queue();
         TechEmbedBuilder priority = new TechEmbedBuilder("Ticket Creation" + (member != null ? " (" + member.getEffectiveName() + ")" : ""))
-                .setText("First, please react with the priority of the issue below:", "", lowPriority.getAsMention() + "- Low Priority", mediumPriority.getAsMention() + "- Medium Priority", highPriority.getAsMention() + "- High Priority", "", "*Please choose the priority based on the how urgent the issue is.*");
+                .text("First, please react with the priority of the issue below:", "", lowPriority.getAsMention() + "- Low Priority", mediumPriority.getAsMention() + "- Medium Priority", highPriority.getAsMention() + "- High Priority", "", "*Please choose the priority based on the how urgent the issue is.*");
 
-        lastInstructions = priority.send(channel);
-        if(lastInstructions != null) lastInstructions.addReaction(lowPriority).complete();
-        if(lastInstructions != null) lastInstructions.addReaction(mediumPriority).complete();
-        if(lastInstructions != null) lastInstructions.addReaction(highPriority).complete();
+        lastInstructions = priority.complete(channel);
+        if(lastInstructions != null)
+            lastInstructions.addReaction(lowPriority).complete();
+        if(lastInstructions != null)
+            lastInstructions.addReaction(mediumPriority).complete();
+        if(lastInstructions != null)
+            lastInstructions.addReaction(highPriority).complete();
     }
 
     public void sendPluginInstructions(Member member) {
@@ -130,9 +133,9 @@ public class TicketModule extends Module {
 
         if(lastInstructions != null) lastInstructions.delete().queue();
         TechEmbedBuilder plugin = new TechEmbedBuilder("Ticket Creation (" + member.getEffectiveName() + ")")
-                .setText("Secondly, please select which plugin the issue corresponds with below:", "", sb, "", ERROR_EMOTE.query().first().getAsMention() + " - Cancel", "");
+                .text("Secondly, please select which plugin the issue corresponds with below:", "", sb, "", ERROR_EMOTE.query().first().getAsMention() + " - Cancel", "");
 
-        lastInstructions = plugin.send(channel);
+        lastInstructions = plugin.complete(channel);
         for(Emote emote : PLUGIN_EMOTES.query().all()) if(lastInstructions != null) lastInstructions.addReaction(emote).complete();
         if(lastInstructions != null) lastInstructions.addReaction(ERROR_EMOTE.query().first()).complete();
     }
@@ -144,9 +147,9 @@ public class TicketModule extends Module {
 
         if(lastInstructions != null) lastInstructions.delete().queue();
         TechEmbedBuilder issue = new TechEmbedBuilder("Ticket Creation (" + member.getEffectiveName() + ")")
-                .setText("Last but not least, please tell us what you're having an issue with!", "", ERROR_EMOTE.query().first().getAsMention() + " - Cancel", "", "*Try not to make the message over 1024 chars long.*", "*We'll cut it off due to Discord's Limitations!*");
+                .text("Last but not least, please tell us what you're having an issue with!", "", ERROR_EMOTE.query().first().getAsMention() + " - Cancel", "", "*Try not to make the message over 1024 chars long.*", "*We'll cut it off due to Discord's Limitations!*");
 
-        lastInstructions = issue.send(channel);
+        lastInstructions = issue.complete(channel);
         if(lastInstructions != null) lastInstructions.addReaction(ERROR_EMOTE.query().first()).complete();
     }
 
@@ -171,14 +174,14 @@ public class TicketModule extends Module {
 
         String plugins = Plugin.getMembersPluginsinEmojis(member);
         new TechEmbedBuilder(member.getEffectiveName() + " - " + member.getUser().getId())
-                .addField("Plugin", plugin.getEmoji().getAsMention(), true)
-                .addField("Owned Plugins", plugins, true)
-                .addField("Issue", issue, false)
-                .send(ticketChannel);
+                .field("Plugin", plugin.getEmoji().getAsMention(), true)
+                .field("Owned Plugins", plugins, true)
+                .field("Issue", issue, false)
+                .queue(ticketChannel);
 
         new TechEmbedBuilder("New Ticket")
-                .setText(member.getAsMention() + " created a new ticket (" + ticketChannel.getAsMention() + ")")
-                .send(channel);
+                .text(member.getAsMention() + " created a new ticket (" + ticketChannel.getAsMention() + ")")
+                .queue(channel);
 
         isSelection = false;
         selectionUserId = null;
@@ -197,7 +200,7 @@ public class TicketModule extends Module {
             if(this.selectionUserId.equals(userId) && isSelection) {
                 new TechEmbedBuilder("Ticket - Error")
                         .error()
-                        .setText("You took too long!")
+                        .text("You took too long!")
                         .sendTemporary(channel, 10);
 
                 isSelection = false;
@@ -239,7 +242,7 @@ public class TicketModule extends Module {
 
         if(getOpenTicketChat(e.getMember()) != null) {
             new TechEmbedBuilder("Ticket Creation - Error")
-                    .setText("You already have an open ticket (" + getOpenTicketChat(e.getMember()).getAsMention() + ")")
+                    .text("You already have an open ticket (" + getOpenTicketChat(e.getMember()).getAsMention() + ")")
                     .error()
                     .sendTemporary(channel, 10);
 
@@ -269,7 +272,7 @@ public class TicketModule extends Module {
             if(e.getMember().getRoles().stream().noneMatch(r -> r.getName().equals(plugin.getRoleName()))) {
                 new TechEmbedBuilder("Ticket - Error")
                         .error()
-                        .setText("You do not own " + plugin.getRoleName() + "!")
+                        .text("You do not own " + plugin.getRoleName() + "!")
                         .sendTemporary(channel, 10);
                 e.getReaction().removeReaction(e.getUser()).queue();
 
@@ -282,7 +285,7 @@ public class TicketModule extends Module {
             String ezMention = TechDiscordBot.getJDA().getUserById("130340486920667136").getAsMention();
 
             new TechEmbedBuilder("Ticket Creation - Error")
-                    .setText("This shouldn't be happening. Contact " + ezMention + " (EazyFTW#0001) immediately!")
+                    .text("This shouldn't be happening. Contact " + ezMention + " (EazyFTW#0001) immediately!")
                     .error()
                     .sendTemporary(channel, 10);
             isSelection = false;
@@ -363,14 +366,14 @@ public class TicketModule extends Module {
                     if (isTicketCreator) {
                         e.replyEmbeds(
                                 new TechEmbedBuilder("Ticket")
-                                        .setText("Thank you for contacting us " + e.getMember().getAsMention() + ". Consider writing a review if you enjoyed the support!")
+                                        .text("Thank you for contacting us " + e.getMember().getAsMention() + ". Consider writing a review if you enjoyed the support!")
                                         .build()
                         ).queue();
 
                         e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS);
 
                         new TechEmbedBuilder("Solved Ticket")
-                                .setText("The ticket (" + e.getTextChannel().getName() + ") created by " + e.getMember().getAsMention() + " is now solved. Thanks for contacting us!")
+                                .text("The ticket (" + e.getTextChannel().getName() + ") created by " + e.getMember().getAsMention() + " is now solved. Thanks for contacting us!")
                                 .success()
                                 .queueAfter(channel, 15, TimeUnit.SECONDS);
                     } else {
@@ -386,22 +389,22 @@ public class TicketModule extends Module {
 
                         Member ticketMember = getMemberFromTicket(e.getTextChannel());
                         new TechEmbedBuilder("Ticket")
-                                .setText(e.getMember().getAsMention() + " has closed this support ticket." + reasonSend)
-                                .send(e.getTextChannel());
+                                .text(e.getMember().getAsMention() + " has closed this support ticket." + reasonSend)
+                                .queue(e.getTextChannel());
 
                         e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS);
                         if (e.getMember() != null) {
                             new TechEmbedBuilder("Closed Ticket")
-                                    .setText("The ticket (" + e.getTextChannel().getName() + ") from " + member.getAsMention() + " has been closed!")
+                                    .text("The ticket (" + e.getTextChannel().getName() + ") from " + member.getAsMention() + " has been closed!")
                                     .success()
                                     .queueAfter(channel, 15, TimeUnit.SECONDS);
                             new TechEmbedBuilder("Closed Ticket")
-                                    .setText("Your ticket (" + e.getTextChannel().getName() + ") has been closed!" + reasonSend)
+                                    .text("Your ticket (" + e.getTextChannel().getName() + ") has been closed!" + reasonSend)
                                     .success()
-                                    .send(ticketMember);
+                                    .queue(ticketMember);
                         } else {
                             new TechEmbedBuilder("Closed Ticket")
-                                    .setText("The ticket (" + e.getTextChannel().getName() + ") from *member has left* has been closed!")
+                                    .text("The ticket (" + e.getTextChannel().getName() + ") from *member has left* has been closed!")
                                     .success()
                                     .queueAfter(channel, 15, TimeUnit.SECONDS);
 

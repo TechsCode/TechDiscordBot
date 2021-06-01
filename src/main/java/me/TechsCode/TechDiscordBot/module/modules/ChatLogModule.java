@@ -61,10 +61,10 @@ public class ChatLogModule extends Module {
         if(oldMessage == null) return;
 
         new TechEmbedBuilder("Message Edited")
-                .setText("Message Edited by " + e.getMember().getAsMention() + " in " + e.getMessage().getTextChannel().getAsMention() + ".")
-                .addField("From", oldMessage.getContentRaw(), false)
-                .addField("To", e.getMessage().getContentRaw(), false)
-                .send(CHATLOGS_CHANNEL.query().first());
+                .text("Message Edited by " + e.getMember().getAsMention() + " in " + e.getMessage().getTextChannel().getAsMention() + ".")
+                .field("From", oldMessage.getContentRaw(), false)
+                .field("To", e.getMessage().getContentRaw(), false)
+                .queue(CHATLOGS_CHANNEL.query().first());
 
         cachedMessages.put(e.getMessageId(), e.getMessage());
     }
@@ -78,10 +78,10 @@ public class ChatLogModule extends Module {
         if(message.getMember().getRoles().stream().anyMatch(r -> r.getName().equals("Staff"))) return;
 
         new TechEmbedBuilder("Message Deleted")
-                .setText("Message by " + message.getMember().getAsMention() + " was deleted.")
-                .addField("Text Channel", e.getChannel().getAsMention(), true)
-                .addField("Message", message.getContentRaw(), true)
-                .send(CHATLOGS_CHANNEL.query().first());
+                .text("Message by " + message.getMember().getAsMention() + " was deleted.")
+                .field("Text Channel", e.getChannel().getAsMention(), true)
+                .field("Message", message.getContentRaw(), true)
+                .queue(CHATLOGS_CHANNEL.query().first());
 
         cachedMessages.remove(e.getMessageId());
     }

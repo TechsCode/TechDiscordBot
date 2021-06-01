@@ -68,7 +68,7 @@ public class RemindMeCommand extends CommandModule {
         if(r == null) {
             e.replyEmbeds(
                 new TechEmbedBuilder("Reminder - Error")
-                    .setText("An error has occurred. Did you specify a time and a reason?\n\n**Here are some examples!**:\n`/remind 1 day Fix x thing.`\n`/remindme 30 hours I need help.`\n`/remindme 30 hours I need help. dm` (makes it a dm)")
+                    .text("An error has occurred. Did you specify a time and a reason?\n\n**Here are some examples!**:\n`/remind 1 day Fix x thing.`\n`/remindme 30 hours I need help.`\n`/remindme 30 hours I need help. dm` (makes it a dm)")
                     .error()
                     .build()
             ).queue();
@@ -78,7 +78,7 @@ public class RemindMeCommand extends CommandModule {
 
             e.replyEmbeds(
                 new TechEmbedBuilder("Reminder Set!")
-                    .setText("I will remind you in **" + r.getHumanTime() + "** (" + date + ") for **" + r.getReminder() + "**!")
+                    .text("I will remind you in **" + r.getHumanTime() + "** (" + date + ") for **" + r.getReminder() + "**!")
                     .success()
                     .build()
             ).queue();

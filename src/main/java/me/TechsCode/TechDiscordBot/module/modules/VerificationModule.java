@@ -67,8 +67,8 @@ public class VerificationModule extends Module {
         if (lastInstructions != null)
             lastInstructions.delete().complete();
 
-        TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("How It Works").setText("Type your SpigotMC Username in this Chat to verify.\nTo verify your MC-Market purchases please contact a staff member.\n\nVerification is not working? Also feel free to contact a staff member in <#311178000026566658>.");
-        lastInstructions = howItWorksMessage.send(channel);
+        TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("How It Works").text("Type your SpigotMC Username in this Chat to verify.\nTo verify your MC-Market purchases please contact a staff member.\n\nVerification is not working? Also feel free to contact a staff member in <#311178000026566658>.");
+        lastInstructions = howItWorksMessage.complete(channel);
     }
 
     @SubscribeEvent
@@ -83,7 +83,7 @@ public class VerificationModule extends Module {
         TechEmbedBuilder errorMessage = new TechEmbedBuilder("Error (" + e.getAuthor().getName() + ")").error();
 
         if (!TechDiscordBot.getBot().getStatus().isUsable()) {
-            errorMessage.setText("**The API is currently offline.**\nThere is no ETA of when it will be back up.\nYou will have to wait to verify until then.").error().sendTemporary(channel, 10);
+            errorMessage.text("**The API is currently offline.**\nThere is no ETA of when it will be back up.\nYou will have to wait to verify until then.").error().sendTemporary(channel, 10);
 
             String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + "Tried to verify but the the api is down!";
             alertMsg(msg);
@@ -92,28 +92,28 @@ public class VerificationModule extends Module {
         }
 
         if (verificationQueue.contains(e.getAuthor().getId())) {
-            errorMessage.setText("Please follow the instruction above!").sendTemporary(channel, 15);
+            errorMessage.text("Please follow the instruction above!").sendTemporary(channel, 15);
             return;
         }
 
         Verification existingVerification = TechDiscordBot.getStorage().retrieveVerificationWithDiscord(e.getAuthor().getId());
         if (existingVerification != null) {
-            errorMessage.setText("You've already linked to your SpigotMC Account and your roles will be updated automatically!").sendTemporary(channel, 15);
+            errorMessage.text("You've already linked to your SpigotMC Account and your roles will be updated automatically!").sendTemporary(channel, 15);
             return;
         }
 
         if (username.contains(" ")) {
-            errorMessage.setText("Please type in your SpigotMC Username!").sendTemporary(channel, 5);
+            errorMessage.text("Please type in your SpigotMC Username!").sendTemporary(channel, 5);
             return;
         }
 
         Purchase[] purchases = TechDiscordBot.getSpigotAPI().getPurchases().username(username).toArray(new Purchase[0]);
 
         if (purchases.length == 0) {
-            errorMessage.setText("User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " does not own any of Tech's Plugins!\n\n*It may take up to 20 minutes for the bot to recognize new purchases.*\n\n*This could also be an issue with the api. If you believe this is a mistake, please contact a staff member!*");
+            errorMessage.text("User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " does not own any of Tech's Plugins!\n\n*It may take up to 20 minutes for the bot to recognize new purchases.*\n\n*This could also be an issue with the api. If you believe this is a mistake, please contact a staff member!*");
 
             if (TechDiscordBot.getBot().getStatus() == APIStatus.NOT_FETCHING) {
-                errorMessage.setText(errorMessage.getText() + "\n\n**The API is currently not fetching new information, this could also be the issue.");
+                errorMessage.text(errorMessage.getText() + "\n\n**The API is currently not fetching new information, this could also be the issue.");
 
                 String msg = "User (" + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + ") tried to verify but the the api is down!";
                 alertMsg(msg);
@@ -137,15 +137,15 @@ public class VerificationModule extends Module {
             String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " Has tried to verify as https://www.spigotmc.org/members/" + username.toLowerCase() + "." + userId + " But this user is already verified!";
             alertMsg(msg);
 
-            errorMessage.setText("The SpigotMC User " + username + " is already linked with " + purchase.getUser().getUsername() + ". If you believe this is a mistake, please contact a Staff Member.").sendTemporary(channel, 10);
+            errorMessage.text("The SpigotMC User " + username + " is already linked with " + purchase.getUser().getUsername() + ". If you believe this is a mistake, please contact a Staff Member.").sendTemporary(channel, 10);
             return;
         }
 
         String code = UUID.randomUUID().toString().split("-")[0];
 
         TechEmbedBuilder instructions = new TechEmbedBuilder("Verify " + e.getAuthor().getName())
-                .setThumbnail(avatarUrl)
-                .setText("Now go to your SpigotMC Profile and post `TechVerification." + code + "`\n\nLink to your Profile:\nhttps://www.spigotmc.org/members/" + username.toLowerCase() + "." + userId + "\n\n**Please verify yourself within 3 Minutes!**");
+                .thumbnail(avatarUrl)
+                .text("Now go to your SpigotMC Profile and post `TechVerification." + code + "`\n\nLink to your Profile:\nhttps://www.spigotmc.org/members/" + username.toLowerCase() + "." + userId + "\n\n**Please verify yourself within 3 Minutes!**");
 
         Message m = e.getMessage().getChannel().sendMessage(instructions.build()).complete();
         verificationQueue.add(e.getAuthor().getId());
@@ -165,9 +165,9 @@ public class VerificationModule extends Module {
                             alertMsg(msg);
 
                             new TechEmbedBuilder(e.getAuthor().getName() + "'s Verification Completed")
-                                    .success().setText(e.getAuthor().getName() + " has successfully verified their SpigotMC Account!")
-                                    .setThumbnail(avatarUrl)
-                                    .send(this.channel);
+                                    .success().text(e.getAuthor().getName() + " has successfully verified their SpigotMC Account!")
+                                    .thumbnail(avatarUrl)
+                                    .queue(this.channel);
                         }
 
                         sendInstructions();
@@ -177,25 +177,26 @@ public class VerificationModule extends Module {
                             TechDiscordBot.getStorage().createVerification(userId, e.getAuthor().getId());
 
                             new TechEmbedBuilder("Verification Complete!")
-                                    .setText("You've been successfully verified!\n\nHere are your purchased plugins: " + Plugin.getMembersPluginsinEmojis(e.getMember()) + "\n\n*Your roles will be updated automatically from now on!*")
-                                    .setThumbnail(avatarUrl).send(e.getMember());
+                                    .text("You've been successfully verified!\n\nHere are your purchased plugins: " + Plugin.getMembersPluginsinEmojis(e.getMember()) + "\n\n*Your roles will be updated automatically from now on!*")
+                                    .thumbnail(avatarUrl)
+                                    .queue(e.getMember());
                         } else {
                             String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " Has tried to verify as https://www.spigotmc.org/members/" + finalUsername.toLowerCase() + "." + userId;
                             alertMsg(msg);
 
-                            m.editMessage(errorMessage.setText("Please verify your own account.").build()).complete().delete().queueAfter(10L, TimeUnit.SECONDS);
+                            m.editMessage(errorMessage.text("Please verify your own account.").build()).complete().delete().queueAfter(10L, TimeUnit.SECONDS);
                         }
 
                         new TechEmbedBuilder()
-                                .setText("You may now delete the message on your profile! [Go to Comment](https://www.spigotmc.org/profile-posts/" + all.getCommentId() + ")")
-                                .send(e.getMember());
+                                .text("You may now delete the message on your profile! [Go to Comment](https://www.spigotmc.org/profile-posts/" + all.getCommentId() + ")")
+                                .queue(e.getMember());
                         return;
                     }
                 }
             }
 
             verificationQueue.remove(e.getAuthor().getId());
-            m.editMessage(errorMessage.setText("**You took too long!**\n\nThe Verification process has timed out! Please try again.").build())
+            m.editMessage(errorMessage.text("**You took too long!**\n\nThe Verification process has timed out! Please try again.").build())
                     .complete()
                     .delete()
                     .queueAfter(10, TimeUnit.SECONDS);
@@ -204,11 +205,11 @@ public class VerificationModule extends Module {
 
     private void alertMsg(String msg) {
         new TechEmbedBuilder()
-                .setText(msg)
-                .send(getJDA().getUserById("619084935655063552"));
+                .text(msg)
+                .queue(getJDA().getUserById("619084935655063552"));
         new TechEmbedBuilder()
-                .setText(msg)
-                .send(getJDA().getUserById("319429800009662468"));
+                .text(msg)
+                .queue(getJDA().getUserById("319429800009662468"));
     }
 
     @Override

@@ -87,7 +87,7 @@ public class SupportWrongChannelModule extends Module {
 
         TextChannel verificationChannel = bot.getChannel("695493411117072425");
         TechEmbedBuilder teb = new TechEmbedBuilder()
-                .setText("Hello, " + member.getAsMention() + "! I've detected that you might be trying to get help in this channel! Please verify in " + verificationChannel.getAsMention() + " in order to get help, thanks!\n\n*If you are not trying to get help, you can delete this message by reacting to it!*")
+                .text("Hello, " + member.getAsMention() + "! I've detected that you might be trying to get help in this channel! Please verify in " + verificationChannel.getAsMention() + " in order to get help, thanks!\n\n*If you are not trying to get help, you can delete this message by reacting to it!*")
                 .error();
 
         Message message;
@@ -113,7 +113,7 @@ public class SupportWrongChannelModule extends Module {
                 sb.append(channels.toString());
                 sb.append("\nPlease use the corresponding plugin channel above to get support.\nThis channel is **not** a support channel.\n\n*If you are not trying to get help, you can delete this message by reacting to it!*");
 
-                message = new TechEmbedBuilder().setText(sb.toString()).error().reply(sentMessage);
+                message = new TechEmbedBuilder().text(sb.toString()).error().reply(sentMessage);
             } else {
                 message = teb.reply(sentMessage);
             }

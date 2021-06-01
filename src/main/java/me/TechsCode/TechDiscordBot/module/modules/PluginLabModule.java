@@ -131,8 +131,8 @@ public class PluginLabModule extends Module {
 
         if(release.getAsset() != null && release.getRelease() != null && release.getFile() != null) {
             new TechEmbedBuilder("Ready to Test: " + WordUtils.capitalize(release.getRelease().getName().replace(".jar", "")))
-                    .setText("```" + (release.getRelease().getBody().isEmpty() ? "No changes specified." : release.getRelease().getBody().replaceAll(" \\|\\| ", "\n")) + "```")
-                    .send(channel);
+                    .text("```" + (release.getRelease().getBody().isEmpty() ? "No changes specified." : release.getRelease().getBody().replaceAll(" \\|\\| ", "\n")) + "```")
+                    .queue(channel);
 
             channel.sendFile(release.getFile(), pluginName + ".jar").queueAfter(3, TimeUnit.SECONDS, (msg) -> {
                 msg.pin().queue();

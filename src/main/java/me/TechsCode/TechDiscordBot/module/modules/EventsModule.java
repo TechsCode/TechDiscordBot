@@ -24,8 +24,8 @@ public class EventsModule extends Module {
         ServerLogs.log(
                 new TechEmbedBuilder("Member Joined!")
                     .success()
-                    .setText("Welcome " + e.getMember().getAsMention() + " (" + e.getUser().getName() + "#" + e.getUser().getDiscriminator() + ", " + e.getUser().getId() + ")")
-                    .setThumbnail(e.getMember().getUser().getAvatarUrl())
+                    .text("Welcome " + e.getMember().getAsMention() + " (" + e.getUser().getName() + "#" + e.getUser().getDiscriminator() + ", " + e.getUser().getId() + ")")
+                    .thumbnail(e.getMember().getUser().getAvatarUrl())
         );
     }
 
@@ -34,8 +34,8 @@ public class EventsModule extends Module {
         ServerLogs.log(
                 new TechEmbedBuilder("Member Left!")
                         .error()
-                        .setText(e.getUser().getAsMention() + " (" + e.getUser().getName() + "#" + e.getUser().getDiscriminator() + ", " + e.getUser().getId() + ")")
-                        .setThumbnail(e.getUser().getAvatarUrl())
+                        .text(e.getUser().getAsMention() + " (" + e.getUser().getName() + "#" + e.getUser().getDiscriminator() + ", " + e.getUser().getId() + ")")
+                        .thumbnail(e.getUser().getAvatarUrl())
         );
     }
 
@@ -44,8 +44,8 @@ public class EventsModule extends Module {
         ServerLogs.log(
                 new TechEmbedBuilder("Member Banned!")
                         .error()
-                        .setText("Don't say goodbye to " + e.getUser().getAsMention() + " (" + e.getUser().getName() + "#" + e.getUser().getDiscriminator() + ", " + e.getUser().getId() + ")")
-                        .setThumbnail(e.getUser().getAvatarUrl())
+                        .text("Don't say goodbye to " + e.getUser().getAsMention() + " (" + e.getUser().getName() + "#" + e.getUser().getDiscriminator() + ", " + e.getUser().getId() + ")")
+                        .thumbnail(e.getUser().getAvatarUrl())
         );
     }
 

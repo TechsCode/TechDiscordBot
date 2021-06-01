@@ -73,17 +73,17 @@ public class RulesCommand extends CommandModule {
 
     public void showTOS() {
         new TechEmbedBuilder("Discord TOS & Guidelines")
-                .setText("This server is compliant with the Discord Terms of Service and Guidelines. " +
+                .text("This server is compliant with the Discord Terms of Service and Guidelines. " +
                         "We will ban if the content is not a complaint. Be sure to familiarize yourself with them here:\n" +
                         "- [Terms of Service](https://dis.gd/tos)\n- [Content Guidelines](https://dis.gd/guidelines)" +
                         "\n\nOur Staff reserve the right to request a member to confirm their age if they are perceived to be potentially under 13. Noncompliance will result in the assumption of being under 13.")
-                .send(RULES_CHANNEL.query().first());
+                .queue(RULES_CHANNEL.query().first());
     }
 
     public void showNote() {
         new TechEmbedBuilder()
-                .setText("**PLEASE NOTE**: Staff do reserve the right to punish for things not listed on this list under the staff's discretion. Please use common sense, and if you are unsure about anything, please ask.")
-                .send(RULES_CHANNEL.query().first());
+                .text("**PLEASE NOTE**: Staff do reserve the right to punish for things not listed on this list under the staff's discretion. Please use common sense, and if you are unsure about anything, please ask.")
+                .queue(RULES_CHANNEL.query().first());
     }
 
     public void showRules() {
@@ -109,8 +109,8 @@ public class RulesCommand extends CommandModule {
         i = 0;
         for(String s : embeds) {
             new TechEmbedBuilder(i == 0 ? "Rules" : null, false)
-                    .setText(s)
-                    .send(RULES_CHANNEL.query().first());
+                    .text(s)
+                    .queue(RULES_CHANNEL.query().first());
             i++;
         }
     }
@@ -129,8 +129,8 @@ public class RulesCommand extends CommandModule {
         }
 
         new TechEmbedBuilder("Roles")
-                .setText(sBuilder + "\n\nPlease don't ask to be Staff, it's annoying.")
-                .send(RULES_CHANNEL.query().first());
+                .text(sBuilder + "\n\nPlease don't ask to be Staff, it's annoying.")
+                .queue(RULES_CHANNEL.query().first());
     }
 
     public enum Rule {

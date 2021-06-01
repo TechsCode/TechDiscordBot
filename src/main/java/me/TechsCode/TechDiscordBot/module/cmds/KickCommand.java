@@ -62,7 +62,7 @@ public class KickCommand extends CommandModule {
         e.replyEmbeds(
             new TechEmbedBuilder("Kicked " + member.getUser().getName() + "#" + member.getUser().getDiscriminator())
                 .success()
-                .setText("Successfully kicked " + member.getAsMention() + (reason == null ? "!" : " for `" + reason + "`!"))
+                .text("Successfully kicked " + member.getAsMention() + (reason == null ? "!" : " for `" + reason + "`!"))
                 .build()
         ).queue();
     }

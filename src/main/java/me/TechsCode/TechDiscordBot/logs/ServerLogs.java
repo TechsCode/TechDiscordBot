@@ -32,7 +32,7 @@ public class ServerLogs {
 
     private static boolean sendChannel(TechEmbedBuilder embed) {
         try {
-            embed.send(Objects.requireNonNull(TechDiscordBot.getJDA().getTextChannelById(CHANNEL_ID)));
+            embed.queue(Objects.requireNonNull(TechDiscordBot.getJDA().getTextChannelById(CHANNEL_ID)));
 
             return true;
         } catch (Exception ex) {
@@ -43,9 +43,9 @@ public class ServerLogs {
     private static boolean sendChannel(String title, String msg, Color color) {
         try {
             new TechEmbedBuilder(title)
-                .setText(msg)
-                .setColor(color)
-                .send(Objects.requireNonNull(TechDiscordBot.getJDA().getTextChannelById(CHANNEL_ID)));
+                .text(msg)
+                .color(color)
+                .queue(Objects.requireNonNull(TechDiscordBot.getJDA().getTextChannelById(CHANNEL_ID)));
 
             return true;
         } catch (Exception ex) {

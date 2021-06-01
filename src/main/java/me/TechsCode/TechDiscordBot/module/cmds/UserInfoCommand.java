@@ -54,12 +54,12 @@ public class UserInfoCommand extends CommandModule {
         User user = member.getUser();
 
         e.replyEmbeds(new TechEmbedBuilder(user.getName() + "#" + user.getDiscriminator())
-                .addField("Status", member.getOnlineStatus().getKey().substring(0, 1).toUpperCase() + member.getOnlineStatus().getKey().substring(1), true)
-                .addField("Created At", user.getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                .addField("Joined At", member.getTimeJoined().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                .addField("Flags", user.getFlags().clone().stream().map(User.UserFlag::getName).collect(Collectors.joining(", ")) + ".", false)
-                .addField("Roles", member.getRoles().stream().map(Role::getAsMention).collect(Collectors.joining(", ")) + ".", false)
-                .setThumbnail(user.getAvatarUrl())
+                .field("Status", member.getOnlineStatus().getKey().substring(0, 1).toUpperCase() + member.getOnlineStatus().getKey().substring(1), true)
+                .field("Created At", user.getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
+                .field("Joined At", member.getTimeJoined().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
+                .field("Flags", user.getFlags().clone().stream().map(User.UserFlag::getName).collect(Collectors.joining(", ")) + ".", false)
+                .field("Roles", member.getRoles().stream().map(Role::getAsMention).collect(Collectors.joining(", ")) + ".", false)
+                .thumbnail(user.getAvatarUrl())
                 .build()
         ).queue();
     }

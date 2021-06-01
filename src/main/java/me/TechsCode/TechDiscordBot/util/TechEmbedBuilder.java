@@ -15,61 +15,144 @@ import java.util.function.Consumer;
 public class TechEmbedBuilder extends EmbedBuilder {
 
     public TechEmbedBuilder() {
-        setColor(new Color(81, 153, 226));
+        color(new Color(81, 153, 226));
     }
 
     public TechEmbedBuilder(String title) {
-        if(title != null) setAuthor(title, "https://techscode.com", "https://i.imgur.com/nnegGEV.png");
-        setColor(new Color(81, 153, 226));
-        setFooter("Developed by Tech & Team");
+        if(title != null)
+            setAuthor(title, "https://techscode.com", "https://i.imgur.com/nnegGEV.png");
+
+        color(new Color(81, 153, 226));
+        footer("Developed by Tech & Team");
     }
 
     public TechEmbedBuilder(String title, boolean footer) {
-        if(title != null) setAuthor(title, "https://techscode.com", "https://i.imgur.com/nnegGEV.png");
-        setColor(new Color(81, 153, 226));
-        if(footer) setFooter("Developed by Tech & Team");
+        if(title != null)
+            setAuthor(title, "https://techscode.com", "https://i.imgur.com/nnegGEV.png");
+        if(footer)
+            footer("Developed by Tech & Team");
+
+        color(new Color(81, 153, 226));
     }
 
     public TechEmbedBuilder(boolean footer) {
-        setColor(new Color(81, 153, 226));
-        if(footer) setFooter("Developed by Tech & Team");
+        if(footer)
+            footer("Developed by Tech & Team");
+
+        color(new Color(81, 153, 226));
     }
 
-    public TechEmbedBuilder setFooter(String text) {
+    public TechEmbedBuilder footer(String text) {
         setFooter("Tech's Plugin Support • " + text, "https://i.imgur.com/nzfiUTy.png");
+
         return this;
     }
 
     public TechEmbedBuilder error() {
-        setColor(new Color(178,34,34));
+        color(new Color(178,34,34));
+
         return this;
     }
 
     public TechEmbedBuilder success() {
-        setColor(new Color(50, 205, 50));
+        color(new Color(50, 205, 50));
+
         return this;
     }
 
-    public TechEmbedBuilder setText(String text) {
+    public TechEmbedBuilder text(String text) {
         setDescription(text);
+
         return this;
     }
 
-    public TechEmbedBuilder setText(String... text) {
+    public TechEmbedBuilder text(String... text) {
         setDescription(String.join("\n", text));
+
         return this;
     }
 
-    public Message send(TextChannel textChannel) {
+    public TechEmbedBuilder thumbnail(String url) {
+        super.setThumbnail(url);
+
+        return this;
+    }
+
+    public TechEmbedBuilder color(Color color) {
+        if(color == null)
+            return this;
+
+        super.setColor(color);
+        return this;
+    }
+
+    public TechEmbedBuilder image(String url) {
+        super.setImage(url);
+
+        return this;
+    }
+
+    public TechEmbedBuilder field(String name, String value, boolean inline) {
+        super.addField(name, value, inline);
+
+        return this;
+    }
+
+    public TechEmbedBuilder blankField(boolean inline) {
+        super.addBlankField(inline);
+
+        return this;
+    }
+
+    public String getText() {
+        return super.getDescriptionBuilder().toString();
+    }
+
+    @Deprecated
+    // Try not to use this as it sleeps the bot basically.
+    public Message complete(TextChannel textChannel) {
         return textChannel.sendMessage(build()).complete();
     }
 
-    public Message sendAfter(TextChannel textChannel, int delay, TimeUnit unit) {
-        return textChannel.sendMessage(build()).completeAfter(delay, unit);
+    @Deprecated
+    // Try not to use this as it sleeps the bot basically.
+    public Message complete(Member member) {
+        return complete(member.getUser());
+    }
+
+    public Message complete(User user) {
+        try {
+            return user.openPrivateChannel().complete().sendMessage(build()).complete();
+        } catch (ErrorResponseException ignore) { }
+        return null;
+    }
+
+    public void queue(TextChannel textChannel) {
+        textChannel.sendMessage(build()).queue();
+    }
+
+    public void queue(Member member) {
+        queue(member.getUser());
+    }
+
+    public void queue(User user) {
+        try {
+            user.openPrivateChannel().queue(c -> c.sendMessage(build()).queue());
+        } catch (ErrorResponseException ignore) { }
+    }
+
+    public void queue(TextChannel textChannel, Consumer<Message> consumer) {
+        textChannel.sendMessage(build()).queue(consumer);
     }
 
     public void queueAfter(TextChannel textChannel, int delay, TimeUnit unit) {
         textChannel.sendMessage(build()).queueAfter(delay, unit);
+    }
+
+    public void queueAfter(User user, int delay, TimeUnit time) {
+        try {
+            user.openPrivateChannel().complete().sendMessage(build()).queueAfter(delay, time);
+        } catch (ErrorResponseException ignore) { }
     }
 
     public Message reply(Message message) {
@@ -85,30 +168,15 @@ public class TechEmbedBuilder extends EmbedBuilder {
     }
 
     public void replyTemporary(Message message, boolean mention, int duration, TimeUnit timeUnit) {
-        Message msg = message.reply(build()).mentionRepliedUser(mention).complete();
-        msg.delete().submitAfter(duration, timeUnit);
-    }
-
-    public void queueAfter(User user, int delay, TimeUnit time) {
-        try {
-            user.openPrivateChannel().complete().sendMessage(build()).queueAfter(delay, time);
-        } catch (ErrorResponseException ignore) {}
-    }
-
-    public Message send(Member member) {
-        return send(member.getUser());
-    }
-
-    public Message send(User user) {
-        try {
-            return user.openPrivateChannel().complete().sendMessage(build()).complete();
-        } catch (ErrorResponseException ignore) {}
-        return null;
+        message.reply(build()).mentionRepliedUser(mention).queue((msg -> msg.delete().submitAfter(duration, timeUnit)));
     }
 
     public void sendTemporary(TextChannel textChannel, int duration, TimeUnit timeUnit) {
-        Message message = send(textChannel);
-        message.delete().submitAfter(duration, timeUnit);
+        queue(textChannel, (msg) -> msg.delete().submitAfter(duration, timeUnit));
+    }
+
+    public void sendTemporary(TextChannel textChannel, int duration) {
+        sendTemporary(textChannel, duration, TimeUnit.SECONDS);
     }
 
     public ScheduledFuture<?> sendAfter(TextChannel textChannel, int duration, Consumer<Message> onSuccess) {
@@ -117,45 +185,5 @@ public class TechEmbedBuilder extends EmbedBuilder {
 
     public ScheduledFuture<?> sendAfter(TextChannel textChannel, int duration, TimeUnit timeUnit, Consumer<Message> onSuccess) {
         return textChannel.sendMessage(build()).queueAfter(duration, timeUnit, onSuccess);
-    }
-
-    public void sendTemporary(TextChannel textChannel, int duration) {
-        sendTemporary(textChannel, duration, TimeUnit.SECONDS);
-    }
-
-    @Override
-    public TechEmbedBuilder setThumbnail(String url) {
-        super.setThumbnail(url);
-        return this;
-    }
-
-    @Override
-    public TechEmbedBuilder setColor(Color color) {
-        if(color == null) return this;
-
-        super.setColor(color);
-        return this;
-    }
-
-    @Override
-    public TechEmbedBuilder setImage(String url) {
-        super.setImage(url);
-        return this;
-    }
-
-    @Override
-    public TechEmbedBuilder addField(String name, String value, boolean inline) {
-        super.addField(name, value, inline);
-        return this;
-    }
-
-    @Override
-    public TechEmbedBuilder addBlankField(boolean inline) {
-        super.addBlankField(inline);
-        return this;
-    }
-
-    public String getText() {
-        return super.getDescriptionBuilder().toString();
     }
 }

@@ -62,7 +62,7 @@ public class MemberCheckCommand extends CommandModule {
             e.replyEmbeds(
                 new TechEmbedBuilder("API Not Usable")
                     .error()
-                    .setText("The API does not contain any information! I cannot check a user if it's offline!")
+                    .text("The API does not contain any information! I cannot check a user if it's offline!")
                     .build()
             ).queue();
             return;
@@ -75,7 +75,7 @@ public class MemberCheckCommand extends CommandModule {
         if(verification == null) {
             e.replyEmbeds(
                 new TechEmbedBuilder((spigotId != null ? spigotId : member.getEffectiveName()) + " Is Not Verified!")
-                    .setText((spigotId != null ? spigotId : member.getAsMention()) + " has not verified themselves!")
+                    .text((spigotId != null ? spigotId : member.getAsMention()) + " has not verified themselves!")
                     .error()
                     .build()
             ).queue();
@@ -93,7 +93,7 @@ public class MemberCheckCommand extends CommandModule {
         if(!canView) {
             e.replyEmbeds(
                 new TechEmbedBuilder("Not Enough Perms")
-                    .setText("You have to either be Staff or be viewing your self to execute this command!")
+                    .text("You have to either be Staff or be viewing your self to execute this command!")
                     .error()
                     .build()
             ).setEphemeral(true).queue();
@@ -104,7 +104,7 @@ public class MemberCheckCommand extends CommandModule {
             e.replyEmbeds(
                 new TechEmbedBuilder((spigotId != null ? spigotId : member.getEffectiveName()) + "'s Purchases")
                     .error()
-                    .setText((member != null ? spigotId : member.getAsMention()) + " has not bought of any Tech's Resources!")
+                    .text((member != null ? spigotId : member.getAsMention()) + " has not bought of any Tech's Resources!")
                     .build()
             ).queue();
             return;
@@ -125,12 +125,12 @@ public class MemberCheckCommand extends CommandModule {
         e.replyEmbeds(
             new TechEmbedBuilder(member.getEffectiveName())
                 .success()
-                .setThumbnail(purchase.getUser().getAvatar())
-                .setText("Showing " + member.getAsMention() + "'s Spigot Information.")
-                .addField("Username / ID", "[" + purchase.getUser().getUsername() + "." + purchase.getUser().getUserId() + "](https://www.spigotmc.org/members/" + purchase.getUser().getUsername().toLowerCase() + "." + purchase.getUser().getUserId() + ")", true)
-                .addField("Purchases Amount", hasBoughtAll ? " **All** " + purchases.size() + " plugins purchased!" : purchases.size() + "**/**" + TechDiscordBot.getSpigotAPI().getResources().premium().size() + " purchased.", true)
-                .addField("Last Purchase", Plugin.fromId(purchase.getResource().getId()).getEmoji().getAsMention() + " " + (date != null ? date + ".": "Unknown\n*or cannot calculate*."), true)
-                .addField("Purchases", purchasesString.substring(0, purchasesString.length() - 3) + ".", false)
+                .thumbnail(purchase.getUser().getAvatar())
+                .text("Showing " + member.getAsMention() + "'s Spigot Information.")
+                .field("Username / ID", "[" + purchase.getUser().getUsername() + "." + purchase.getUser().getUserId() + "](https://www.spigotmc.org/members/" + purchase.getUser().getUsername().toLowerCase() + "." + purchase.getUser().getUserId() + ")", true)
+                .field("Purchases Amount", hasBoughtAll ? " **All** " + purchases.size() + " plugins purchased!" : purchases.size() + "**/**" + TechDiscordBot.getSpigotAPI().getResources().premium().size() + " purchased.", true)
+                .field("Last Purchase", Plugin.fromId(purchase.getResource().getId()).getEmoji().getAsMention() + " " + (date != null ? date + ".": "Unknown\n*or cannot calculate*."), true)
+                .field("Purchases", purchasesString.substring(0, purchasesString.length() - 3) + ".", false)
                 .build()
         ).queue();
     }

@@ -59,7 +59,7 @@ public class StopCommand extends CommandModule {
 
         if(confirm.equals("cOnFirM")) {
             e.replyEmbeds(new TechEmbedBuilder("Stop")
-                    .setText("The bot will now stop!")
+                    .text("The bot will now stop!")
                     .build()
             ).setEphemeral(true).queue();
 
@@ -67,7 +67,7 @@ public class StopCommand extends CommandModule {
             System.exit(0);
         } else {
             e.replyEmbeds(new TechEmbedBuilder("Stop")
-                    .setText("Hello, " + m.getAsMention() + "! I've detected that you're trying to stop me!\n\nI do not like that, especially that if I do stop, I will not be restarted!\nIf you **REALLY** wish to stop me, type the following command:\n`!stop cOnFirM`")
+                    .text("Hello, " + m.getAsMention() + "! I've detected that you're trying to stop me!\n\nI do not like that, especially that if I do stop, I will not be restarted!\nIf you **REALLY** wish to stop me, type the following command:\n`!stop cOnFirM`")
                     .build()
             ).setEphemeral(true).queue();
         }

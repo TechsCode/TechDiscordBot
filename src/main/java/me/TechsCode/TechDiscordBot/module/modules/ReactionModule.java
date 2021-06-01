@@ -32,8 +32,8 @@ public class ReactionModule extends Module {
 
     public void sendMessage() {
         this.reactionMessage = new TechEmbedBuilder("Reaction Roles")
-                .setText(getUpdateEmote().getAsMention() + " **For Plugin Updates**\nWhen there is a new update, you will be notified.\n\n" + getAnnouncementEmote().getAsMention() + " **For Announcements**\nWhen there is an announcement, you will receive a ping.\n\n" + getGiveawayEmote().getAsMention() + " **For Giveaways**\nWhen there is a giveaway, you will be notified.")
-                .send(ROLES_CHANNEL);
+                .text(getUpdateEmote().getAsMention() + " **For Plugin Updates**\nWhen there is a new update, you will be notified.\n\n" + getAnnouncementEmote().getAsMention() + " **For Announcements**\nWhen there is an announcement, you will receive a ping.\n\n" + getGiveawayEmote().getAsMention() + " **For Giveaways**\nWhen there is a giveaway, you will be notified.")
+                .complete(ROLES_CHANNEL);
     }
 
     public void resetReactions() {
@@ -66,13 +66,15 @@ public class ReactionModule extends Module {
                 TechDiscordBot.log("Reaction Role » Removed " + e.getReactionEmote().getName() + " (" + e.getMember().getEffectiveName() + ")");
 
                 new TechEmbedBuilder("Reaction Roles")
-                        .setText("The {role} Role has been removed, you will not be notified whenever there is a {role}.\nSimply react to add the {role} role again, and it will be added.".replace("{role}", e.getReactionEmote().getName())).send(e.getMember());
+                    .text("The {role} Role has been removed, you will not be notified whenever there is a {role}.\nSimply react to add the {role} role again, and it will be added.".replace("{role}", e.getReactionEmote().getName()))
+                    .queue(e.getMember());
             } else {
                 e.getGuild().addRoleToMember(e.getMember(), giveRole(e.getReactionEmote().getName())).queue();
                 TechDiscordBot.log("Reaction Role » Added " + e.getReactionEmote().getName() + " (" + e.getMember().getEffectiveName() + ")");
 
                 new TechEmbedBuilder("Reaction Roles")
-                        .setText("The {role} Role has been added, you will now be notified whenever there are {role}.\nSimply react to remove the {role} role again, and it will be removed.".replace("{role}", e.getReactionEmote().getName())).send(e.getMember());
+                    .text("The {role} Role has been added, you will now be notified whenever there are {role}.\nSimply react to remove the {role} role again, and it will be removed.".replace("{role}", e.getReactionEmote().getName()))
+                    .queue(e.getMember());
             }
 
             e.getReaction().removeReaction(e.getUser()).complete();

@@ -76,7 +76,7 @@ public class UnverifyCommand extends CommandModule {
             e.replyEmbeds(
                 new TechEmbedBuilder("Unverify Command - Error")
                     .error()
-                    .setText("The spigot id '" + spigotId + "' is not verified!")
+                    .text("The spigot id '" + spigotId + "' is not verified!")
                     .build()
             ).setEphemeral(true).queue();
         } else {
@@ -85,7 +85,7 @@ public class UnverifyCommand extends CommandModule {
             e.replyEmbeds(
                 new TechEmbedBuilder("Unverify Command - Success")
                     .success()
-                    .setText("Successfully removed " + (isUserOnline ? TechDiscordBot.getGuild().getMemberById(verification.getDiscordId()).getAsMention() : verification.getDiscordId()) + "'s verification!")
+                    .text("Successfully removed " + (isUserOnline ? TechDiscordBot.getGuild().getMemberById(verification.getDiscordId()).getAsMention() : verification.getDiscordId()) + "'s verification!")
                     .build()
             ).queue();
             verification.delete();
@@ -99,7 +99,7 @@ public class UnverifyCommand extends CommandModule {
             e.replyEmbeds(
                 new TechEmbedBuilder("Unverify Command - Error")
                     .error()
-                    .setText(member + " is not verified!")
+                    .text(member + " is not verified!")
                     .build()
             ).setEphemeral(true).queue();
         } else {
@@ -108,7 +108,7 @@ public class UnverifyCommand extends CommandModule {
             e.replyEmbeds(
                 new TechEmbedBuilder("Unverify Command - Success")
                     .success()
-                    .setText("Successfully removed " + member + "'s verification!")
+                    .text("Successfully removed " + member + "'s verification!")
                     .build()
             ).queue();
         }

@@ -76,13 +76,13 @@ public class WikiCommand extends CommandModule {
         if(Plugin.isPluginChannel(channel)) {
             Plugin plugin = Plugin.byChannel(channel);
             if(!plugin.hasWiki()) {
-                new TechEmbedBuilder("Wikis").error().setText(plugin.getEmoji().getAsMention() + " " + plugin.getRoleName() + " unfortunately does not have a wiki!").sendTemporary(channel, 10);
+                new TechEmbedBuilder("Wikis").error().text(plugin.getEmoji().getAsMention() + " " + plugin.getRoleName() + " unfortunately does not have a wiki!").sendTemporary(channel, 10);
                 return;
             }
 
             e.replyEmbeds(
                     new TechEmbedBuilder("Wikis")
-                        .setText("*Showing the wiki of the support channel you're in.*\n\n" + plugin.getEmoji().getAsMention() + " " + plugin.getWiki() + "\n\nFor more info please execute the command `wiki help`.")
+                        .text("*Showing the wiki of the support channel you're in.*\n\n" + plugin.getEmoji().getAsMention() + " " + plugin.getWiki() + "\n\nFor more info please execute the command `wiki help`.")
                         .build()
             ).queue();
         }
@@ -107,7 +107,7 @@ public class WikiCommand extends CommandModule {
 
         e.replyEmbeds(
             new TechEmbedBuilder("Wikis")
-                .setText(sb.substring(0, sb.toString().length() - 1))
+                .text(sb.substring(0, sb.toString().length() - 1))
                 .build()
         ).queue();
     }
@@ -121,7 +121,7 @@ public class WikiCommand extends CommandModule {
 
         e.replyEmbeds(
             new TechEmbedBuilder("Wikis")
-                .setText(sb.substring(0, sb.toString().length() - 1))
+                .text(sb.substring(0, sb.toString().length() - 1))
                 .build()
         ).queue();
     }

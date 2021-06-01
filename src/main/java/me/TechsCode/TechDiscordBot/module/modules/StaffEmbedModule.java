@@ -48,30 +48,30 @@ public class StaffEmbedModule extends Module {
             String[] arguments = text.split("\\^");
 
             if(arguments.length != 2 && arguments.length != 3) {
-                new TechEmbedBuilder("Invalid Arguments").setText("Usage: ^ Title ^ Message ^ (Optional) Thumbnail ^").error().sendTemporary(e.getChannel(), 5);
+                new TechEmbedBuilder("Invalid Arguments").text("Usage: ^ Title ^ Message ^ (Optional) Thumbnail ^").error().sendTemporary(e.getChannel(), 5);
                 return;
             }
 
             if(arguments.length == 3) {
                 if (arguments[2].trim().startsWith("#")) {
                     new TechEmbedBuilder(arguments[0])
-                            .setFooter("Posted by " + e.getAuthor().getName())
-                            .setText(arguments[1])
-                            .setColor(Color.decode(arguments[2].trim()))
-                            .send(e.getChannel());
+                            .footer("Posted by " + e.getAuthor().getName())
+                            .text(arguments[1])
+                            .color(Color.decode(arguments[2].trim()))
+                            .queue(e.getChannel());
                 } else {
                     new TechEmbedBuilder(arguments[0])
-                            .setFooter("Posted by " + e.getAuthor().getName())
-                            .setText(arguments[1])
-                            .setThumbnail(arguments[2])
-                            .send(e.getChannel());
+                            .footer("Posted by " + e.getAuthor().getName())
+                            .text(arguments[1])
+                            .thumbnail(arguments[2])
+                            .queue(e.getChannel());
                 }
 
             } else {
                 new TechEmbedBuilder(arguments[0])
-                        .setFooter("Posted by " + e.getAuthor().getName())
-                        .setText(arguments[1])
-                        .send(e.getChannel());
+                        .footer("Posted by " + e.getAuthor().getName())
+                        .text(arguments[1])
+                        .queue(e.getChannel());
             }
         }
     }

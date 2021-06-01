@@ -68,7 +68,7 @@ public class BanCommand extends CommandModule {
         e.replyEmbeds(
             new TechEmbedBuilder("Banned " + member.getUser().getName() + "#" + member.getUser().getDiscriminator())
                 .success()
-                .setText("Successfully banned " + member.getAsMention() + (reason == null ? "!" : " for `" + reason + "`!"))
+                .text("Successfully banned " + member.getAsMention() + (reason == null ? "!" : " for `" + reason + "`!"))
                 .build()
         ).queue();
     }

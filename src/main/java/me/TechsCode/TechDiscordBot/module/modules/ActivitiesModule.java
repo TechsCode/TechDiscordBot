@@ -82,29 +82,29 @@ public class ActivitiesModule extends Module {
         String usernameOrAt = (isMemberInDiscord ? TechDiscordBot.getBot().getMember(verification.getDiscordId()).getAsMention() : review.getUser().getUsername());
 
         new TechEmbedBuilder("Review from " + review.getUser().getUsername())
-                .setColor(plugin.getColor())
-                .setThumbnail(review.getResource().getIcon())
-                .addField("Rating", ratingSB.toString(), true)
-                .setText("```" + review.getText() + "```\nThanks to " + usernameOrAt + " for making this review!")
-                .send(ACTIVITIES_CHANNEL.query().first());
+                .color(plugin.getColor())
+                .thumbnail(review.getResource().getIcon())
+                .field("Rating", ratingSB.toString(), true)
+                .text("```" + review.getText() + "```\nThanks to " + usernameOrAt + " for making this review!")
+                .queue(ACTIVITIES_CHANNEL.query().first());
         announcedIds.add(review.getResource().getId() + "-" + review.getUser().getUserId());
     }
 
     public void printUpdate(Plugin plugin, Update update) {
         TechEmbedBuilder ceb = new TechEmbedBuilder("Update for " + update.getResource().getName())
-                .setColor(plugin.getColor())
-                .setThumbnail(plugin.getResourceLogo());
-        ceb.addField("Version", update.getResource().getVersion(), true);
-        ceb.addField("Download", "[Click Here](https://www.spigotmc.org/resources/" + update.getResourceId() + "/update?update=" + update.getId() + ")", true);
-        ceb.setText(update.getDescription().trim().length() > 0 ? update.getTitle() + "```" + update.getDescription() + "```" : update.getTitle());
+                .color(plugin.getColor())
+                .thumbnail(plugin.getResourceLogo());
+        ceb.field("Version", update.getResource().getVersion(), true);
+        ceb.field("Download", "[Click Here](https://www.spigotmc.org/resources/" + update.getResourceId() + "/update?update=" + update.getId() + ")", true);
+        ceb.text(update.getDescription().trim().length() > 0 ? update.getTitle() + "```" + update.getDescription() + "```" : update.getTitle());
 
         plugin.getChannel().ifPresent(channel -> {
-            new TechEmbedBuilder().setText("There's a new update for " + plugin.getEmoji().getAsMention() + " "  + plugin.getRoleName() + "! Make sure to download it [here](https://www.spigotmc.org/resources/" + update.getResourceId() + "/update?update=" + update.getId() + ")!" +
-                    "\n\nCheck out " + ACTIVITIES_CHANNEL.query().first().getAsMention() + " for more info!").send(channel);
+            new TechEmbedBuilder().text("There's a new update for " + plugin.getEmoji().getAsMention() + " "  + plugin.getRoleName() + "! Make sure to download it [here](https://www.spigotmc.org/resources/" + update.getResourceId() + "/update?update=" + update.getId() + ")!" +
+                    "\n\nCheck out " + ACTIVITIES_CHANNEL.query().first().getAsMention() + " for more info!").queue(channel);
         });
 
-        if(update.getImages() != null && update.getImages().length > 0 && !update.getImages()[0].isEmpty()) ceb.setImage(update.getImages()[0]);
-        ceb.send(ACTIVITIES_CHANNEL.query().first());
+        if(update.getImages() != null && update.getImages().length > 0 && !update.getImages()[0].isEmpty()) ceb.image(update.getImages()[0]);
+        ceb.queue(ACTIVITIES_CHANNEL.query().first());
         announcedIds.add((update.getId()));
     }
 }
