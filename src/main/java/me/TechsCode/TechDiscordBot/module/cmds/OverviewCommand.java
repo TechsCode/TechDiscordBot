@@ -88,13 +88,16 @@ public class OverviewCommand extends CommandModule {
 
     @SubscribeEvent
     public void onReactAdd(GuildMessageReactionAddEvent e) {
-        if(e.getChannel() != OVERVIEW_CHANNEL.query().first()) return;
-        if(e.getUser().isBot()) return;
+        if(e.getChannel() != OVERVIEW_CHANNEL.query().first() || e.getUser().isBot())
+            return;
 
         Emote emote = bot.getEmotes("TechSupport").first();
+
         if(e.getReaction().getReactionEmote().isEmote() && e.getReaction().getReactionEmote().getEmote() == emote) {
-            if(e.getMember().getRoles().stream().anyMatch(r -> r.getName().equals("Member"))) return;
-            e.getGuild().addRoleToMember(e.getMember(), bot.getRoles("Member").first()).complete();
+            if(e.getMember().getRoles().stream().anyMatch(r -> r.getName().equals("Member")))
+                return;
+
+            e.getGuild().addRoleToMember(e.getMember(), bot.getRoles("Member").first()).queue();
         }
     }
 

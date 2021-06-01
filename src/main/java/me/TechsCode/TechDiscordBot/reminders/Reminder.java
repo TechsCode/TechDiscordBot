@@ -58,7 +58,7 @@ public class Reminder {
 
             if(type == ReminderType.DMs) {
                 try {
-                    user.openPrivateChannel().complete().sendMessage("**Reminder**: " + reminder).queue();
+                    user.openPrivateChannel().queue(msg -> msg.sendMessage("**Reminder**: " + reminder).queue());
                 } catch(Exception ex) {
                     if(channel == null)
                         return;

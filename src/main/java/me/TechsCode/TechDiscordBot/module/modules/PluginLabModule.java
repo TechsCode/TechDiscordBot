@@ -125,9 +125,8 @@ public class PluginLabModule extends Module {
 
     public void uploadFile(TextChannel channel, GithubRelease release, String pluginName) {
         try {
-            List<Message> msgs = channel.getHistory().retrieveFuture(100).complete().stream().filter(msg -> msg.getAuthor().isBot() && msg.isPinned()).collect(Collectors.toList());
-            msgs.forEach(msg -> msg.unpin().queue());
-        } catch (IllegalStateException ignored){}
+            channel.getHistory().retrieveFuture(100).queue(msgs -> msgs.stream().filter(msg -> msg.getAuthor().isBot() && msg.isPinned()).forEach(msg -> msg.unpin().queue()));
+        } catch (IllegalStateException ignored) { }
 
         if(release.getAsset() != null && release.getRelease() != null && release.getFile() != null) {
             new TechEmbedBuilder("Ready to Test: " + WordUtils.capitalize(release.getRelease().getName().replace(".jar", "")))

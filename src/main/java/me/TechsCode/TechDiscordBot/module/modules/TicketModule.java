@@ -116,11 +116,7 @@ public class TicketModule extends Module {
 
         lastInstructions = priority.complete(channel);
         if(lastInstructions != null)
-            lastInstructions.addReaction(lowPriority).complete();
-        if(lastInstructions != null)
-            lastInstructions.addReaction(mediumPriority).complete();
-        if(lastInstructions != null)
-            lastInstructions.addReaction(highPriority).complete();
+            lastInstructions.addReaction(lowPriority).queue(a -> lastInstructions.addReaction(mediumPriority).queue(a2 -> lastInstructions.addReaction(highPriority).queue()));
     }
 
     public void sendPluginInstructions(Member member) {
@@ -136,26 +132,35 @@ public class TicketModule extends Module {
                 .text("Secondly, please select which plugin the issue corresponds with below:", "", sb, "", ERROR_EMOTE.query().first().getAsMention() + " - Cancel", "");
 
         lastInstructions = plugin.complete(channel);
-        for(Emote emote : PLUGIN_EMOTES.query().all()) if(lastInstructions != null) lastInstructions.addReaction(emote).complete();
-        if(lastInstructions != null) lastInstructions.addReaction(ERROR_EMOTE.query().first()).complete();
+
+        PLUGIN_EMOTES.query().all().stream().filter(emote -> lastInstructions != null).forEach(emote -> lastInstructions.addReaction(emote).complete());
+        if(lastInstructions != null)
+            lastInstructions.addReaction(ERROR_EMOTE.query().first()).complete();
     }
 
     public void sendIssueInstructions(Member member) {
-        if(selectionStep != 2) return;
+        if(selectionStep != 2)
+            return;
+
         selectionStep = 3;
         isSelection = true;
 
-        if(lastInstructions != null) lastInstructions.delete().queue();
+        if(lastInstructions != null)
+            lastInstructions.delete().queue();
+
         TechEmbedBuilder issue = new TechEmbedBuilder("Ticket Creation (" + member.getEffectiveName() + ")")
                 .text("Last but not least, please tell us what you're having an issue with!", "", ERROR_EMOTE.query().first().getAsMention() + " - Cancel", "", "*Try not to make the message over 1024 chars long.*", "*We'll cut it off due to Discord's Limitations!*");
 
         lastInstructions = issue.complete(channel);
-        if(lastInstructions != null) lastInstructions.addReaction(ERROR_EMOTE.query().first()).complete();
+
+        if(lastInstructions != null)
+            lastInstructions.addReaction(ERROR_EMOTE.query().first()).queue();
     }
 
     public void createTicket(Member member, TicketPriority priority, Plugin plugin, String issue) {
         String name = "ticket-" + member.getEffectiveName().replaceAll("[^a-zA-Z\\d\\s_-]", "").toLowerCase();
-        if(name.equals("ticket-")) name = "ticket-" + member.getUser().getId(); //Make sure the ticket has an actual name. In case the regex result is empty.
+        if(name.equals("ticket-"))
+            name = "ticket-" + member.getUser().getId(); //Make sure the ticket has an actual name. In case the regex result is empty.
 
         TextChannel ticketChannel = TechDiscordBot.getGuild().createTextChannel(name)
                 .setParent(getCategoryByTicketPriority(priority))

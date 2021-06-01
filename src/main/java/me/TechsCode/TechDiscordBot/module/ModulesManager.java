@@ -72,13 +72,13 @@ public class ModulesManager {
                             new OptionData(OptionType.STRING, "reason", "Reason to close the ticket. (Optional)")
                         )
                 )
-        ).complete();
+        ).queue(cmds -> {
+            cmds.forEach(command -> {
+                CommandPrivilege[] privilege = cmdModules.stream().filter(c -> c.getName().equals(command.getName())).map(CommandModule::getCommandPrivileges).findFirst().orElse(new CommandPrivilege[]{});
 
-        TechDiscordBot.getGuild().retrieveCommands().complete().forEach(command -> {
-            CommandPrivilege[] privilege = cmdModules.stream().filter(c -> c.getName().equals(command.getName())).map(CommandModule::getCommandPrivileges).findFirst().orElse(new CommandPrivilege[] {});
-
-            if(privilege.length > 0)
-                TechDiscordBot.getGuild().updateCommandPrivilegesById(command.getId(), Arrays.asList(privilege)).queue();
+                if (privilege.length > 0)
+                    TechDiscordBot.getGuild().updateCommandPrivilegesById(command.getId(), Arrays.asList(privilege)).queue();
+            });
         });
 
         TechDiscordBot.getJDA().addEventListener(modules.toArray());

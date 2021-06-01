@@ -79,7 +79,8 @@ public class RoleAssignerModule extends Module {
 
 
     public void loop() {
-        if(!TechDiscordBot.getBot().getStatus().isUsable()) return;
+        if(!TechDiscordBot.getBot().getStatus().isUsable())
+            return;
 
         Role verificationRole = VERIFICATION_ROLE.query().first();
         Role reviewSquad = REVIEW_SQUAD_ROLE.query().first();

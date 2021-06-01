@@ -37,10 +37,7 @@ public class ReactionModule extends Module {
     }
 
     public void resetReactions() {
-        this.reactionMessage.clearReactions().complete();
-        this.reactionMessage.addReaction(getUpdateEmote()).complete();
-        this.reactionMessage.addReaction(getAnnouncementEmote()).complete();
-        this.reactionMessage.addReaction(getGiveawayEmote()).complete();
+        this.reactionMessage.clearReactions().queue(a -> this.reactionMessage.addReaction(getUpdateEmote()).queue(a2 -> this.reactionMessage.addReaction(getAnnouncementEmote()).queue(a3 -> this.reactionMessage.addReaction(getGiveawayEmote()).queue())));
     }
 
     public Emote getAnnouncementEmote() {
