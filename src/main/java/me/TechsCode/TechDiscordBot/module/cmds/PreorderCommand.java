@@ -43,8 +43,8 @@ public class PreorderCommand extends CommandModule {
     public OptionData[] getOptions() {
         return new OptionData[] {
                 new OptionData(OptionType.USER, "member", "View this member's preorder. (Default: You)"),
-                new OptionData(OptionType.BOOLEAN, "showEmail", "Show the member's email? (Default: False)"),
-                new OptionData(OptionType.BOOLEAN, "showTransactionId", "Show the transaction id? (Default: False)")
+                new OptionData(OptionType.BOOLEAN, "show-email", "Show the member's email? (Default: False)"),
+                new OptionData(OptionType.BOOLEAN, "show-transaction-id", "Show the transaction id? (Default: False)")
         };
     }
 
@@ -83,8 +83,8 @@ public class PreorderCommand extends CommandModule {
             return;
         }
 
-        boolean showEmail = (e.getOption("showEmail") != null && e.getOption("showEmail").getAsBoolean()) && (preorder.getDiscordId() == member.getUser().getIdLong() || isStaff(member));
-        boolean showTransactionId = (e.getOption("showTransactionId") != null && e.getOption("showTransactionId").getAsBoolean()) && (preorder.getDiscordId() == member.getUser().getIdLong() || isStaff(member));
+        boolean showEmail = (e.getOption("show-email") != null && e.getOption("show-email").getAsBoolean()) && (preorder.getDiscordId() == member.getUser().getIdLong() || isStaff(member));
+        boolean showTransactionId = (e.getOption("show-transaction-id") != null && e.getOption("show-transaction-id").getAsBoolean()) && (preorder.getDiscordId() == member.getUser().getIdLong() || isStaff(member));
 
         Query<Emote> query = bot.getEmotes(preorder.getPlugin().replace(" ", ""));
 
@@ -100,26 +100,33 @@ public class PreorderCommand extends CommandModule {
     }
 
     public String obfuscateEmail(String email) {
-        if(email.equals("notAvailable") || email.equals("ManuallyAdded")) return "Unknown";
+        if(email.equals("notAvailable") || email.equals("ManuallyAdded"))
+            return "Unknown";
 
         int index = email.indexOf("@");
-        if(index == -1) return email;
+        if(index == -1)
+            return email;
 
         StringBuilder length = new StringBuilder();
-        for(int i = 0; i < index; i++) length.append("\\*");
+        for(int i = 0; i < index; i++)
+            length.append("\\*");
 
         StringBuilder sb = new StringBuilder(email);
         sb.replace(0, index, length.toString());
+
         return sb.toString();
     }
 
     public String obfuscateTransactionId(String transactionId) {
-        if(transactionId.equals("NONE") || transactionId.equals("something")) return "Unknown";
+        if(transactionId.equals("NONE") || transactionId.equals("something"))
+            return "Unknown";
+
         StringBuilder sb = new StringBuilder(transactionId);
 
         String length = IntStream.range(0, (int) (transactionId.length() / 1.5d)).mapToObj(i -> "\\*").collect(Collectors.joining());
 
         sb.replace(0, (int)(transactionId.length() / 1.5d), length);
+
         return sb.toString();
     }
 
