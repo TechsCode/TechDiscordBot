@@ -24,7 +24,8 @@ public class ModulesManager {
     private final List<Module> modules = new ArrayList<>();
 
     public void load() {
-        CommandListUpdateAction commands = TechDiscordBot.getJDA().updateCommands();
+        TechDiscordBot.getJDA().updateCommands().queue();
+        CommandListUpdateAction commands = TechDiscordBot.getGuild().updateCommands();
 
         for (Class<?> each : ProjectUtil.getClasses("me.TechsCode.TechDiscordBot.module")) {
             if (CommandModule.class.isAssignableFrom(each) && !Modifier.isAbstract(each.getModifiers())) {
