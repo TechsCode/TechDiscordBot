@@ -328,8 +328,8 @@ public class TicketModule extends Module {
                 return;
             }
 
-            Member member = e.getOption("member").getAsMember();
-            if(member == null) {
+            Member member = e.getOption("member") == null ? null : e.getOption("member").getAsMember();
+            if(member == null && !e.getSubcommandName().equals("close")) {
                 e.reply("*Member is invalid!** This probably shouldn't be happening...").setEphemeral(true).queue();
                 return;
             }
