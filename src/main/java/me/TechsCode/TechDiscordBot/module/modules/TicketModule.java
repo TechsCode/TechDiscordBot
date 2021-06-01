@@ -384,6 +384,7 @@ public class TicketModule extends Module {
                         boolean hasReason = reason != null;
                         String reasonSend = (hasReason ? " \n \n**Reason**: " + reason : "");
 
+                        Member ticketMember = getMemberFromTicket(e.getTextChannel());
                         new TechEmbedBuilder("Ticket")
                                 .setText(e.getMember().getAsMention() + " has closed this support ticket." + reasonSend)
                                 .send(e.getTextChannel());
@@ -391,13 +392,13 @@ public class TicketModule extends Module {
                         e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS);
                         if (e.getMember() != null) {
                             new TechEmbedBuilder("Closed Ticket")
-                                    .setText("The ticket (" + e.getTextChannel().getName() + ") from " + e.getMember().getAsMention() + " has been closed!")
+                                    .setText("The ticket (" + e.getTextChannel().getName() + ") from " + member.getAsMention() + " has been closed!")
                                     .success()
                                     .queueAfter(channel, 15, TimeUnit.SECONDS);
                             new TechEmbedBuilder("Closed Ticket")
                                     .setText("Your ticket (" + e.getTextChannel().getName() + ") has been closed!" + reasonSend)
                                     .success()
-                                    .send(e.getMember());
+                                    .send(ticketMember);
                         } else {
                             new TechEmbedBuilder("Closed Ticket")
                                     .setText("The ticket (" + e.getTextChannel().getName() + ") from *member has left* has been closed!")
