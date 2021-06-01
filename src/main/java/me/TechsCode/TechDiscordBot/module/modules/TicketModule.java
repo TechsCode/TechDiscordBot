@@ -324,7 +324,7 @@ public class TicketModule extends Module {
             boolean isTicketCreator = e.getTextChannel().getTopic() != null && e.getTextChannel().getTopic().contains(e.getMember().getAsMention());
 
             if(!isTicketCreator && !TechDiscordBot.isStaff(e.getMember())) {
-                e.reply("You have ot be the ticket creator or a staff member to add someone!").setEphemeral(true).queue();
+                e.reply("You have to be the ticket creator or a staff member to add someone!").setEphemeral(true).queue();
                 return;
             }
 
