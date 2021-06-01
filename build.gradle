@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    implementation ('com.github.DV8FromTheWorld:JDA:a20fc88') { exclude module: 'opus-java' }
+    implementation ('com.github.DV8FromTheWorld:JDA:05d58f1') { exclude module: 'opus-java' }
 
     implementation 'com.github.techscode:spigotapi:build-25'
     implementation 'org.jsoup:jsoup:1.13.1'
