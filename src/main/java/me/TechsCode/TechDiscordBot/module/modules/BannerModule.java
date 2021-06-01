@@ -41,10 +41,7 @@ public class BannerModule extends Module {
 
             current++;
             if (current >= plugins.length) current = 0;
-        } catch (Exception ignored) {}
-//            ex.printStackTrace();
-//            ServerLogs.error(ex.getMessage());
-//        }
+        } catch (Exception ignored) { }
     }
 
     @Override

@@ -55,10 +55,8 @@ public class TechDiscordBot {
 
         try {
             new TechDiscordBot(args[0], args[1], MySQLSettings.of(args[2], args[3], args[4], args[5], args[6]), args[7]);
-            //Sentry.init(options -> options.setDsn("https://21ba29cc18984aa7a02598fb8e94d05c@o565371.ingest.sentry.io/5734422"));
         } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
-            //Sentry.captureException(e);
         }
     }
 

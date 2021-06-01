@@ -85,7 +85,6 @@ public class ModulesManager {
         TechDiscordBot.getJDA().addEventListener(cmdModules.toArray());
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> modules.forEach(Module::onDisable)));
-//        Runtime.getRuntime().addShutdownHook(new Thread(() -> cmdModules.forEach(CommandModule::onDisable)));
     }
 
     public void logLoad() {
@@ -119,57 +118,11 @@ public class ModulesManager {
         cmd.onCommand(e.getTextChannel(), e.getMember(), e);
     }
 
-//    @SubscribeEvent
-//    public void onMessage(GuildMessageReceivedEvent e) {
-//        if(e.getMember() == null) return;
-//        String first = e.getMessage().getContentDisplay().split(" ")[0];
-//
-//        CommandModule cmd = cmdModules.stream().filter(cmdM -> cmdM.getCommand() != null && cmdM.getCommand().equalsIgnoreCase(first) || (cmdM.getAliases() != null && Arrays.asList(cmdM.getAliases()).contains(first))).findFirst().orElse(null);
-//        if(cmd == null) return;
-//
-//        List<Role> restrictedRoles = new ArrayList<>();
-//        if(cmd.getRestrictedRoles() != null && cmd.getRestrictedRoles().query() != null && cmd.getRestrictedRoles().query().all() != null) restrictedRoles.addAll(cmd.getRestrictedRoles().query().all());
-//        List<TextChannel> restrictedChannels =  new ArrayList<>();
-//        if(cmd.getRestrictedChannels() != null && cmd.getRestrictedChannels().query() != null && cmd.getRestrictedChannels().query().all() != null) restrictedChannels.addAll(cmd.getRestrictedChannels().query().all());
-//
-//        // Check if the player has at least one of the restricted roles
-//        if(!restrictedRoles.isEmpty() && Collections.disjoint(e.getMember().getRoles(), restrictedRoles)) {
-//            new TechEmbedBuilder("Not Enough Perms")
-//                    .error()
-//                    .setText("You don't have enough permissions to execute this command!")
-//                    .sendTemporary(e.getChannel(), 5, TimeUnit.SECONDS);
-//            return;
-//        }
-//
-//        if(cmd.getCooldown() > 0 && cmd.getCooldowns().containsKey(e.getMember().getId())) {
-//            boolean remaining = cmd.getCooldowns().get(e.getMember().getId()).isCooldownRemaining();
-//            if(remaining) return;
-//            cmd.getCooldowns().remove(e.getMember().getId());
-//        }
-//
-//        // Check if the message was sent in one of the restricted channels (if there are any)
-//        if (!restrictedChannels.isEmpty() && !restrictedChannels.contains(e.getChannel())) return;
-//
-//        String message = e.getMessage().getContentDisplay();
-//        String[] args = Arrays.copyOfRange(message.split(" "), 1, message.split(" ").length);
-//
-//        if(cmd.deleteCommandMsg())
-//            e.getMessage().delete().complete();
-//
-//        cmd.onCommand(e.getChannel(), e.getMessage(), e.getMember(), args);
-//        if(!cmd.getCooldowns().containsKey(e.getMember().getId())) cmd.getCooldowns().put(e.getMember().getId(), new Cooldown(OffsetDateTime.now().plusSeconds(cmd.getCooldown())));
-//    }
-
     public List<Module> getModules() {
         return modules;
     }
 
     public List<CommandModule> getCommandModules() {
         return cmdModules;
-    }
-
-    public void disableAll() {
-        getModules().forEach(Module::onDisable);
-//        getCommandModules().forEach(CommandModule::onDisable);
     }
 }
