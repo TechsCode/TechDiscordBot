@@ -408,7 +408,7 @@ public class TicketModule extends Module {
                                 .queue(e.getTextChannel());
 
                         e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS);
-                        if (e.getMember() != null) {
+                        if (ticketMember != null) {
                             new TechEmbedBuilder("Closed Ticket")
                                     .text("The ticket (" + e.getTextChannel().getName() + ") from " + ticketMember.getAsMention() + " has been closed!")
                                     .success()
@@ -422,7 +422,6 @@ public class TicketModule extends Module {
                                     .text("The ticket (" + e.getTextChannel().getName() + ") from *member has left* has been closed!")
                                     .success()
                                     .queueAfter(channel, 15, TimeUnit.SECONDS);
-
                         }
                     }
 
