@@ -66,6 +66,7 @@ public class TechDiscordBot {
         jda = JDABuilder.createDefault(token)
                 .setEnabledIntents(GatewayIntent.getIntents(GatewayIntent.DEFAULT | GatewayIntent.GUILD_MEMBERS.getRawValue() | GatewayIntent.GUILD_BANS.getRawValue()))
                 .setDisabledIntents(GatewayIntent.DIRECT_MESSAGE_TYPING, GatewayIntent.GUILD_MESSAGE_TYPING)
+                .enableCache(CacheFlag.ONLINE_STATUS)
                 .disableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .setChunkingFilter(ChunkingFilter.ALL)
