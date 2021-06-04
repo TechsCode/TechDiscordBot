@@ -10,6 +10,8 @@ import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.util.Plugin;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.ArrayList;
@@ -17,6 +19,11 @@ import java.util.Arrays;
 
 public class ActivitiesModule extends Module {
 
+    private final DefinedQuery<Role> UPDATES_ROLE = new DefinedQuery<Role>() {
+        protected Query<Role> newQuery() {
+            return bot.getRoles("Updates");
+        }
+    };
     private final DefinedQuery<TextChannel> ACTIVITIES_CHANNEL = new DefinedQuery<TextChannel>() {
         @Override
         protected Query<TextChannel> newQuery() {
@@ -96,7 +103,7 @@ public class ActivitiesModule extends Module {
                 .thumbnail(plugin.getResourceLogo());
         ceb.field("Version", update.getResource().getVersion(), true);
         ceb.field("Download", "[Click Here](https://www.spigotmc.org/resources/" + update.getResourceId() + "/update?update=" + update.getId() + ")", true);
-        ceb.text(update.getDescription().trim().length() > 0 ? update.getTitle() + "```" + update.getDescription() + "```" : update.getTitle());
+        ceb.text(UPDATES_ROLE.query().first().getAsMention() + (update.getDescription().trim().length() > 0 ? update.getTitle() + "```" + update.getDescription() + "```" : update.getTitle()));
 
         plugin.getChannel().ifPresent(channel -> {
             new TechEmbedBuilder().text("There's a new update for " + plugin.getEmoji().getAsMention() + " "  + plugin.getRoleName() + "! Make sure to download it [here](https://www.spigotmc.org/resources/" + update.getResourceId() + "/update?update=" + update.getId() + ")!" +
