@@ -41,7 +41,7 @@ public class MemberCheckCommand extends CommandModule {
     public OptionData[] getOptions() {
         return new OptionData[] {
                 new OptionData(OptionType.USER, "member", "Member to check."),
-                new OptionData(OptionType.STRING, "spigot-id", "Member's spigot id.")
+                new OptionData(OptionType.INTEGER, "spigot-id", "Member's spigot id.")
         };
     }
 
