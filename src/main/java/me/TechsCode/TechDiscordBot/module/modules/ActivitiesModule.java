@@ -103,7 +103,7 @@ public class ActivitiesModule extends Module {
                 .thumbnail(plugin.getResourceLogo());
         ceb.field("Version", update.getResource().getVersion(), true);
         ceb.field("Download", "[Click Here](https://www.spigotmc.org/resources/" + update.getResourceId() + "/update?update=" + update.getId() + ")", true);
-        ceb.text(UPDATES_ROLE.query().first().getAsMention() + (update.getDescription().trim().length() > 0 ? update.getTitle() + "```" + update.getDescription() + "```" : update.getTitle()));
+        ceb.text((update.getDescription().trim().length() > 0 ? update.getTitle() + "```" + update.getDescription() + "```" : update.getTitle()));
 
         plugin.getChannel().ifPresent(channel -> {
             new TechEmbedBuilder().text("There's a new update for " + plugin.getEmoji().getAsMention() + " "  + plugin.getRoleName() + "! Make sure to download it [here](https://www.spigotmc.org/resources/" + update.getResourceId() + "/update?update=" + update.getId() + ")!" +
