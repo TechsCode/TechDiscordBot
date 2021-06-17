@@ -188,9 +188,7 @@ public class TicketModule extends Module {
                 .text(member.getAsMention() + " created a new ticket (" + ticketChannel.getAsMention() + ")")
                 .queue(channel);
 
-        isSelection = false;
-        selectionUserId = null;
-        sendPriorityInstructions(null);
+        reset();
     }
 
     public void startTimeout(String userId) {
@@ -208,9 +206,7 @@ public class TicketModule extends Module {
                         .text("You took too long!")
                         .sendTemporary(channel, 10);
 
-                isSelection = false;
-                selectionUserId = null;
-                sendPriorityInstructions(null);
+                reset();
             }
         }).start();
     }
@@ -251,16 +247,12 @@ public class TicketModule extends Module {
                     .error()
                     .sendTemporary(channel, 10);
 
-            isSelection = false;
-            selectionUserId = null;
-            sendPriorityInstructions(null);
+            reset();
             return;
         }
 
         if(e.getReactionEmote().getName().equalsIgnoreCase("error") && selectionStep != 1) {
-            isSelection = false;
-            selectionUserId = null;
-            sendPriorityInstructions(null);
+            reset();
             return;
         }
 
@@ -293,9 +285,8 @@ public class TicketModule extends Module {
                     .text("This shouldn't be happening. Contact " + ezMention + " (EazyFTW#0001) immediately!")
                     .error()
                     .sendTemporary(channel, 10);
-            isSelection = false;
-            selectionUserId = null;
-            sendPriorityInstructions(null);
+
+            reset();
         }
     }
 
@@ -412,7 +403,7 @@ public class TicketModule extends Module {
                             new TechEmbedBuilder("Closed Ticket")
                                     .text("The ticket (" + e.getTextChannel().getName() + ") from " + ticketMember.getAsMention() + " has been closed!")
                                     .success()
-                                    .queueAfter(channel, 15, TimeUnit.SECONDS);
+                                    .queueAfter(channel, 15, TimeUnit.SECONDS, (msg) -> reset());
                             new TechEmbedBuilder("Closed Ticket")
                                     .text("Your ticket (" + e.getTextChannel().getName() + ") has been closed!" + reasonSend)
                                     .success()
@@ -421,19 +412,22 @@ public class TicketModule extends Module {
                             new TechEmbedBuilder("Closed Ticket")
                                     .text("The ticket (" + e.getTextChannel().getName() + ") from *member has left* has been closed!")
                                     .success()
-                                    .queueAfter(channel, 15, TimeUnit.SECONDS);
+                                    .queueAfter(channel, 15, TimeUnit.SECONDS, (msg) -> reset());
                         }
                     }
 
-                    isSelection = false;
-                    selectionUserId = null;
-                    sendPriorityInstructions(null);
                     break;
                 default:
                     e.reply("Could not recognize this sub command!").setEphemeral(true).queue();
                     break;
             }
         }
+    }
+
+    public void reset() {
+        isSelection = false;
+        selectionUserId = null;
+        sendPriorityInstructions(null);
     }
 
     @Override

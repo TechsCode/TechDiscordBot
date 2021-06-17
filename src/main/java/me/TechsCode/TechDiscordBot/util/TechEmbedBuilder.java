@@ -149,6 +149,10 @@ public class TechEmbedBuilder extends EmbedBuilder {
         textChannel.sendMessage(build()).queueAfter(delay, unit);
     }
 
+    public void queueAfter(TextChannel textChannel, int delay, TimeUnit unit, Consumer<Message> success) {
+        textChannel.sendMessage(build()).queueAfter(delay, unit, success);
+    }
+
     public void queueAfter(User user, int delay, TimeUnit time) {
         try {
             user.openPrivateChannel().complete().sendMessage(build()).queueAfter(delay, time);
