@@ -68,7 +68,7 @@ public class RestartCommand extends CommandModule {
             e.reply("Bot Restarting").setEphemeral(true).complete();
             Thread.sleep(500);
 
-            Runtime.getRuntime().exec("cmd.exe /c start C:\Users\Administrator\Desktop\TechBot\start.bat");
+            Runtime.getRuntime().exec("cmd.exe /c start C:\\Users\\Administrator\\Desktop\\TechBot\\start.bat");
             Thread.sleep(1000);
 
             System.exit(0);
