@@ -59,7 +59,9 @@ public class RestartCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member member, SlashCommandEvent e) {
-        if(e.getOption("service").getAsString() == "Bot") {
+        String service = e.getOption("service").getAsString();
+
+        if(service.equalsIgnoreCase("Bot")) {
             try {
                 List<Message> messages = new ArrayList<>();
 
@@ -80,7 +82,7 @@ public class RestartCommand extends CommandModule {
                 ex.printStackTrace();
             }
         }
-        if(e.getOption("service").getAsString() == "API") {
+        if(service.equalsIgnoreCase("API")) {
             try {
                 e.reply("API Restarting").setEphemeral(true).complete();
                 Thread.sleep(500);
