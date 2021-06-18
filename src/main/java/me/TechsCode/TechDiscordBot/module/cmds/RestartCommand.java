@@ -48,7 +48,7 @@ public class RestartCommand extends CommandModule {
     @Override
     public OptionData[] getOptions() {
         return new OptionData[] {
-                new OptionData(OptionType.STRING, "serivce", "The Service to restart (API or Bot)", true)
+                new OptionData(OptionType.STRING, "service", "The Service to restart (API or Bot)", true)
         };
     }
 
