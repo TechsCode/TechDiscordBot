@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
@@ -46,7 +47,9 @@ public class RestartCommand extends CommandModule {
 
     @Override
     public OptionData[] getOptions() {
-        return new OptionData[0];
+        return new OptionData[] {
+                new OptionData(OptionType.STRING, "serivce", "The Service to restart (API or Bot)", true)
+        };
     }
 
     @Override
@@ -56,24 +59,39 @@ public class RestartCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member member, SlashCommandEvent e) {
-        try {
-            List<Message> messages = new ArrayList<>();
+        if(e.getOption("service").getAsString() == "Bot") {
+            try {
+                List<Message> messages = new ArrayList<>();
 
-            messages.addAll(TechDiscordBot.getJDA().getTextChannelById("695493411117072425").getHistory().retrievePast(1).complete());
-            messages.addAll(TechDiscordBot.getJDA().getTextChannelById("695294630803275806").getHistory().retrievePast(1).complete());
-            messages.addAll(TechDiscordBot.getJDA().getTextChannelById("727403767523442759").getHistory().retrievePast(1).complete());
+                messages.addAll(TechDiscordBot.getJDA().getTextChannelById("695493411117072425").getHistory().retrievePast(1).complete());
+                messages.addAll(TechDiscordBot.getJDA().getTextChannelById("695294630803275806").getHistory().retrievePast(1).complete());
+                messages.addAll(TechDiscordBot.getJDA().getTextChannelById("727403767523442759").getHistory().retrievePast(1).complete());
 
-            messages.forEach(m -> m.delete().complete());
+                messages.forEach(m -> m.delete().complete());
 
-            e.reply("Bot Restarting").setEphemeral(true).complete();
-            Thread.sleep(500);
+                e.reply("Bot Restarting").setEphemeral(true).complete();
+                Thread.sleep(500);
 
-            Runtime.getRuntime().exec("cmd.exe /c start C:\\Users\\Administrator\\Desktop\\TechBot\\start.bat");
-            Thread.sleep(1000);
+                Runtime.getRuntime().exec("cmd.exe /c start C:\\Users\\Administrator\\Desktop\\TechBot\\start.bat");
+                Thread.sleep(1000);
 
-            System.exit(0);
-        } catch (InterruptedException | IOException ex) {
-            ex.printStackTrace();
+                System.exit(0);
+            } catch (InterruptedException | IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        if(e.getOption("service").getAsString() == "API") {
+            try {
+                e.reply("API Restarting").setEphemeral(true).complete();
+                Thread.sleep(500);
+
+                Runtime.getRuntime().exec("cmd.exe /c start C:\\Users\\Administrator\\Desktop\\SpigotAPI\\start.bat");
+                Thread.sleep(1000);
+            } catch (InterruptedException | IOException interruptedException) {
+                interruptedException.printStackTrace();
+            }
         }
     }
 }
+
+
