@@ -1,6 +1,5 @@
 package me.TechsCode.TechDiscordBot.module.modules;
 
-//import io.sentry.Sentry;
 import me.TechsCode.SpigotAPI.data.Purchase;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.Module;
