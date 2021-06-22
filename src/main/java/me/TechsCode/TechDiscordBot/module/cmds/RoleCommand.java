@@ -97,18 +97,28 @@ public class RoleCommand extends CommandModule {
             e.replyEmbeds(
                     new TechEmbedBuilder("Role Management")
                             .color(Color.orange)
-                            .text("**Senior Supporter**: Keep Roles, MC-Market, Verified and all plugin roles \n **Assistant**: Staff, Jr. Supporter, Supporter, Senior Supporter, Retired, Wiki Editor")
+                            .text("**Senior Supporter**: Keep Roles, MC-Market, Verified and all plugin roles \n **Assistant**: Staff, Jr. Supporter, Supporter, Senior Supporter, Retired, Wiki Editor, Plugin Lab")
                             .build()
             ).queue();
             return;
         }
 
-        if((m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(854044253885956136l)) && !SENIOR_SUPPORTER_ROLES.contains(role.getName())) || m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(608113993038561325l)) && !ASSISTANT_ROLES.contains(role.getName())) {
+        if((m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(854044253885956136l)) && !m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(608113993038561325l)) && !SENIOR_SUPPORTER_ROLES.contains(role.getName())) || m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(608113993038561325l)) && !ASSISTANT_ROLES.contains(role.getName())) {
             e.replyEmbeds(
                     new TechEmbedBuilder("Role Management")
                             .color(Color.orange)
-                            .text("**Senior Supporter**: Keep Roles, MC-Market, Verified and all plugin roles \n **Assistant**: Jr. Supporter, Supporter, Senior Supporter, Retired, Wiki Editor")
+                            .text("**Senior Supporter**: Keep Roles, MC-Market, Verified and all plugin roles \n **Assistant**: Jr. Supporter, Supporter, Senior Supporter, Retired, Wiki Editor, Plugin Lab")
                             .build()
+            ).queue();
+            return;
+        }
+
+        if(m.equals(member)) {
+            e.replyEmbeds(
+                    new TechEmbedBuilder("Role Management - Error")
+                    .error()
+                    .text("You can't exit your own roles!")
+                    .build()
             ).queue();
             return;
         }
