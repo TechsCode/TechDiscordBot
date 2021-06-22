@@ -41,6 +41,13 @@ public class RoleAssignerModule extends Module {
         }
     };
 
+    private final DefinedQuery<Role> SUB_VERIFIED_ROLE = new DefinedQuery<Role>() {
+        @Override
+        protected Query<Role> newQuery() {
+            return bot.getRoles("Sub Verified");
+        }
+    };
+
     public RoleAssignerModule(TechDiscordBot bot) {
         super(bot);
     }
@@ -122,6 +129,15 @@ public class RoleAssignerModule extends Module {
                 if(purchases != 0 && purchases == reviews) rolesToKeep.add(reviewSquad);
             }
 
+
+            if(TechDiscordBot.getStorage().isSubVerifiedUser(all.getId())) {
+                TechDiscordBot.getGuild().addRoleToMember(all, SUB_VERIFIED_ROLE.query().first()).queue();
+            } else {
+                if(all.getRoles().contains(SUB_VERIFIED_ROLE.query().first())) {
+                    TechDiscordBot.getGuild().removeRoleFromMember(all, SUB_VERIFIED_ROLE.query().first()).queue();
+                }
+            }
+
             Set<Role> rolesToRemove = new HashSet<>();
 
             if(all.getRoles().stream().map(Role::getName).noneMatch(r -> r.equals("Keep Roles")))
@@ -135,12 +151,10 @@ public class RoleAssignerModule extends Module {
                     .collect(Collectors.toSet());
 
             rolesToAdd.forEach(r -> {
-                TechDiscordBot.getGuild().addRoleToMember(all, r).complete();
                 TechDiscordBot.log("Role » Added " + r.getName() + " (" + all.getEffectiveName() + ")");
             });
 
             rolesToRemove.forEach(r -> {
-                TechDiscordBot.getGuild().removeRoleFromMember(all, r).complete();
                 TechDiscordBot.log("Role » Removed " + r.getName() + " (" + all.getEffectiveName() + ")");
             });
         }
