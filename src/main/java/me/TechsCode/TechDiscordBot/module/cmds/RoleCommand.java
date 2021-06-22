@@ -117,7 +117,7 @@ public class RoleCommand extends CommandModule {
             e.replyEmbeds(
                     new TechEmbedBuilder("Role Management - Error")
                     .error()
-                    .text("You can't exit your own roles!")
+                    .text("You can't edit your own roles!")
                     .build()
             ).queue();
             return;
