@@ -47,7 +47,9 @@ public class SubVerifyCommand extends CommandModule {
     @Override
     public OptionData[] getOptions() {
         return new OptionData[] {
-                new OptionData(OptionType.STRING, "action", "add | remove", true),
+                new OptionData(OptionType.STRING, "action", "Add or Remove a member as your sub verified user", true)
+                        .addChoice("Add", "add")
+                        .addChoice("Remove", "remove"),
                 new OptionData(OptionType.USER, "member", "The member to sub verify which is then linked with your verification", true)
         };
     }
