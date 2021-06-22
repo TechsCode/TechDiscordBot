@@ -45,7 +45,6 @@ public class SpigotMC {
                 }
             }
         }
-        browser.close();
         return comments.toArray(new ProfileComment[0]);
     }
 
