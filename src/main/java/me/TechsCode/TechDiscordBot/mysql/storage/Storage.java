@@ -22,6 +22,7 @@ public class Storage {
     private final String VERIFICATIONS_TABLE = "Verifications";
     private final String REMINDERS_TABLE = "Reminders";
     private final String MUTES_TABLE = "Mutes";
+    private final String SUB_VERIFICATIONS_TABLE = "SubVerifications";
 
     private Storage(MySQLSettings mySQLSettings) {
         this.connected = false;
@@ -46,6 +47,7 @@ public class Storage {
         mysql.update("CREATE TABLE IF NOT EXISTS " + VERIFICATIONS_TABLE + " (userid varchar(10), discordid varchar(32));");
         mysql.update("CREATE TABLE IF NOT EXISTS " + MUTES_TABLE + " (memberId varchar(32), reason longtext, end varchar(32), expired tinyint(1));");
         mysql.update("CREATE TABLE IF NOT EXISTS " + REMINDERS_TABLE + " (user_id varchar(32), channel_id varchar(32), time varchar(32), type tinyint(1), reminder longtext);");
+        mysql.update("CREATE TABLE IF NOT EXISTS " + SUB_VERIFICATIONS_TABLE + " (discordId_verified varchar(32), discordId_subVerified varchar(32));");
 
         this.connected = true;
     }
@@ -57,6 +59,53 @@ public class Storage {
 
     public void removeVerification(Verification verification) {
         mysql.update("DELETE FROM " + VERIFICATIONS_TABLE + " WHERE `userid`=" + verification.getUserId());
+    }
+
+    //Sub Verification
+    public void addSubVerification(String discordId_verified, String discordId_subVerified) {
+        mysql.update("INSERT INTO " + SUB_VERIFICATIONS_TABLE + " (discordId_verified, discordId_subVerified) VALUES ('" + discordId_verified + "', '" + discordId_subVerified + "');");
+    }
+
+    public void removeSubVerification(String discordId_verified) {
+        mysql.update("DELETE FROM " + SUB_VERIFICATIONS_TABLE + " WHERE `discordId_verified`=" + discordId_verified);
+    }
+
+    public boolean hasSubVerification(String discordId_verified) {
+        boolean hasSubVerification = false;
+
+        try {
+            Connection connection = mysql.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + SUB_VERIFICATIONS_TABLE + " WHERE `discordId_verified`=" + discordId_verified);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            hasSubVerification = rs.next();
+
+            rs.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+       return hasSubVerification;
+    }
+
+    public boolean isSubVerifiedUser(String discordId_subVerified) {
+        boolean isSubVerifiedUser = false;
+
+        try {
+            Connection connection = mysql.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + SUB_VERIFICATIONS_TABLE + " WHERE `discordId_subVerified`=" + discordId_subVerified);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            isSubVerifiedUser = rs.next();
+
+            rs.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return isSubVerifiedUser;
     }
 
     public Verification retrieveVerificationWithDiscord(User user) { return retrieveVerificationWithDiscord(user.getId()); }
