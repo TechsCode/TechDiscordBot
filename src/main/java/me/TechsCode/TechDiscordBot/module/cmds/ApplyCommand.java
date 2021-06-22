@@ -76,6 +76,15 @@ public class ApplyCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
+        if(getApplyChannel(e.getMember()) != null) {
+            new TechEmbedBuilder("Apply Creation - Error")
+                    .text("You already have an open application (" + getApplyChannel(e.getMember()).getAsMention() + ")")
+                    .error()
+                    .sendTemporary(channel, 10);
+
+            return;
+        }
+
         TextChannel applicationChannel = TechDiscordBot.getGuild().createTextChannel("application - " + m.getEffectiveName())
                 .setParent(APPLICATION_CATEGORY.query().first())
                 .setTopic(m.getAsMention() + "'s Application")
@@ -106,4 +115,11 @@ public class ApplyCommand extends CommandModule {
                         .build()
         ).queue();
     }
-}
+
+    public boolean isApplicationChannel(TextChannel channel) {
+        return channel.getName().contains("application-");
+    }
+
+    public TextChannel getApplyChannel(Member member) {
+        return TechDiscordBot.getGuild().getTextChannels().stream().filter(channel -> isApplicationChannel(channel) && channel.getTopic() != null && channel.getTopic().contains(member.getAsMention())).findFirst().orElse(null);
+    }}
