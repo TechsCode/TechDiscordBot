@@ -45,9 +45,10 @@ public class SpigotMC {
                 }
             }
         }
-
+        browser.close();
         return comments.toArray(new ProfileComment[0]);
     }
+
 
     private static User getUserFromHref(String href) {
         href = href.replace("members/", "").replace("/", "");
