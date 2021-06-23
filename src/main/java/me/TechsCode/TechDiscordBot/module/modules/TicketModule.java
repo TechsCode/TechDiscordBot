@@ -361,9 +361,9 @@ public class TicketModule extends Module {
                 case "close":
                     if (isTicketCreator) {
                         e.replyEmbeds(
-                                new TechEmbedBuilder("Ticket")
-                                        .text("Thank you for contacting us " + e.getMember().getAsMention() + ". Consider writing a review if you enjoyed the support!")
-                                        .build()
+                            new TechEmbedBuilder("Ticket")
+                                    .text("Thank you for contacting us " + e.getMember().getAsMention() + ". Consider writing a review if you enjoyed the support!")
+                                    .build()
                         ).queue();
 
                         e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS);
@@ -371,7 +371,7 @@ public class TicketModule extends Module {
                         new TechEmbedBuilder("Solved Ticket")
                                 .text("The ticket (" + e.getTextChannel().getName() + ") created by " + e.getMember().getAsMention() + " is now solved. Thanks for contacting us!")
                                 .success()
-                                .queueAfter(channel, 15, TimeUnit.SECONDS);
+                                .queueAfter(channel, 15, TimeUnit.SECONDS, (msg) -> reset());
                     } else {
                         if (!TechDiscordBot.isStaff(e.getMember())) {
                             e.reply("You cannot close this ticket!").setEphemeral(true).queue();
