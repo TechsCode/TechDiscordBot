@@ -151,10 +151,12 @@ public class RoleAssignerModule extends Module {
                     .collect(Collectors.toSet());
 
             rolesToAdd.forEach(r -> {
+                TechDiscordBot.getGuild().addRoleToMember(all, r).complete();
                 TechDiscordBot.log("Role » Added " + r.getName() + " (" + all.getEffectiveName() + ")");
             });
 
             rolesToRemove.forEach(r -> {
+                TechDiscordBot.getGuild().removeRoleFromMember(all, r).complete();
                 TechDiscordBot.log("Role » Removed " + r.getName() + " (" + all.getEffectiveName() + ")");
             });
         }
