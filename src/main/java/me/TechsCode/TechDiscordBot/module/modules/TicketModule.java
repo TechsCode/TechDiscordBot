@@ -91,7 +91,8 @@ public class TicketModule extends Module {
         lastInstructions = null;
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            if(lastInstructions != null) lastInstructions.delete().complete();
+            if(lastInstructions != null)
+                lastInstructions.delete().complete();
         }));
 
         sendPriorityInstructions(null);
@@ -99,7 +100,8 @@ public class TicketModule extends Module {
 
     @Override
     public void onDisable() {
-        if(lastInstructions != null) lastInstructions.delete().complete();
+        if(lastInstructions != null)
+            lastInstructions.delete().complete();
     }
 
     public void sendPriorityInstructions(Member member) {
@@ -114,7 +116,7 @@ public class TicketModule extends Module {
         TechEmbedBuilder priority = new TechEmbedBuilder("Ticket Creation" + (member != null ? " (" + member.getEffectiveName() + ")" : ""))
                 .text("First, please react with the priority of the issue below:", "", lowPriority.getAsMention() + "- Low Priority", mediumPriority.getAsMention() + "- Medium Priority", highPriority.getAsMention() + "- High Priority", "", "*Please choose the priority based on the how urgent the issue is.*");
 
-        lastInstructions = priority.complete(channel);
+        priority.queue(channel, this::setLastInstructions);
         if(lastInstructions != null)
             lastInstructions.addReaction(lowPriority).queue(a -> lastInstructions.addReaction(mediumPriority).queue(a2 -> lastInstructions.addReaction(highPriority).queue()));
     }
@@ -131,7 +133,7 @@ public class TicketModule extends Module {
         TechEmbedBuilder plugin = new TechEmbedBuilder("Ticket Creation (" + member.getEffectiveName() + ")")
                 .text("Secondly, please select which plugin the issue corresponds with below:", "", sb, "", ERROR_EMOTE.query().first().getAsMention() + " - Cancel", "");
 
-        lastInstructions = plugin.complete(channel);
+        plugin.queue(channel, this::setLastInstructions);
 
         PLUGIN_EMOTES.query().all().stream().filter(emote -> lastInstructions != null).forEach(emote -> lastInstructions.addReaction(emote).complete());
         if(lastInstructions != null)
@@ -151,7 +153,7 @@ public class TicketModule extends Module {
         TechEmbedBuilder issue = new TechEmbedBuilder("Ticket Creation (" + member.getEffectiveName() + ")")
                 .text("Last but not least, please tell us what you're having an issue with!", "", ERROR_EMOTE.query().first().getAsMention() + " - Cancel", "", "*Try not to make the message over 1024 chars long.*", "*We'll cut it off due to Discord's Limitations!*");
 
-        lastInstructions = issue.complete(channel);
+        issue.queue(channel, this::setLastInstructions);
 
         if(lastInstructions != null)
             lastInstructions.addReaction(ERROR_EMOTE.query().first()).queue();
@@ -428,6 +430,10 @@ public class TicketModule extends Module {
         isSelection = false;
         selectionUserId = null;
         sendPriorityInstructions(null);
+    }
+
+    public void setLastInstructions(Message message) {
+        this.lastInstructions = message;
     }
 
     @Override
