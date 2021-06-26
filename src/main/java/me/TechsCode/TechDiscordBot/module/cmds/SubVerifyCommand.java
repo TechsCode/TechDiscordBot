@@ -25,6 +25,13 @@ public class SubVerifyCommand extends CommandModule {
         }
     };
 
+    private final DefinedQuery<Role> VERIFIED = new DefinedQuery<Role>() {
+        @Override
+        protected Query<Role> newQuery() {
+            return bot.getRoles("Verified");
+        }
+    };
+
     public SubVerifyCommand(TechDiscordBot bot) {
         super(bot);
     }
@@ -74,6 +81,16 @@ public class SubVerifyCommand extends CommandModule {
             return;
         }
 
+        if(!m.getRoles().equals(VERIFIED.query().first())) {
+            e.replyEmbeds(
+                    new TechEmbedBuilder("Sub Verification - Error")
+                            .error()
+                            .text("This command is only for verified user.")
+                            .build()
+            ).queue();
+            return;
+        }
+
         if(m.equals(member)) {
             e.replyEmbeds(
                     new TechEmbedBuilder("Sub Verification - Error")
@@ -95,17 +112,15 @@ public class SubVerifyCommand extends CommandModule {
                 return;
             }
 
-            if(action.equalsIgnoreCase("add")) {
-                TechDiscordBot.getGuild().addRoleToMember(member, SUB_VERIFIED.query().first()).queue();
-                TechDiscordBot.getStorage().addSubVerification(m.getId(), member.getId());
-                e.replyEmbeds(
-                        new TechEmbedBuilder("Sub Verification - Added")
-                                .success()
-                                .text("Successfully **added** " + member.getAsMention() + " as " + m.getAsMention() + "'s sub verified user")
-                                .build()
-                ).queue();
-                return;
-            }
+            TechDiscordBot.getGuild().addRoleToMember(member, SUB_VERIFIED.query().first()).queue();
+            TechDiscordBot.getStorage().addSubVerification(m.getId(), member.getId());
+            e.replyEmbeds(
+                    new TechEmbedBuilder("Sub Verification - Added")
+                            .success()
+                            .text("Successfully **added** " + member.getAsMention() + " as " + m.getAsMention() + "'s sub verified user")
+                            .build()
+            ).queue();
+            return;
         }
 
         if(action.equalsIgnoreCase("remove")) {
