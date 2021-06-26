@@ -133,9 +133,10 @@ public class TicketModule extends Module {
                 .text("Secondly, please select which plugin the issue corresponds with below:", "", sb, "", ERROR_EMOTE.query().first().getAsMention() + " - Cancel", "");
 
         plugin.queue(channel, message -> setLastInstructions(message, msg -> {
-            PLUGIN_EMOTES.query().all().stream().filter(emote -> msg != null).forEach(emote -> msg.addReaction(emote).complete());
-            if(msg != null)
-                msg.addReaction(ERROR_EMOTE.query().first()).complete();
+            PLUGIN_EMOTES.query().all().stream().filter(emote -> msg != null).forEach(emote -> msg.addReaction(emote).queue((msg2) -> {
+                if(msg != null)
+                    msg.addReaction(ERROR_EMOTE.query().first()).queue();
+            }));
         }));
     }
 
