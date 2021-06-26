@@ -25,12 +25,6 @@ public class SubVerifyCommand extends CommandModule {
         }
     };
 
-    private final DefinedQuery<Role> VERIFIED = new DefinedQuery<Role>() {
-        @Override
-        protected Query<Role> newQuery() {
-            return bot.getRoles("Verified");
-        }
-    };
 
     public SubVerifyCommand(TechDiscordBot bot) {
         super(bot);
@@ -50,6 +44,7 @@ public class SubVerifyCommand extends CommandModule {
     public CommandPrivilege[] getCommandPrivileges() {
         return new CommandPrivilege[0];
     }
+
 
     @Override
     public OptionData[] getOptions() {
@@ -81,11 +76,11 @@ public class SubVerifyCommand extends CommandModule {
             return;
         }
 
-        if(!m.getRoles().equals(VERIFIED.query().first())) {
+        if(!m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(416174015141642240l))) {
             e.replyEmbeds(
                     new TechEmbedBuilder("Sub Verification - Error")
                             .error()
-                            .text("This command is only for verified user.")
+                            .text("This command is only for **verified** user.")
                             .build()
             ).queue();
             return;
