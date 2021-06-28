@@ -1,5 +1,6 @@
 package me.TechsCode.TechDiscordBot.mysql.storage;
 
+import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.mysql.MySQL;
 import me.TechsCode.TechDiscordBot.mysql.MySQLSettings;
 import me.TechsCode.TechDiscordBot.reminders.Reminder;
@@ -106,6 +107,48 @@ public class Storage {
         }
 
         return isSubVerifiedUser;
+    }
+
+    public String getVerifiedIdFromSubVerifiedId(String discordId_subVerified) {
+        String pluginHolder = null;
+
+        try {
+            Connection connection = mysql.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + SUB_VERIFICATIONS_TABLE + " WHERE `discordId_subVerified`=" + discordId_subVerified);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                pluginHolder = rs.getString("discordId_verified");
+            }
+
+            rs.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return pluginHolder;
+    }
+
+    public String getSubVerifiedIdFromVerifiedId(String discordId_verified) {
+        String pluginHolder = null;
+
+        try {
+            Connection connection = mysql.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + SUB_VERIFICATIONS_TABLE + " WHERE `discordId_verified`=" + discordId_verified);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                pluginHolder = rs.getString("discordId_subVerified");
+            }
+
+            rs.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return pluginHolder;
     }
 
     public Verification retrieveVerificationWithDiscord(User user) { return retrieveVerificationWithDiscord(user.getId()); }

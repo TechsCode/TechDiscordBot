@@ -96,6 +96,26 @@ public class SubVerifyCommand extends CommandModule {
             return;
         }
 
+        if(member.getRoles().contains(TechDiscordBot.getGuild().getRoleById(311188630922330112l))) {
+            e.replyEmbeds(
+                    new TechEmbedBuilder("Sub Verification - Error")
+                    .error()
+                    .text("You can't a " + TechDiscordBot.getGuild().getRoleById(311188630922330112l).getAsMention() +  " as " + SUB_VERIFIED.query().first().getAsMention() + " users!")
+                    .build()
+            ).queue();
+            return;
+        }
+
+        if(TechDiscordBot.getStorage().isSubVerifiedUser(member.getId()) && !TechDiscordBot.getStorage().getVerifiedIdFromSubVerifiedId(member.getId()).equals(m.getId())) {
+            e.replyEmbeds(
+                    new TechEmbedBuilder("Sub Verification - Error")
+                    .error()
+                    .text("This user is already a " + SUB_VERIFIED.query().first().getAsMention() + " user of " + TechDiscordBot.getGuild().getMemberById(TechDiscordBot.getStorage().getVerifiedIdFromSubVerifiedId(member.getId())).getAsMention())
+                    .build()
+            ).queue();
+            return;
+        }
+
         if(action.equalsIgnoreCase("add")) {
             if(TechDiscordBot.getStorage().hasSubVerification(m.getId())) {
                 e.replyEmbeds(
@@ -119,6 +139,26 @@ public class SubVerifyCommand extends CommandModule {
         }
 
         if(action.equalsIgnoreCase("remove")) {
+            if(TechDiscordBot.getStorage().getSubVerifiedIdFromVerifiedId(m.getId()) == null) {
+             e.replyEmbeds(
+                     new TechEmbedBuilder("Sub Verification - Error")
+                     .error()
+                     .text("You don't have an sub verified user!")
+                     .build()
+             ).queue();
+             return;
+            }
+
+            if(TechDiscordBot.getStorage().getSubVerifiedIdFromVerifiedId(m.getId()) != null && !TechDiscordBot.getStorage().getSubVerifiedIdFromVerifiedId(m.getId()).equals(member.getId())) {
+                e.replyEmbeds(
+                        new TechEmbedBuilder("Sub Verification - Error")
+                        .error()
+                        .text(member.getAsMention() + " isn't your verified user!")
+                        .build()
+                ).queue();
+                return;
+            }
+
             TechDiscordBot.getGuild().removeRoleFromMember(member, SUB_VERIFIED.query().first()).queue();
             TechDiscordBot.getStorage().removeSubVerification(m.getId());
             e.replyEmbeds(

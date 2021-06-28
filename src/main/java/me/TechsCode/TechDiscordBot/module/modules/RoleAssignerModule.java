@@ -131,7 +131,11 @@ public class RoleAssignerModule extends Module {
 
 
             if(TechDiscordBot.getStorage().isSubVerifiedUser(all.getId())) {
-                TechDiscordBot.getGuild().addRoleToMember(all, SUB_VERIFIED_ROLE.query().first()).queue();
+                if(TechDiscordBot.getStorage().getVerifiedIdFromSubVerifiedId(all.getId()) != null && TechDiscordBot.getGuild().getMemberById(TechDiscordBot.getStorage().getVerifiedIdFromSubVerifiedId(all.getId())) != null) {
+                    TechDiscordBot.getGuild().addRoleToMember(all, SUB_VERIFIED_ROLE.query().first()).queue();
+                } else {
+                    TechDiscordBot.getGuild().removeRoleFromMember(all, SUB_VERIFIED_ROLE.query().first()).queue();
+                }
             } else {
                 if(all.getRoles().contains(SUB_VERIFIED_ROLE.query().first())) {
                     TechDiscordBot.getGuild().removeRoleFromMember(all, SUB_VERIFIED_ROLE.query().first()).queue();
