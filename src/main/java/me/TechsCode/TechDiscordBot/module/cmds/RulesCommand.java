@@ -159,12 +159,12 @@ public class RulesCommand extends CommandModule {
 
         CODING_WIZARD("Coding Wizard", "311178859171282944", "It was Tech & now it's MATRIX!, The former head of the operations."),
         ASSISTANT("Assistant", "608113993038561325", "This is the Developers Assistant! If the Developers are not online, he is in charge. Occasionally also helps with coding."),
-        STAFF("Staff", "608114002387533844", "They are here to help! Don't argue with Staff. If you think there is an issue, please contact <@842350337880227872> or <@&311178859171282944>."),
+        STAFF("Staff", "608114002387533844", "They are here to help! Don't argue with Staff. If you think there is an issue, please contact <@608113993038561325> or <@&311178859171282944>."),
         PATREON("Patreon", "795101981051977788", "These are our incredible Patreon supporters who getting rewarded by us for their monthly support with various rewards, additions and exclusive stuff."),
         DONATOR("Donator", "311179148691505152", "These are amazing people who have donated to Tech!"),
         VERIFIED_CREATOR("Knows how to Code", "435183665719541761", "A role given to people who have well known coding projects."),
-        NITRO_BOOSTERS("Nitro Booster", "585559418008109075", "These people get are also **AMAZING** and get the same perks the Review Squad role."),
-        REVIEW_SQUAD("Review Squad", "457934035549683713", "These people are the **AMAZING** people in the community who have review all of their plugin's owned by Tech. They're allowed to advertise in a special channel!"),
+        NITRO_BOOSTERS("Nitro Booster", "585559418008109075", "These people get are also **AMAZING** who are helping us to unlock great features for our Discord!"),
+        REVIEW_SQUAD("Review Squad", "457934035549683713", "These people are the **AMAZING** people in the community who have review all of their plugin's owned by Tech"),
         VERIFIED("Verified", "416174015141642240", "This role is given to members who have successfully verified that they've purchased *as least* one of Tech's resources.");
 
         private final String name;
