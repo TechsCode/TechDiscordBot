@@ -22,7 +22,7 @@ public class RulesCommand extends CommandModule {
     };
     private final DefinedQuery<TextChannel> RULES_CHANNEL = new DefinedQuery<TextChannel>() {
         @Override
-        protected Query<TextChannel> newQuery() { return bot.getChannels("rules"); }
+        protected Query<TextChannel> newQuery() { return bot.getChannels("overview"); }
     };
 
     public RulesCommand(TechDiscordBot bot) {
