@@ -46,7 +46,7 @@ public class ApplyCommand extends CommandModule {
     };
 
     private TextChannel applicationChannel;
-    private TechEmbedBuilder test;
+    private Member member;
     public ApplyCommand(TechDiscordBot bot) {
         super(bot);
     }
@@ -112,7 +112,7 @@ public class ApplyCommand extends CommandModule {
     }
 
     public void applicationChannelPermissions(Member member) {
-        List<Permission> permissionsAllow = new ArrayList<>(Arrays.asList(Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_READ, Permission.MESSAGE_HISTORY));
+        List<Permission> permissionsAllow = new ArrayList<>(Arrays.asList(Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_READ, Permission.MESSAGE_HISTORY, Permission.MESSAGE_WRITE));
         List<Permission> permissionsAllowAssistant = new ArrayList<>(Arrays.asList(Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_HISTORY));
 
         applicationChannel.getManager()
@@ -124,7 +124,7 @@ public class ApplyCommand extends CommandModule {
     }
 
     public void applicationProcess(Member member) {
-        applicationChannel.sendMessage(new TechEmbedBuilder(member.getEffectiveName() + "'s Application - OPEN")
+        applicationChannel.sendMessage(new TechEmbedBuilder(member.getEffectiveName() + "'s Application")
                 .color(Color.CYAN)
                 .text(member.getAsMention() + ", thank you for creating an application. \nFill out these questions and our team will review your application as soon as possible.")
                 .build()
@@ -148,10 +148,21 @@ public class ApplyCommand extends CommandModule {
                 .build()).setActionRow(
                     Button.success(member.getId() + ":send:", "Yes!")
         ).queue();
+
+        this.member = member;
     }
 
     public void applicationNotifications() {
         applicationChannel.sendMessage("**Application Notification:** " + TechDiscordBot.getGuild().getRoleById(608113993038561325l).getAsMention() + ", " + TechDiscordBot.getGuild().getRoleById(311178859171282944l).getAsMention()).queue();
+    }
+
+    public void lockApplication() {
+        applicationChannel.getManager().removePermissionOverride(member).queue();
+        List<Permission> permissionsAllow = new ArrayList<>(Arrays.asList(Permission.MESSAGE_READ, Permission.MESSAGE_HISTORY));
+
+        applicationChannel.getManager()
+                .putPermissionOverride(member, permissionsAllow, Collections.singletonList(Permission.MESSAGE_TTS))
+                .complete();
     }
 
     @SubscribeEvent
@@ -167,6 +178,7 @@ public class ApplyCommand extends CommandModule {
         if(type.equalsIgnoreCase("send")) {
             event.getMessage().delete().queue();
             applicationNotifications();
+            lockApplication();
         }
     }
 
