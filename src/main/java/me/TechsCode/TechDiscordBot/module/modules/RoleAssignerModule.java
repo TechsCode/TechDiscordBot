@@ -130,7 +130,7 @@ public class RoleAssignerModule extends Module {
             }
 
 
-            if(TechDiscordBot.getStorage().isSubVerifiedUser(all.getId())) {
+            /*if(TechDiscordBot.getStorage().isSubVerifiedUser(all.getId())) {
                 if(TechDiscordBot.getStorage().getVerifiedIdFromSubVerifiedId(all.getId()) != null && TechDiscordBot.getGuild().getMemberById(TechDiscordBot.getStorage().getVerifiedIdFromSubVerifiedId(all.getId())) != null) {
                     TechDiscordBot.getGuild().addRoleToMember(all, SUB_VERIFIED_ROLE.query().first()).queue();
                 } else {
@@ -140,7 +140,7 @@ public class RoleAssignerModule extends Module {
                 if(all.getRoles().contains(SUB_VERIFIED_ROLE.query().first())) {
                     TechDiscordBot.getGuild().removeRoleFromMember(all, SUB_VERIFIED_ROLE.query().first()).queue();
                 }
-            }
+            }*/
 
             Set<Role> rolesToRemove = new HashSet<>();
 
