@@ -66,7 +66,7 @@ public class VerificationModule extends Module {
         if (lastInstructions != null)
             lastInstructions.delete().complete();
 
-        TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("How It Works").text("Type your SpigotMC Username in this Chat to verify.\nTo verify your MC-Market purchases please contact a staff member.\n\nVerification is not working? Also feel free to contact a staff member in <#311178000026566658>.");
+        TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("How It Works").text("Type your SpigotMC Username in this Chat to verify.\nTo verify your MC-Market purchases please contact a staff member.\n\nMake sure your profile is set to public and **not** private.\nVerification is not working? Also feel free to contact a staff member in <#311178000026566658>.");
         lastInstructions = howItWorksMessage.complete(channel);
     }
 
