@@ -31,6 +31,7 @@ public class RoleCommand extends CommandModule {
         add("Ultra Regions");
         add("Insane Shops");
         add("Ultra Economy");
+        add("Ultra Scoreboards");
         add("Keep Roles");
         add("MC-Market");
         add("Verified");
@@ -43,10 +44,11 @@ public class RoleCommand extends CommandModule {
         add("Ultra Regions");
         add("Insane Shops");
         add("Ultra Economy");
+        add("Ultra Scoreboards");
         add("Keep Roles");
         add("MC-Market");
         add("Verified");
-        add("Jr. Supporter");
+        add("Junior Supporter");
         add("Supporter");
         add("Senior Supporter");
         add("Retired");
@@ -97,7 +99,7 @@ public class RoleCommand extends CommandModule {
             e.replyEmbeds(
                     new TechEmbedBuilder("Role Management")
                             .color(Color.orange)
-                            .text("**Senior Supporter**: Keep Roles, MC-Market, Verified and all plugin roles \n **Assistant**: Staff, Jr. Supporter, Supporter, Senior Supporter, Retired, Wiki Editor, Plugin Lab")
+                            .text("**Senior Supporter**: Keep Roles, MC-Market, Verified and all plugin roles \n **Assistant**: Staff, Junior Supporter, Supporter, Senior Supporter, Retired, Wiki Editor, Plugin Lab")
                             .build()
             ).queue();
             return;
@@ -107,7 +109,7 @@ public class RoleCommand extends CommandModule {
             e.replyEmbeds(
                     new TechEmbedBuilder("Role Management")
                             .color(Color.orange)
-                            .text("**Senior Supporter**: Keep Roles, MC-Market, Verified and all plugin roles \n **Assistant**: Jr. Supporter, Supporter, Senior Supporter, Retired, Wiki Editor, Plugin Lab")
+                            .text("**Senior Supporter**: Keep Roles, MC-Market, Verified and all plugin roles \n **Assistant**: Junior Supporter, Supporter, Senior Supporter, Retired, Wiki Editor, Plugin Lab")
                             .build()
             ).queue();
             return;
