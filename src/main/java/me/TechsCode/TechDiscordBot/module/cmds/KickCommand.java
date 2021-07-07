@@ -13,6 +13,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
+import java.util.List;
+
 public class KickCommand extends CommandModule {
 
     private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
@@ -56,14 +58,33 @@ public class KickCommand extends CommandModule {
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         Member member = e.getOption("member").getAsMember();
         String reason = e.getOption("reason").getAsString();
+        List<Role> roles = m.getRoles();
+        String roleslist = roles.toString();
 
-        member.kick(reason).queue();
+        if (roleslist.contains("Staff")) {
+            e.replyEmbeds(
+                    new TechEmbedBuilder("Kick - Error")
+                            .error()
+                            .text("You cannot kick this user")
+                            .build()
+            ).queue();
+        } else if (member == e.getMember()) {
+            e.replyEmbeds(
+                    new TechEmbedBuilder("Kick - Error")
+                            .error()
+                            .text("You cannot kick yourself")
+                            .build()
+            ).queue();
+        } else {
+                member.kick(reason).queue();
 
-        e.replyEmbeds(
-            new TechEmbedBuilder("Kicked " + member.getUser().getName() + "#" + member.getUser().getDiscriminator())
-                .success()
-                .text("Successfully kicked " + member.getAsMention() + (reason == null ? "!" : " for `" + reason + "`!"))
-                .build()
-        ).queue();
+                e.replyEmbeds(
+                        new TechEmbedBuilder("Kicked " + member.getUser().getName() + "#" + member.getUser().getDiscriminator())
+                                .success()
+                                .text("Successfully kicked " + member.getAsMention() + (reason == null ? "!" : " for `" + reason + "`!"))
+                                .build()
+                ).queue();
+            }
+        }
     }
 }
