@@ -103,14 +103,14 @@ public class OverviewCommand extends CommandModule {
 
     public void showInfo() {
         new TechEmbedBuilder("Tech's Plugin Support")
-                .text("Welcome to **Tech's Plugin Support**. Here, not only can you get support for Tech's Plugins. You can talk and socialize with people too! You can also get help with other plugins!\n\nIf you're new here and need help with one or more of Tech's Plugins, you can verify in <#695493411117072425> to get support. Once you do, you will get access to the specified support channels.\nIf you are already verified and you have bought another plugin, simply wait for the bot to give you the role *(could take up to 15 minutes, possibly longer)*.")
+                .text("Welcome to **Tech's Plugin Support**. Here, not only can you get support for Tech's Plugins. You can talk and socialize with people too! You can also get help with other plugins!\n\nIf you're new here and need help with one or more of Tech's Plugins, you can verify in <#695493411117072425> to get support. Once you do, you will get access to the specified support channels.\n\nIf you are already verified and you have bought another plugin, simply wait for the bot to give you the role *(could take up to 15 minutes, possibly longer)*.")
                 .thumbnail("https://i.imgur.com/SfFEnoU.png")
                 .queue(OVERVIEW_CHANNEL.query().first());
     }
 
     public void showFeedback() {
         new TechEmbedBuilder("Feedback")
-                .text("Would you like to suggest features for Tech's Plugins? You can do so by clicking here: https://feedback.techscode.de")
+                .text("Would you like to suggest a feature or report a bug for Tech's Plugins? You can do so by clicking here: https://feedback.techscode.de")
                 .thumbnail("https://i.imgur.com/nzfiUTy.png")
                 .queue(OVERVIEW_CHANNEL.query().first());
     }
