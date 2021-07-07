@@ -138,6 +138,10 @@ public class RulesCommand extends CommandModule {
         NSFW("**NSFW content is not allowed** on this server. Keep all content SFW, including profile pictures and names."),
         SPAMMING("**Do not spam** or else you will be muted/banned. Spam includes posting the same thing across many channels at the same time or spamming characters (letters, numbers, emojis, and symbols)."),
         INVITES("Server invites **are not allowed** unless it's done privately and with the user's consent."),
+        MASS_MENTION("Do do mass mention a user. If the user has blocked or is ignoring you, it doesn’t count as a proper cause."),
+        GHOST_PING("Ghost pinging a user is prohibited and can result in **mute**."),
+        PINGING_STAFF("Pinging us won't make us answer faster, please be patient and we will get to you once we are available."),
+        SUPPORT_DM("Please do not DM staff for support, instead use the appropriate support channels or create a ticket."),        
         DOXXING("We have a **zero tolerance policy** for doxxing of any kind. If you're found doxxing **anyone** from the server or others, you will be **banned**."),
         LAG("Do not purposefully include characters that may crash or lag other devices. Includes massive animated emotes."),
         MINI_MODDING("Mini-modding, or telling people what to do, is prohibited. If there's something that's not okay, ask a staff member to look into it."),
@@ -164,7 +168,7 @@ public class RulesCommand extends CommandModule {
         DONATOR("Donator", "311179148691505152", "These are amazing people who have donated to Tech!"),
         VERIFIED_CREATOR("Knows how to Code", "435183665719541761", "A role given to people who have well known coding projects."),
         NITRO_BOOSTERS("Nitro Booster", "585559418008109075", "These people get are also **AMAZING** who are helping us to unlock great features for our Discord!"),
-        REVIEW_SQUAD("Review Squad", "457934035549683713", "These people are the **AMAZING** people in the community who have review all of their plugin's owned by Tech"),
+        REVIEW_SQUAD("Review Squad", "457934035549683713", "These people are the **AMAZING** people in the community who have review all of their plugin's owned by Tech."),
         VERIFIED("Verified", "416174015141642240", "This role is given to members who have successfully verified that they've purchased *as least* one of Tech's resources.");
 
         private final String name;
