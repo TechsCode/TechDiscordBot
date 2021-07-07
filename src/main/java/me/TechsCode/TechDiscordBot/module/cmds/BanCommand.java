@@ -58,8 +58,6 @@ public class BanCommand extends CommandModule {
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         Member member = e.getOption("member").getAsMember();
         String reason = e.getOption("reason").getAsString();
-        List<Role> roles = m.getRoles();
-        String roleslist = roles.toString();
 
         Member selfMember = e.getGuild().getSelfMember();
         if (member != null && !selfMember.canInteract(member)) {
@@ -67,7 +65,7 @@ public class BanCommand extends CommandModule {
             return;
         }
 
-        if (roleslist.contains("Staff")) {
+        if (m.getRoles().contains(STAFF_ROLE.query().first())) {
             e.replyEmbeds(
                     new TechEmbedBuilder("Ban - Error")
                             .error()

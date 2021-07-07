@@ -58,10 +58,8 @@ public class KickCommand extends CommandModule {
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         Member member = e.getOption("member").getAsMember();
         String reason = e.getOption("reason").getAsString();
-        List<Role> roles = m.getRoles();
-        String roleslist = roles.toString();
 
-        if (roleslist.contains("Staff")) {
+        if (m.getRoles().contains(STAFF_ROLE.query().first())) {
             e.replyEmbeds(
                     new TechEmbedBuilder("Kick - Error")
                             .error()
@@ -76,15 +74,14 @@ public class KickCommand extends CommandModule {
                             .build()
             ).queue();
         } else {
-                member.kick(reason).queue();
+            member.kick(reason).queue();
 
-                e.replyEmbeds(
-                        new TechEmbedBuilder("Kicked " + member.getUser().getName() + "#" + member.getUser().getDiscriminator())
-                                .success()
-                                .text("Successfully kicked " + member.getAsMention() + (reason == null ? "!" : " for `" + reason + "`!"))
-                                .build()
-                ).queue();
-            }
+            e.replyEmbeds(
+                    new TechEmbedBuilder("Kicked " + member.getUser().getName() + "#" + member.getUser().getDiscriminator())
+                            .success()
+                            .text("Successfully kicked " + member.getAsMention() + (reason == null ? "!" : " for `" + reason + "`!"))
+                            .build()
+            ).queue();
         }
     }
 }

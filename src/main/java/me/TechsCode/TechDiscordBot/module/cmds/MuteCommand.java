@@ -64,10 +64,8 @@ public class MuteCommand extends CommandModule {
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         Member member = e.getOption("member").getAsMember();
-        List<Role> roles = m.getRoles();
-        String roleslist = roles.toString();
 
-        if (roleslist.contains("Staff")) {
+        if (m.getRoles().contains(STAFF_ROLE.query().first())) {
             e.replyEmbeds(
                     new TechEmbedBuilder("Mute - Error")
                             .error()
