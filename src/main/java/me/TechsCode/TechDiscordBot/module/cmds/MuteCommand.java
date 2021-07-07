@@ -4,6 +4,7 @@ import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
+import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -11,6 +12,8 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
+
+import java.util.List;
 
 public class MuteCommand extends CommandModule {
 
@@ -61,8 +64,26 @@ public class MuteCommand extends CommandModule {
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         Member member = e.getOption("member").getAsMember();
+        List<Role> roles = m.getRoles();
+        String roleslist = roles.toString();
 
-        if(memberHasMutedRole(member)) {
+        if (roleslist.contains("Staff")) {
+            e.replyEmbeds(
+                    new TechEmbedBuilder("Mute - Error")
+                            .error()
+                            .text("You cannot mute this user")
+                            .build()
+            ).queue();
+
+        } else if (member == e.getMember()) {
+            e.replyEmbeds(
+                    new TechEmbedBuilder("Mute - Error")
+                            .error()
+                            .text("You cannot mute yourself")
+                            .build()
+            ).queue();
+
+        } else if(memberHasMutedRole(member)) {
             e.getGuild().removeRoleFromMember(member, MUTED_ROLE.query().first()).queue();
             e.reply(member.getAsMention() + " is no longer muted!").queue();
         } else {

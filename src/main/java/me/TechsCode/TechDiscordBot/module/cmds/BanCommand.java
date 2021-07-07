@@ -13,6 +13,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
+import java.util.List;
+
 public class BanCommand extends CommandModule {
 
     private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
@@ -56,6 +58,8 @@ public class BanCommand extends CommandModule {
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         Member member = e.getOption("member").getAsMember();
         String reason = e.getOption("reason").getAsString();
+        List<Role> roles = m.getRoles();
+        String roleslist = roles.toString();
 
         Member selfMember = e.getGuild().getSelfMember();
         if (member != null && !selfMember.canInteract(member)) {
@@ -63,13 +67,31 @@ public class BanCommand extends CommandModule {
             return;
         }
 
-        member.ban(0, reason).queue();
+        if (roleslist.contains("Staff")) {
+            e.replyEmbeds(
+                    new TechEmbedBuilder("Ban - Error")
+                            .error()
+                            .text("You cannot ban this user")
+                            .build()
+            ).queue();
 
-        e.replyEmbeds(
-            new TechEmbedBuilder("Banned " + member.getUser().getName() + "#" + member.getUser().getDiscriminator())
-                .success()
-                .text("Successfully banned " + member.getAsMention() + (reason == null ? "!" : " for `" + reason + "`!"))
-                .build()
-        ).queue();
+        } else if (member == e.getMember()) {
+            e.replyEmbeds(
+                    new TechEmbedBuilder("Ban - Error")
+                            .error()
+                            .text("You cannot ban yourself")
+                            .build()
+            ).queue();
+
+        } else {
+            member.ban(0, reason).queue();
+
+            e.replyEmbeds(
+                    new TechEmbedBuilder("Banned " + member.getUser().getName() + "#" + member.getUser().getDiscriminator())
+                            .success()
+                            .text("Successfully banned " + member.getAsMention() + (reason == null ? "!" : " for `" + reason + "`!"))
+                            .build()
+            ).queue();
+        }
     }
 }
