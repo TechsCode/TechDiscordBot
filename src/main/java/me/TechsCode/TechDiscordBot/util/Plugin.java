@@ -24,7 +24,8 @@ public enum Plugin {
     ULTRA_REGIONS("Ultra Regions", "58317", "465975554101739520", "465975795433734155", new Color(57, 135, 153), "UltraRegions", "https://www.spigotmc.org/data/resource_icons/58/58317.jpg?5775757457"),
     ULTRA_PUNISHMENTS("Ultra Punishments", "63511", "531255363505487872", "531251918291599401", new Color(247, 119, 39), "UltraPunishments", "https://www.spigotmc.org/data/resource_icons/63/63511.jpg?1597561836"),
     INSANE_SHOPS("Insane Shops", "67352", "531255363505487872", "576813543698202624", new Color(114, 185, 77), "InsaneShops", "https://www.spigotmc.org/data/resource_icons/67/67352.jpg?1597561788"),
-    ULTRA_ECONOMY("Ultra Economy", "83374", "749034791936196649", "737773631198986240", new Color(255, 198, 10), "UltraEconomy", "https://www.spigotmc.org/data/resource_icons/83/83374.jpg?1598896895");
+    ULTRA_ECONOMY("Ultra Economy", "83374", "749034791936196649", "737773631198986240", new Color(255, 198, 10), "UltraEconomy", "https://www.spigotmc.org/data/resource_icons/83/83374.jpg?1598896895"),
+    ULTRA_SCOREBOARD("Ultra Scoreboard", "00000", "811397836616630352", "858052621574078474", new Color(131, 52, 235), "UltraScoreboards", "https://www.spigotmc.org/data/resource_icons/NEW_LINK");
 
     private final String resourceId, channelId, roleName, roleId, emojiName, logo;
     private final Color color;
