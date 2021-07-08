@@ -62,6 +62,13 @@ public class TicketModule extends Module {
         }
     };
 
+    private final DefinedQuery<Role> SUB_VERIFIED = new DefinedQuery<Role>() {
+        @Override
+        protected Query<Role> newQuery() {
+            return bot.getRoles("Sub Verified");
+        }
+    };
+
     private final DefinedQuery<Category> TICKET_CATEGORY = new DefinedQuery<Category>() {
         @Override
         protected Query<Category> newQuery() {
@@ -282,7 +289,7 @@ public class TicketModule extends Module {
             if (plugin == null)
                 return;
 
-            if(e.getMember().getRoles().stream().noneMatch(r -> r.getName().equals(plugin.getRoleName())) && !e.getMember().getRoles().contains("Sub Verified")) {
+            if(e.getMember().getRoles().stream().noneMatch(r -> r.getName().equals(plugin.getRoleName())) && !e.getMember().getRoles().contains(SUB_VERIFIED.query().first())) {
                 new TechEmbedBuilder("Ticket - Error")
                         .error()
                         .text("You do not own " + plugin.getRoleName() + "!")
