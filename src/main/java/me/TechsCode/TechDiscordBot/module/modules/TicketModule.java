@@ -282,7 +282,7 @@ public class TicketModule extends Module {
             if (plugin == null)
                 return;
 
-            if(e.getMember().getRoles().stream().noneMatch(r -> r.getName().equals(plugin.getRoleName()))) {
+            if(e.getMember().getRoles().stream().noneMatch(r -> r.getName().equals(plugin.getRoleName())) && !e.getMember().getRoles().contains("Sub Verified")) {
                 new TechEmbedBuilder("Ticket - Error")
                         .error()
                         .text("You do not own " + plugin.getRoleName() + "!")
