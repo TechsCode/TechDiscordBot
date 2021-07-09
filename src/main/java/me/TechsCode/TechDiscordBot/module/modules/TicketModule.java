@@ -201,10 +201,6 @@ public class TicketModule extends Module {
                     .text("Original Pluginholder: " + TechDiscordBot.getGuild().getMemberById(TechDiscordBot.getStorage().getVerifiedIdFromSubVerifiedId(member.getId())).getAsMention())
                     .color(Color.ORANGE)
                     .queue(ticketChannel);
-
-            ticketChannel.getManager()
-                    .putPermissionOverride(TechDiscordBot.getGuild().getMemberById(TechDiscordBot.getStorage().getVerifiedIdFromSubVerifiedId(member.getId())), permissionsAllow, Collections.singletonList(Permission.MESSAGE_TTS))
-                    .complete();
         }
 
         new TechEmbedBuilder("New Ticket")
