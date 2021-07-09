@@ -81,7 +81,6 @@ public class ReminderManager {
                             int timint = Math.abs(Integer.parseInt(tim));
                             time = time + rtt.toMilli(timint);
                             bhb.addX(rtt, timint);
-                            argsAm = argsAm + 2;
                         } catch (Exception e) {
                             e.printStackTrace();
                             return null;
