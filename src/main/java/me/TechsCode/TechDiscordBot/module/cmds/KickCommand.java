@@ -59,7 +59,7 @@ public class KickCommand extends CommandModule {
         Member member = e.getOption("member").getAsMember();
         String reason = e.getOption("reason").getAsString();
 
-        if (m.getRoles().contains(STAFF_ROLE.query().first())) {
+        if (member.getRoles().contains(STAFF_ROLE.query().first())) {
             e.replyEmbeds(
                     new TechEmbedBuilder("Kick - Error")
                             .error()

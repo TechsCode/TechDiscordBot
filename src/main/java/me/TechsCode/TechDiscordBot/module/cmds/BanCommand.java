@@ -65,7 +65,7 @@ public class BanCommand extends CommandModule {
             return;
         }
 
-        if (m.getRoles().contains(STAFF_ROLE.query().first())) {
+        if (member.getRoles().contains(STAFF_ROLE.query().first())) {
             e.replyEmbeds(
                     new TechEmbedBuilder("Ban - Error")
                             .error()
