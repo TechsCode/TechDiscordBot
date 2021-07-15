@@ -62,11 +62,13 @@ public class OverviewCommand extends CommandModule {
             return;
         }
 
-        //OVERVIEW_CHANNEL.query().first().getIterableHistory()
-                //.takeAsync(200)
-                //.thenAccept(channel::purgeMessages);
+//        OVERVIEW_CHANNEL.query().first().getIterableHistory()
+//                .takeAsync(200)
+//                .thenAccept(channel::purgeMessages);
 
         e.deferReply().queue();
+        e.reply("Sending messages...").queue();
+
         showAll();
     }
 

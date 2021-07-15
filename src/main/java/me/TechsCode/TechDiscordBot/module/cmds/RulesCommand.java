@@ -23,7 +23,7 @@ public class RulesCommand extends CommandModule {
         }
     };
 
-    private final DefinedQuery<TextChannel> RULES_CHANNEL = new DefinedQuery<TextChannel>() {
+    private final DefinedQuery<TextChannel> OVERVIEW_CHANNEL = new DefinedQuery<TextChannel>() {
         @Override
         protected Query<TextChannel> newQuery() {
             return bot.getChannels("overview");
@@ -61,11 +61,12 @@ public class RulesCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member member, SlashCommandEvent e) {
-        RULES_CHANNEL.query().first().getIterableHistory()
+        e.deferReply().queue();
+        e.reply("Sending messages...").queue();
+        OVERVIEW_CHANNEL.query().first().getIterableHistory()
                 .takeAsync(200)
                 .thenAccept(channel::purgeMessages);
 
-        e.deferReply().queue();
         showAll();
     }
 
@@ -82,13 +83,13 @@ public class RulesCommand extends CommandModule {
                         "We will ban if the content is not a complaint. Be sure to familiarize yourself with them here:\n" +
                         "- [Terms of Service](https://dis.gd/tos)\n- [Content Guidelines](https://dis.gd/guidelines)" +
                         "\n\nOur Staff reserve the right to request a member to confirm their age if they are perceived to be potentially under 13. Noncompliance will result in the assumption of being under 13.")
-                .queue(RULES_CHANNEL.query().first());
+                .queue(OVERVIEW_CHANNEL.query().first());
     }
 
     public void showNote() {
         new TechEmbedBuilder()
                 .text("**PLEASE NOTE**: Staff do reserve the right to punish for things not listed on this list under the staff's discretion. Please use common sense, and if you are unsure about anything, please ask.")
-                .queue(RULES_CHANNEL.query().first());
+                .queue(OVERVIEW_CHANNEL.query().first());
     }
 
     public void showRules() {
@@ -115,7 +116,7 @@ public class RulesCommand extends CommandModule {
         for(String s : embeds) {
             new TechEmbedBuilder(i == 0 ? "Rules" : null, false)
                     .text(s)
-                    .queue(RULES_CHANNEL.query().first());
+                    .queue(OVERVIEW_CHANNEL.query().first());
             i++;
         }
     }
@@ -135,7 +136,7 @@ public class RulesCommand extends CommandModule {
 
         new TechEmbedBuilder("Roles")
                 .text(sBuilder + "\n\nPlease don't ask to be Staff, it's annoying.")
-                .queue(RULES_CHANNEL.query().first());
+                .queue(OVERVIEW_CHANNEL.query().first());
     }
 
     public enum Rule {
