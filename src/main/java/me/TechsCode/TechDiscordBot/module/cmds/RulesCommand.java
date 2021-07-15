@@ -18,11 +18,16 @@ public class RulesCommand extends CommandModule {
 
     private final DefinedQuery<net.dv8tion.jda.api.entities.Role> STAFF_ROLE = new DefinedQuery<net.dv8tion.jda.api.entities.Role>() {
         @Override
-        protected Query<net.dv8tion.jda.api.entities.Role> newQuery() { return bot.getRoles("Staff"); }
+        protected Query<net.dv8tion.jda.api.entities.Role> newQuery() {
+            return bot.getRoles("Staff");
+        }
     };
+
     private final DefinedQuery<TextChannel> RULES_CHANNEL = new DefinedQuery<TextChannel>() {
         @Override
-        protected Query<TextChannel> newQuery() { return bot.getChannels("overview"); }
+        protected Query<TextChannel> newQuery() {
+            return bot.getChannels("overview");
+        }
     };
 
     public RulesCommand(TechDiscordBot bot) {
@@ -36,12 +41,12 @@ public class RulesCommand extends CommandModule {
 
     @Override
     public String getDescription() {
-        return "Resend the #rules messages.";
+        return "Resend the #overview rules messages.";
     }
 
     @Override
     public CommandPrivilege[] getCommandPrivileges() {
-        return new CommandPrivilege[0];
+        return new CommandPrivilege[] { CommandPrivilege.enable(STAFF_ROLE.query().first()) };
     }
 
     @Override
