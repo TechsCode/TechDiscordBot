@@ -7,6 +7,7 @@ import me.TechsCode.TechDiscordBot.module.CommandModule;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
+import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -72,9 +73,7 @@ public class GetReleaseCommand extends CommandModule {
                 new TechEmbedBuilder(release.getRelease().getName())
                     .text("```" + (release.getRelease().getBody().isEmpty() ? "No changes specified." : release.getRelease().getBody().replaceAll(" \\|\\| ", "\n")) + "```")
                     .build()
-            ).queue();
-
-            channel.sendFile(release.getFile(), plugin + ".jar").queue((msg) -> release.getFile().delete());
+            ).queue(msg -> msg.editOriginal(release.getFile(), plugin + ".jar").queue((msg2) -> release.getFile().delete()));
         } else {
             e.reply("**Failed!** Could not get the file!\n\n**Possible reasons:**\n- Eazy messed up.\n- The release has no files for some reason.\n- GitHub died.").queue();
         }
