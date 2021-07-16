@@ -413,9 +413,11 @@ public class TicketModule extends Module {
                             return;
                         }
 
-                        new TechEmbedBuilder("Ticket")
+                        e.replyEmbeds(
+                            new TechEmbedBuilder("Ticket")
                                 .text(e.getMember().getAsMention() + " has closed this support ticket." + reasonSend)
-                                .queue(e.getTextChannel());
+                                .build()
+                        ).queue();
 
                         e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS);
                         if (ticketMember != null) {
