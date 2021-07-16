@@ -15,10 +15,11 @@ repositories {
     mavenCentral()
 
     maven { url 'https://www.jitpack.io' }
+    maven { url 'https://m2.dv8tion.net/releases'}
 }
 
 dependencies {
-    implementation ('com.github.DV8FromTheWorld:JDA:05d58f1') { exclude module: 'opus-java' }
+    implementation ('net.dv8tion:JDA:4.3.0_296') { exclude module: 'opus-java' }
 
     implementation 'com.github.techscode:spigotapi:build-25'
     implementation 'org.jsoup:jsoup:1.13.1'
