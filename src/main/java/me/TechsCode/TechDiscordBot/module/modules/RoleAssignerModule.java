@@ -143,7 +143,14 @@ public class RoleAssignerModule extends Module {
             for (SongodaPurchase songodaPurchase : TechDiscordBot.getSongodaAPI().getPurchases()) {
                 if (songodaPurchase.getDiscord() != null && songodaPurchase.getDiscord().equalsIgnoreCase(all.getUser().getName() + "#" + all.getUser().getDiscriminator())) {
                     rolesToKeep.add(songodaVerificationRole);
-                    rolesToKeep.add(bot.getRoles(songodaPurchase.getResource().getName()).first());
+
+                    if(songodaPurchase.getResource() == null) {
+                        System.out.println(songodaPurchase.getState().toString());
+                        System.out.println(songodaPurchase.getDiscord());
+                    } else {
+                        rolesToKeep.add(bot.getRoles(songodaPurchase.getResource().getName()).first());
+                    }
+
                 }
             }
 
