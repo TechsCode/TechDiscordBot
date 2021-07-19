@@ -25,6 +25,7 @@ public class SongodaAPIClient extends APIClient {
     public SongodaAPIClient(String token) {
         super(token);
 
+        this.time = 0;
         this.purchases = new SongodaPurchaseList();
     }
 
@@ -51,9 +52,10 @@ public class SongodaAPIClient extends APIClient {
 
                 JsonArray data = JsonParser.parseReader(new InputStreamReader((InputStream) httpcon.getContent())).getAsJsonObject().getAsJsonArray("data");
 
-                this.time = 0;
+                this.time = System.currentTimeMillis();
                 this.purchases.clear();
-                for (JsonElement d : data) {
+
+                data.forEach(d -> {
                     JsonObject object = d.getAsJsonObject();
 
                     String product = object.get("product").getAsString();
@@ -70,7 +72,7 @@ public class SongodaAPIClient extends APIClient {
                     sp.inject(TechDiscordBot.getSpigotAPI().getData().get());
 
                     this.purchases.add(sp);
-                }
+                });
 
                 httpcon.disconnect();
             } catch (IOException | JsonParseException e) {
