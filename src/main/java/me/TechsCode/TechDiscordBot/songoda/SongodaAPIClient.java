@@ -38,14 +38,6 @@ public class SongodaAPIClient extends APIClient {
     public SongodaPurchaseList getPurchases() {
         return purchases;
     }
-//
-//    public List<Purchase> getPurchases(String discord) {
-//        return getPurchases().stream().filter(sp -> sp.getDiscord() != null && sp.getDiscord().equals(discord)).collect(Collectors.toList());
-//    }
-//
-//    public List<SongodaPurchase> getPurchases(User member) {
-//        return getPurchases().stream().filter(sp -> sp.getDiscord() != null && sp.getDiscord().equals(member.getName() + "#" + member.getDiscriminator())).collect(Collectors.toList());
-//    }
 
     @Override
     public void run() {
@@ -66,7 +58,7 @@ public class SongodaAPIClient extends APIClient {
                     String product = object.get("product").getAsString();
                     String username = object.get("username").getAsString();
                     String avatar = object.has("avatar") ? object.get("avatar").getAsString() : "https://imgproxy.songoda.com//fit/48/48/sm/0/plain/https://cdn2.songoda.com/avatars/default/avatar_5.png";
-                    String discord = object.get("discord").getAsString();
+                    String discord = object.get("discord").isJsonNull() ? null : object.get("discord").getAsString();
                     String currency = object.get("currency").getAsString();
                     float cost = Float.parseFloat(object.get("amount").getAsString());
 
