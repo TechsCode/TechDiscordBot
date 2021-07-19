@@ -28,7 +28,7 @@ public class SongodaAPIClient extends APIClient {
     }
 
     public boolean isLoaded() {
-        return purchases.size() == 0;
+        return purchases.size() != 0;
     }
 
     public long getRefreshTime() {

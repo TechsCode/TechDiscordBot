@@ -61,7 +61,7 @@ public class PluginCommand extends CommandModule {
 
         e.replyEmbeds(
                 new TechEmbedBuilder(plugin.getRoleName())
-                    .text(plugin.getDescription())
+                    .text(plugin.getDescription() + ".")
                     .field("Download Links", plugin.getPluginMarketplace().toString(), true)
                     .field("Wiki", plugin.getWiki(), true)
                     .color(plugin.getColor())
