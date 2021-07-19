@@ -2,16 +2,17 @@ package me.TechsCode.TechDiscordBot.util;
 
 public class PluginMarketplace {
 
-    private final String spigotRId, songodaRId, polymartRId;
+    private final String spigotRId, songodaRId, mcMarketRId, polymartRId;
 
-    private PluginMarketplace(String spigotRId, String songodaRId, String polymartRId) {
+    private PluginMarketplace(String spigotRId, String songodaRId, String mcMarketRId, String polymartRId) {
         this.spigotRId = spigotRId;
         this.songodaRId = songodaRId;
+        this.mcMarketRId = mcMarketRId;
         this.polymartRId = polymartRId;
     }
 
-    public static PluginMarketplace of(String spigotRId, String songodaRId, String polymartRId) {
-        return new PluginMarketplace(spigotRId, songodaRId, polymartRId);
+    public static PluginMarketplace of(String spigotRId, String songodaRId, String mcMarketRId, String polymartRId) {
+        return new PluginMarketplace(spigotRId, songodaRId, mcMarketRId, polymartRId);
     }
 
     public String getSpigotResourceId() {
@@ -28,6 +29,14 @@ public class PluginMarketplace {
 
     public String getSongodaResourceUrl() {
         return "https://songoda.com/marketplace/product/" + songodaRId;
+    }
+
+    public String getMcMarketResourceId() {
+        return mcMarketRId;
+    }
+
+    public String getMcMarketResourceUrl() {
+        return "https://www.mc-market.org/resources/" + mcMarketRId;
     }
 
     public String getPolymartResourceId() {
@@ -48,6 +57,11 @@ public class PluginMarketplace {
         if(songodaRId != null) {
             appendNotEmpty(sb);
             sb.append("[Songoda](").append(getSongodaResourceUrl()).append(")");
+        }
+
+        if(mcMarketRId != null) {
+            appendNotEmpty(sb);
+            sb.append("[MC-Market](").append(getMcMarketResourceUrl()).append(")");
         }
 
         if(polymartRId != null) {
