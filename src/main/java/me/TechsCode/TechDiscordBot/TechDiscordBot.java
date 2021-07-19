@@ -54,7 +54,7 @@ public class TechDiscordBot {
         }
 
         try {
-            new TechDiscordBot(args[0], args[1], args[2], MySQLSettings.of(args[3], args[4], args[5], args[7], args[8]), args[9]);
+            new TechDiscordBot(args[0], args[1], args[2], MySQLSettings.of(args[3], args[4], args[5], args[6], args[7]), args[8]);
         } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
         }
