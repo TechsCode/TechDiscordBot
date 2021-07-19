@@ -94,7 +94,7 @@ public class RoleAssignerModule extends Module {
     }
 
     public void loop() {
-        if(!TechDiscordBot.getBot().getStatus().isUsable() || !TechDiscordBot.getSongodaAPI().isLoaded())
+        if(!TechDiscordBot.getBot().getStatus().isUsable() || TechDiscordBot.getSpigotAPI().getPurchases().size() < 9000 || !TechDiscordBot.getSongodaAPI().isLoaded())
             return;
 
         Role verificationRole = VERIFICATION_ROLE.query().first();
