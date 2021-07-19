@@ -7,8 +7,7 @@ import me.TechsCode.TechDiscordBot.mysql.storage.Storage;
 import me.TechsCode.TechDiscordBot.objects.ChannelQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.reminders.ReminderManager;
-import me.TechsCode.TechDiscordBot.songoda.SongodaPurchase;
-import me.TechsCode.TechDiscordBot.songoda.SongodaPurchases;
+import me.TechsCode.TechDiscordBot.songoda.SongodaAPIClient;
 import me.TechsCode.TechDiscordBot.spigotmc.api.APIStatus;
 import me.TechsCode.TechDiscordBot.util.ConsoleColor;
 import net.dv8tion.jda.api.JDA;
@@ -37,7 +36,8 @@ public class TechDiscordBot {
     private static Member self;
 
     private static SpigotAPIClient spigotAPIClient;
-    private static List<SongodaPurchase> songodaPurchases;
+    private static SongodaAPIClient songodaAPIClient;
+//    private static List<SongodaPurchase> songodaPurchases;
 
     private static Storage storage;
 
@@ -47,20 +47,20 @@ public class TechDiscordBot {
     private static ReminderManager remindersManager;
 
     public static void main(String[] args) {
-        if (args.length != 8) {
+        if (args.length != 9) {
             log(ConsoleColor.RED + "Invalid start arguments. Consider using:");
-            log(ConsoleColor.WHITE_BOLD_BRIGHT + "java -jar TechPluginSupportBot.jar <Discord Bot Token> <Tech API Token> <MySQL Host> <MySQL Port> <MySQL Database> <MySQL Username> <MySQL Password> <Github Token>");
+            log(ConsoleColor.WHITE_BOLD_BRIGHT + "java -jar TechPluginSupportBot.jar <Discord Bot Token> <Tech API Token> <Songoda API Token> <MySQL Host> <MySQL Port> <MySQL Database> <MySQL Username> <MySQL Password> <Github Token>");
             return;
         }
 
         try {
-            new TechDiscordBot(args[0], args[1], MySQLSettings.of(args[2], args[3], args[4], args[5], args[6]), args[7]);
+            new TechDiscordBot(args[0], args[1], args[2], MySQLSettings.of(args[3], args[4], args[5], args[7], args[8]), args[9]);
         } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    public TechDiscordBot(String token, String apiToken, MySQLSettings mySQLSettings, String githubToken) throws LoginException, InterruptedException {
+    public TechDiscordBot(String token, String apiToken, String songodaApiToken, MySQLSettings mySQLSettings, String githubToken) throws LoginException, InterruptedException {
         i = this;
 
         jda = JDABuilder.createDefault(token)
@@ -92,7 +92,8 @@ public class TechDiscordBot {
         TechDiscordBot.githubToken = githubToken;
 
         spigotAPIClient = new SpigotAPIClient("http://api.techscode.de/", apiToken);
-        songodaPurchases = SongodaPurchases.getPurchases();
+        songodaAPIClient = new SongodaAPIClient(songodaApiToken);
+//        songodaPurchases = SongodaPurchases.getPurchases();
 
         log("Initializing MySQL Storage " + mySQLSettings.getHost() + ":" + mySQLSettings.getPort() + "!");
         storage = Storage.of(mySQLSettings);
@@ -130,7 +131,12 @@ public class TechDiscordBot {
         log("");
 
         log("Songoda: ");
-        log("  » Final Purchases: " + getSongodaPurchases().size());
+        if(getSongodaAPI().isLoaded()) {
+            log("  » Purchases: " + getSongodaAPI().getPurchases().size());
+        } else {
+            log("  » " + ConsoleColor.RED + "Could not connect. Cannot show info!");
+        }
+//        log("  » Final Purchases: " + getSongodaPurchases().size());
 
         log("");
 
@@ -172,8 +178,8 @@ public class TechDiscordBot {
         return spigotAPIClient;
     }
 
-    public static List<SongodaPurchase> getSongodaPurchases() {
-        return songodaPurchases;
+    public static SongodaAPIClient getSongodaAPI() {
+        return songodaAPIClient;
     }
 
     public static ModulesManager getModulesManager() {
@@ -246,5 +252,9 @@ public class TechDiscordBot {
 
     public APIStatus getStatus() {
         return APIStatus.getStatus(getSpigotAPI());
+    }
+
+    public APIStatus getSongodaStatus() {
+        return APIStatus.getStatus(getSongodaAPI());
     }
 }

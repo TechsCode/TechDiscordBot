@@ -166,6 +166,10 @@ public enum Plugin {
         return Arrays.stream(Plugin.values()).filter(p -> p.getRoleName().equals(roleName)).findFirst().orElse(null);
     }
 
+    public static Plugin byEmojiName(String emojiName) {
+        return Arrays.stream(Plugin.values()).filter(p -> p.getEmojiName().equals(emojiName)).findFirst().orElse(null);
+    }
+
     public static Plugin byEmote(Emote emote) {
         return Arrays.stream(values()).filter(e -> emote.getId().equals(e.getEmoji().getId())).findFirst().orElse(null);
     }

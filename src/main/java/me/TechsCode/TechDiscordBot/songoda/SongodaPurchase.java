@@ -1,63 +1,43 @@
 package me.TechsCode.TechDiscordBot.songoda;
 
-public class SongodaPurchase {
+import com.google.gson.JsonObject;
+import me.TechsCode.SpigotAPI.data.Cost;
+import me.TechsCode.SpigotAPI.data.Purchase;
+import me.TechsCode.SpigotAPI.data.Time;
+import me.TechsCode.SpigotAPI.data.User;
+import me.TechsCode.TechDiscordBot.TechDiscordBot;
+import net.dv8tion.jda.api.entities.Member;
 
-    private String order_number, transaction_id, product, status, amount, currency, fee, email, first_name, last_name, username, discord;
-    private int created_at, updated_at;
+public class SongodaPurchase extends Purchase {
 
-    public String getAmount() {
-        return amount;
+    private final String discord;
+
+    public SongodaPurchase(String resourceId, User user, Time time, Cost cost, String discord) {
+        super(resourceId, user, time, cost);
+
+        this.discord = discord;
+    }
+
+    public SongodaPurchase(JsonObject state, String discord) {
+        super(state);
+
+        this.discord = discord;
     }
 
     public String getDiscord() {
         return discord;
     }
 
-    public String getCurrency() {
-        return currency;
-    }
+    public Member getMember() {
+        if (getDiscord() == null)
+            return null;
 
-    public String getEmail() {
-        return email;
-    }
+        String name = this.discord.split("#")[0];
+        String discrim = this.discord.split("#")[1];
 
-    public String getFee() {
-        return fee;
-    }
+        if (name == null || discrim == null || name.isEmpty() || discrim.isEmpty())
+            return null;
 
-    public String getProduct() {
-        return product;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public int getCreatedAt() {
-        return created_at;
-    }
-
-    public int getUpdatedAt() {
-        return updated_at;
-    }
-
-    public String getFirstName() {
-        return first_name;
-    }
-
-    public String getLastName() {
-        return last_name;
-    }
-
-    public String getOrderNumber() {
-        return order_number;
-    }
-
-    public String getTransactionId() {
-        return transaction_id;
+        return TechDiscordBot.getGuild().getMembers().stream().filter(member -> member.getUser().getName().equals(name) && member.getUser().getDiscriminator().equals(discrim)).findFirst().orElse(null);
     }
 }

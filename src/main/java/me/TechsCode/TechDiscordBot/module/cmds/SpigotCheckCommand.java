@@ -16,9 +16,9 @@ import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
 import java.util.Comparator;
 
-public class MemberCheckCommand extends CommandModule {
+public class SpigotCheckCommand extends CommandModule {
 
-    public MemberCheckCommand(TechDiscordBot bot) {
+    public SpigotCheckCommand(TechDiscordBot bot) {
         super(bot);
     }
 
@@ -29,7 +29,7 @@ public class MemberCheckCommand extends CommandModule {
 
     @Override
     public String getDescription() {
-        return "Check a member's Purchases & Spigot Info.";
+        return "Check a Member's Purchases & Spigot Info.";
     }
 
     @Override
@@ -62,7 +62,7 @@ public class MemberCheckCommand extends CommandModule {
             e.replyEmbeds(
                 new TechEmbedBuilder("API Not Usable")
                     .error()
-                    .text("The API does not contain any information! I cannot check a user if it's offline!")
+                    .text("I cannot check a user when the Spigot API is offline!")
                     .build()
             ).queue();
             return;
@@ -93,7 +93,7 @@ public class MemberCheckCommand extends CommandModule {
         if(!canView) {
             e.replyEmbeds(
                 new TechEmbedBuilder("Not Enough Perms")
-                    .text("You have to either be Staff or be viewing your self to execute this command!")
+                    .text("You have to either be Staff or be viewing yourself to execute this command!")
                     .error()
                     .build()
             ).setEphemeral(true).queue();
@@ -119,7 +119,7 @@ public class MemberCheckCommand extends CommandModule {
         StringBuilder sb = new StringBuilder();
 
         for (Purchase p : purchases)
-            sb.append("- ").append(Plugin.fromId(p.getResource().getId()).getEmoji().getAsMention()).append(" ").append(p.getResource().getName()).append(" ").append(!p.getCost().isPresent() ? "as a Gift/Free" : "for " + p.getCost().get().getValue() + p.getCost().get().getCurrency()).append(" on").append((p.getTime().getHumanTime() != null ? " " + p.getTime().getHumanTime() : " Unknown (*too early to calculate*)")).append(",\n ");
+            sb.append("- ").append(Plugin.fromId(p.getResource().getId()).getEmoji().getAsMention()).append(" ").append(p.getResource().getName()).append(" ").append(!p.getCost().isPresent() ? "as a Gift/Free" : "for " + p.getCost().get().getValue() + p.getCost().get().getCurrency()).append(" on").append((p.getTime().getHumanTime() != null ? " " + p.getTime().getHumanTime() : " Unknown (*too early to calculate*)")).append("\n ");
 
         String purchasesString = sb.toString();
         e.replyEmbeds(

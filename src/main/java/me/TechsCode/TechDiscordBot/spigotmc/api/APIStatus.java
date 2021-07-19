@@ -2,6 +2,7 @@ package me.TechsCode.TechDiscordBot.spigotmc.api;
 
 import me.TechsCode.SpigotAPI.client.SpigotAPIClient;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
+import me.TechsCode.TechDiscordBot.songoda.SongodaAPIClient;
 
 import java.util.concurrent.TimeUnit;
 
@@ -39,6 +40,22 @@ public enum APIStatus {
         APIStatus status;
 
         if(client.getData().isPresent() && client.getRefreshTime() != 0L) {
+            if(client.getRefreshTime() + TimeUnit.HOURS.toMillis(1) < System.currentTimeMillis()) {
+                status = NOT_FETCHING;
+            } else {
+                status = ONLINE;
+            }
+        } else {
+            status = OFFLINE;
+        }
+
+        return status;
+    }
+
+    public static APIStatus getStatus(SongodaAPIClient client) {
+        APIStatus status;
+
+        if(client.isLoaded() && client.getRefreshTime() != 0L) {
             if(client.getRefreshTime() + TimeUnit.HOURS.toMillis(1) < System.currentTimeMillis()) {
                 status = NOT_FETCHING;
             } else {

@@ -3,6 +3,7 @@ package me.TechsCode.TechDiscordBot.module.modules;
 import me.TechsCode.SpigotAPI.data.Resource;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.Module;
+import me.TechsCode.TechDiscordBot.songoda.SongodaPurchase;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
@@ -23,6 +24,13 @@ public class RoleAssignerModule extends Module {
         @Override
         protected Query<Role> newQuery() {
             return bot.getRoles("Verified");
+        }
+    };
+
+    private final DefinedQuery<Role> SONGODA_VERIFICATION_ROLE = new DefinedQuery<Role>() {
+        @Override
+        protected Query<Role> newQuery() {
+            return bot.getRoles("Songoda Verified");
         }
     };
 
@@ -79,22 +87,25 @@ public class RoleAssignerModule extends Module {
     public Requirement[] getRequirements() {
         return new Requirement[] {
                 new Requirement(VERIFICATION_ROLE, 1, "Missing 'Verified' Role"),
+                new Requirement(SONGODA_VERIFICATION_ROLE, 1, "Missing 'Songoda-Verified' Role"),
                 new Requirement(REVIEW_SQUAD_ROLE, 1, "Missing 'Review Squad' Role"),
                 new Requirement(RESOURCE_ROLES, 1, "Missing Resource Roles")
         };
     }
 
-
     public void loop() {
-        if(!TechDiscordBot.getBot().getStatus().isUsable())
+        if(!TechDiscordBot.getBot().getStatus().isUsable() || !TechDiscordBot.getSongodaAPI().isLoaded())
             return;
 
         Role verificationRole = VERIFICATION_ROLE.query().first();
+        Role songodaVerificationRole = SONGODA_VERIFICATION_ROLE.query().first();
         Role reviewSquad = REVIEW_SQUAD_ROLE.query().first();
 
         Set<Verification> verifications = TechDiscordBot.getStorage().retrieveVerifications();
         Set<Role> possibleRoles = new HashSet<>();
+
         possibleRoles.add(verificationRole);
+        possibleRoles.add(songodaVerificationRole);
         possibleRoles.add(reviewSquad);
         possibleRoles.addAll(RESOURCE_ROLES.query().all());
 
@@ -129,6 +140,12 @@ public class RoleAssignerModule extends Module {
                 if(purchases != 0 && purchases == reviews) rolesToKeep.add(reviewSquad);
             }
 
+            for (SongodaPurchase songodaPurchase : TechDiscordBot.getSongodaAPI().getPurchases()) {
+                if (songodaPurchase.getDiscord() != null && songodaPurchase.getDiscord().equalsIgnoreCase(all.getUser().getName() + "#" + all.getUser().getDiscriminator())) {
+                    rolesToKeep.add(songodaVerificationRole);
+                    rolesToKeep.add(bot.getRoles(songodaPurchase.getResource().getName()).first());
+                }
+            }
 
             /*if(TechDiscordBot.getStorage().isSubVerifiedUser(all.getId())) {
                 if(TechDiscordBot.getStorage().getVerifiedIdFromSubVerifiedId(all.getId()) != null && TechDiscordBot.getGuild().getMemberById(TechDiscordBot.getStorage().getVerifiedIdFromSubVerifiedId(all.getId())) != null) {
