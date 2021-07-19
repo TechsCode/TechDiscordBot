@@ -7,7 +7,6 @@ import me.TechsCode.TechDiscordBot.module.CommandModule;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -64,18 +63,22 @@ public class GetReleaseCommand extends CommandModule {
         e.deferReply().queue();
         String plugin = e.getOption("plugin").getAsString();
 
-        GithubRelease release = GitHubUtil.getLatestRelease(plugin);
+        e.reply("Getting release... please wait.").queue(q -> {
+            GithubRelease release = GitHubUtil.getLatestRelease(plugin);
 
-        if(release == null) {
-            e.reply("**Failed!** Could not get the release!\n\n**Possible reasons:**\n- The repo isn't valid.\n- There is no release in the reop.\n- Github died.").queue();
-        } else if (release.getFile() != null) {
-            e.replyEmbeds(
-                new TechEmbedBuilder(release.getRelease().getName())
-                    .text("```" + (release.getRelease().getBody().isEmpty() ? "No changes specified." : release.getRelease().getBody().replaceAll(" \\|\\| ", "\n")) + "```")
-                    .build()
-            ).queue(msg -> msg.editOriginal(release.getFile(), plugin + ".jar").queue((msg2) -> release.getFile().delete()));
-        } else {
-            e.reply("**Failed!** Could not get the file!\n\n**Possible reasons:**\n- Eazy messed up.\n- The release has no files for some reason.\n- GitHub died.").queue();
-        }
+            if(release == null) {
+                e.reply("**Failed!** Could not get the release!\n\n**Possible reasons:**\n- The repo isn't valid.\n- There is no release in the reop.\n- Github died.").queue();
+            } else if (release.getFile() != null) {
+                q.editOriginal(release.getFile(), plugin + ".jar")
+                        .queue(msg2 -> release.getFile().delete());
+                q.editOriginalEmbeds(
+                        new TechEmbedBuilder(release.getRelease().getName())
+                                .text("```" + (release.getRelease().getBody().isEmpty() ? "No changes specified." : release.getRelease().getBody().replaceAll(" \\|\\| ", "\n")) + "```")
+                                .build()
+                ).queue();
+            } else {
+                e.reply("**Failed!** Could not get the file!\n\n**Possible reasons:**\n- Eazy messed up.\n- The release has no files for some reason.\n- GitHub died.").queue();
+            }
+        });
     }
 }
