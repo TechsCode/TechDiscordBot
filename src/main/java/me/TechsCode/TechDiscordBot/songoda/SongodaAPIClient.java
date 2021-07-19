@@ -4,6 +4,7 @@ import com.google.gson.*;
 import me.TechsCode.SpigotAPI.data.Cost;
 import me.TechsCode.SpigotAPI.data.Time;
 import me.TechsCode.SpigotAPI.data.User;
+import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.client.APIClient;
 import me.TechsCode.TechDiscordBot.util.Plugin;
 
@@ -52,7 +53,7 @@ public class SongodaAPIClient extends APIClient {
 
                 this.time = 0;
                 this.purchases.clear();
-                data.forEach(d -> {
+                for (JsonElement d : data) {
                     JsonObject object = d.getAsJsonObject();
 
                     String product = object.get("product").getAsString();
@@ -65,8 +66,11 @@ public class SongodaAPIClient extends APIClient {
                     long createdAt = object.get("created_at").getAsLong();
                     int userId = object.get("user_id").getAsInt();
 
-                    this.purchases.add(new SongodaPurchase(Plugin.byEmojiName(product.replace(" ", "")).getResourceId(), new User(String.valueOf(userId), username, avatar), new Time(new SimpleDateFormat("MMMM dd, hh:mm:ss a z").format(new Date(createdAt)), createdAt), new Cost(currency, cost), discord));
-                });
+                    SongodaPurchase sp = new SongodaPurchase(Plugin.byEmojiName(product.replace(" ", "")).getResourceId(), new User(String.valueOf(userId), username, avatar), new Time(new SimpleDateFormat("MMMM dd, hh:mm:ss a z").format(new Date(createdAt)), createdAt), new Cost(currency, cost), discord);
+                    sp.inject(TechDiscordBot.getSpigotAPI().getData().get());
+
+                    this.purchases.add(sp);
+                }
 
                 httpcon.disconnect();
             } catch (IOException | JsonParseException e) {
