@@ -44,20 +44,22 @@ public class PluginMarketplace {
 
         if(spigotRId != null)
             sb.append("[SpigotMC](").append(getSpigotResourceUrl()).append(")");
-        appendNotEmpty(sb);
 
-        if(songodaRId != null)
+        if(songodaRId != null) {
+            appendNotEmpty(sb);
             sb.append("[Songoda](").append(getSongodaResourceUrl()).append(")");
-        appendNotEmpty(sb);
+        }
 
-        if(polymartRId != null)
+        if(polymartRId != null) {
+            appendNotEmpty(sb);
             sb.append("[Polymart](").append(getPolymartResourceUrl()).append(")");
+        }
 
         return sb.toString();
     }
 
     private void appendNotEmpty(StringBuilder sb) {
         if(!sb.toString().isEmpty())
-            sb.append("**-** ");
+            sb.append(" **-** ");
     }
 }
