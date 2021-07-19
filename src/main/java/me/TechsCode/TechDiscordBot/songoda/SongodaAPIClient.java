@@ -68,7 +68,7 @@ public class SongodaAPIClient extends APIClient {
                     long createdAt = object.get("created_at").getAsLong();
                     int userId = object.get("user_id").getAsInt();
 
-                    SongodaPurchase sp = new SongodaPurchase(Plugin.byEmojiName(product.replace(" ", "")).getResourceId(), new User(String.valueOf(userId), username, avatar), new Time(new SimpleDateFormat("MMMM dd, hh:mm:ss a z").format(new Date(createdAt)), createdAt), new Cost(currency, cost), discord);
+                    SongodaPurchase sp = new SongodaPurchase(Plugin.byEmojiName(product.replace(" ", "")).getResourceId(), new User(String.valueOf(userId), username, avatar), new Time(new SimpleDateFormat("MMM dd, yyyy 'at' hh:mm a").format(new Date(createdAt)), createdAt), new Cost(currency, cost), discord);
                     sp.inject(TechDiscordBot.getSpigotAPI().getData().get());
 
                     this.purchases.add(sp);

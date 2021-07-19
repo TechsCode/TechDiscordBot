@@ -120,7 +120,7 @@ public class SongodaCheckCommand extends CommandModule {
                         .field("Username / ID", "[" + purchase.getUser().getUsername() + "." + purchase.getUser().getUserId() + "](https://songoda.com/profile/" + purchase.getUser().getUsername().toLowerCase() + ")", true)
                         .field("Purchases Amount", hasBoughtAll ? " **All** " + purchases.size() + " plugins purchased!" : purchases.size() + "**/**" + TechDiscordBot.getSpigotAPI().getResources().premium().size() + " purchased.", true)
                         .field("Last Purchase", Plugin.fromId(purchase.getResource().getId()).getEmoji().getAsMention() + " " + (date != null ? date + ".": "Unknown\n*or cannot calculate*."), true)
-                        .field("Purchases", purchasesString.substring(0, purchasesString.length() - 3) + ".", false)
+                        .field("Purchases", purchasesString.substring(0, purchasesString.length() - 2) + ".", false)
                         .build()
         ).queue();
     }
