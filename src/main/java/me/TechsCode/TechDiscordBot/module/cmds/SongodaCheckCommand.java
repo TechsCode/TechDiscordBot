@@ -78,7 +78,7 @@ public class SongodaCheckCommand extends CommandModule {
             e.replyEmbeds(
                     new TechEmbedBuilder((songodaId != null ? songodaId : member.getEffectiveName()) + "'s Purchases")
                             .error()
-                            .text((member != null ? songodaId : member.getAsMention()) + " has not bought of any Tech's Resources!")
+                            .text((songodaId != null ? songodaId : member.getAsMention()) + " has not bought of any Tech's Resources!")
                             .build()
             ).queue();
             return;

@@ -38,7 +38,7 @@ public class SongodaPurchaseList extends ArrayList<SongodaPurchase> {
     }
 
     public SongodaPurchaseList discord(User user) {
-        return stream().filter(purchase -> purchase.getDiscord() != null && purchase.getDiscord().equals(user.getName() + "#" + user.getDiscriminator())).collect(Collectors.toCollection(SongodaPurchaseList::new));
+        return stream().filter(purchase -> purchase.getDiscord() != null && purchase.getDiscord().equalsIgnoreCase(user.getName() + "#" + user.getDiscriminator())).collect(Collectors.toCollection(SongodaPurchaseList::new));
     }
 
     public SongodaPurchaseList discord(Member member) {
