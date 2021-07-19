@@ -19,20 +19,21 @@ import java.util.stream.Collectors;
 
 public enum Plugin {
 
-    ULTRA_PERMISSIONS("Ultra Permissions","42678", "416194311080771596", "330053303050436608", new Color(0,235,229), "UltraPermissions", "https://www.spigotmc.org/data/resource_icons/42/42678.jpg?75455775"),
-    ULTRA_CUSTOMIZER("Ultra Customizer", "49330", "416194287567372298", "380133603683860480", new Color(184, 103, 243), "UltraCustomizer", "https://www.spigotmc.org/data/resource_icons/49/49330.jpg?575757457475"),
-    ULTRA_REGIONS("Ultra Regions", "58317", "465975554101739520", "465975795433734155", new Color(57, 135, 153), "UltraRegions", "https://www.spigotmc.org/data/resource_icons/58/58317.jpg?5775757457"),
-    ULTRA_PUNISHMENTS("Ultra Punishments", "63511", "531255363505487872", "531251918291599401", new Color(247, 119, 39), "UltraPunishments", "https://www.spigotmc.org/data/resource_icons/63/63511.jpg?1597561836"),
-    INSANE_SHOPS("Insane Shops", "67352", "531255363505487872", "576813543698202624", new Color(114, 185, 77), "InsaneShops", "https://www.spigotmc.org/data/resource_icons/67/67352.jpg?1597561788"),
-    ULTRA_ECONOMY("Ultra Economy", "83374", "749034791936196649", "737773631198986240", new Color(255, 198, 10), "UltraEconomy", "https://www.spigotmc.org/data/resource_icons/83/83374.jpg?1598896895"),
-    ULTRA_SCOREBOARDS("Ultra Scoreboards", "93726", "811397836616630352", "858052621574078474", new Color(131, 52, 235), "UltraScoreboards", "https://www.spigotmc.org/data/resource_icons/93/93726.jpg?1624925787");
+    ULTRA_PERMISSIONS("Ultra Permissions",PluginMarketplace.of("42678", "150", null), "416194311080771596", "330053303050436608", new Color(0,235,229), "UltraPermissions", "https://www.spigotmc.org/data/resource_icons/42/42678.jpg?75455775"),
+    ULTRA_CUSTOMIZER("Ultra Customizer", PluginMarketplace.of("49330", "151", null), "416194287567372298", "380133603683860480", new Color(184, 103, 243), "UltraCustomizer", "https://www.spigotmc.org/data/resource_icons/49/49330.jpg?575757457475"),
+    ULTRA_REGIONS("Ultra Regions", PluginMarketplace.of("58317", "152", null), "465975554101739520", "465975795433734155", new Color(57, 135, 153), "UltraRegions", "https://www.spigotmc.org/data/resource_icons/58/58317.jpg?5775757457"),
+    ULTRA_PUNISHMENTS("Ultra Punishments", PluginMarketplace.of("63511", "154", null), "531255363505487872", "531251918291599401", new Color(247, 119, 39), "UltraPunishments", "https://www.spigotmc.org/data/resource_icons/63/63511.jpg?1597561836"),
+    INSANE_SHOPS("Insane Shops", PluginMarketplace.of("67352", "153", null), "531255363505487872", "576813543698202624", new Color(114, 185, 77), "InsaneShops", "https://www.spigotmc.org/data/resource_icons/67/67352.jpg?1597561788"),
+    ULTRA_ECONOMY("Ultra Economy", PluginMarketplace.of("83374", "639", null), "749034791936196649", "737773631198986240", new Color(255, 198, 10), "UltraEconomy", "https://www.spigotmc.org/data/resource_icons/83/83374.jpg?1598896895"),
+    ULTRA_SCOREBOARDS("Ultra Scoreboards", PluginMarketplace.of("93726", null, null), "811397836616630352", "858052621574078474", new Color(131, 52, 235), "UltraScoreboards", "https://www.spigotmc.org/data/resource_icons/93/93726.jpg?1624925787");
 
-    private final String resourceId, channelId, roleName, roleId, emojiName, logo;
+    private final PluginMarketplace pluginMarketplace;
+    private final String channelId, roleName, roleId, emojiName, logo;
     private final Color color;
 
-    Plugin(String roleName, String resourceId, String roleId, String channelId, Color color, String emojiName, String logo) {
+    Plugin(String roleName, PluginMarketplace pluginMarketplace, String roleId, String channelId, Color color, String emojiName, String logo) {
         this.roleName = roleName;
-        this.resourceId = resourceId;
+        this.pluginMarketplace = pluginMarketplace;
         this.channelId = channelId;
         this.roleId = roleId;
         this.color = color;
@@ -41,7 +42,11 @@ public enum Plugin {
     }
 
     public String getResourceId() {
-        return resourceId;
+        return pluginMarketplace.getSpigotResourceId();
+    }
+
+    public PluginMarketplace getPluginMarketplace() {
+        return pluginMarketplace;
     }
 
     public String getChannelId() {
@@ -65,7 +70,7 @@ public enum Plugin {
     }
 
     public String getDescription() {
-        return TechDiscordBot.getSpigotAPI().getResources().id(resourceId).get().getTagLine();
+        return TechDiscordBot.getSpigotAPI().getResources().id(getResourceId()).get().getTagLine();
     }
 
     public String getResourceLogo() {

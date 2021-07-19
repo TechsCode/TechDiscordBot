@@ -76,16 +76,9 @@ public class OverviewCommand extends CommandModule {
         showInfo();
         showFeedback();
         //showRules();
-        //showPlugins();
+        showPlugins();
         showInvite();
         //showVerify();
-        showUltraPermissions();
-        showUltraCustomizer();
-        showUltraRegions();
-        showUltraPunishments();
-        showInsaneShops();
-        showUltraEconomy();
-        showUltraScoreboard();
     }
 
     public void showVerify() {
@@ -95,20 +88,20 @@ public class OverviewCommand extends CommandModule {
             .queue(OVERVIEW_CHANNEL.query().first(), msg -> msg.addReaction(bot.getEmotes("TechSupport").first()).complete());
     }
 
-    @SubscribeEvent
-    public void onReactAdd(GuildMessageReactionAddEvent e) {
-        if(e.getChannel() != OVERVIEW_CHANNEL.query().first() || e.getUser().isBot())
-            return;
-
-        Emote emote = bot.getEmotes("TechSupport").first();
-
-        if(e.getReaction().getReactionEmote().isEmote() && e.getReaction().getReactionEmote().getEmote() == emote) {
-            if(e.getMember().getRoles().stream().anyMatch(r -> r.getName().equals("Member")))
-                return;
-
-            e.getGuild().addRoleToMember(e.getMember(), bot.getRoles("Member").first()).queue();
-        }
-    }
+//    @SubscribeEvent
+//    public void onReactAdd(GuildMessageReactionAddEvent e) {
+//        if(e.getChannel() != OVERVIEW_CHANNEL.query().first() || e.getUser().isBot())
+//            return;
+//
+//        Emote emote = bot.getEmotes("TechSupport").first();
+//
+//        if(e.getReaction().getReactionEmote().isEmote() && e.getReaction().getReactionEmote().getEmote() == emote) {
+//            if(e.getMember().getRoles().stream().anyMatch(r -> r.getName().equals("Member")))
+//                return;
+//
+//            e.getGuild().addRoleToMember(e.getMember(), bot.getRoles("Member").first()).queue();
+//        }
+//    }
 
     public void showInfo() {
         new TechEmbedBuilder("Tech's Plugin Support")
@@ -137,61 +130,13 @@ public class OverviewCommand extends CommandModule {
                 .queue(OVERVIEW_CHANNEL.query().first());
     }
 
-    public void showUltraPermissions() {
-        new TechEmbedBuilder("Ultra Permissions")
-                .text("The Ultimate GUI based Permissions Plugin for Spigot & Bungee.\n\n**Download Links:**\n[SpigotMC](https://www.spigotmc.org/resources/ultra-permissions.42678/) **-** [MC-Market]https://www.mc-market.org/resources/19028/) **-** [Songoda](https://songoda.com/marketplace/product/ultra-permissions-the-ultimate-gui-based-permissions-plugin-for-spigot-bungee.150)\n\n**Wiki:**\n:UltraPermissions: **-** https://www.ultrapermissions.com")
-                .thumbnail("https://www.spigotmc.org/data/resource_icons/42/42678.jpg?75455775")
-                .queue(OVERVIEW_CHANNEL.query().first());
-
-    }
-
-    public void showUltraCustomizer() {
-        new TechEmbedBuilder("Ultra Customizer")
-                .text("The Ultimate Customization Plugin fully controllable via GUI's w/ Script System.\n\n**Download Links:**\n[SpigotMC](https://www.spigotmc.org/resources/ultra-customizer.49330/) **-** [MC-Market](https://www.mc-market.org/resources/19029/) **-** [Songoda](https://songoda.com/marketplace/product/ultra-customizer-the-ultimate-customization-plugin-fully-controllable-via-guis.151)\n\n**Wiki:**\n:UltraCustomizer: **-** https://www.ultracustomizer.com")
-                .thumbnail("https://www.spigotmc.org/data/resource_icons/49/49330.jpg?575757457475")
-                .queue(OVERVIEW_CHANNEL.query().first());
-    }
-
-    public void showUltraRegions() {
-        new TechEmbedBuilder("Ultra Regions")
-                .text("The Ultimate replacement for Multiverse and World Guard featuring a modern GUI.\n\n**Download Links:**\n[SpigotMC](https://www.spigotmc.org/resources/ultra-regions.58317/) **-** [MC-Market](https://www.mc-market.org/resources/19031/) **-** [Songoda](https://songoda.com/marketplace/product/ultra-regions-the-ultimate-replacement-for-multiverse-and-worldguard-featuring-a-gui.152)\n\n**Wiki:**\n:UltraRegions: **-** https://www.ultraregions.com")
-                .thumbnail("https://www.spigotmc.org/data/resource_icons/58/58317.jpg?5775757457")
-                .queue(OVERVIEW_CHANNEL.query().first());
-    }
-
-    public void showUltraPunishments() {
-        new TechEmbedBuilder("Ultra Punishments")
-                .text("Next Generation Punishment Plugin fully controllable via GUI's w/ Report System.\n\n**Download Links:**\n[SpigotMC](https://www.spigotmc.org/resources/ultra-punishments.63511/) **-** [MC-Market](https://www.mc-market.org/resources/19030/) **-** [Songoda](https://songoda.com/marketplace/product/ultra-punishments-next-generation-punishment-plugin-fully-controllable-via-guis.154)\n\n**Wiki:**\n:UltraPunishments: **-** https://www.ultrapunishments.com")
-                .thumbnail("https://www.spigotmc.org/data/resource_icons/63/63511.jpg?1597561836")
-                .queue(OVERVIEW_CHANNEL.query().first());
-    }
-
-    public void showInsaneShops() {
-        new TechEmbedBuilder("Insane Shops")
-                .text("Fully interactive Chest Shop Plugin with Holograms fully controlled with GUI's.\n\n**Download Links:**\n[SpigotMC](https://www.spigotmc.org/resources/insaneshops.67352/) **-** [MC-Market](https://www.mc-market.org/resources/19032/) **-** [Songoda](https://songoda.com/marketplace/product/insane-shops-fully-interactive-chest-shop-plugin-that-is-fully-controlled-with-guis.153)\n\n**Wiki:**\n:InsaneShops: **-** https://www.insaneshops.com")
-                .thumbnail("https://www.spigotmc.org/data/resource_icons/67/67352.jpg?1597561788")
-                .queue(OVERVIEW_CHANNEL.query().first());
-    }
-
-    public void showUltraEconomy() {
-        new TechEmbedBuilder("Ultra Economy")
-                .text("The Ultimate GUI based Economy Plugin which adds Currencies, Trading System and more.\n\n**Download Links:**\n[SpigotMC](https://www.spigotmc.org/resources/ultra-economy.83374/) **-** [MC-Market](https://www.mc-market.org/resources/19033/) **-** [Songoda](https://songoda.com/marketplace/product/ultra-economy-the-ultimate-gui-based-economy-plugin-for-spigot-bungee.639)\n\n**Wiki:**\n:UltraEconomy: **-** https://www.ultraeconomy.com")
-                .thumbnail("https://www.spigotmc.org/data/resource_icons/83/83374.jpg?1598896895")
-                .queue(OVERVIEW_CHANNEL.query().first());
-    }
-
-    public void showUltraScoreboard() {
-        new TechEmbedBuilder("Ultra Scoreboard")
-                .text("The Ultimate Scoreboards Plugin fully controllable via GUI for Spigot & Bungee.\n\n**Download Links:**\n\n**Download Links:**\n[SpigotMC](https://www.spigotmc.org/resources/ultra-scoreboards.93726/)\n\n**Wiki:**\n:UltraScoreboards: **-** https://www.ultrascoreboard.com")
-                .thumbnail("https://www.spigotmc.org/data/resource_icons/93/93726.jpg?1624925787")
-                .queue(OVERVIEW_CHANNEL.query().first());
-    }
-
-//    public void showPlugins() {
-//        Arrays.stream(Plugin.values()).forEach(plugin -> new TechEmbedBuilder(plugin.getRoleName())
-//                .text(plugin.getDescription().replace(" (", ". (") + (plugin.getDescription().endsWith(".") || plugin.getDescription().endsWith(")") ? "" : "."))
-//                .thumbnail(plugin.getResourceLogo())
-//                .color(plugin.getColor())
-//                .queue(OVERVIEW_CHANNEL.query().first()));
+    public void showPlugins() {
+        Arrays.stream(Plugin.values()).forEach(plugin -> new TechEmbedBuilder(plugin.getRoleName())
+                .text((plugin.getDescription().replace(" (", ". (") + (plugin.getDescription().endsWith(".") || plugin.getDescription().endsWith(")") ? "" : ".")))
+                .field("Download Links", plugin.getPluginMarketplace().toString(), true)
+                .field("Wiki", plugin.getWiki(), true)
+                .color(plugin.getColor())
+                .thumbnail(plugin.getResourceLogo())
+                .queue(OVERVIEW_CHANNEL.query().first()));
     }
 }
