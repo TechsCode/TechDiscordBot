@@ -39,10 +39,9 @@ public class PluginCommand extends CommandModule {
 
     @Override
     public OptionData[] getOptions() {
-        List<Command.Choice> choices = Arrays.stream(Plugin.values()).map(p -> new Command.Choice(p.getRoleName(), p.getRoleName())).collect(Collectors.toList());
         return new OptionData[] {
-                new OptionData(OptionType.STRING, "plugin", "The plugin you want info about.")
-                        .addChoices(choices)
+                new OptionData(OptionType.STRING, "plugin", "The plugin you want info about.", true)
+                        .addChoices(Arrays.stream(Plugin.values()).map(p -> new Command.Choice(p.getRoleName(), p.getRoleName())).toArray(Command.Choice[]::new))
         };
     }
 
