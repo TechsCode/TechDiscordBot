@@ -140,7 +140,7 @@ public class RoleAssignerModule extends Module {
                 if(purchases != 0 && purchases == reviews) rolesToKeep.add(reviewSquad);
             }
 
-            for (SongodaPurchase songodaPurchase : TechDiscordBot.getSongodaAPI().getPurchases()) {
+            for (SongodaPurchase songodaPurchase : TechDiscordBot.getSongodaAPI().getPurchases().stream().filter(Objects::nonNull).collect(Collectors.toList())) {
                 if (songodaPurchase.getDiscord() != null && songodaPurchase.getDiscord().equalsIgnoreCase(all.getUser().getName() + "#" + all.getUser().getDiscriminator())) {
                     rolesToKeep.add(songodaVerificationRole);
 
