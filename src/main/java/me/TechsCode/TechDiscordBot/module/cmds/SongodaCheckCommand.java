@@ -72,7 +72,7 @@ public class SongodaCheckCommand extends CommandModule {
 
         boolean canView = m.getRoles().stream().anyMatch(r -> r.getName().equals("Staff"));
 
-        SongodaPurchaseList purchases = songodaId == null ? TechDiscordBot.getSongodaAPI().getPurchases().discord(m) : TechDiscordBot.getSongodaAPI().getPurchases().userId(songodaId);
+        SongodaPurchaseList purchases = songodaId == null ? TechDiscordBot.getSongodaAPI().getPurchases().discord(member) : TechDiscordBot.getSongodaAPI().getPurchases().userId(songodaId);
 
         if(purchases.size() == 0) {
             e.replyEmbeds(
