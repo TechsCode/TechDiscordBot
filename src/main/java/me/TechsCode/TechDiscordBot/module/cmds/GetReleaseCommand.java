@@ -67,7 +67,7 @@ public class GetReleaseCommand extends CommandModule {
             GithubRelease release = GitHubUtil.getLatestRelease(plugin);
 
             if(release == null) {
-                e.reply("**Failed!** Could not get the release!\n\n**Possible reasons:**\n- The repo isn't valid.\n- There is no release in the reop.\n- Github died.").queue();
+                q.editOriginal("**Failed!** Could not get the release!\n\n**Possible reasons:**\n- The repo isn't valid.\n- There is no release in the reop.\n- Github died.").queue();
             } else if (release.getFile() != null) {
                 q.editOriginal(release.getFile(), plugin + ".jar")
                         .queue(msg2 -> release.getFile().delete());
@@ -77,7 +77,7 @@ public class GetReleaseCommand extends CommandModule {
                                 .build()
                 ).queue();
             } else {
-                e.reply("**Failed!** Could not get the file!\n\n**Possible reasons:**\n- Eazy messed up.\n- The release has no files for some reason.\n- GitHub died.").queue();
+                q.editOriginal("**Failed!** Could not get the file!\n\n**Possible reasons:**\n- Eazy messed up.\n- The release has no files for some reason.\n- GitHub died.").queue();
             }
         });
     }
