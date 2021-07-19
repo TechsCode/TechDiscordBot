@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 public enum Plugin {
 
-    ULTRA_PERMISSIONS("Ultra Permissions",PluginMarketplace.of("42678", "150", null), "416194311080771596", "330053303050436608", new Color(0,235,229), "UltraPermissions", "https://www.spigotmc.org/data/resource_icons/42/42678.jpg?75455775"),
+    ULTRA_PERMISSIONS("Ultra Permissions", PluginMarketplace.of("42678", "150", null), "416194311080771596", "330053303050436608", new Color(0,235,229), "UltraPermissions", "https://www.spigotmc.org/data/resource_icons/42/42678.jpg?75455775"),
     ULTRA_CUSTOMIZER("Ultra Customizer", PluginMarketplace.of("49330", "151", null), "416194287567372298", "380133603683860480", new Color(184, 103, 243), "UltraCustomizer", "https://www.spigotmc.org/data/resource_icons/49/49330.jpg?575757457475"),
     ULTRA_REGIONS("Ultra Regions", PluginMarketplace.of("58317", "152", null), "465975554101739520", "465975795433734155", new Color(57, 135, 153), "UltraRegions", "https://www.spigotmc.org/data/resource_icons/58/58317.jpg?5775757457"),
     ULTRA_PUNISHMENTS("Ultra Punishments", PluginMarketplace.of("63511", "154", null), "531255363505487872", "531251918291599401", new Color(247, 119, 39), "UltraPunishments", "https://www.spigotmc.org/data/resource_icons/63/63511.jpg?1597561836"),
