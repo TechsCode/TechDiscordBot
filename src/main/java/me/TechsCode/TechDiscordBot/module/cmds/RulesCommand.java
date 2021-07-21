@@ -61,7 +61,6 @@ public class RulesCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member member, SlashCommandEvent e) {
-        e.deferReply().queue();
         e.reply("Sending messages...").queue();
         OVERVIEW_CHANNEL.query().first().getIterableHistory()
                 .takeAsync(200)
