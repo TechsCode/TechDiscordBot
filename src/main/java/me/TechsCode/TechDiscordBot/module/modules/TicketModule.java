@@ -403,15 +403,6 @@ public class TicketModule extends Module {
                         String reasonSend = (hasReason ? " \n \n**Reason**: " + reason : "");
 
                         Member ticketMember = getMemberFromTicket(e.getTextChannel());
-                        if(ticketMember == null) {
-                            e.replyEmbeds(
-                                new TechEmbedBuilder("Ticket")
-                                    .error()
-                                    .text("I'm unable to get the ticket's owner. I don't think this should be happening.")
-                                    .build()
-                            ).queue();
-                            return;
-                        }
 
                         e.replyEmbeds(
                             new TechEmbedBuilder("Ticket")
