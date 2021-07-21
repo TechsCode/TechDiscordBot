@@ -5,7 +5,6 @@ import me.TechsCode.TechDiscordBot.module.CommandModule;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -95,7 +94,7 @@ public class RoleCommand extends CommandModule {
         Member member = e.getOption("member").getAsMember();
         Role role = e.getOption("role").getAsRole();
 
-        if(!m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(854044253885956136l)) && !m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(608113993038561325l)) && !m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(311178859171282944l))) {
+        if(!m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(854044253885956136L)) && !m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(608113993038561325L)) && !m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(311178859171282944L))) {
             e.replyEmbeds(
                     new TechEmbedBuilder("Role Management")
                             .color(Color.orange)
@@ -105,7 +104,7 @@ public class RoleCommand extends CommandModule {
             return;
         }
 
-        if((m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(854044253885956136l)) && !m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(608113993038561325l)) && !SENIOR_SUPPORTER_ROLES.contains(role.getName())) || m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(608113993038561325l)) && !ASSISTANT_ROLES.contains(role.getName())) {
+        if((m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(854044253885956136L)) && !m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(608113993038561325L)) && !SENIOR_SUPPORTER_ROLES.contains(role.getName())) || m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(608113993038561325L)) && !ASSISTANT_ROLES.contains(role.getName())) {
             e.replyEmbeds(
                     new TechEmbedBuilder("Role Management")
                             .color(Color.orange)
@@ -118,9 +117,9 @@ public class RoleCommand extends CommandModule {
         if(m.equals(member)) {
             e.replyEmbeds(
                     new TechEmbedBuilder("Role Management - Error")
-                    .error()
-                    .text("You can't edit your own roles!")
-                    .build()
+                        .error()
+                        .text("You can't edit your own roles!")
+                        .build()
             ).queue();
             return;
         }
@@ -140,6 +139,5 @@ public class RoleCommand extends CommandModule {
                             .build()
             ).queue();
         }
-        
     }
 }

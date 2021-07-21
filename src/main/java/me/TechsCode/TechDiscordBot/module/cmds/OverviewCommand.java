@@ -67,10 +67,6 @@ public class OverviewCommand extends CommandModule {
             return;
         }
 
-//        OVERVIEW_CHANNEL.query().first().getIterableHistory()
-//                .takeAsync(200)
-//                .thenAccept(channel::purgeMessages);
-
         e.reply("Sending messages...").queue();
 
         showAll();
