@@ -55,7 +55,7 @@ public class ReminderManager {
                 isDM = true;
             }
 
-            reminder = reminder.subList(argResponse.getAmountOfArgs(), reminder.size());
+//            reminder = reminder.subList(argResponse.getAmountOfArgs(), reminder.size());
             if(reminder.size() == 0) return null;
 
             Reminder r = new Reminder(user.getId(), channel.getId(), argResponse.getTime(), argResponse.getTimeHuman(), (isDM ? ReminderType.DMs : ReminderType.CHANNEL), String.join(" ", reminder));
