@@ -66,7 +66,7 @@ public class GetReleaseCommand extends CommandModule {
             GithubRelease release = GitHubUtil.getLatestRelease(plugin);
 
             if(release == null) {
-                q.editOriginal("**Failed!** Could not get the release!\n\n**Possible reasons:**\n- The repo isn't valid.\n- There is no release in the reop.\n- Github died.").queue();
+                q.editOriginal("**Failed!** Could not get the release!\n\n**Possible reasons:**\n- The repo isn't valid.\n- There is no release in the repo.\n- Github died.").queue();
             } else if (release.getFile() != null) {
                 q.editOriginal(release.getFile(), plugin + ".jar")
                         .queue(msg2 -> release.getFile().delete());
