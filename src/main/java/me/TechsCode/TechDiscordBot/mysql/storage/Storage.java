@@ -1,6 +1,5 @@
 package me.TechsCode.TechDiscordBot.mysql.storage;
 
-import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.mysql.MySQL;
 import me.TechsCode.TechDiscordBot.mysql.MySQLSettings;
 import me.TechsCode.TechDiscordBot.reminders.Reminder;

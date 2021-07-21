@@ -13,8 +13,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
-import java.util.List;
-
 public class MuteCommand extends CommandModule {
 
     private final DefinedQuery<Role> MUTED_ROLE = new DefinedQuery<Role>() {

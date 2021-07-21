@@ -1,10 +1,8 @@
 package me.TechsCode.TechDiscordBot.module.cmds;
 
 import me.TechsCode.SpigotAPI.data.Purchase;
-import me.TechsCode.SpigotAPI.data.lists.PurchasesList;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
-import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
 import me.TechsCode.TechDiscordBot.songoda.SongodaPurchase;
 import me.TechsCode.TechDiscordBot.songoda.SongodaPurchaseList;
 import me.TechsCode.TechDiscordBot.util.Plugin;
