@@ -60,7 +60,6 @@ public class GetReleaseCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
-        e.deferReply().queue();
         String plugin = e.getOption("plugin").getAsString();
 
         e.reply("Getting release... please wait.").queue(q -> {
