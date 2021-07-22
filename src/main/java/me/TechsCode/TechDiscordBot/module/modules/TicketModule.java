@@ -392,6 +392,7 @@ public class TicketModule extends Module {
                                     .build()
                         ).queue();
 
+                        e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS, s -> CLOSING_CHANNELS.remove(channelId));
 //                        transcript.build(object -> {
 //                            new TechEmbedBuilder("Transcript")
 //                                    .text("You can view your recently closed ticket's transcript here:\n" + transcript.getUrl())
