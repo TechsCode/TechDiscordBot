@@ -68,7 +68,7 @@ public class MySQL {
     }
 
     public Connection getConnection() throws SQLException {
-        String connectString = "jdbc:mysql://" + mySQLSettings.getHost() + ":" + mySQLSettings.getPort() + "/" + mySQLSettings.getDatabase() + "?useSSL=false&useUnicode=true&serverTimezone=UTC";
+        String connectString = "jdbc:mysql://" + mySQLSettings.getHost() + ":" + mySQLSettings.getPort() + "/" + mySQLSettings.getDatabase() + "?useSSL=false&characterEncoding=UTF-8&useUnicode=true&serverTimezone=UTC";
         return DriverManager.getConnection(connectString, mySQLSettings.getUsername(), mySQLSettings.getPassword());
     }
 
