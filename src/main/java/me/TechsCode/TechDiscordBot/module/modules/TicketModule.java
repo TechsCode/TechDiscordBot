@@ -377,7 +377,7 @@ public class TicketModule extends Module {
                     e.getTextChannel().getManager().putPermissionOverride(member, new ArrayList<>(), permissionsDeny).queue();
                     break;
                 case "close":
-                    TicketTranscript transcript = TicketTranscript.buildTranscript(channel, TicketTranscriptOptions.DEFAULT);
+                    TicketTranscript transcript = TicketTranscript.buildTranscript(e.getTextChannel(), TicketTranscriptOptions.DEFAULT);
                     String channelId = e.getChannel().getId();
 
                     if (isTicketCreator) {
