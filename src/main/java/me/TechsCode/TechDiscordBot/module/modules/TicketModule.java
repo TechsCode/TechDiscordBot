@@ -120,10 +120,10 @@ public class TicketModule extends Module {
 
         if(lastInstructions != null) lastInstructions.delete().queue();
         TechEmbedBuilder priority = new TechEmbedBuilder("Ticket Creation" + (member != null ? " (" + member.getEffectiveName() + ")" : ""))
-                .text("Please below to create a ticket!");
+                .text("Please react below to create a ticket!");
 
         priority.queue(channel, message -> setLastInstructions(message, msg -> {
-            if(!msg.getId().equals(lastInstructions.getId()))
+            if(msg.getId().equals(lastInstructions.getId()))
                 msg.addReaction(lowPriority).queue();
         }));
     }
@@ -142,7 +142,7 @@ public class TicketModule extends Module {
 
         plugin.queue(channel, message -> setLastInstructions(message, msg -> {
             PLUGIN_EMOTES.query().all().stream().filter(emote -> msg != null).forEach(emote -> msg.addReaction(emote).queue((msg2) -> {
-                if(!msg.getId().equals(lastInstructions.getId()))
+                if(msg.getId().equals(lastInstructions.getId()))
                     msg.addReaction(ERROR_EMOTE.query().first()).queue();
             }));
         }));
