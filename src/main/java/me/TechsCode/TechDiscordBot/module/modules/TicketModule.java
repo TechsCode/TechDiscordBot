@@ -399,9 +399,9 @@ public class TicketModule extends Module {
                                     .queue(e.getMember());
 
                             ServerLogs.log(
-                                    new TechEmbedBuilder("Ticket Transcript")
-                                            .text("Transcript of " + e.getMember().getAsMention() +  "'s ticket: " + transcript.getUrl())
-                                            .color(Color.ORANGE)
+                                new TechEmbedBuilder("Ticket Transcript")
+                                        .text("Transcript of " + e.getMember().getAsMention() +  "'s ticket:\n" + transcript.getUrl())
+                                        .color(Color.ORANGE)
                             );
 
                             e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS, s -> CLOSING_CHANNELS.remove(channelId));
@@ -454,9 +454,9 @@ public class TicketModule extends Module {
                         transcript.build(object -> {
                             if(ticketMember != null) {
                                 ServerLogs.log(
-                                        new TechEmbedBuilder("Ticket Transcript")
-                                                .text(ticketMember == null ? "Transcript of #" + e.getChannel().getName() + ": " + transcript.getUrl() : "Transcript of " + ticketMember.getAsMention() +  "'s ticket: " + transcript.getUrl())
-                                                .color(Color.ORANGE)
+                                    new TechEmbedBuilder("Ticket Transcript")
+                                            .text(ticketMember == null ? "Transcript of #" + e.getChannel().getName() + ": " + transcript.getUrl() : "Transcript of " + ticketMember.getAsMention() +  "'s ticket:\n" + transcript.getUrl())
+                                            .color(Color.ORANGE)
                                 );
 
                                 if (ticketMember != null) {
