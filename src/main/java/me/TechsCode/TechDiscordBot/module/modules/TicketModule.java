@@ -36,7 +36,7 @@ public class TicketModule extends Module {
 
     private boolean isSelection;
     private int selectionStep;
-    private List<String> CLOSING_CHANNELS = new ArrayList<>();
+    private final List<String> CLOSING_CHANNELS = new ArrayList<>();
 
     private final DefinedQuery<Emote> PRIORITY_EMOTES = new DefinedQuery<Emote>() {
         @Override
@@ -87,13 +87,6 @@ public class TicketModule extends Module {
         }
     };
 
-    private final DefinedQuery<Category> TICKET_CATEGORIES = new DefinedQuery<Category>() {
-        @Override
-        protected Query<Category> newQuery() {
-            return bot.getCategories("low priority tickets", "medium priority tickets", "high priority tickets");
-        }
-    };
-
     public TicketModule(TechDiscordBot bot) {
         super(bot);
     }
@@ -124,14 +117,15 @@ public class TicketModule extends Module {
         selectionStep = 1;
 
         Emote lowPriority = PRIORITY_EMOTES.query().get(0);
-        Emote mediumPriority = PRIORITY_EMOTES.query().get(1);
-        Emote highPriority = PRIORITY_EMOTES.query().get(2);
 
         if(lastInstructions != null) lastInstructions.delete().queue();
         TechEmbedBuilder priority = new TechEmbedBuilder("Ticket Creation" + (member != null ? " (" + member.getEffectiveName() + ")" : ""))
-                .text("First, please react with the priority of the issue below:", "", lowPriority.getAsMention() + "- Low Priority", mediumPriority.getAsMention() + "- Medium Priority", highPriority.getAsMention() + "- High Priority", "", "*Please choose the priority based on the how urgent the issue is.*");
+                .text("Please below to create a ticket!");
 
-        priority.queue(channel, message -> setLastInstructions(message, msg -> msg.addReaction(lowPriority).queue(a -> msg.addReaction(mediumPriority).queue(a2 -> msg.addReaction(highPriority).queue()))));
+        priority.queue(channel, message -> setLastInstructions(message, msg -> {
+            if(!msg.getId().equals(lastInstructions.getId()))
+                msg.addReaction(lowPriority).queue();
+        }));
     }
 
     public void sendPluginInstructions(Member member) {
@@ -144,11 +138,11 @@ public class TicketModule extends Module {
 
         if(lastInstructions != null) lastInstructions.delete().queue();
         TechEmbedBuilder plugin = new TechEmbedBuilder("Ticket Creation (" + member.getEffectiveName() + ")")
-                .text("Secondly, please select which plugin the issue corresponds with below:", "", sb, "", ERROR_EMOTE.query().first().getAsMention() + " - Cancel", "");
+                .text("Please select which plugin the issue corresponds with below:", "", sb, "", ERROR_EMOTE.query().first().getAsMention() + " - Cancel", "");
 
         plugin.queue(channel, message -> setLastInstructions(message, msg -> {
             PLUGIN_EMOTES.query().all().stream().filter(emote -> msg != null).forEach(emote -> msg.addReaction(emote).queue((msg2) -> {
-                if(msg != null)
+                if(!msg.getId().equals(lastInstructions.getId()))
                     msg.addReaction(ERROR_EMOTE.query().first()).queue();
             }));
         }));
@@ -179,7 +173,7 @@ public class TicketModule extends Module {
             name = "ticket-" + member.getUser().getId(); //Make sure the ticket has an actual name. In case the regex result is empty.
 
         TextChannel ticketChannel = TechDiscordBot.getGuild().createTextChannel(name)
-                .setParent(getCategoryByTicketPriority(priority))
+                .setParent(getTicketCategory())
                 .setTopic(member.getAsMention() + "'s Ticket | Problem Solved? Please execute /ticket close.")
                 .complete();
 
@@ -249,8 +243,8 @@ public class TicketModule extends Module {
         return channel.getGuild().getMemberById(channel.getTopic().split("<")[1].split(">")[0].replace("@", "").replace("!", ""));
     }
 
-    public Category getCategoryByTicketPriority(TicketPriority priority) {
-        return TICKET_CATEGORIES.query().get(priority.getValue());
+    public Category getTicketCategory() {
+        return TICKET_CATEGORY.query().first();
     }
 
     @SubscribeEvent
@@ -382,14 +376,40 @@ public class TicketModule extends Module {
                     e.getTextChannel().getManager().putPermissionOverride(member, new ArrayList<>(), permissionsDeny).queue();
                     break;
                 case "close":
+                    String channelId = e.getChannel().getId();
+
                     if (isTicketCreator) {
+                        if (CLOSING_CHANNELS.contains(e.getChannel().getId())) {
+                            e.reply("This ticket is already closing!").setEphemeral(true).queue();
+                            return;
+                        }
+
+                        TicketTranscript transcript = TicketTranscript.buildTranscript(channel, TicketTranscriptOptions.DEFAULT);
+
                         e.replyEmbeds(
                             new TechEmbedBuilder("Ticket")
                                     .text("Thank you for contacting us " + e.getMember().getAsMention() + ". Consider writing a review if you enjoyed the support!")
                                     .build()
-                        ).queue();
+                        ).queue(after -> {
+                            transcript.build(object -> {
+                                TechDiscordBot.getStorage().saveTranscript(object);
 
-                        e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS);
+                                e.getChannel().sendMessageEmbeds(
+                                        new TechEmbedBuilder("Transcript")
+                                                .text("You can view the transcript here: " + transcript.getUrl())
+                                                .color(Color.ORANGE)
+                                                .build()
+                                ).queue();
+
+                                ServerLogs.log(
+                                        new TechEmbedBuilder("Ticket Transcript")
+                                                .text("Transcript of " + e.getMember().getAsMention() +  "'s ticket: " + transcript.getUrl())
+                                                .color(Color.ORANGE)
+                                );
+                            });
+                        });
+
+                        e.getTextChannel().delete().queueAfter(20, TimeUnit.SECONDS, s -> CLOSING_CHANNELS.remove(channelId));
 
                         new TechEmbedBuilder("Solved Ticket")
                                 .text("The ticket (" + e.getTextChannel().getName() + ") created by " + e.getMember().getAsMention() + " is now solved. Thanks for contacting us!")
@@ -401,7 +421,7 @@ public class TicketModule extends Module {
                             return;
                         }
 
-                        if (CLOSING_CHANNELS.contains(channel.getId())) {
+                        if (CLOSING_CHANNELS.contains(e.getChannel().getId())) {
                             e.reply("This ticket is already closing!").setEphemeral(true).queue();
                             return;
                         }
@@ -410,7 +430,6 @@ public class TicketModule extends Module {
 
                         boolean hasReason = reason != null;
                         String reasonSend = (hasReason ? " \n\n**Reason**: " + reason : "");
-                        String channelId = channel.getId();
 
                         Member ticketMember = getMemberFromTicket(e.getTextChannel());
                         TicketTranscript transcript = TicketTranscript.buildTranscript(channel, TicketTranscriptOptions.DEFAULT);
@@ -420,12 +439,12 @@ public class TicketModule extends Module {
                                         .text(e.getMember().getAsMention() + " has closed this support ticket." + reasonSend)
                                         .build()
                         ).queue();
-                        CLOSING_CHANNELS.add(channel.getId());
+                        CLOSING_CHANNELS.add(e.getChannel().getId());
 
                         transcript.build(object -> {
                             TechDiscordBot.getStorage().saveTranscript(object);
 
-                            channel.sendMessageEmbeds(
+                            e.getChannel().sendMessageEmbeds(
                                 new TechEmbedBuilder("Transcript")
                                     .text("You can view the transcript here: " + transcript.getUrl())
                                     .color(Color.ORANGE)
@@ -435,7 +454,7 @@ public class TicketModule extends Module {
 
                                 ServerLogs.log(
                                     new TechEmbedBuilder("Ticket Transcript")
-                                            .text(ticketMember == null ? "Transcript of #" + channel.getName() + ": " + transcript.getUrl() : "Transcript of " + ticketMember.getAsMention() +  "'s ticket: " + transcript.getUrl())
+                                            .text(ticketMember == null ? "Transcript of #" + e.getChannel().getName() + ": " + transcript.getUrl() : "Transcript of " + ticketMember.getAsMention() +  "'s ticket: " + transcript.getUrl())
                                             .color(Color.ORANGE)
                                 );
 
@@ -491,7 +510,6 @@ public class TicketModule extends Module {
         return new Requirement[] {
                 new Requirement(TICKET_CREATION_CHANNEL, 1, "Missing Creation Channel (#tickets)"),
                 new Requirement(TICKET_CATEGORY, 1, "Missing Tickets Category (tickets)"),
-                new Requirement(TICKET_CATEGORIES, 1, "Missing One Or More Ticket Categories (<low/medium/high> priority tickets)"),
                 new Requirement(STAFF_ROLE, 1, "Missing 'Staff' Role")
         };
     }
