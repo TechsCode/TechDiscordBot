@@ -123,8 +123,9 @@ public class TicketModule extends Module {
                 .text("Please react below to create a ticket!");
 
         priority.queue(channel, message -> setLastInstructions(message, msg -> {
-            if(msg.getId().equals(lastInstructions.getId()))
+            try {
                 msg.addReaction(lowPriority).queue();
+            } catch (Exception ignored) {}
         }));
     }
 
@@ -142,8 +143,9 @@ public class TicketModule extends Module {
 
         plugin.queue(channel, message -> setLastInstructions(message, msg -> {
             PLUGIN_EMOTES.query().all().stream().filter(emote -> msg != null).forEach(emote -> msg.addReaction(emote).queue((msg2) -> {
-                if(msg.getId().equals(lastInstructions.getId()))
+                try {
                     msg.addReaction(ERROR_EMOTE.query().first()).queue();
+                } catch (Exception ignored) {}
             }));
         }));
     }
@@ -162,8 +164,9 @@ public class TicketModule extends Module {
                 .text("Last but not least, please tell us what you're having an issue with!", "", ERROR_EMOTE.query().first().getAsMention() + " - Cancel", "", "*Try not to make the message over 1024 chars long.*", "*We'll cut it off due to Discord's Limitations!*");
 
         issue.queue(channel, message -> setLastInstructions(message, msg -> {
-            if(msg != null)
+            try {
                 msg.addReaction(ERROR_EMOTE.query().first()).queue();
+            } catch (Exception ignored) {}
         }));
     }
 
@@ -249,10 +252,8 @@ public class TicketModule extends Module {
 
     @SubscribeEvent
     public void onReactionAdd(MessageReactionAddEvent e) {
-        if(e.getUser() == null || e.getMember() == null) return;
-        if(e.getUser().isBot()) return;
-        if(e.getChannel() != channel) return;
-
+        if(e.getUser() == null || e.getMember() == null || e.getUser().isBot() || e.getChannel() != channel)
+            return;
         if((selectionUserId != null && !e.getMember().getId().equals(selectionUserId))) {
             e.getReaction().removeReaction(e.getUser()).queue();
             return;

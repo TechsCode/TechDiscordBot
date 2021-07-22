@@ -271,7 +271,7 @@ public class Storage {
     }
 
     public void saveTranscript(JsonObject transcript) {
-        mysql.update("INSERT INTO " + TRANSCRIPTS_TABLE + " (id, value) VALUES ('" + transcript.get("id").getAsString() + "', '" + transcript + "');");
+        mysql.update("INSERT INTO " + TRANSCRIPTS_TABLE + " (id, value) VALUES (?, ?);", transcript.get("id").getAsString(), transcript.toString().replace("'", "''"));
     }
 
     public void deleteReminder(Reminder reminder) {
