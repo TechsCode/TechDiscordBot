@@ -128,11 +128,15 @@ public class TechEmbedBuilder extends EmbedBuilder {
     }
 
     public void queue(TextChannel textChannel) {
-        textChannel.sendMessage(build()).queue();
+        textChannel.sendMessageEmbeds(build()).queue();
     }
 
     public void queue(Member member) {
         queue(member.getUser());
+    }
+
+    public void queue(Member member, Consumer<Message> consumer) {
+        queue(member.getUser(), consumer);
     }
 
     public void queue(User user) {
@@ -141,21 +145,27 @@ public class TechEmbedBuilder extends EmbedBuilder {
         } catch (Exception ignore) { }
     }
 
+    public void queue(User user, Consumer<Message> consumer) {
+        try {
+            user.openPrivateChannel().queue(c -> c.sendMessageEmbeds(build()).queue(consumer));
+        } catch (Exception ignore) { }
+    }
+
     public void queue(TextChannel textChannel, Consumer<Message> consumer) {
-        textChannel.sendMessage(build()).queue(consumer);
+        textChannel.sendMessageEmbeds(build()).queue(consumer);
     }
 
     public void queueAfter(TextChannel textChannel, int delay, TimeUnit unit) {
-        textChannel.sendMessage(build()).queueAfter(delay, unit);
+        textChannel.sendMessageEmbeds(build()).queueAfter(delay, unit);
     }
 
     public void queueAfter(TextChannel textChannel, int delay, TimeUnit unit, Consumer<Message> success) {
-        textChannel.sendMessage(build()).queueAfter(delay, unit, success);
+        textChannel.sendMessageEmbeds(build()).queueAfter(delay, unit, success);
     }
 
     public void queueAfter(User user, int delay, TimeUnit time) {
         try {
-            user.openPrivateChannel().complete().sendMessage(build()).queueAfter(delay, time);
+            user.openPrivateChannel().complete().sendMessageEmbeds(build()).queueAfter(delay, time);
         } catch (ErrorResponseException ignore) { }
     }
 
@@ -172,7 +182,7 @@ public class TechEmbedBuilder extends EmbedBuilder {
     }
 
     public void replyTemporary(Message message, boolean mention, int duration, TimeUnit timeUnit) {
-        message.reply(build()).mentionRepliedUser(mention).queue((msg -> msg.delete().submitAfter(duration, timeUnit)));
+        message.replyEmbeds(build()).mentionRepliedUser(mention).queue((msg -> msg.delete().submitAfter(duration, timeUnit)));
     }
 
     public void sendTemporary(TextChannel textChannel, int duration, TimeUnit timeUnit) {
@@ -184,10 +194,10 @@ public class TechEmbedBuilder extends EmbedBuilder {
     }
 
     public ScheduledFuture<?> sendAfter(TextChannel textChannel, int duration, Consumer<Message> onSuccess) {
-        return textChannel.sendMessage(build()).queueAfter(duration, TimeUnit.SECONDS, onSuccess);
+        return textChannel.sendMessageEmbeds(build()).queueAfter(duration, TimeUnit.SECONDS, onSuccess);
     }
 
     public ScheduledFuture<?> sendAfter(TextChannel textChannel, int duration, TimeUnit timeUnit, Consumer<Message> onSuccess) {
-        return textChannel.sendMessage(build()).queueAfter(duration, timeUnit, onSuccess);
+        return textChannel.sendMessageEmbeds(build()).queueAfter(duration, timeUnit, onSuccess);
     }
 }

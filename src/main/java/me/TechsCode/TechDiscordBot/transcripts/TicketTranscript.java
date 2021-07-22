@@ -2,6 +2,7 @@ package me.TechsCode.TechDiscordBot.transcripts;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import me.TechsCode.TechDiscordBot.module.modules.TicketModule;
 import me.TechsCode.TechDiscordBot.util.PasswordGenerator;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -43,7 +44,7 @@ public class TicketTranscript {
             JsonArray array = new JsonArray();
             m.forEach(msg -> array.add(buildMessage(msg)));
 
-            //TODO: Add later when transferred to bot: object.add("creator", );
+            object.add("creator", buildMember(TicketModule.getMemberFromTicket(channel)));
             object.addProperty("name", this.channel.getName());
             object.addProperty("id", this.id);
             object.addProperty("password", this.password);
@@ -192,6 +193,8 @@ public class TicketTranscript {
 
     private JsonObject buildMember(Member member) {
         JsonObject object = new JsonObject();
+        if(member == null)
+            return object;
 
         object.addProperty("name", member.getUser().getName());
         object.addProperty("staff", member.getRoles().stream().anyMatch(r -> r.getName().equals("Staff")));
