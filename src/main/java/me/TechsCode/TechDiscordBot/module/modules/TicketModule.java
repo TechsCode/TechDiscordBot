@@ -144,7 +144,7 @@ public class TicketModule extends Module {
         plugin.queue(channel, message -> setLastInstructions(message, msg -> {
             PLUGIN_EMOTES.query().all().stream().filter(emote -> msg != null).forEach(emote -> msg.addReaction(emote).queue((msg2) -> {
                 try {
-                    msg.addReaction(ERROR_EMOTE.query().first()).queue();
+                    msg.addReaction(ERROR_EMOTE.query().first()).queue(null, null);
                 } catch (Exception ignored) {}
             }));
         }));
@@ -377,6 +377,7 @@ public class TicketModule extends Module {
                     e.getTextChannel().getManager().putPermissionOverride(member, new ArrayList<>(), permissionsDeny).queue();
                     break;
                 case "close":
+                    TicketTranscript transcript = TicketTranscript.buildTranscript(channel, TicketTranscriptOptions.DEFAULT);
                     String channelId = e.getChannel().getId();
 
                     if (isTicketCreator) {
@@ -385,30 +386,27 @@ public class TicketModule extends Module {
                             return;
                         }
 
-                        TicketTranscript transcript = TicketTranscript.buildTranscript(channel, TicketTranscriptOptions.DEFAULT);
-
                         e.replyEmbeds(
                             new TechEmbedBuilder("Ticket")
                                     .text("Thank you for contacting us " + e.getMember().getAsMention() + ". Consider writing a review if you enjoyed the support!")
                                     .build()
-                        ).queue(after -> {
-                            transcript.build(object -> {
-                                TechDiscordBot.getStorage().saveTranscript(object);
+                        ).queue();
 
-                                new TechEmbedBuilder("Transcript")
-                                        .text("You can view the transcript here: " + transcript.getUrl())
-                                        .color(Color.ORANGE)
-                                        .queue(e.getMember());
+                        transcript.build(object -> {
+                            new TechEmbedBuilder("Transcript")
+                                    .text("You can view the transcript here: " + transcript.getUrl())
+                                    .color(Color.ORANGE)
+                                    .queue(e.getMember());
 
-                                ServerLogs.log(
-                                        new TechEmbedBuilder("Ticket Transcript")
-                                                .text("Transcript of " + e.getMember().getAsMention() +  "'s ticket: " + transcript.getUrl())
-                                                .color(Color.ORANGE)
-                                );
-                            });
+                            ServerLogs.log(
+                                    new TechEmbedBuilder("Ticket Transcript")
+                                            .text("Transcript of " + e.getMember().getAsMention() +  "'s ticket: " + transcript.getUrl())
+                                            .color(Color.ORANGE)
+                            );
+
+                            e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS, s -> CLOSING_CHANNELS.remove(channelId));
+                            TechDiscordBot.getStorage().saveTranscript(object);
                         });
-
-                        e.getTextChannel().delete().queueAfter(20, TimeUnit.SECONDS, s -> CLOSING_CHANNELS.remove(channelId));
 
                         new TechEmbedBuilder("Solved Ticket")
                                 .text("The ticket (" + e.getTextChannel().getName() + ") created by " + e.getMember().getAsMention() + " is now solved. Thanks for contacting us!")
@@ -431,7 +429,6 @@ public class TicketModule extends Module {
                         String reasonSend = (hasReason ? " \n\n**Reason**: " + reason : "");
 
                         Member ticketMember = getMemberFromTicket(e.getTextChannel());
-                        TicketTranscript transcript = TicketTranscript.buildTranscript(channel, TicketTranscriptOptions.DEFAULT);
 
                         e.replyEmbeds(
                                 new TechEmbedBuilder("Ticket")
@@ -448,7 +445,7 @@ public class TicketModule extends Module {
                                         .text("You can view the transcript here: " + transcript.getUrl())
                                         .color(Color.ORANGE)
                                         .queue(ticketMember, after -> {
-                                            e.getTextChannel().delete().queueAfter(20, TimeUnit.SECONDS, s -> CLOSING_CHANNELS.remove(channelId));
+                                            e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS, s -> CLOSING_CHANNELS.remove(channelId));
 
                                             ServerLogs.log(
                                                     new TechEmbedBuilder("Ticket Transcript")
