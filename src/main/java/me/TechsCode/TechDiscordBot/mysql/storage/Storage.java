@@ -1,9 +1,11 @@
 package me.TechsCode.TechDiscordBot.mysql.storage;
 
+import com.google.gson.JsonObject;
 import me.TechsCode.TechDiscordBot.mysql.MySQL;
 import me.TechsCode.TechDiscordBot.mysql.MySQLSettings;
 import me.TechsCode.TechDiscordBot.reminders.Reminder;
 import me.TechsCode.TechDiscordBot.reminders.ReminderType;
+import me.TechsCode.TechDiscordBot.transcripts.TicketTranscript;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 
@@ -23,6 +25,7 @@ public class Storage {
     private final String REMINDERS_TABLE = "Reminders";
     private final String MUTES_TABLE = "Mutes";
     private final String SUB_VERIFICATIONS_TABLE = "SubVerifications";
+    private final String TRANSCRIPTS_TABLE = "Transcripts";
 
     private Storage(MySQLSettings mySQLSettings) {
         this.connected = false;
@@ -48,6 +51,7 @@ public class Storage {
         mysql.update("CREATE TABLE IF NOT EXISTS " + MUTES_TABLE + " (memberId varchar(32), reason longtext, end varchar(32), expired tinyint(1));");
         mysql.update("CREATE TABLE IF NOT EXISTS " + REMINDERS_TABLE + " (user_id varchar(32), channel_id varchar(32), time varchar(32), type tinyint(1), reminder longtext);");
         mysql.update("CREATE TABLE IF NOT EXISTS " + SUB_VERIFICATIONS_TABLE + " (discordId_verified varchar(32), discordId_subVerified varchar(32));");
+        mysql.update("CREATE TABLE IF NOT EXISTS " + TRANSCRIPTS_TABLE + " (id varchar(36), value longtext);");
 
         this.connected = true;
     }
@@ -264,6 +268,10 @@ public class Storage {
 
     public void saveReminder(Reminder reminder) {
         mysql.update("INSERT INTO " + REMINDERS_TABLE + " (user_id, channel_id, time, type, reminder, message_id) VALUES ('" + reminder.getUserId() + "', " + (reminder.getChannelId() == null ? "NULL" : "'" + reminder.getChannelId() + "'") + ", '" + reminder.getTime() + "', " + reminder.getType().getI() + ", '" + reminder.getReminder().replace("'", "''") + "', 'XXXX');");
+    }
+
+    public void saveTranscript(JsonObject transcript) {
+        mysql.update("INSERT INTO " + TRANSCRIPTS_TABLE + " (id, value) VALUES ('" + transcript.get("id").getAsString() + "', '" + transcript + "');");
     }
 
     public void deleteReminder(Reminder reminder) {

@@ -1,11 +1,14 @@
 package me.TechsCode.TechDiscordBot.module.modules;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
+import me.TechsCode.TechDiscordBot.logs.ServerLogs;
 import me.TechsCode.TechDiscordBot.module.Module;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.objects.TicketPriority;
+import me.TechsCode.TechDiscordBot.transcripts.TicketTranscript;
+import me.TechsCode.TechDiscordBot.transcripts.TicketTranscriptOptions;
 import me.TechsCode.TechDiscordBot.util.Plugin;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -13,6 +16,7 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.exceptions.ContextException;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
 import java.awt.*;
@@ -26,12 +30,13 @@ public class TicketModule extends Module {
 
     private TextChannel channel;
     private Message lastInstructions;
-
-    private boolean isSelection;
     private String selectionUserId;
     private TicketPriority selectionPriority;
     private Plugin selectionPlugin;
+
+    private boolean isSelection;
     private int selectionStep;
+    private List<String> CLOSING_CHANNELS = new ArrayList<>();
 
     private final DefinedQuery<Emote> PRIORITY_EMOTES = new DefinedQuery<Emote>() {
         @Override
@@ -396,35 +401,61 @@ public class TicketModule extends Module {
                             return;
                         }
 
+                        if (CLOSING_CHANNELS.contains(channel.getId())) {
+                            e.reply("This ticket is already closing!").setEphemeral(true).queue();
+                            return;
+                        }
+
                         String reason = e.getOption("reason") == null ? null : e.getOption("reason").getAsString();
 
                         boolean hasReason = reason != null;
-                        String reasonSend = (hasReason ? " \n \n**Reason**: " + reason : "");
+                        String reasonSend = (hasReason ? " \n\n**Reason**: " + reason : "");
+                        String channelId = channel.getId();
 
                         Member ticketMember = getMemberFromTicket(e.getTextChannel());
+                        TicketTranscript transcript = TicketTranscript.buildTranscript(channel, TicketTranscriptOptions.DEFAULT);
 
                         e.replyEmbeds(
-                            new TechEmbedBuilder("Ticket")
-                                .text(e.getMember().getAsMention() + " has closed this support ticket." + reasonSend)
-                                .build()
+                                new TechEmbedBuilder("Ticket")
+                                        .text(e.getMember().getAsMention() + " has closed this support ticket." + reasonSend)
+                                        .build()
                         ).queue();
+                        CLOSING_CHANNELS.add(channel.getId());
 
-                        e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS);
-                        if (ticketMember != null) {
-                            new TechEmbedBuilder("Closed Ticket")
-                                    .text("The ticket (" + e.getTextChannel().getName() + ") from " + ticketMember.getAsMention() + " has been closed!")
-                                    .success()
-                                    .queueAfter(channel, 15, TimeUnit.SECONDS, (msg) -> reset());
-                            new TechEmbedBuilder("Closed Ticket")
-                                    .text("Your ticket (" + e.getTextChannel().getName() + ") has been closed!" + reasonSend)
-                                    .success()
-                                    .queue(ticketMember);
-                        } else {
-                            new TechEmbedBuilder("Closed Ticket")
-                                    .text("The ticket (" + e.getTextChannel().getName() + ") from *member has left* has been closed!")
-                                    .success()
-                                    .queueAfter(channel, 15, TimeUnit.SECONDS, (msg) -> reset());
-                        }
+                        transcript.build(object -> {
+                            TechDiscordBot.getStorage().saveTranscript(object);
+
+                            channel.sendMessageEmbeds(
+                                new TechEmbedBuilder("Transcript")
+                                    .text("You can view the transcript here: " + transcript.getUrl())
+                                    .color(Color.ORANGE)
+                                    .build()
+                            ).queue(after -> {
+                                e.getTextChannel().delete().queueAfter(20, TimeUnit.SECONDS, s -> CLOSING_CHANNELS.remove(channelId));
+
+                                ServerLogs.log(
+                                    new TechEmbedBuilder("Ticket Transcript")
+                                            .text(ticketMember == null ? "Transcript of #" + channel.getName() + ": " + transcript.getUrl() : "Transcript of " + ticketMember.getAsMention() +  "'s ticket: " + transcript.getUrl())
+                                            .color(Color.ORANGE)
+                                );
+
+                                if (ticketMember != null) {
+                                    new TechEmbedBuilder("Ticket Closed")
+                                            .text("The ticket (" + e.getTextChannel().getName() + ") from " + ticketMember.getAsMention() + " has been closed!")
+                                            .success()
+                                            .queueAfter(channel, 15, TimeUnit.SECONDS, (msg) -> reset());
+                                    new TechEmbedBuilder("Ticket Closed")
+                                            .text("Your ticket (" + e.getTextChannel().getName() + ") has been closed!" + reasonSend + "\n\nYou can view the transcript here: " + transcript.getUrl())
+                                            .success()
+                                            .queue(ticketMember);
+                                } else {
+                                    new TechEmbedBuilder("Ticket Closed")
+                                            .text("The ticket (" + e.getTextChannel().getName() + ") from *member has left* has been closed!")
+                                            .success()
+                                            .queueAfter(channel, 15, TimeUnit.SECONDS, (msg) -> reset());
+                                }
+                            });
+                        });
                     }
 
                     break;

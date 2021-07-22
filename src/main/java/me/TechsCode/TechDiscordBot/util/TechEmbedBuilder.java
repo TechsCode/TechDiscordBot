@@ -137,8 +137,8 @@ public class TechEmbedBuilder extends EmbedBuilder {
 
     public void queue(User user) {
         try {
-            user.openPrivateChannel().queue(c -> c.sendMessage(build()).queue());
-        } catch (ErrorResponseException ignore) { }
+            user.openPrivateChannel().queue(c -> c.sendMessageEmbeds(build()).queue());
+        } catch (Exception ignore) { }
     }
 
     public void queue(TextChannel textChannel, Consumer<Message> consumer) {
