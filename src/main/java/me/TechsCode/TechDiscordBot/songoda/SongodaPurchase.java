@@ -31,6 +31,8 @@ public class SongodaPurchase extends Purchase {
     public Member getMember() {
         if (getDiscord() == null)
             return null;
+        if(!getDiscord().contains("#"))
+            return TechDiscordBot.getGuild().getMemberById(getDiscord());
 
         String name = this.discord.split("#")[0];
         String discrim = this.discord.split("#")[1];

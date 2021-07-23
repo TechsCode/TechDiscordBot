@@ -64,14 +64,19 @@ public class SongodaAPIClient extends APIClient {
                     String product = object.get("product").getAsString();
                     String username = object.get("username").getAsString();
                     String avatar = object.has("avatar") ? object.get("avatar").getAsString() : "https://imgproxy.songoda.com//fit/48/48/sm/0/plain/https://cdn2.songoda.com/avatars/default/avatar_5.png";
-                    String discord = object.get("discord").isJsonNull() ? null : object.get("discord").getAsString();
                     String currency = object.get("currency").getAsString();
                     float cost = Float.parseFloat(object.get("amount").getAsString());
+
+                    String discord = object.get("discord").isJsonNull() ? null : object.get("discord").getAsString();
+                    String discordId = null;
+                    JsonObject discordData = object.has("discord_data") && !object.get("discord_data").isJsonNull() ? object.get("discord_data").getAsJsonObject() : new JsonObject();
+                    if(discordData.has("id"))
+                        discordId = discordData.get("id").getAsString();
 
                     long createdAt = object.get("created_at").getAsLong();
                     int userId = object.get("user_id").getAsInt();
 
-                    SongodaPurchase sp = new SongodaPurchase(Plugin.byEmojiName(product.replace(" ", "")).getResourceId(), new User(String.valueOf(userId), username, avatar), new Time(new SimpleDateFormat("MMM dd, yyyy 'at' hh:mm a").format(new Date(createdAt)), createdAt), new Cost(currency, cost), discord);
+                    SongodaPurchase sp = new SongodaPurchase(Plugin.byEmojiName(product.replace(" ", "")).getResourceId(), new User(String.valueOf(userId), username, avatar), new Time(new SimpleDateFormat("MMM dd, yyyy 'at' hh:mm a").format(new Date(createdAt)), createdAt), new Cost(currency, cost), discordId == null ? discord : discordId);
                     sp.inject(TechDiscordBot.getSpigotAPI().getData().get());
 
                     this.purchases.add(sp);
