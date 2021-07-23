@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class TicketTranscript {
 
@@ -39,17 +40,24 @@ public class TicketTranscript {
 
     public void build(Consumer<JsonObject> consumer) {
         fetch(m -> {
+            List<String> memberMessages = new ArrayList<>();
+
             JsonObject object = new JsonObject();
 
             JsonArray array = new JsonArray();
-            m.forEach(msg -> array.add(buildMessage(msg)));
+            m.forEach(msg -> {
+                JsonObject msgg = buildMessage(msg);
 
-            object.add("creator", buildMember(TicketModule.getMemberFromTicket(channel)));
+                memberMessages.add(msgg.has("author") ? msgg.get("author").getAsJsonObject().get("tag").getAsString() : "");
+                array.add(msgg);
+            });
+
             object.addProperty("name", this.channel.getName());
             object.addProperty("id", this.id);
             object.addProperty("password", this.password);
 
-            object.add("members", buildMembers());
+            object.add("members", buildMembers(memberMessages));
+            object.add("creator", buildMember(TicketModule.getMemberFromTicket(channel)));
             object.add("messages", array);
 
             consumer.accept(object);
@@ -64,19 +72,7 @@ public class TicketTranscript {
 
         if(canType(TicketTranscriptMessageType.MESSAGE)) {
             object.addProperty("message", message.getContentDisplay());
-
-            JsonObject author = new JsonObject();
-
-            author.addProperty("name", message.getAuthor().getName());
-            author.addProperty("discriminator", message.getAuthor().getDiscriminator());
-            author.addProperty("tag", message.getAuthor().getAsTag());
-            author.addProperty("avatar", message.getAuthor().getEffectiveAvatarUrl());
-            author.addProperty("bot", message.getAuthor().isBot());
-            author.addProperty("system", message.getAuthor().isSystem());
-            author.addProperty("color", message.getMember() == null ? null : message.getMember().getColorRaw());
-
-            object.add("author", author);
-
+            object.add("author", buildMember(message.getMember()));
             object.addProperty("created", message.getTimeCreated().toEpochSecond() * 1000);
 
             if(message.getTimeEdited() != null)
@@ -158,23 +154,31 @@ public class TicketTranscript {
         return object;
     }
 
-    private JsonArray buildMembers() {
+    private JsonArray buildMembers(List<String> tags) {
         JsonArray array = new JsonArray();
         HashMap<String, List<JsonObject>> byRoles = new HashMap<>();
 
-        channel.getMembers().forEach(member -> {
+        for (Member member : channel.getMembers().stream().filter(m -> tags.contains(m.getUser().getAsTag())).collect(Collectors.toList())) {
             JsonObject m = buildMember(member);
             String role = m.get("role").getAsString();
 
-            if(byRoles.containsKey(role)) {
+            if (!byRoles.containsKey(role)) {
                 byRoles.put(role, Collections.singletonList(m));
             } else {
-                List<JsonObject> byRolesM = new ArrayList<>();
+                List<JsonObject> byRolesM = new ArrayList<>(byRoles.get(role));
                 byRolesM.add(m);
 
                 byRoles.put(role, byRolesM);
             }
-        });
+        }
+
+        HashMap<String, Integer> rolePositions = new HashMap<>();
+        byRoles.forEach((k, v) -> rolePositions.put(k, channel.getJDA().getGuilds().get(0).getRolesByName(k, true).get(0).getPositionRaw()));
+
+        byRoles = byRoles.entrySet().stream().sorted(Map.Entry.comparingByKey(Comparator.comparingInt(rolePositions::get))).collect(Collectors.toMap(
+                Map.Entry::getKey,
+                Map.Entry::getValue,
+                (oldValue, newValue) -> oldValue, LinkedHashMap::new));
 
         byRoles.forEach((role, members) -> {
             JsonObject object = new JsonObject();
@@ -200,6 +204,14 @@ public class TicketTranscript {
         object.addProperty("staff", member.getRoles().stream().anyMatch(r -> r.getName().equals("Staff")));
         object.addProperty("avatar", member.getUser().getEffectiveAvatarUrl());
         object.addProperty("role", member.getRoles().size() == 0 ? "Member" : member.getRoles().get(0).getName());
+        object.addProperty("color", member.getColorRaw());
+
+        object.addProperty("name", member.getUser().getName());
+        object.addProperty("discriminator", member.getUser().getDiscriminator());
+        object.addProperty("tag", member.getUser().getAsTag());
+        object.addProperty("avatar", member.getUser().getEffectiveAvatarUrl());
+        object.addProperty("bot", member.getUser().isBot());
+        object.addProperty("system", member.getUser().isSystem());
         object.addProperty("color", member.getColorRaw());
 
         return object;
