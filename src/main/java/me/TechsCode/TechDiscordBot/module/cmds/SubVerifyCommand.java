@@ -1,6 +1,7 @@
 package me.TechsCode.TechDiscordBot.module.cmds;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
+import me.TechsCode.TechDiscordBot.logs.ServerLogs;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
@@ -17,13 +18,33 @@ import java.awt.*;
 
 public class SubVerifyCommand extends CommandModule {
 
-    private final DefinedQuery<Role> SUB_VERIFIED = new DefinedQuery<Role>() {
+    private final DefinedQuery<Role> SUB_VERIFIED_ROLE = new DefinedQuery<Role>() {
         @Override
         protected Query<Role> newQuery() {
             return bot.getRoles("Sub Verified");
         }
     };
 
+    private final DefinedQuery<Role> VERIFIED_ROLE = new DefinedQuery<Role>() {
+        @Override
+        protected Query<Role> newQuery() {
+            return bot.getRoles("Verified");
+        }
+    };
+
+    private final DefinedQuery<Role> STAFF_ROLES = new DefinedQuery<Role>() {
+        @Override
+        protected Query<Role> newQuery() {
+            return bot.getRoles("Senior Supporter", "Assistant", "Developer", "\uD83D\uDCBB Coding Wizard");
+        }
+    };
+
+    private final DefinedQuery<Role> BOT_ROLE = new DefinedQuery<Role>() {
+        @Override
+        protected Query<Role> newQuery() {
+            return bot.getRoles("Bot");
+        }
+    };
 
     public SubVerifyCommand(TechDiscordBot bot) {
         super(bot);
@@ -75,7 +96,7 @@ public class SubVerifyCommand extends CommandModule {
             return;
         }
 
-        if(!m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(416174015141642240l))) {
+        if(!m.getRoles().contains(VERIFIED_ROLE.query().first())) {
             e.replyEmbeds(
                     new TechEmbedBuilder("Sub Verification - Error")
                             .error()
@@ -95,11 +116,11 @@ public class SubVerifyCommand extends CommandModule {
             return;
         }
 
-        if(member.getRoles().contains(TechDiscordBot.getGuild().getRoleById(311188630922330112l))) {
+        if(member.getRoles().contains(BOT_ROLE.query().first())) {
             e.replyEmbeds(
                     new TechEmbedBuilder("Sub Verification - Error")
                     .error()
-                    .text("You can't a " + TechDiscordBot.getGuild().getRoleById(311188630922330112l).getAsMention() +  " as " + SUB_VERIFIED.query().first().getAsMention() + " users!")
+                    .text("You can't add a " + BOT_ROLE.query().first().getAsMention() +  " as a " + SUB_VERIFIED_ROLE.query().first().getAsMention() + " user!")
                     .build()
             ).queue();
             return;
@@ -109,7 +130,7 @@ public class SubVerifyCommand extends CommandModule {
             e.replyEmbeds(
                     new TechEmbedBuilder("Sub Verification - Error")
                     .error()
-                    .text("This user is already a " + SUB_VERIFIED.query().first().getAsMention() + " user of " + TechDiscordBot.getGuild().getMemberById(TechDiscordBot.getStorage().getVerifiedIdFromSubVerifiedId(member.getId())).getAsMention())
+                    .text("This user is already a " + SUB_VERIFIED_ROLE.query().first().getAsMention() + " user of " + TechDiscordBot.getGuild().getMemberById(TechDiscordBot.getStorage().getVerifiedIdFromSubVerifiedId(member.getId())).getAsMention())
                     .build()
             ).queue();
             return;
@@ -124,9 +145,17 @@ public class SubVerifyCommand extends CommandModule {
                         .build()
                 ).queue();
                 return;
+            } if (member.getRoles().contains(SUB_VERIFIED_ROLE.query().first())) {
+                e.replyEmbeds(
+                        new TechEmbedBuilder("Sub Verification - Error")
+                                .error()
+                                .text("You can not add a already verified user as your subverified user.")
+                                .build()
+                ).queue();
+                return;
             }
 
-            TechDiscordBot.getGuild().addRoleToMember(member, SUB_VERIFIED.query().first()).queue();
+            TechDiscordBot.getGuild().addRoleToMember(member, SUB_VERIFIED_ROLE.query().first()).queue();
             TechDiscordBot.getStorage().addSubVerification(m.getId(), member.getId());
             e.replyEmbeds(
                     new TechEmbedBuilder("Sub Verification - Added")
@@ -134,6 +163,13 @@ public class SubVerifyCommand extends CommandModule {
                             .text("Successfully **added** " + member.getAsMention() + " as " + m.getAsMention() + "'s sub verified user")
                             .build()
             ).queue();
+            ServerLogs.log(
+                    new TechEmbedBuilder("Subverification added")
+                            .success()
+                            .text("User: " + e.getMember().getAsMention() + " (" + e.getUser().getName() + "#" + e.getUser().getDiscriminator() + ", " + e.getUser().getId() + ") \n"+
+                                    "has added: " + m.getAsMention() + "as a subverified user")
+                            .thumbnail(e.getMember().getUser().getAvatarUrl())
+            );
             return;
         }
 
@@ -158,7 +194,7 @@ public class SubVerifyCommand extends CommandModule {
                 return;
             }
 
-            TechDiscordBot.getGuild().removeRoleFromMember(member, SUB_VERIFIED.query().first()).queue();
+            TechDiscordBot.getGuild().removeRoleFromMember(member, SUB_VERIFIED_ROLE.query().first()).queue();
             TechDiscordBot.getStorage().removeSubVerification(m.getId());
             e.replyEmbeds(
                     new TechEmbedBuilder("Sub Verification - Removed")
@@ -166,6 +202,13 @@ public class SubVerifyCommand extends CommandModule {
                             .text("Successfully **removed** " + member.getAsMention() + " as " + m.getAsMention() + "'s sub verified user")
                             .build()
             ).queue();
+            ServerLogs.log(
+                    new TechEmbedBuilder("Subverification Removed")
+                            .error()
+                            .text("User: " + e.getMember().getAsMention() + " (" + e.getUser().getName() + "#" + e.getUser().getDiscriminator() + ", " + e.getUser().getId() + ") \n"+
+                                    "has added: " + m.getAsMention() + "as a subverified user")
+                            .thumbnail(e.getMember().getUser().getAvatarUrl())
+            );
             return;
         }
     }
