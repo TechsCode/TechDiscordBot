@@ -117,6 +117,19 @@ public class TicketTranscript {
                 embed.addProperty("color", e.getColorRaw());
                 embed.addProperty("description", e.getDescription());
                 embed.addProperty("unix", e.getTimestamp() == null ? null : e.getTimestamp().toEpochSecond() * 1000);
+                embed.addProperty("thumbnail", e.getThumbnail() == null || e.getThumbnail().getUrl() == null ? null : e.getThumbnail().getUrl());
+                embed.addProperty("image", e.getImage() == null || e.getImage().getUrl() == null ? null : e.getImage().getUrl());
+
+                if(e.getImage() != null) {
+                    JsonObject image = new JsonObject();
+
+                    image.addProperty("url", e.getImage().getUrl());
+                    image.addProperty("proxyUrl", e.getImage().getProxyUrl());
+                    image.addProperty("height", e.getImage().getHeight());
+                    image.addProperty("width", e.getImage().getWidth());
+
+                    embed.add("image", image);
+                }
 
                 if(e.getAuthor() != null) {
                     JsonObject author = new JsonObject();
@@ -127,6 +140,16 @@ public class TicketTranscript {
                     author.addProperty("iconProxy", e.getAuthor().getProxyIconUrl());
 
                     embed.add("author", author);
+                }
+
+                if(e.getFooter() != null) {
+                    JsonObject footer = new JsonObject();
+
+                    footer.addProperty("text", e.getFooter().getText());
+                    footer.addProperty("icon", e.getFooter().getIconUrl());
+                    footer.addProperty("iconProxy", e.getFooter().getProxyIconUrl());
+
+                    embed.add("footer", footer);
                 }
 
                 if(e.getFields().size() > 0) {
