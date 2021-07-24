@@ -16,7 +16,6 @@ import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 import net.dv8tion.jda.api.interactions.components.Button;
-import org.w3c.dom.Text;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -98,7 +97,7 @@ public class ApplyCommand extends CommandModule {
         } if (!isEnabled()) {
             e.replyEmbeds(
                 new TechEmbedBuilder("Apply Creation - Error")
-                    .text("Applications have been closed.")
+                    .text("Applications are currently closed, please try again later.")
                     .error()
                     .build()
             ).setEphemeral(true).queue();
@@ -113,7 +112,7 @@ public class ApplyCommand extends CommandModule {
             e.replyEmbeds(
                 new TechEmbedBuilder(m.getEffectiveName() + "'s Application Created")
                         .success()
-                        .text("Your application has been created at " + applicationChannel.getAsMention())
+                        .text("Your application has been created: " + applicationChannel.getAsMention())
                         .build()
             ).queue();
         });
@@ -163,9 +162,8 @@ public class ApplyCommand extends CommandModule {
                 .success()
                 .text("**This will send your application to the staff to review it.**\nAre you sure?")
                 .build()
-            ).setActionRow(
-                    Button.success("apply:" + member.getId() + ":send:", "Yes!")
-            ).queue();
+            ).setActionRow(Button.success("apply:" + member.getId() + ":send:", "Yes!")
+        ).queue();
     }
 
     public void applicationNotifications(TextChannel channel) {
