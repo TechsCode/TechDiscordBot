@@ -25,10 +25,21 @@ import java.util.List;
 
 public class ApplyCommand extends CommandModule {
 
+    private static boolean isEnabled() {
+        return false;
+    }
+
     private final DefinedQuery<Category> APPLICATION_CATEGORY = new DefinedQuery<Category>() {
         @Override
         protected Query<Category> newQuery() {
             return bot.getCategories("Applications");
+        }
+    };
+
+    private final DefinedQuery<Role> VERIFIED_ROLE = new DefinedQuery<Role>() {
+        @Override
+        protected Query<Role> newQuery() {
+            return bot.getRoles("Verified");
         }
     };
 
@@ -64,7 +75,7 @@ public class ApplyCommand extends CommandModule {
 
     @Override
     public CommandPrivilege[] getCommandPrivileges() {
-        return new CommandPrivilege[0];
+        return new CommandPrivilege[] { CommandPrivilege.enable(VERIFIED_ROLE.query().first()) };
     }
 
     @Override
@@ -82,6 +93,13 @@ public class ApplyCommand extends CommandModule {
         if (getApplyChannel(e.getMember()) != null) {
             new TechEmbedBuilder("Apply Creation - Error")
                     .text("You already have an open application (" + getApplyChannel(e.getMember()).getAsMention() + ")")
+                    .error()
+                    .sendTemporary(channel, 10);
+
+            return;
+        } if (!isEnabled()) {
+            new TechEmbedBuilder("Apply Creation - Error")
+                    .text("Applications have been closed.")
                     .error()
                     .sendTemporary(channel, 10);
 
