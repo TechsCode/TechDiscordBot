@@ -170,7 +170,7 @@ public class TicketModule extends Module {
         }));
     }
 
-    public void createTicket(Member member, TicketPriority priority, Plugin plugin, String issue) {
+    public void createTicket(Member member, Plugin plugin, String issue) {
         String name = "ticket-" + member.getEffectiveName().replaceAll("[^a-zA-Z\\d\\s_-]", "").toLowerCase();
         if(name.equals("ticket-"))
             name = "ticket-" + member.getUser().getId(); //Make sure the ticket has an actual name. In case the regex result is empty.
@@ -188,7 +188,7 @@ public class TicketModule extends Module {
                 .putPermissionOverride(STAFF_ROLE.query().first(), permissionsAllow, Collections.singletonList(Permission.MESSAGE_TTS))
                 .putPermissionOverride(member, permissionsAllow, Collections.singletonList(Permission.MESSAGE_TTS))
                 .putPermissionOverride(TechDiscordBot.getGuild().getPublicRole(), new ArrayList<>(), Arrays.asList(Permission.MESSAGE_READ, Permission.MESSAGE_WRITE))
-                .complete();
+                .queue();
 
         String plugins = Plugin.getMembersPluginsinEmojis(member);
         new TechEmbedBuilder(member.getEffectiveName() + " - " + member.getUser().getId())
@@ -199,7 +199,7 @@ public class TicketModule extends Module {
 
         if(TechDiscordBot.getStorage().isSubVerifiedUser(member.getId())) {
             new TechEmbedBuilder("Sub Verified User Support")
-                    .text("Original Pluginholder: " + TechDiscordBot.getGuild().getMemberById(TechDiscordBot.getStorage().getVerifiedIdFromSubVerifiedId(member.getId())).getAsMention())
+                    .text("Original Plugin-holder: " + TechDiscordBot.getGuild().getMemberById(TechDiscordBot.getStorage().getVerifiedIdFromSubVerifiedId(member.getId())).getAsMention())
                     .color(Color.ORANGE)
                     .queue(ticketChannel);
         }
@@ -325,7 +325,7 @@ public class TicketModule extends Module {
         if(message.length() > 1024) message = message.substring(0, 1024); //Make sure It outputs the embed. Embed values cannot be longer than 1024 chars.
 
         e.getMessage().delete().queue();
-        createTicket(e.getMember(), selectionPriority, selectionPlugin, message);
+        createTicket(e.getMember(), selectionPlugin, message);
     }
 
     @SubscribeEvent
