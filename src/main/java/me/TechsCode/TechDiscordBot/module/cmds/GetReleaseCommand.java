@@ -91,7 +91,7 @@ public class GetReleaseCommand extends CommandModule {
 
             e.replyEmbeds(
                     new TechEmbedBuilder("Get Release - Error")
-                            .text("You can not use this command in this channel.\n\n**Available Channels:**" + channels)
+                            .text("You can not use this command in this channel's category.\n\n**Available Categories:**" + channels)
                             .error()
                             .build()
             ).setEphemeral(true).queue();
