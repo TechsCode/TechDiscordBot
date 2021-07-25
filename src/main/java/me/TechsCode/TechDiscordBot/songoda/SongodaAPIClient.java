@@ -73,7 +73,7 @@ public class SongodaAPIClient extends APIClient {
                     if(discordData.has("id"))
                         discordId = discordData.get("id").getAsString();
 
-                    long createdAt = object.get("created_at").getAsLong();
+                    long createdAt = object.get("created_at").getAsLong() * 1000;
                     int userId = object.get("user_id").getAsInt();
 
                     SongodaPurchase sp = new SongodaPurchase(Plugin.byEmojiName(product.replace(" ", "")).getResourceId(), new User(String.valueOf(userId), username, avatar), new Time(new SimpleDateFormat("MMM dd, yyyy 'at' hh:mm a").format(new Date(createdAt)), createdAt), new Cost(currency, cost), discordId == null ? discord : discordId);
