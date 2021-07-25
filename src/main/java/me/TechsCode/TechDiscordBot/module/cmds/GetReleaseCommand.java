@@ -28,7 +28,7 @@ public class GetReleaseCommand extends CommandModule {
 
     private final DefinedQuery<Category> SUPPORT_CATEGORIES = new DefinedQuery<Category>() {
         @Override
-        protected Query<Category> newQuery() { return bot.getCategories("tickets", "paid plugin support"); }
+        protected Query<Category> newQuery() { return bot.getCategories("tickets", "paid plugin support", "free plugin support", "staff discussions"); }
     };
 
     public GetReleaseCommand(TechDiscordBot bot) {
@@ -64,20 +64,15 @@ public class GetReleaseCommand extends CommandModule {
     }
 
     @Override
-    public boolean isHook() {
-        return true;
-    }
-
-    @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         String plugin = e.getOption("plugin").getAsString();
 
-        if (channel.getParent() == SUPPORT_CATEGORIES.query().first()) {
+        if (SUPPORT_CATEGORIES.query().stream().anyMatch(c -> c.getId().equals(channel.getParent().getId()))) {
             e.reply("Getting release... please wait.").queue(q -> {
                 GithubRelease release = GitHubUtil.getLatestRelease(plugin);
 
                 if (release == null) {
-                    q.editOriginal("**Failed!** Could not get the release!\n\n**Possible reasons:**\n- The repo isn't valid.\n- There is no release in the repo.\n- Github died.").queue();
+                    q.editOriginal("**Failed!** Could not get the release!\n\n**Possible reasons:**\n- The repo isn't valid.\n- There is no release in the repo.\n- Github is down.").queue();
                 } else if (release.getFile() != null) {
                     q.editOriginal(release.getFile(), plugin + ".jar")
                             .queue(msg2 -> release.getFile().delete());
@@ -87,13 +82,16 @@ public class GetReleaseCommand extends CommandModule {
                                     .build()
                     ).queue();
                 } else {
-                    q.editOriginal("**Failed!** Could not get the file!\n\n**Possible reasons:**\n- Eazy messed up.\n- The release has no files for some reason.\n- GitHub died.").queue();
+                    q.editOriginal("**Failed!** Could not get the file!\n\n**Possible reasons:**\n- Eazy messed up.\n- The release has no files for some reason.\n- GitHub is down.").queue();
                 }
             });
-        }else{
+        } else {
+            StringBuilder channels = new StringBuilder();
+            SUPPORT_CATEGORIES.query().forEach(c -> channels.append("\n - ").append(c.getAsMention()));
+
             e.replyEmbeds(
                     new TechEmbedBuilder("Get Release - Error")
-                            .text("You can not use this command in this channel.\n\n**Available channels:**\n  - Support channels\n  - Tickets")
+                            .text("You can not use this command in this channel.\n\n**Available Channels:**" + channels)
                             .error()
                             .build()
             ).setEphemeral(true).queue();
