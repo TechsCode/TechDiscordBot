@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class GetReleaseCommand extends CommandModule {
@@ -47,7 +48,7 @@ public class GetReleaseCommand extends CommandModule {
 
     @Override
     public CommandPrivilege[] getCommandPrivileges() {
-        return new CommandPrivilege[] { CommandPrivilege.enable(SUPPORT_ROLES.query().first()) };
+        return SUPPORT_ROLES.query().stream().map(CommandPrivilege::enable).toArray(CommandPrivilege[]::new);
     }
 
     @Override
