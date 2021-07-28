@@ -18,9 +18,7 @@ import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 import net.dv8tion.jda.api.interactions.components.Button;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -129,11 +127,12 @@ public class ApplyCommand extends CommandModule {
     public void applicationChannelPermissions(Member member, TextChannel channel) {
         List<Permission> permissionsAllow = new ArrayList<>(Arrays.asList(Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_READ, Permission.MESSAGE_HISTORY, Permission.MESSAGE_WRITE));
         List<Permission> permissionsAllowAssistant = new ArrayList<>(Arrays.asList(Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_HISTORY));
+        List<Permission> permissionsDeny = new ArrayList<>(Arrays.asList(Permission.MANAGE_THREADS, Permission.USE_PRIVATE_THREADS, Permission.USE_PUBLIC_THREADS, Permission.MESSAGE_TTS));
 
         channel.getManager()
-                .putPermissionOverride(STAFF_ROLE.query().first(), permissionsAllow, Collections.singletonList(Permission.MESSAGE_TTS))
-                .putPermissionOverride(ASSISTANT_ROLE.query().first(), permissionsAllowAssistant, Collections.singleton(Permission.MESSAGE_TTS))
-                .putPermissionOverride(member, permissionsAllow, Collections.singletonList(Permission.MESSAGE_TTS))
+                .putPermissionOverride(STAFF_ROLE.query().first(), permissionsAllow, permissionsDeny)
+                .putPermissionOverride(ASSISTANT_ROLE.query().first(), permissionsAllowAssistant, permissionsDeny)
+                .putPermissionOverride(member, permissionsAllow, permissionsDeny)
                 .putPermissionOverride(TechDiscordBot.getGuild().getPublicRole(), new ArrayList<>(), Arrays.asList(Permission.MESSAGE_READ, Permission.MESSAGE_WRITE))
                 .queue();
     }

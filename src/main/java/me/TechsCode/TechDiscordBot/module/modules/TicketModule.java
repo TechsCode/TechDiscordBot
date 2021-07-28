@@ -356,8 +356,9 @@ public class TicketModule extends Module {
 
                     e.reply("Successfully added " + member.getAsMention() + " to this ticket!").queue();
 
-                    Collection<Permission> permissionsAllow = new ArrayList<>(Arrays.asList(Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_HISTORY));
-                    e.getTextChannel().getManager().putPermissionOverride(member, permissionsAllow, new ArrayList<>()).queue();
+                    Collection<Permission> permissionsAddAllow = new ArrayList<>(Arrays.asList(Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_HISTORY));
+                    Collection<Permission> permissionsAddDeny = new ArrayList<>(Arrays.asList(Permission.MANAGE_THREADS, Permission.USE_PRIVATE_THREADS, Permission.USE_PUBLIC_THREADS));
+                    e.getTextChannel().getManager().putPermissionOverride(member, permissionsAddAllow, permissionsAddDeny).queue();
                     break;
                 case "remove":
                     boolean isTicketCreator2 = e.getTextChannel().getTopic() != null && e.getTextChannel().getTopic().contains(member.getAsMention());
@@ -369,8 +370,8 @@ public class TicketModule extends Module {
 
                     e.reply("Successfully removed " + member.getAsMention() + " from this ticket!").queue();
 
-                    Collection<Permission> permissionsDeny = new ArrayList<>(Arrays.asList(Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_HISTORY));
-                    e.getTextChannel().getManager().putPermissionOverride(member, new ArrayList<>(), permissionsDeny).queue();
+                    Collection<Permission> permissionsRemoveDeny = new ArrayList<>(Arrays.asList(Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_HISTORY));
+                    e.getTextChannel().getManager().putPermissionOverride(member, new ArrayList<>(), permissionsRemoveDeny).queue();
                     break;
                 case "close":
                     //TicketTranscript transcript = TicketTranscript.buildTranscript(e.getTextChannel(), TicketTranscriptOptions.DEFAULT);
