@@ -17,7 +17,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class GetReleaseCommand extends CommandModule {
