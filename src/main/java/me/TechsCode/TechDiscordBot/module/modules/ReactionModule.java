@@ -11,6 +11,8 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
+import java.util.function.Consumer;
+
 public class ReactionModule extends Module {
 
     public Message reactionMessage;
@@ -22,22 +24,37 @@ public class ReactionModule extends Module {
     }
 
     public void onEnable() {
-        sendMessage();
-        resetReactions();
+        clearMessages(msg -> sendMessage(this::resetReactions));
     }
 
     public void onDisable() {
         this.reactionMessage.delete().complete();
     }
 
-    public void sendMessage() {
-        this.reactionMessage = new TechEmbedBuilder("Reaction Roles")
-                .text(getUpdateEmote().getAsMention() + " **For Plugin Updates**\nWhen there is a new update, you will be notified.\n\n" + getAnnouncementEmote().getAsMention() + " **For Announcements**\nWhen there is an announcement, you will receive a ping.\n\n" + getGiveawayEmote().getAsMention() + " **For Giveaways**\nWhen there is a giveaway, you will be notified.")
-                .complete(ROLES_CHANNEL);
+    public void clearMessages(Consumer<Message> message) {
+        ROLES_CHANNEL.getIterableHistory()
+                .takeAsync(5)
+                .thenAccept(msg -> {
+                    ROLES_CHANNEL.purgeMessages(msg);
+                    message.accept(null);
+                });
     }
 
-    public void resetReactions() {
-        this.reactionMessage.clearReactions().queue(a -> this.reactionMessage.addReaction(getUpdateEmote()).queue(a2 -> this.reactionMessage.addReaction(getAnnouncementEmote()).queue(a3 -> this.reactionMessage.addReaction(getGiveawayEmote()).queue())));
+    public void sendMessage(Consumer<Message> message) {
+        new TechEmbedBuilder("Reaction Roles")
+                .text(getUpdateEmote().getAsMention() + " **For Plugin Updates**\nWhen there is a new update, you will be notified.\n\n" + getAnnouncementEmote().getAsMention() + " **For Announcements**\nWhen there is an announcement, you will receive a ping.\n\n" + getGiveawayEmote().getAsMention() + " **For Giveaways**\nWhen there is a giveaway, you will be notified.")
+                .queue(ROLES_CHANNEL, msg -> {
+                    message.accept(msg);
+                    setReactionMessage(msg);
+                });
+    }
+
+    public void setReactionMessage(Message reactionMessage) {
+        this.reactionMessage = reactionMessage;
+    }
+
+    public void resetReactions(Message message) {
+        message.clearReactions().queue(a -> message.addReaction(getUpdateEmote()).queue(a2 -> message.addReaction(getAnnouncementEmote()).queue(a3 -> message.addReaction(getGiveawayEmote()).queue())));
     }
 
     public Emote getAnnouncementEmote() {
@@ -75,7 +92,6 @@ public class ReactionModule extends Module {
             }
 
             e.getReaction().removeReaction(e.getUser()).complete();
-            resetReactions();
         }
     }
 
