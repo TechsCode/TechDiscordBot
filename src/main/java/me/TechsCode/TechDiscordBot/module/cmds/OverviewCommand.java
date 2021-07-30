@@ -78,9 +78,9 @@ public class OverviewCommand extends CommandModule {
         showFeedback();
         //showRules();
         showPlugins();
-        showInvite();
         //showVerify();
         showPatreon();
+        showInvite();
     }
 
     public void showVerify() {
