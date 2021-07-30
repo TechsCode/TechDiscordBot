@@ -90,6 +90,9 @@ public class TicketModule extends Module {
     @Override
     public void onEnable() {
         channel = TICKET_CREATION_CHANNEL.query().first();
+        channel.getIterableHistory()
+                .takeAsync(100)
+                .thenAccept(msg -> channel.purgeMessages(msg.stream().filter(m -> m.getReactions().size() > 0).collect(Collectors.toList())));
 
         selectionStep = 1;
         lastInstructions = null;
