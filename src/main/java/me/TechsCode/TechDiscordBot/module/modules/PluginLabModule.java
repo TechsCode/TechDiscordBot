@@ -8,10 +8,7 @@ import me.TechsCode.TechDiscordBot.module.Module;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.PermissionOverride;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.*;
 import org.apache.commons.text.WordUtils;
 
 import java.io.IOException;
@@ -132,11 +129,11 @@ public class PluginLabModule extends Module {
         } catch (IllegalStateException ignored) { }
 
         if(release.getAsset() != null && release.getRelease() != null && release.getFile() != null) {
-            new TechEmbedBuilder("Ready to Test: " + WordUtils.capitalize(release.getRelease().getName().replace(".jar", "")))
+            MessageEmbed embed = new TechEmbedBuilder("Ready to Test: " + WordUtils.capitalize(release.getRelease().getName().replace(".jar", "")))
                     .text("```" + (release.getRelease().getBody().isEmpty() ? "No changes specified." : release.getRelease().getBody().replaceAll(" \\|\\| ", "\n")) + "```")
-                    .queue(channel);
+                    .build();
 
-            channel.sendFile(release.getFile(), pluginName + ".jar").queueAfter(3, TimeUnit.SECONDS, (msg) -> {
+            channel.sendMessageEmbeds(embed).addFile(release.getFile(), pluginName + ".jar").queue((msg) -> {
                 msg.pin().queue();
                 release.getFile().delete();
             });
