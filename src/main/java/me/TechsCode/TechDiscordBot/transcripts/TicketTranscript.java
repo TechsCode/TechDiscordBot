@@ -72,7 +72,8 @@ public class TicketTranscript {
 
         if(canType(TicketTranscriptMessageType.MESSAGE)) {
             object.addProperty("message", message.getContentDisplay());
-            object.add("author", buildMember(message.getMember()));
+            if(message.getMember() != null)
+                object.add("author", buildMember(message.getMember()));
             object.addProperty("created", message.getTimeCreated().toEpochSecond() * 1000);
 
             if(message.getTimeEdited() != null)
