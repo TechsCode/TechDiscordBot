@@ -16,7 +16,6 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
-import net.dv8tion.jda.api.exceptions.ContextException;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
 import java.awt.*;
@@ -94,6 +93,9 @@ public class TicketModule extends Module {
     @Override
     public void onEnable() {
         channel = TICKET_CREATION_CHANNEL.query().first();
+        channel.getIterableHistory()
+                .takeAsync(100)
+                .thenAccept(msg -> channel.purgeMessages(msg.stream().filter(m -> m.getReactions().size() > 0).collect(Collectors.toList())));
 
         selectionStep = 1;
         lastInstructions = null;
@@ -170,7 +172,7 @@ public class TicketModule extends Module {
         }));
     }
 
-    public void createTicket(Member member, TicketPriority priority, Plugin plugin, String issue) {
+    public void createTicket(Member member, Plugin plugin, String issue) {
         String name = "ticket-" + member.getEffectiveName().replaceAll("[^a-zA-Z\\d\\s_-]", "").toLowerCase();
         if(name.equals("ticket-"))
             name = "ticket-" + member.getUser().getId(); //Make sure the ticket has an actual name. In case the regex result is empty.
@@ -188,7 +190,7 @@ public class TicketModule extends Module {
                 .putPermissionOverride(STAFF_ROLE.query().first(), permissionsAllow, Collections.singletonList(Permission.MESSAGE_TTS))
                 .putPermissionOverride(member, permissionsAllow, Collections.singletonList(Permission.MESSAGE_TTS))
                 .putPermissionOverride(TechDiscordBot.getGuild().getPublicRole(), new ArrayList<>(), Arrays.asList(Permission.MESSAGE_READ, Permission.MESSAGE_WRITE))
-                .complete();
+                .queue();
 
         String plugins = Plugin.getMembersPluginsinEmojis(member);
         new TechEmbedBuilder(member.getEffectiveName() + " - " + member.getUser().getId())
@@ -199,7 +201,7 @@ public class TicketModule extends Module {
 
         if(TechDiscordBot.getStorage().isSubVerifiedUser(member.getId())) {
             new TechEmbedBuilder("Sub Verified User Support")
-                    .text("Original Pluginholder: " + TechDiscordBot.getGuild().getMemberById(TechDiscordBot.getStorage().getVerifiedIdFromSubVerifiedId(member.getId())).getAsMention())
+                    .text("Original Plugin-holder: " + TechDiscordBot.getGuild().getMemberById(TechDiscordBot.getStorage().getVerifiedIdFromSubVerifiedId(member.getId())).getAsMention())
                     .color(Color.ORANGE)
                     .queue(ticketChannel);
         }
@@ -325,7 +327,7 @@ public class TicketModule extends Module {
         if(message.length() > 1024) message = message.substring(0, 1024); //Make sure It outputs the embed. Embed values cannot be longer than 1024 chars.
 
         e.getMessage().delete().queue();
-        createTicket(e.getMember(), selectionPriority, selectionPlugin, message);
+        createTicket(e.getMember(), selectionPlugin, message);
     }
 
     @SubscribeEvent
@@ -360,8 +362,9 @@ public class TicketModule extends Module {
 
                     e.reply("Successfully added " + member.getAsMention() + " to this ticket!").queue();
 
-                    Collection<Permission> permissionsAllow = new ArrayList<>(Arrays.asList(Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_HISTORY));
-                    e.getTextChannel().getManager().putPermissionOverride(member, permissionsAllow, new ArrayList<>()).queue();
+                    Collection<Permission> permissionsAddAllow = new ArrayList<>(Arrays.asList(Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_HISTORY));
+                    Collection<Permission> permissionsAddDeny = new ArrayList<>(Arrays.asList(Permission.MANAGE_THREADS, Permission.USE_PRIVATE_THREADS, Permission.USE_PUBLIC_THREADS));
+                    e.getTextChannel().getManager().putPermissionOverride(member, permissionsAddAllow, permissionsAddDeny).queue();
                     break;
                 case "remove":
                     boolean isTicketCreator2 = e.getTextChannel().getTopic() != null && e.getTextChannel().getTopic().contains(member.getAsMention());
@@ -373,11 +376,11 @@ public class TicketModule extends Module {
 
                     e.reply("Successfully removed " + member.getAsMention() + " from this ticket!").queue();
 
-                    Collection<Permission> permissionsDeny = new ArrayList<>(Arrays.asList(Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_HISTORY));
-                    e.getTextChannel().getManager().putPermissionOverride(member, new ArrayList<>(), permissionsDeny).queue();
+                    Collection<Permission> permissionsRemoveDeny = new ArrayList<>(Arrays.asList(Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_HISTORY));
+                    e.getTextChannel().getManager().putPermissionOverride(member, new ArrayList<>(), permissionsRemoveDeny).queue();
                     break;
                 case "close":
-                    //TicketTranscript transcript = TicketTranscript.buildTranscript(e.getTextChannel(), TicketTranscriptOptions.DEFAULT);
+                    TicketTranscript transcript = TicketTranscript.buildTranscript(e.getTextChannel(), TicketTranscriptOptions.DEFAULT);
                     String channelId = e.getChannel().getId();
 
                     if (isTicketCreator) {
@@ -392,22 +395,21 @@ public class TicketModule extends Module {
                                     .build()
                         ).queue();
 
-                        e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS, s -> CLOSING_CHANNELS.remove(channelId));
-//                        transcript.build(object -> {
-//                            new TechEmbedBuilder("Transcript")
-//                                    .text("You can view your recently closed ticket's transcript here:\n" + transcript.getUrl())
-//                                    .color(Color.ORANGE)
-//                                    .queue(e.getMember());
-//
-//                            ServerLogs.log(
-//                                new TechEmbedBuilder("Ticket Transcript")
-//                                        .text("Transcript of " + e.getMember().getAsMention() +  "'s ticket:\n" + transcript.getUrl())
-//                                        .color(Color.ORANGE)
-//                            );
-//
-//                            e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS, s -> CLOSING_CHANNELS.remove(channelId));
-//                            TechDiscordBot.getStorage().saveTranscript(object);
-//                        });
+                        transcript.build(object -> {
+                            new TechEmbedBuilder("Transcript")
+                                    .text("You can view your recently closed ticket's transcript here:\n" + transcript.getUrl())
+                                    .color(Color.ORANGE)
+                                    .queue(e.getMember());
+
+                            ServerLogs.log(
+                                new TechEmbedBuilder("Ticket Transcript")
+                                        .text("Transcript of " + e.getMember().getAsMention() +  "'s ticket:\n" + transcript.getUrl())
+                                        .color(Color.ORANGE)
+                            );
+
+                            e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS, s -> CLOSING_CHANNELS.remove(channelId));
+                            TechDiscordBot.getStorage().saveTranscript(object);
+                        });
 
                         new TechEmbedBuilder("Solved Ticket")
                                 .text("The ticket (" + e.getTextChannel().getName() + ") created by " + e.getMember().getAsMention() + " is now solved. Thanks for contacting us!")
@@ -438,7 +440,6 @@ public class TicketModule extends Module {
                         ).queue();
 
                         CLOSING_CHANNELS.add(e.getChannel().getId());
-                        e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS, s -> CLOSING_CHANNELS.remove(channelId));
 
                         if (ticketMember != null) {
                             new TechEmbedBuilder("Ticket Closed")
@@ -458,24 +459,25 @@ public class TicketModule extends Module {
                                     .queueAfter(channel, 15, TimeUnit.SECONDS, (msg) -> reset());
                         }
 
-//                        transcript.build(object -> {
-//                            if(ticketMember != null) {
-//                                ServerLogs.log(
-//                                    new TechEmbedBuilder("Ticket Transcript")
-//                                            .text(ticketMember == null ? "Transcript of #" + e.getChannel().getName() + ": " + transcript.getUrl() : "Transcript of " + ticketMember.getAsMention() +  "'s ticket:\n" + transcript.getUrl())
-//                                            .color(Color.ORANGE)
-//                                );
-//
-//                                if (ticketMember != null) {
-//                                    new TechEmbedBuilder("Ticket Closed")
-//                                            .text("Your ticket (" + e.getTextChannel().getName() + ") has been closed!" + reasonSend + "\n\nYou can view the transcript here:\n" + transcript.getUrl())
-//                                            .success()
-//                                            .queue(ticketMember);
-//                                }
-//                            }
-//
-//                            TechDiscordBot.getStorage().saveTranscript(object);
-//                        });
+                        transcript.build(object -> {
+                            if(ticketMember != null) {
+                                ServerLogs.log(
+                                    new TechEmbedBuilder("Ticket Transcript")
+                                            .text(ticketMember == null ? "Transcript of #" + e.getChannel().getName() + ": " + transcript.getUrl() : "Transcript of " + ticketMember.getAsMention() +  "'s ticket:\n" + transcript.getUrl())
+                                            .color(Color.ORANGE)
+                                );
+
+                                if (ticketMember != null) {
+                                    new TechEmbedBuilder("Ticket Closed")
+                                            .text("Your ticket (" + e.getTextChannel().getName() + ") has been closed!" + reasonSend + "\n\nYou can view the transcript here:\n" + transcript.getUrl())
+                                            .success()
+                                            .queue(ticketMember);
+                                }
+                            }
+
+                            TechDiscordBot.getStorage().saveTranscript(object);
+                            e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS, s -> CLOSING_CHANNELS.remove(channelId));
+                        });
                     }
 
                     break;

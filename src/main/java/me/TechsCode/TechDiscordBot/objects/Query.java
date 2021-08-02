@@ -3,6 +3,7 @@ package me.TechsCode.TechDiscordBot.objects;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -57,5 +58,9 @@ public class Query<T> {
 
     public Stream<T> stream() {
         return all().stream();
+    }
+
+    public void forEach(Consumer<T> action) {
+        all().forEach(action);
     }
 }

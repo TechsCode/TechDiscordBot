@@ -5,7 +5,6 @@ import me.TechsCode.TechDiscordBot.mysql.MySQL;
 import me.TechsCode.TechDiscordBot.mysql.MySQLSettings;
 import me.TechsCode.TechDiscordBot.reminders.Reminder;
 import me.TechsCode.TechDiscordBot.reminders.ReminderType;
-import me.TechsCode.TechDiscordBot.transcripts.TicketTranscript;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 
