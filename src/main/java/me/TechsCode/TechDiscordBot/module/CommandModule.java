@@ -29,10 +29,6 @@ public abstract class CommandModule {
 
     public abstract int getCooldown();
 
-    public boolean isHook() {
-        return false;
-    }
-
     public HashMap<String, Cooldown> getCooldowns() {
         return cooldowns;
     }

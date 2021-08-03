@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static me.TechsCode.TechDiscordBot.TechDiscordBot.getJDA;
 
@@ -45,6 +46,9 @@ public class VerificationModule extends Module {
     @Override
     public void onEnable() {
         channel = VERIFICATION_CHANNEL.query().first();
+        channel.getIterableHistory()
+                .takeAsync(100)
+                .thenAccept(msg -> channel.purgeMessages(msg.stream().filter(m -> m.getEmbeds().size() > 0 && m.getEmbeds().get(0).getAuthor() != null && m.getEmbeds().get(0).getAuthor().getName() != null && m.getEmbeds().get(0).getAuthor().getName().equals("How It Works")).collect(Collectors.toList())));
 
         lastInstructions = null;
         verificationQueue = new ArrayList<>();

@@ -38,7 +38,7 @@ public class JoinModule extends Module {
         Verification existingVerification = TechDiscordBot.getStorage().retrieveVerificationWithDiscord(e.getMember().getId());
 
         new TechEmbedBuilder("Welcome to Tech's Plugin Support")
-                .text((existingVerification != null ? "Welcome to Tech's Plugin Support,\nIf you are looking for help, you must first verify your Spigot Account in <#695493411117072425>.\n\nAfter you have been verified, you will have access to the support channel(s)." : "Hello there,\nYou have previously verified yourself and your roles will be automatically updated as a result.\n\nThis update may take 10 to 15 minutes to complete.") + "\n\nThanks & Welcome,\nTechsCode & Team")
+                .text((existingVerification == null ? "Welcome to Tech's Plugin Support,\nIf you are looking for help, you must first verify your Spigot Account in <#695493411117072425>.\n\nAfter you have been verified, you will have access to the support channel(s)." : "Hello there,\nYou have previously verified yourself and your roles will be automatically updated as a result.\n\nThis update may take 10 to 15 minutes to complete.") + "\n\nThanks & Welcome,\nTechsCode & Team")
                 .queue(e.getMember());
     }
 

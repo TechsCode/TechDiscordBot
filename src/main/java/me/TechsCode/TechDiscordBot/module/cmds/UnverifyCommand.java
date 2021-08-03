@@ -46,9 +46,9 @@ public class UnverifyCommand extends CommandModule {
     public OptionData[] getOptions() {
         return new OptionData[] {
                 new OptionData(OptionType.STRING, "type", "The type of value.", true)
-                    .addChoice("User ID", "offlineId")
-                    .addChoice("Spigot Name", "spigot"),
-                new OptionData(OptionType.STRING, "data", "The user id or spigot name.", true),
+                    .addChoice("Discord ID", "discord")
+                    .addChoice("Spigot ID", "spigot"),
+                new OptionData(OptionType.STRING, "data", "The Discord ID or Spigot ID.", true),
         };
     }
 
@@ -62,7 +62,7 @@ public class UnverifyCommand extends CommandModule {
         String type = e.getOption("type").getAsString();
         String data = e.getOption("data").getAsString();
 
-        if(type.equals("offlineId")) {
+        if(type.equals("discord")) {
             process(e, data, channel);
         } else if(type.equals("spigot")) {
             processSpigotId(e, data, channel);
@@ -76,7 +76,7 @@ public class UnverifyCommand extends CommandModule {
             e.replyEmbeds(
                 new TechEmbedBuilder("Unverify Command - Error")
                     .error()
-                    .text("The spigot id '" + spigotId + "' is not verified!")
+                    .text("The Spigot ID '" + spigotId + "' is not verified!")
                     .build()
             ).setEphemeral(true).queue();
         } else {

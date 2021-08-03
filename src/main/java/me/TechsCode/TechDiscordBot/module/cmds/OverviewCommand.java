@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
+import java.awt.*;
 import java.util.Arrays;
 
 public class OverviewCommand extends CommandModule {
@@ -77,8 +78,9 @@ public class OverviewCommand extends CommandModule {
         showFeedback();
         //showRules();
         showPlugins();
-        showInvite();
         //showVerify();
+        showPatreon();
+        showInvite();
     }
 
     public void showVerify() {
@@ -138,5 +140,13 @@ public class OverviewCommand extends CommandModule {
                 .color(plugin.getColor())
                 .thumbnail(plugin.getResourceLogo())
                 .queue(OVERVIEW_CHANNEL.query().first()));
+    }
+
+    public void showPatreon() {
+        new TechEmbedBuilder("TechsCode Patreon")
+                .text("Join our Patreon **Program today** and get __exclusive__ and great rewards! \n\n https://www.patreon.com/TechsCode")
+                .color(Color.decode("#f96854"))
+                .thumbnail("https://techscode.com/patreon.gif")
+                .queue(OVERVIEW_CHANNEL.query().first());
     }
 }
