@@ -70,7 +70,8 @@ public class ModulesManager {
                     new SubcommandData("close", "Close a ticket.")
                         .addOptions(
                             new OptionData(OptionType.STRING, "reason", "Reason to close the ticket. (Optional)")
-                        )
+                    ),
+                    new SubcommandData("transcript", "Force make a ticket transcript.")
                 )
         ).queue(cmds -> {
             cmds.forEach(command -> {

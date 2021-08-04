@@ -354,7 +354,27 @@ public class TicketModule extends Module {
             }
 
             switch (e.getSubcommandName()) {
-                case "add":
+                case "transcript": {
+                    if (!TechDiscordBot.isStaff(e.getMember())) {
+                        e.reply("You cannot force a ticket transcript!").setEphemeral(true).queue();
+                        return;
+                    }
+
+                    TicketTranscript transcript = TicketTranscript.buildTranscript(e.getTextChannel(), TicketTranscriptOptions.DEFAULT);
+                    Member ticketMember = getMemberFromTicket(e.getTextChannel());
+
+                    transcript.build(object -> {
+                        if(ticketMember != null) {
+                            ServerLogs.log(
+                                    new TechEmbedBuilder("Forced Ticket Transcript")
+                                            .text(ticketMember == null ? "Transcript of #" + e.getChannel().getName() + ": " + transcript.getUrl() : "Transcript of " + ticketMember.getAsMention() +  "'s ticket:\n" + transcript.getUrl())
+                                            .color(Color.ORANGE)
+                            );
+                        }
+
+                        TechDiscordBot.getStorage().saveTranscript(object);
+                    });
+                } case "add":
                     if (e.getMember().equals(member)) {
                         e.reply("You can't be added to a ticket you're already in.").setEphemeral(true).queue();
                         return;
