@@ -39,6 +39,6 @@ public class FeedbackCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
-        e.reply("https://feedback.techscode.de").queue();
+        e.reply("https://feedback.techscode.com").queue();
     }
 }
