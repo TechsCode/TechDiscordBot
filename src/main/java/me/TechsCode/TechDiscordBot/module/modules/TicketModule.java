@@ -348,7 +348,7 @@ public class TicketModule extends Module {
             }
 
             Member member = e.getOption("member") == null ? null : e.getOption("member").getAsMember();
-            if(!e.getSubcommandName().equals("transcript") && member == null && !e.getSubcommandName().equals("close")) {
+            if(!e.getSubcommandName().equals("transcript") && !e.getSubcommandName().equals("close") && member == null) {
                 e.reply("**Member is invalid!** This probably shouldn't be happening...").setEphemeral(true).queue();
                 return;
             }
@@ -363,17 +363,28 @@ public class TicketModule extends Module {
                     TicketTranscript transcript = TicketTranscript.buildTranscript(e.getTextChannel(), TicketTranscriptOptions.DEFAULT);
                     Member ticketMember = getMemberFromTicket(e.getTextChannel());
 
-                    transcript.build(object -> {
-                        if(ticketMember != null) {
-                            ServerLogs.log(
-                                    new TechEmbedBuilder("Forced Ticket Transcript")
+                    e.reply("Generating the transcript... please wait.").queue(msg -> {
+                        transcript.build(object -> {
+                            if(ticketMember != null) {
+                                ServerLogs.log(
+                                        new TechEmbedBuilder("Ticket Transcript (Command)")
+                                                .text(ticketMember == null ? "Transcript of #" + e.getChannel().getName() + ": " + transcript.getUrl() : "Transcript of " + ticketMember.getAsMention() +  "'s ticket:\n" + transcript.getUrl())
+                                                .color(Color.ORANGE)
+                                );
+                            }
+
+                            msg.editOriginalEmbeds(
+                                    new TechEmbedBuilder("Ticket Transcript")
                                             .text(ticketMember == null ? "Transcript of #" + e.getChannel().getName() + ": " + transcript.getUrl() : "Transcript of " + ticketMember.getAsMention() +  "'s ticket:\n" + transcript.getUrl())
                                             .color(Color.ORANGE)
-                            );
-                        }
+                                            .build()
+                            ).queue();
 
-                        TechDiscordBot.getStorage().saveTranscript(object);
+                            TechDiscordBot.getStorage().saveTranscript(object);
+                        });
                     });
+
+
                 } case "add":
                     if (e.getMember().equals(member)) {
                         e.reply("You can't be added to a ticket you're already in.").setEphemeral(true).queue();
