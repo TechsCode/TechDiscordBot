@@ -75,7 +75,7 @@ public class TicketModule extends Module {
     private final DefinedQuery<Category> TICKET_CATEGORY = new DefinedQuery<Category>() {
         @Override
         protected Query<Category> newQuery() {
-            return bot.getCategories("tickets");
+            return bot.getCategories("\uD83C\uDF9F ︱Tickets");
         }
     };
 
