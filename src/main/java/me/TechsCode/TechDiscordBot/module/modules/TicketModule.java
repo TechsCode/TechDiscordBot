@@ -221,7 +221,9 @@ public class TicketModule extends Module {
                 e.printStackTrace();
             }
 
-            if(this.selectionUserId == null || userId == null) return;
+            if(this.selectionUserId == null || userId == null)
+                return;
+
             if(this.selectionUserId.equals(userId) && isSelection) {
                 new TechEmbedBuilder("Ticket - Error")
                         .error()
@@ -321,10 +323,12 @@ public class TicketModule extends Module {
             return;
         }
 
-        if(!isSelection) return;
+        if(!isSelection)
+            return;
 
         String message = e.getMessage().getContentDisplay();
-        if(message.length() > 1024) message = message.substring(0, 1024); //Make sure It outputs the embed. Embed values cannot be longer than 1024 chars.
+        if(message.length() > 1024)
+            message = message.substring(0, 1024); //Make sure It outputs the embed. Embed values cannot be longer than 1024 chars.
 
         e.getMessage().delete().queue();
         createTicket(e.getMember(), selectionPlugin, message);
@@ -332,7 +336,8 @@ public class TicketModule extends Module {
 
     @SubscribeEvent
     public void onSlashCommand(SlashCommandEvent e) {
-        if(e.getMember() == null || e.getMember().getUser().isBot()) return;
+        if(e.getMember() == null || e.getMember().getUser().isBot())
+            return;
 
         if(e.getName().equals("ticket") && e.getSubcommandName() != null) {
             if(!isTicketChat(e.getTextChannel())) {
@@ -383,8 +388,6 @@ public class TicketModule extends Module {
                             TechDiscordBot.getStorage().saveTranscript(object);
                         });
                     });
-
-
                 } case "add":
                     if (e.getMember().equals(member)) {
                         e.reply("You can't be added to a ticket you're already in.").setEphemeral(true).queue();
