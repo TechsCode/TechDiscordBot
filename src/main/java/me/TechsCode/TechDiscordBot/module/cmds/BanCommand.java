@@ -1,6 +1,7 @@
 package me.TechsCode.TechDiscordBot.module.cmds;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
+import me.TechsCode.TechDiscordBot.logs.PunishLogs;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
@@ -88,6 +89,12 @@ public class BanCommand extends CommandModule {
                             .text("Successfully banned " + member.getAsMention() + (reason == null ? "!" : " for `" + reason + "`!"))
                             .build()
             ).queue();
+
+            PunishLogs.log(
+                    new TechEmbedBuilder("Banned " + member.getUser().getName() + "#" + member.getUser().getDiscriminator())
+                            .success()
+                            .text("Successfully banned " + member.getAsMention() + (reason == null ? "!" : " for `" + reason + "`!"))
+            );
         }
     }
 }

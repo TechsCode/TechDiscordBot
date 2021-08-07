@@ -2,6 +2,8 @@ package me.TechsCode.TechDiscordBot.module.modules;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.logs.ServerLogs;
+import me.TechsCode.TechDiscordBot.logs.TicketLogs;
+import me.TechsCode.TechDiscordBot.logs.TranscriptLogs;
 import me.TechsCode.TechDiscordBot.module.Module;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
@@ -75,7 +77,7 @@ public class TicketModule extends Module {
     private final DefinedQuery<Category> TICKET_CATEGORY = new DefinedQuery<Category>() {
         @Override
         protected Query<Category> newQuery() {
-            return bot.getCategories("\uD83C\uDF9F ︱Tickets");
+            return bot.getCategories("\uD83C\uDFAB ︱Tickets");
         }
     };
 
@@ -476,10 +478,11 @@ public class TicketModule extends Module {
                         CLOSING_CHANNELS.add(e.getChannel().getId());
 
                         if (ticketMember != null) {
-                            new TechEmbedBuilder("Ticket Closed")
-                                    .text("The ticket (" + e.getTextChannel().getName() + ") from " + ticketMember.getAsMention() + " has been closed!")
-                                    .success()
-                                    .queueAfter(channel, 15, TimeUnit.SECONDS, (msg) -> reset());
+                            TicketLogs.log(
+                                new TechEmbedBuilder("Ticket Closed")
+                                        .text("The ticket (" + e.getTextChannel().getName() + ") from " + ticketMember.getAsMention() + " has been closed!")
+                                        .success()
+                            );
                             if (ticketMember != null) {
                                 new TechEmbedBuilder("Ticket Closed")
                                         .text("Your ticket (" + e.getTextChannel().getName() + ") has been closed!" + reasonSend)
@@ -487,15 +490,16 @@ public class TicketModule extends Module {
                                         .queue(ticketMember);
                             }
                         } else {
-                            new TechEmbedBuilder("Ticket Closed")
+                            TicketLogs.log(
+                                new TechEmbedBuilder("Ticket Closed")
                                     .text("The ticket (" + e.getTextChannel().getName() + ") from *member has left* has been closed!")
                                     .success()
-                                    .queueAfter(channel, 15, TimeUnit.SECONDS, (msg) -> reset());
+                            );
                         }
 
                         transcript.build(object -> {
                             if(ticketMember != null) {
-                                ServerLogs.log(
+                                TranscriptLogs.log(
                                     new TechEmbedBuilder("Ticket Transcript")
                                             .text(ticketMember == null ? "Transcript of #" + e.getChannel().getName() + ": " + transcript.getUrl() : "Transcript of " + ticketMember.getAsMention() +  "'s ticket:\n" + transcript.getUrl())
                                             .color(Color.ORANGE)
