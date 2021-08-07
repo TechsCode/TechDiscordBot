@@ -373,7 +373,7 @@ public class TicketModule extends Module {
                     e.reply("Generating the transcript... please wait.").queue(msg -> {
                         transcript.build(object -> {
                             if(ticketMember != null) {
-                                ServerLogs.log(
+                                TranscriptLogs.log(
                                         new TechEmbedBuilder("Ticket Transcript (Command)")
                                                 .text(ticketMember == null ? "Transcript of #" + e.getChannel().getName() + ": " + transcript.getUrl() : "Transcript of " + ticketMember.getAsMention() +  "'s ticket:\n" + transcript.getUrl())
                                                 .color(Color.ORANGE)
@@ -446,11 +446,11 @@ public class TicketModule extends Module {
                             e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS, s -> CLOSING_CHANNELS.remove(channelId));
                             TechDiscordBot.getStorage().saveTranscript(object);
                         });
-
-                        new TechEmbedBuilder("Solved Ticket")
-                                .text("The ticket (" + e.getTextChannel().getName() + ") created by " + e.getMember().getAsMention() + " is now solved. Thanks for contacting us!")
-                                .success()
-                                .queueAfter(channel, 15, TimeUnit.SECONDS, (msg) -> reset());
+                        TicketLogs.log(
+                                new TechEmbedBuilder("Solved Ticket")
+                                        .text("The ticket (" + e.getTextChannel().getName() + ") created by " + e.getMember().getAsMention() + " is now solved. Thanks for contacting us!")
+                                        .success()
+                        );
                     } else {
                         if (!TechDiscordBot.isStaff(e.getMember())) {
                             e.reply("You cannot close this ticket!").setEphemeral(true).queue();
@@ -478,11 +478,11 @@ public class TicketModule extends Module {
                         CLOSING_CHANNELS.add(e.getChannel().getId());
 
                         if (ticketMember != null) {
-                            TicketLogs.log(
-                                new TechEmbedBuilder("Ticket Closed")
-                                        .text("The ticket (" + e.getTextChannel().getName() + ") from " + ticketMember.getAsMention() + " has been closed!")
-                                        .success()
-                            );
+                            new TechEmbedBuilder("Ticket Closed")
+                                    .text("The ticket (" + e.getTextChannel().getName() + ") from " + ticketMember.getAsMention() + " has been closed!")
+                                    .success()
+                                    .queueAfter(channel, 15, TimeUnit.SECONDS, (msg) -> reset());
+
                             if (ticketMember != null) {
                                 new TechEmbedBuilder("Ticket Closed")
                                         .text("Your ticket (" + e.getTextChannel().getName() + ") has been closed!" + reasonSend)
@@ -490,11 +490,10 @@ public class TicketModule extends Module {
                                         .queue(ticketMember);
                             }
                         } else {
-                            TicketLogs.log(
-                                new TechEmbedBuilder("Ticket Closed")
+                            new TechEmbedBuilder("Ticket Closed")
                                     .text("The ticket (" + e.getTextChannel().getName() + ") from *member has left* has been closed!")
                                     .success()
-                            );
+                                    .queueAfter(channel, 15, TimeUnit.SECONDS, (msg) -> reset());
                         }
 
                         transcript.build(object -> {
