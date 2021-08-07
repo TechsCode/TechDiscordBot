@@ -144,7 +144,7 @@ public class OverviewCommand extends CommandModule {
 
     public void showPatreon() {
         new TechEmbedBuilder("TechsCode Patreon")
-                .text("Join our Patreon **Program today** and get __exclusive__ and great rewards! \n\n https://www.patreon.com/TechsCode")
+                .text("Join our Patreon **program today** and get __exclusive__ and great rewards! \n\n http://patreon.techscode.com")
                 .color(Color.decode("#f96854"))
                 .thumbnail("https://techscode.com/patreon.gif")
                 .queue(OVERVIEW_CHANNEL.query().first());
