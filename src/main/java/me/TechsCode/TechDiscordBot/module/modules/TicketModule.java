@@ -67,6 +67,13 @@ public class TicketModule extends Module {
         }
     };
 
+    private final DefinedQuery<Role> PATREON_ROLE = new DefinedQuery<Role>() {
+        @Override
+        protected Query<Role> newQuery() {
+            return bot.getRoles("Patreon");
+        }
+    };
+
     private final DefinedQuery<Role> SUB_VERIFIED = new DefinedQuery<Role>() {
         @Override
         protected Query<Role> newQuery() {
@@ -208,9 +215,10 @@ public class TicketModule extends Module {
                     .queue(ticketChannel);
         }
 
-        new TechEmbedBuilder("New Ticket")
-                .text(member.getAsMention() + " created a new ticket (" + ticketChannel.getAsMention() + ")")
-                .queue(channel);
+        TicketLogs.log(
+            new TechEmbedBuilder("New Ticket")
+                    .text(member.getAsMention() + " created a new ticket (" + ticketChannel.getAsMention() + ")")
+        );
 
         reset();
     }
@@ -437,7 +445,7 @@ public class TicketModule extends Module {
                                     .color(Color.ORANGE)
                                     .queue(e.getMember());
 
-                            ServerLogs.log(
+                            TicketLogs.log(
                                 new TechEmbedBuilder("Ticket Transcript")
                                         .text("Transcript of " + e.getMember().getAsMention() +  "'s ticket:\n" + transcript.getUrl())
                                         .color(Color.ORANGE)
