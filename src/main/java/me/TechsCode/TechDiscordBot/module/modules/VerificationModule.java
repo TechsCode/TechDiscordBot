@@ -31,7 +31,7 @@ public class VerificationModule extends Module {
     private final DefinedQuery<TextChannel> VERIFICATION_CHANNEL = new DefinedQuery<TextChannel>() {
         @Override
         protected Query<TextChannel> newQuery() {
-            return bot.getChannels("verification");
+            return bot.getChannels("\uD83D\uDCD8︱verification");
         }
     };
 
