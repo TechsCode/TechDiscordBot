@@ -69,7 +69,7 @@ public class ReactionModule extends Module {
         return TechDiscordBot.getJDA().getEmoteById("837724632529895486");
     }
 
-    public Emote getPatreonNewsEmote() { return TechDiscordBot.getJDA().getEmoteById("873377532102189097"); }
+    public Emote getPatreonNewsEmote() { return TechDiscordBot.getJDA().getEmoteById("873383176712622120"); }
 
     @SubscribeEvent
     public void onReactionAdd(MessageReactionAddEvent e) {
