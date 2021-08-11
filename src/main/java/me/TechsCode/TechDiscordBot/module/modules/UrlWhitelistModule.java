@@ -24,12 +24,25 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class UrlWhitelistModule extends Module {
-    private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
+    private final DefinedQuery<Role> ASSISTANT_ROLE = new DefinedQuery<Role>() {
         @Override
         protected Query<Role> newQuery() {
-            return bot.getRoles("Staff");
+            return bot.getRoles("Assistant");
         }
     };
+    private final DefinedQuery<Role> DEVELOPER_ROLE = new DefinedQuery<Role>() {
+        @Override
+        protected Query<Role> newQuery() {
+            return bot.getRoles("Developer");
+        }
+    };
+    private final DefinedQuery<Role> CODINGWIZARD_ROLE = new DefinedQuery<Role>() {
+        @Override
+        protected Query<Role> newQuery() {
+            return bot.getRoles("\uD83D\uDCBB Coding Wizard");
+        }
+    };
+
     List<String> whitelistedUrls = new ArrayList<String>();
 
     public UrlWhitelistModule(TechDiscordBot bot) {
@@ -44,13 +57,15 @@ public class UrlWhitelistModule extends Module {
 
                 try {
                     Thread.sleep(TimeUnit.HOURS.toMillis(1)); //Wait every hour
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             }
         }).start();
     }
 
     @Override
-    public void onDisable() {}
+    public void onDisable() {
+    }
 
     public String getName() {
         return "UrlWhitelistModule";
@@ -60,12 +75,14 @@ public class UrlWhitelistModule extends Module {
     public void onMessage(GuildMessageReceivedEvent e) {
         if (e.getMember() == null) return;
         if (e.getAuthor().isBot()) return;
-        //if (e.getMember().getRoles().contains(STAFF_ROLE.query().first())) return;
+        if (e.getMember().getRoles().contains(ASSISTANT_ROLE.query().first())) return;
+        if (e.getMember().getRoles().contains(DEVELOPER_ROLE.query().first())) return;
+        if (e.getMember().getRoles().contains(CODINGWIZARD_ROLE.query().first())) return;
 
         String message = e.getMessage().getContentRaw();
         boolean blockMessage = false;
 
-        if(!whitelistedUrls.isEmpty()){
+        if (!whitelistedUrls.isEmpty()) {
             Set<String> extractedUrls = extractUrls(message);
             for (String extractedUrl : extractedUrls) {
                 if (!whitelistedUrls.contains(extractedUrl)) {
@@ -74,24 +91,24 @@ public class UrlWhitelistModule extends Module {
                 }
             }
 
-            if(blockMessage){
+            if (blockMessage) {
                 e.getMessage().delete().queue();
                 new TechEmbedBuilder("Blocked url(s)")
                         .color(Color.RED)
-                        .text("Your message contained a link which is not in our whitelist.\nTo add it to our whitelist please do `/urlwhitelist` to view how.")
+                        .text("Your message contained a link which is not in our whitelist.\n\nIf you think this is a mistake take a look at our [whitelist](https://github.com/TechsCode-Team/UrlWhitelist).")
                         .queue(e.getChannel());
             }
         }
     }
 
-    private void getWhitelist(){
-        try{
+    private void getWhitelist() {
+        try {
             URL url = new URL("https://raw.githubusercontent.com/TechsCode-Team/UrlWhitelist/main/urls.txt");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
 
             int status = con.getResponseCode();
-            if(status == 200){
+            if (status == 200) {
                 BufferedReader in = new BufferedReader(
                         new InputStreamReader(con.getInputStream()));
                 String inputLine;
@@ -99,11 +116,11 @@ public class UrlWhitelistModule extends Module {
                     whitelistedUrls.add(inputLine.trim());
                 }
                 in.close();
-            }else{
+            } else {
                 System.err.println("Error getting url whitelist list");
             }
             con.disconnect();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
