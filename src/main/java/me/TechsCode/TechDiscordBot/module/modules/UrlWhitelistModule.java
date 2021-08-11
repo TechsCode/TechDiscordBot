@@ -30,7 +30,7 @@ public class UrlWhitelistModule extends Module {
 
     private final DefinedQuery<Category> SUPPORT_CATEGORIES = new DefinedQuery<Category>() {
         @Override
-        protected Query<Category> newQuery() { return bot.getCategories("\uD83D\uDCC1 | Archives", "\uD83D\uDCD1 | Staff Logs", "Other Staff Discussions", "staff discussions", "⚖ | Leadership-Discussions"); }
+        protected Query<Category> newQuery() { return bot.getCategories("\uD83D\uDCC1 | Archives", "\uD83D\uDCD1 | Staff Logs", "Other Staff Discussions", "staff discussions", "⚖ | Leadership-Discussions", "\uD83C\uDFAB ︱Tickets"); }
     };
 
     List<String> whitelistedUrls = new ArrayList<String>();
