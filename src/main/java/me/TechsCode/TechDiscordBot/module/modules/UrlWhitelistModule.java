@@ -5,17 +5,20 @@ import me.TechsCode.TechDiscordBot.module.Module;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
-import me.TechsCode.TechDiscordBot.util.ConsoleColor;
+import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -60,14 +63,25 @@ public class UrlWhitelistModule extends Module {
         //if (e.getMember().getRoles().contains(STAFF_ROLE.query().first())) return;
 
         String message = e.getMessage().getContentRaw();
+        boolean blockMessage = false;
 
-        List<String> extractedUrls = extractUrls(message);
-        for (String extractedUrl : extractedUrls) {
-            if(!whitelistedUrls.contains(extractedUrl)){
-                System.out.println(ConsoleColor.RED+"Message contains url");
+        if(!whitelistedUrls.isEmpty()){
+            Set<String> extractedUrls = extractUrls(message);
+            for (String extractedUrl : extractedUrls) {
+                if (!whitelistedUrls.contains(extractedUrl)) {
+                    blockMessage = true;
+                    break;
+                }
+            }
+
+            if(blockMessage){
+                e.getMessage().delete().queue();
+                new TechEmbedBuilder("Blocked url(s)")
+                        .color(Color.RED)
+                        .text("Your message contained a link which is not in our whitelist.\nTo add it to our whitelist please do `/urlwhitelist` to view how.")
+                        .queue(e.getChannel());
             }
         }
-
     }
 
     private void getWhitelist(){
@@ -77,25 +91,25 @@ public class UrlWhitelistModule extends Module {
             con.setRequestMethod("GET");
 
             int status = con.getResponseCode();
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuffer content = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                content.append(inputLine);
+            if(status == 200){
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(con.getInputStream()));
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    whitelistedUrls.add(inputLine.trim());
+                }
+                in.close();
+            }else{
+                System.err.println("Error getting url whitelist list");
             }
-            in.close();
             con.disconnect();
-
-            //whitelistedUrls = content.toString();
-            System.out.println(content.toString());
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
-    private List<String> extractUrls(String text) {
-        List<String> containedUrls = new ArrayList<String>();
+    private Set<String> extractUrls(String text) {
+        Set<String> containedUrls = new LinkedHashSet<>();
         String urlRegex = "(^|\\s)((https?:\\/\\/)?[\\w-]+(\\.[\\w-]+)+\\.?(:\\d+)?(\\/\\S*)?)";
         Pattern pattern = Pattern.compile(urlRegex, Pattern.CASE_INSENSITIVE);
         Matcher urlMatcher = pattern.matcher(text);
