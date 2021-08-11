@@ -19,6 +19,8 @@ import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UrlWhitelistModule extends Module {
     private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
@@ -122,11 +124,17 @@ public class UrlWhitelistModule extends Module {
         for (String messagePart : messageParts) {
             String domain = "";
             boolean successfulParse = false;
-            if(!messagePart.startsWith("http://") && !messagePart.startsWith("https://")){
-                messagePart = "http://"+messagePart;
+
+            Pattern p = Pattern.compile("[(http(s)?):\\/\\/(www\\.)?a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)");//. represents single character
+            Matcher m = p.matcher(messagePart);
+            boolean b = m.matches();
+            String regexResponse = m.group(0);
+
+            if(!regexResponse.startsWith("http://") && !regexResponse.startsWith("https://")){
+                regexResponse = "http://"+regexResponse;
             }
             try{
-                URL url = new URL(messagePart);
+                URL url = new URL(regexResponse);
                 String[] domainExploded = url.getHost().split("\\.");
                 domain = domainExploded[domainExploded.length - 2] + "." + domainExploded[domainExploded.length - 1];
                 successfulParse = true;
