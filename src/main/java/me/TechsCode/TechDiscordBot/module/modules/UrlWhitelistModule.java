@@ -15,13 +15,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class UrlWhitelistModule extends Module {
     private final DefinedQuery<Role> ASSISTANT_ROLE = new DefinedQuery<Role>() {
@@ -127,17 +123,25 @@ public class UrlWhitelistModule extends Module {
 
     private Set<String> extractUrls(String text) {
         Set<String> containedUrls = new LinkedHashSet<>();
-        String urlRegex = "(^|\\s)((https?:\\/\\/)?[\\w-]+(\\.[\\w-]+)+\\.?(:\\d+)?(\\/\\S*)?)";
-        Pattern pattern = Pattern.compile(urlRegex, Pattern.CASE_INSENSITIVE);
-        Matcher urlMatcher = pattern.matcher(text);
 
-        while (urlMatcher.find()) {
-            containedUrls.add(text.substring(urlMatcher.start(0),
-                            urlMatcher.end(0))
-                    .replaceAll("www.", "")
-                    .replaceAll("https://", "")
-                    .replaceAll("http://", "")
-                    .replaceAll("\\/.*", "").trim());
+        String[] messageParts = {};
+        messageParts = text.split(" ");
+        for (String messagePart : messageParts) {
+            String domain = "";
+            boolean successfulParse = false;
+            if(!messagePart.startsWith("http://") && !messagePart.startsWith("https://")){
+                messagePart = "http://"+messagePart;
+            }
+            try{
+                URL url = new URL(messagePart);
+                String[] domainExploded = url.getHost().split("\\.");
+                domain = domainExploded[domainExploded.length - 2] + "." + domainExploded[domainExploded.length - 1];
+                successfulParse = true;
+            }catch (Exception ignored){}
+
+            if(successfulParse){
+                containedUrls.add(domain);
+            }
         }
 
         return containedUrls;
