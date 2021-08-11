@@ -6,6 +6,7 @@ import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
+import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
@@ -20,23 +21,16 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class UrlWhitelistModule extends Module {
-    private final DefinedQuery<Role> ASSISTANT_ROLE = new DefinedQuery<Role>() {
+    private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
         @Override
         protected Query<Role> newQuery() {
-            return bot.getRoles("Assistant");
+            return bot.getRoles("Staff");
         }
     };
-    private final DefinedQuery<Role> DEVELOPER_ROLE = new DefinedQuery<Role>() {
+
+    private final DefinedQuery<Category> SUPPORT_CATEGORIES = new DefinedQuery<Category>() {
         @Override
-        protected Query<Role> newQuery() {
-            return bot.getRoles("Developer");
-        }
-    };
-    private final DefinedQuery<Role> CODINGWIZARD_ROLE = new DefinedQuery<Role>() {
-        @Override
-        protected Query<Role> newQuery() {
-            return bot.getRoles("\uD83D\uDCBB Coding Wizard");
-        }
+        protected Query<Category> newQuery() { return bot.getCategories("\uD83D\uDCC1 | Archives", "\uD83D\uDCD1 | Staff Logs", "Other Staff Discussions", "staff discussions", "⚖ | Leadership-Discussions"); }
     };
 
     List<String> whitelistedUrls = new ArrayList<String>();
@@ -71,9 +65,8 @@ public class UrlWhitelistModule extends Module {
     public void onMessage(GuildMessageReceivedEvent e) {
         if (e.getMember() == null) return;
         if (e.getAuthor().isBot()) return;
-        if (e.getMember().getRoles().contains(ASSISTANT_ROLE.query().first())) return;
-        if (e.getMember().getRoles().contains(DEVELOPER_ROLE.query().first())) return;
-        if (e.getMember().getRoles().contains(CODINGWIZARD_ROLE.query().first())) return;
+        if (e.getMember().getRoles().contains(STAFF_ROLE.query().first())) return;
+        if (SUPPORT_CATEGORIES.query().stream().anyMatch(c -> c.getId().equals(e.getChannel().getParent().getId()))) return;
 
         String message = e.getMessage().getContentRaw();
         boolean blockMessage = false;
@@ -110,6 +103,7 @@ public class UrlWhitelistModule extends Module {
                 String inputLine;
                 while ((inputLine = in.readLine()) != null) {
                     whitelistedUrls.add(inputLine.trim());
+                    System.out.println(inputLine);
                 }
                 in.close();
             } else {
