@@ -103,7 +103,6 @@ public class UrlWhitelistModule extends Module {
                 String inputLine;
                 while ((inputLine = in.readLine()) != null) {
                     whitelistedUrls.add(inputLine.trim());
-                    System.out.println(inputLine);
                 }
                 in.close();
             } else {
