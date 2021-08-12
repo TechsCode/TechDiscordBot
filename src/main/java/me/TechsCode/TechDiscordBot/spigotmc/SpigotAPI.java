@@ -131,7 +131,8 @@ public class SpigotAPI {
                     resource.get("category").getAsString(),
                     resource.get("version").getAsString(),
                     pluginCost,
-                    new Time(time.get("human").getAsString(), time.get("unix").getAsInt())));
+                    new Time(time.get("human").getAsString(), time.get("unix").getAsInt())
+                    , "spigot"));
         }
 
         return resources;
@@ -225,7 +226,7 @@ public class SpigotAPI {
             }
 
             purchases.add(new Purchase(
-                    purchase.get("id").getAsString(),
+                    purchase.get("resourceId").getAsString(),
                     new User(purchase.get("user").getAsJsonObject()),
                     new Time(time.get("human").getAsString(), time.get("unix").getAsInt()),
                     pluginCost));
@@ -294,7 +295,8 @@ public class SpigotAPI {
                     resource.get("category").getAsString(),
                     resource.get("version").getAsString(),
                     pluginCost,
-                    new Time(time.get("human").getAsString(), time.get("unix").getAsInt())));
+                    new Time(time.get("human").getAsString(), time.get("unix").getAsInt())
+                    ,"market"));
         }
 
         return resources;
