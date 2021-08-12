@@ -215,18 +215,18 @@ public class SpigotAPI {
         JsonArray arr = obj.get("data").getAsJsonArray();
 
         for (JsonElement jsonElement : arr) {
-            JsonObject review = jsonElement.getAsJsonObject();
-            JsonObject time = review.get("time").getAsJsonObject();
+            JsonObject purchase = jsonElement.getAsJsonObject();
+            JsonObject time = purchase.get("time").getAsJsonObject();
 
             Cost pluginCost = null;
-            if(review.has("cost")){
-                JsonObject cost = review.get("cost").getAsJsonObject();
+            if(purchase.has("cost")){
+                JsonObject cost = purchase.get("cost").getAsJsonObject();
                 pluginCost = new Cost(cost.get("currency").getAsString(), cost.get("value").getAsFloat());
             }
 
             purchases.add(new Purchase(
-                    review.get("").getAsString(),
-                    new User(review.get("user").getAsJsonObject()),
+                    purchase.get("id").getAsString(),
+                    new User(purchase.get("user").getAsJsonObject()),
                     new Time(time.get("human").getAsString(), time.get("unix").getAsInt()),
                     pluginCost));
         }
