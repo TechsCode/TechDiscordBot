@@ -2,7 +2,7 @@ package me.TechsCode.TechDiscordBot.module.cmds;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
-import me.TechsCode.TechDiscordBot.spigotmc.api.APIStatus;
+import me.TechsCode.TechDiscordBot.spigotmc.data.APIStatus;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -70,41 +70,32 @@ public class APICommand extends CommandModule {
 
         if(status.isUsable() && m.getRoles().stream().anyMatch(r -> r.getName().equals("Staff"))) { //Make sure the member is staff.
             if(name.equals("Spigot")) {
-                int purchases = TechDiscordBot.getSpigotAPI().getPurchases().size();
-                int reviews = TechDiscordBot.getSpigotAPI().getReviews().size();
-                int updates = TechDiscordBot.getSpigotAPI().getUpdates().size();
-                int resources = TechDiscordBot.getSpigotAPI().getResources().size();
+                int purchases = TechDiscordBot.getSpigotAPI().getSpigotPurchases().size();
+                int reviews = TechDiscordBot.getSpigotAPI().getSpigotReviews().size();
+                int updates = TechDiscordBot.getSpigotAPI().getSpigotUpdates().size();
+                int resources = TechDiscordBot.getSpigotAPI().getSpigotResource().size();
 
                 sb.append("**Purchases:** ").append(purchases).append("\n");
                 sb.append("**Reviews:** ").append(reviews).append("\n");
                 sb.append("**Updates:** ").append(updates).append("\n");
                 sb.append("**Resources:** ").append(resources).append("\n\n");
             } else {
-                sb.append("**Purchases:** ").append(TechDiscordBot.getSongodaAPI().getPurchases().size()).append("\n\n");
+                sb.append("**Purchases:** ").append(TechDiscordBot.getSongodaAPI().getSpigotPurchases().size()).append("\n\n");
             }
         }
 
         String lastUpdatedFormatted = "Never";
-        String botLastParsed = "Never";
 
         if(status.isUsable()) {
             DateFormat dateTimeInstanceRT = new SimpleDateFormat("MMMM dd, hh:mm:ss a z");
 
             if(name.equals("Spigot")) {
-                lastUpdatedFormatted = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSpigotAPI().getRefreshTime()));
-
-                DateFormat dateTimeInstanceLP = new SimpleDateFormat("MMMM dd, hh:mm:ss a z");
-                botLastParsed = dateTimeInstanceLP.format(new Date(TechDiscordBot.getSpigotAPI().getLastParsed()));
+                lastUpdatedFormatted = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSpigotAPI().getStatus().getLastFetch()));
             } else {
                 lastUpdatedFormatted = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSongodaAPI().getRefreshTime()));
             }
         }
 
-        if(name.equals("Spigot")) {
-            sb.append("**Last Fetched**: ").append(lastUpdatedFormatted);
-            sb.append("\n**Bot Last Parsed**: ").append(botLastParsed);
-        } else {
-            sb.append("**Last Fetched**: ").append(lastUpdatedFormatted);
-        }
+        sb.append("**Last Fetched**: ").append(lastUpdatedFormatted);
     }
 }

@@ -1,6 +1,5 @@
 package me.TechsCode.TechDiscordBot.module.modules;
 
-import me.TechsCode.SpigotAPI.data.Resource;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.Module;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
@@ -8,6 +7,7 @@ import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.songoda.SongodaPurchase;
+import me.TechsCode.TechDiscordBot.spigotmc.data.Resource;
 import me.TechsCode.TechDiscordBot.util.Plugin;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -94,7 +94,7 @@ public class RoleAssignerModule extends Module {
     }
 
     public void loop() {
-        if(!TechDiscordBot.getBot().getStatus().isUsable() || TechDiscordBot.getSpigotAPI().getPurchases().size() < 9000 || !TechDiscordBot.getSongodaAPI().isLoaded())
+        if(!TechDiscordBot.getBot().getStatus().isUsable() || TechDiscordBot.getSpigotAPI().getSpigotPurchases().size() < 9000 || !TechDiscordBot.getSongodaAPI().isLoaded())
             return;
 
         Role verificationRole = VERIFICATION_ROLE.query().first();
@@ -109,14 +109,14 @@ public class RoleAssignerModule extends Module {
         possibleRoles.add(reviewSquad);
         possibleRoles.addAll(RESOURCE_ROLES.query().all());
 
-        Resource[] resources = TechDiscordBot.getSpigotAPI().getResources().stream().filter(Resource::isPremium).toArray(Resource[]::new);
+        Resource[] resources = TechDiscordBot.getSpigotAPI().getSpigotResource().stream().filter(Resource::isPremium).toArray(Resource[]::new);
 
         HashMap<String, List<String>> resourcePurchaserIds = new HashMap<>();
         HashMap<String, List<String>> resourceReviewerIds = new HashMap<>();
 
         Arrays.stream(resources).forEach(resource -> {
-            resourcePurchaserIds.put(resource.getId(), resource.getPurchases().stream().map(p -> p.getUser().getUserId()).collect(Collectors.toList()));
-            resourceReviewerIds.put(resource.getId(), resource.getReviews().stream().map(r -> r.getUser().getUserId()).collect(Collectors.toList()));
+            resourcePurchaserIds.put(resource.getId(), resource.getSpigotPurchases().stream().map(p -> p.getUser().getUserId()).collect(Collectors.toList()));
+            resourceReviewerIds.put(resource.getId(), resource.getSpigotReviews().stream().map(r -> r.getUser().getUserId()).collect(Collectors.toList()));
         });
 
         for(Member all : TechDiscordBot.getGuild().getMembers()) {
@@ -140,7 +140,7 @@ public class RoleAssignerModule extends Module {
                 if(purchases != 0 && purchases == reviews) rolesToKeep.add(reviewSquad);
             }
 
-            for (SongodaPurchase songodaPurchase : TechDiscordBot.getSongodaAPI().getPurchases().discord(all)) {
+            for (SongodaPurchase songodaPurchase : TechDiscordBot.getSongodaAPI().getSpigotPurchases().discord(all)) {
                 rolesToKeep.add(songodaVerificationRole);
                 rolesToKeep.add(bot.getRoles(songodaPurchase.getResource().getName()).first());
             }

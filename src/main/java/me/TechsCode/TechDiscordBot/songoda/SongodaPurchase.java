@@ -1,11 +1,11 @@
 package me.TechsCode.TechDiscordBot.songoda;
 
 import com.google.gson.JsonObject;
-import me.TechsCode.SpigotAPI.data.Cost;
-import me.TechsCode.SpigotAPI.data.Purchase;
-import me.TechsCode.SpigotAPI.data.Time;
-import me.TechsCode.SpigotAPI.data.User;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
+import me.TechsCode.TechDiscordBot.spigotmc.data.Cost;
+import me.TechsCode.TechDiscordBot.spigotmc.data.Purchase;
+import me.TechsCode.TechDiscordBot.spigotmc.data.Time;
+import me.TechsCode.TechDiscordBot.spigotmc.data.User;
 import net.dv8tion.jda.api.entities.Member;
 
 public class SongodaPurchase extends Purchase {

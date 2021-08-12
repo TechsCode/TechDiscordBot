@@ -1,10 +1,10 @@
 package me.TechsCode.TechDiscordBot.module.cmds;
 
-import me.TechsCode.SpigotAPI.data.Purchase;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
 import me.TechsCode.TechDiscordBot.songoda.SongodaPurchase;
 import me.TechsCode.TechDiscordBot.songoda.SongodaPurchaseList;
+import me.TechsCode.TechDiscordBot.spigotmc.data.Purchase;
 import me.TechsCode.TechDiscordBot.util.Plugin;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -70,7 +70,7 @@ public class SongodaCheckCommand extends CommandModule {
 
         boolean canView = m.getRoles().stream().anyMatch(r -> r.getName().equals("Staff"));
 
-        SongodaPurchaseList purchases = songodaId == null ? TechDiscordBot.getSongodaAPI().getPurchases().discord(member) : TechDiscordBot.getSongodaAPI().getPurchases().userId(songodaId);
+        SongodaPurchaseList purchases = songodaId == null ? TechDiscordBot.getSongodaAPI().getSpigotPurchases().discord(member) : TechDiscordBot.getSongodaAPI().getSpigotPurchases().userId(songodaId);
 
         if(purchases.size() == 0) {
             e.replyEmbeds(
@@ -103,7 +103,7 @@ public class SongodaCheckCommand extends CommandModule {
             return;
 
         String date = purchase.getTime().getHumanTime();
-        boolean hasBoughtAll = TechDiscordBot.getSpigotAPI().getResources().premium().size() == purchases.size();
+        boolean hasBoughtAll = TechDiscordBot.getSpigotAPI().getSpigotResource().premium().size() == purchases.size();
         StringBuilder sb = new StringBuilder();
 
         for (Purchase p : purchases)
@@ -116,7 +116,7 @@ public class SongodaCheckCommand extends CommandModule {
                         .thumbnail(purchase.getUser().getAvatar())
                         .text("Showing " + member.getAsMention() + "'s Songoda Information.")
                         .field("Username / ID", "[" + purchase.getUser().getUsername() + "." + purchase.getUser().getUserId() + "](https://songoda.com/profile/" + purchase.getUser().getUsername().toLowerCase() + ")", true)
-                        .field("Purchases Amount", hasBoughtAll ? " **All** " + purchases.size() + " plugins purchased!" : purchases.size() + "**/**" + TechDiscordBot.getSpigotAPI().getResources().premium().size() + " purchased.", true)
+                        .field("Purchases Amount", hasBoughtAll ? " **All** " + purchases.size() + " plugins purchased!" : purchases.size() + "**/**" + TechDiscordBot.getSpigotAPI().getSpigotResource().premium().size() + " purchased.", true)
                         .field("Last Purchase", Plugin.fromId(purchase.getResource().getId()).getEmoji().getAsMention() + " " + (date != null ? date + ".": "Unknown\n*or cannot calculate*."), true)
                         .field("Purchases", purchasesString.substring(0, purchasesString.length() - 2) + ".", false)
                         .build()

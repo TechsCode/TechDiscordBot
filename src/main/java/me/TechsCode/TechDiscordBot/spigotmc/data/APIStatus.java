@@ -1,13 +1,12 @@
-package me.TechsCode.TechDiscordBot.spigotmc.api;
+package me.TechsCode.TechDiscordBot.spigotmc.data;
 
-import me.TechsCode.SpigotAPI.client.SpigotAPIClient;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.songoda.SongodaAPIClient;
+import me.TechsCode.TechDiscordBot.spigotmc.SpigotAPI;
 
 import java.util.concurrent.TimeUnit;
 
 public enum APIStatus {
-
     ONLINE("Online", "The api is online and running!", "low_priority"),
     NOT_FETCHING("Not Fetching", "The api is online, but is not fetching new info!", "medium_priority"),
     OFFLINE("Offline", "The api has no information. Something bad must've happened.", "high_priority");
@@ -36,11 +35,11 @@ public enum APIStatus {
         return TechDiscordBot.getGuild().getEmotesByName(emojiName, true).get(0).getAsMention();
     }
 
-    public static APIStatus getStatus(SpigotAPIClient client) {
+    public static APIStatus getStatus(SpigotAPI client) {
         APIStatus status;
 
-        if(client.getData().isPresent() && client.getRefreshTime() != 0L) {
-            if(client.getRefreshTime() + TimeUnit.HOURS.toMillis(1) < System.currentTimeMillis()) {
+        if(client.getStatus().getLastFetch() != 0L) {
+            if(client.getStatus().getLastFetch() + TimeUnit.HOURS.toMillis(1) < System.currentTimeMillis()) {
                 status = NOT_FETCHING;
             } else {
                 status = ONLINE;
@@ -55,7 +54,7 @@ public enum APIStatus {
     public static APIStatus getStatus(SongodaAPIClient client) {
         APIStatus status;
 
-        if(client.isLoaded() && client.getRefreshTime() != 0L) {
+        if(client.getRefreshTime() != 0L) {
             if(client.getRefreshTime() + TimeUnit.HOURS.toMillis(1) < System.currentTimeMillis()) {
                 status = NOT_FETCHING;
             } else {
@@ -67,4 +66,5 @@ public enum APIStatus {
 
         return status;
     }
+
 }

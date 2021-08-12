@@ -21,7 +21,6 @@ repositories {
 dependencies {
     implementation ('net.dv8tion:JDA:4.3.0_299') { exclude module: 'opus-java' }
 
-    implementation 'com.github.techscode:spigotapi:build-25'
     implementation 'org.jsoup:jsoup:1.13.1'
     implementation 'org.apache.commons:commons-lang3:3.7'
     implementation 'mysql:mysql-connector-java:5.1.17'

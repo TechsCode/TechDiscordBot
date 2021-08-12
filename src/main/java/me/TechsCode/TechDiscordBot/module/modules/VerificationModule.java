@@ -1,15 +1,14 @@
 package me.TechsCode.TechDiscordBot.module.modules;
 
-import me.TechsCode.SpigotAPI.data.Purchase;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.Module;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
-import me.TechsCode.TechDiscordBot.spigotmc.ProfileComment;
-import me.TechsCode.TechDiscordBot.spigotmc.SpigotMC;
-import me.TechsCode.TechDiscordBot.spigotmc.api.APIStatus;
+import me.TechsCode.TechDiscordBot.spigotmc.data.APIStatus;
+import me.TechsCode.TechDiscordBot.spigotmc.data.ProfileComment;
+import me.TechsCode.TechDiscordBot.spigotmc.data.Purchase;
 import me.TechsCode.TechDiscordBot.util.Plugin;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -24,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static me.TechsCode.TechDiscordBot.TechDiscordBot.getJDA;
+import static me.TechsCode.TechDiscordBot.TechDiscordBot.getSpigotAPI;
 
 public class VerificationModule extends Module {
 
@@ -110,7 +110,7 @@ public class VerificationModule extends Module {
             return;
         }
 
-        Purchase[] purchases = TechDiscordBot.getSpigotAPI().getPurchases().username(username).toArray(new Purchase[0]);
+        Purchase[] purchases = TechDiscordBot.getSpigotAPI().getSpigotPurchases().username(username).toArray(new Purchase[0]);
 
         if (purchases.length == 0) {
             errorMessage.text("User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " does not own any of Tech's Plugins!\n\n*It may take up to 20 minutes for the bot to recognize new purchases.*\n\n*This could also be an issue with the api. If you believe this is a mistake, please contact a staff member!*");
@@ -135,7 +135,7 @@ public class VerificationModule extends Module {
         existingVerification = TechDiscordBot.getStorage().retrieveVerificationWithSpigot(userId);
 
         if (existingVerification != null) {
-            Purchase purchase = TechDiscordBot.getSpigotAPI().getPurchases().userId(existingVerification.getUserId()).get(0);
+            Purchase purchase = TechDiscordBot.getSpigotAPI().getSpigotPurchases().userId(existingVerification.getUserId()).get(0);
 
             String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " Has tried to verify as https://www.spigotmc.org/members/" + username.toLowerCase() + "." + userId + " But this user is already verified!";
             alertMsg(msg);
@@ -158,7 +158,7 @@ public class VerificationModule extends Module {
             long start = System.currentTimeMillis();
 
             while (System.currentTimeMillis() - start < TimeUnit.MINUTES.toMillis(3)) {
-                for (ProfileComment all : SpigotMC.getComments(userId)) {
+                for (ProfileComment all : getSpigotAPI().getSpigotProfileComments(userId, false)) {
 
                     if (all.getText().equals("TechVerification." + code)) {
                         if (all.getUserId().equals(userId)) {

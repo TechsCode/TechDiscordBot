@@ -1,6 +1,5 @@
 package me.TechsCode.TechDiscordBot;
 
-import me.TechsCode.SpigotAPI.client.SpigotAPIClient;
 import me.TechsCode.TechDiscordBot.module.ModulesManager;
 import me.TechsCode.TechDiscordBot.mysql.MySQLSettings;
 import me.TechsCode.TechDiscordBot.mysql.storage.Storage;
@@ -8,7 +7,8 @@ import me.TechsCode.TechDiscordBot.objects.ChannelQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.reminders.ReminderManager;
 import me.TechsCode.TechDiscordBot.songoda.SongodaAPIClient;
-import me.TechsCode.TechDiscordBot.spigotmc.api.APIStatus;
+import me.TechsCode.TechDiscordBot.spigotmc.SpigotAPI;
+import me.TechsCode.TechDiscordBot.spigotmc.data.APIStatus;
 import me.TechsCode.TechDiscordBot.util.ConsoleColor;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -35,7 +35,7 @@ public class TechDiscordBot {
     private static Guild guild;
     private static Member self;
 
-    private static SpigotAPIClient spigotAPIClient;
+    private static SpigotAPI spigotAPIClient;
     private static SongodaAPIClient songodaAPIClient;
 //    private static List<SongodaPurchase> songodaPurchases;
 
@@ -91,9 +91,9 @@ public class TechDiscordBot {
 
         TechDiscordBot.githubToken = githubToken;
 
-        spigotAPIClient = new SpigotAPIClient("http://api.techscode.de/", apiToken);
+        spigotAPIClient = new SpigotAPI("http://localhost/", apiToken);
         songodaAPIClient = new SongodaAPIClient(songodaApiToken);
-//        songodaPurchases = SongodaPurchases.getPurchases();
+//        songodaPurchases = SongodaPurchases.getSpigotPurchases();
 
         log("Initializing MySQL Storage " + mySQLSettings.getHost() + ":" + mySQLSettings.getPort() + "!");
         storage = Storage.of(mySQLSettings);
@@ -124,15 +124,25 @@ public class TechDiscordBot {
         if(!getStatus().isUsable())
             log("  » " + ConsoleColor.RED + "API is not usable!");
 
-        log("  » Purchases: " + getSpigotAPI().getPurchases().size());
-        log("  » Resources: " + getSpigotAPI().getResources().size());
-        log("  » Updates: " + getSpigotAPI().getUpdates().size());
-        log("  » Reviews: " + getSpigotAPI().getReviews().size());
+        log("  » Purchases: " + getSpigotAPI().getSpigotPurchases().size());
+        log("  » Resources: " + getSpigotAPI().getSpigotResource().size());
+        log("  » Updates: " + getSpigotAPI().getSpigotUpdates().size());
+        log("  » Reviews: " + getSpigotAPI().getSpigotReviews().size());
+        log("");
+
+        log("Market:");
+        if(!getStatus().isUsable())
+            log("  » " + ConsoleColor.RED + "API is not usable!");
+
+        log("  » Purchases: " + getSpigotAPI().getMarketPurchases().size());
+        log("  » Resources: " + getSpigotAPI().getMarketResource().size());
+        log("  » Updates: " + getSpigotAPI().getMarketUpdates().size());
+        log("  » Reviews: " + getSpigotAPI().getMarketReviews().size());
         log("");
 
         log("Songoda: ");
         if(getSongodaAPI().isLoaded()) {
-            log("  » Purchases: " + getSongodaAPI().getPurchases().size());
+            log("  » Purchases: " + getSongodaAPI().getSpigotPurchases().size());
         } else {
             log("  » " + ConsoleColor.RED + "Could not connect. Cannot show info!");
         }
@@ -174,7 +184,7 @@ public class TechDiscordBot {
         return storage;
     }
 
-    public static SpigotAPIClient getSpigotAPI() {
+    public static SpigotAPI getSpigotAPI() {
         return spigotAPIClient;
     }
 
@@ -251,7 +261,7 @@ public class TechDiscordBot {
     }
 
     public APIStatus getStatus() {
-        return APIStatus.getStatus(getSpigotAPI());
+        return APIStatus.getStatus(spigotAPIClient);
     }
 
     public APIStatus getSongodaStatus() {

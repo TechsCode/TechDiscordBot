@@ -1,10 +1,10 @@
 package me.TechsCode.TechDiscordBot.util;
 
-import me.TechsCode.SpigotAPI.data.Resource;
-import me.TechsCode.SpigotAPI.data.Update;
-import me.TechsCode.SpigotAPI.data.lists.PurchasesList;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
+import me.TechsCode.TechDiscordBot.spigotmc.data.Resource;
+import me.TechsCode.TechDiscordBot.spigotmc.data.Update;
+import me.TechsCode.TechDiscordBot.spigotmc.data.lists.PurchasesList;
 import net.dv8tion.jda.api.entities.*;
 
 import javax.imageio.ImageIO;
@@ -70,7 +70,7 @@ public enum Plugin {
     }
 
     public String getDescription() {
-        return TechDiscordBot.getSpigotAPI().getResources().id(getResourceId()).get().getTagLine();
+        return TechDiscordBot.getSpigotAPI().getSpigotResource().id(getResourceId()).get().getTagLine();
     }
 
     public String getResourceLogo() {
@@ -141,11 +141,11 @@ public enum Plugin {
     }
 
     public Resource getResource() {
-        return TechDiscordBot.getSpigotAPI().getResources().id(getResourceId()).get();
+        return TechDiscordBot.getSpigotAPI().getSpigotResource().id(getResourceId()).get();
     }
 
     public Update getLatestUpdate() {
-        return TechDiscordBot.getSpigotAPI().getUpdates().resource(getResourceId()).get(TechDiscordBot.getSpigotAPI().getUpdates().resource(getResourceId()).size() - 1);
+        return TechDiscordBot.getSpigotAPI().getSpigotUpdates().resource(getResourceId()).get(TechDiscordBot.getSpigotAPI().getSpigotUpdates().resource(getResourceId()).size() - 1);
     }
 
     public static List<Plugin> allWithWiki() {
@@ -210,7 +210,7 @@ public enum Plugin {
 
             PurchasesList pc = null;
             try {
-                pc = TechDiscordBot.getSpigotAPI().getPurchases().userId(verification.getUserId());
+                pc = TechDiscordBot.getSpigotAPI().getSpigotPurchases().userId(verification.getUserId());
             } catch (NullPointerException ignored) {
                 TechDiscordBot.log(ConsoleColor.RED + "Could not find any SpigotMC plugins for " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator());
             }
