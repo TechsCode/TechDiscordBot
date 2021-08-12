@@ -1,5 +1,6 @@
 package me.TechsCode.TechDiscordBot.spigotmc.data;
 
+import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.spigotmc.data.lists.PurchasesList;
 import me.TechsCode.TechDiscordBot.spigotmc.data.lists.ReviewsList;
 import me.TechsCode.TechDiscordBot.spigotmc.data.lists.UpdatesList;
@@ -9,11 +10,11 @@ import java.util.Optional;
 
 public class Resource {
 
-    private String id, name, tagLine, category, version;
+    private String id, name, tagLine, category, version, market;
     private Cost cost;
     private Time time;
 
-    public Resource(String id, String name, String tagLine, String category, String version, Cost cost, Time time) {
+    public Resource(String id, String name, String tagLine, String category, String version, Cost cost, Time time, String market) {
         this.id = id;
         this.name = name;
         this.tagLine = tagLine;
@@ -21,6 +22,7 @@ public class Resource {
         this.version = version;
         this.cost = cost;
         this.time = time;
+        this.market = market;
     }
 
     public String getId() {
@@ -82,18 +84,27 @@ public class Resource {
         return Objects.hash(id);
     }
 
-    public UpdatesList getSpigotUpdates() {
-        //return dataset.getSpigotUpdates().resource(id);
-        return null;
+    public UpdatesList getUpdates() {
+        if(market.equals("spigot")){
+            return TechDiscordBot.getSpigotAPI().getSpigotUpdates().resource(id);
+        }else{
+            return TechDiscordBot.getSpigotAPI().getMarketUpdates().resource(id);
+        }
     }
 
-    public ReviewsList getSpigotReviews() {
-        //return dataset.getSpigotReviews().resource(id);
-        return null;
+    public ReviewsList getReviews() {
+        if(market.equals("spigot")){
+            return TechDiscordBot.getSpigotAPI().getSpigotReviews().resource(id);
+        }else{
+            return TechDiscordBot.getSpigotAPI().getMarketReviews().resource(id);
+        }
     }
 
-    public PurchasesList getSpigotPurchases() {
-        //return dataset.getSpigotPurchases().resource(id);
-        return null;
+    public PurchasesList getPurchases() {
+        if(market.equals("spigot")){
+            return TechDiscordBot.getSpigotAPI().getSpigotPurchases().resource(id);
+        }else{
+            return TechDiscordBot.getSpigotAPI().getMarketPurchases().resource(id);
+        }
     }
 }

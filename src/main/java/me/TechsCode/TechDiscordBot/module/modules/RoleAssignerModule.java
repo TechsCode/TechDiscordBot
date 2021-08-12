@@ -115,8 +115,8 @@ public class RoleAssignerModule extends Module {
         HashMap<String, List<String>> resourceReviewerIds = new HashMap<>();
 
         Arrays.stream(resources).forEach(resource -> {
-            resourcePurchaserIds.put(resource.getId(), resource.getSpigotPurchases().stream().map(p -> p.getUser().getUserId()).collect(Collectors.toList()));
-            resourceReviewerIds.put(resource.getId(), resource.getSpigotReviews().stream().map(r -> r.getUser().getUserId()).collect(Collectors.toList()));
+            resourcePurchaserIds.put(resource.getId(), resource.getPurchases().stream().map(p -> p.getUser().getUserId()).collect(Collectors.toList()));
+            resourceReviewerIds.put(resource.getId(), resource.getReviews().stream().map(r -> r.getUser().getUserId()).collect(Collectors.toList()));
         });
 
         for(Member all : TechDiscordBot.getGuild().getMembers()) {

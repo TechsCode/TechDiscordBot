@@ -55,7 +55,7 @@ public class ActivitiesModule extends Module {
                         return;
 
                     //Review[] newReviews = resource.getSpigotReviews().stream().filter(r -> !announcedIds.contains(r.getId())).toArray(Review[]::new);
-                    Update[] newUpdates = resource.getSpigotUpdates().stream().filter(u -> !announcedIds.contains(u.getId())).toArray(Update[]::new);
+                    Update[] newUpdates = resource.getUpdates().stream().filter(u -> !announcedIds.contains(u.getId())).toArray(Update[]::new);
                     //Arrays.stream(newReviews).forEach(review -> printReview(plugin, review));
                     Arrays.stream(newUpdates).forEach(update -> printUpdate(plugin, update));
                 });
