@@ -128,20 +128,24 @@ public class UrlWhitelistModule extends Module {
             Pattern p = Pattern.compile("[(http(s)?):\\/\\/(www\\.)?a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)");//. represents single character
             Matcher m = p.matcher(messagePart);
             boolean b = m.matches();
-            String regexResponse = m.group(0);
 
-            if(!regexResponse.startsWith("http://") && !regexResponse.startsWith("https://")){
-                regexResponse = "http://"+regexResponse;
-            }
-            try{
-                URL url = new URL(regexResponse);
-                String[] domainExploded = url.getHost().split("\\.");
-                domain = domainExploded[domainExploded.length - 2] + "." + domainExploded[domainExploded.length - 1];
-                successfulParse = true;
-            }catch (Exception ignored){}
+            if(b){
+                String regexResponse = m.group(0);
 
-            if(successfulParse){
-                containedUrls.add(domain);
+                if(!regexResponse.startsWith("http://") && !regexResponse.startsWith("https://")){
+                    regexResponse = "http://"+regexResponse;
+                }
+
+                try{
+                    URL url = new URL(regexResponse);
+                    String[] domainExploded = url.getHost().split("\\.");
+                    domain = domainExploded[domainExploded.length - 2] + "." + domainExploded[domainExploded.length - 1];
+                    successfulParse = true;
+                }catch (Exception ignored){}
+
+                if(successfulParse){
+                    containedUrls.add(domain);
+                }
             }
         }
 
