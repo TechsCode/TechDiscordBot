@@ -42,7 +42,7 @@ public class ReactionModule extends Module {
 
     public void sendMessage(Consumer<Message> message) {
         new TechEmbedBuilder("Reaction Roles")
-                .text(getUpdateEmote().getAsMention() + " **For Plugin Updates**\nWhen there is a new update, you will be notified.\n\n" + getAnnouncementEmote().getAsMention() + " **For Announcements**\nWhen there is an announcement, you will receive a ping.\n\n" + getPatreonNewsEmote().getAsMention() + " **For PatreonNews**\nWhen there are any new Benefits, Events and more, you will receive a ping.\n\n" + getGiveawayEmote().getAsMention() + " **For Giveaways**\nWhen there is a giveaway, you will be notified.")
+                .text(getUpdateEmote().getAsMention() + " **For Plugin Updates**\nWhen there is a new update, you will be notified.\n\n" + getAnnouncementEmote().getAsMention() + " **For Announcements**\nWhen there is an announcement, you will receive a ping.\n\n" + getPatreonNewsEmote().getAsMention() + " **For Patreon News**\nWhen there are any new Benefits, Events and more, you will receive a ping.\n\n" + getGiveawayEmote().getAsMention() + " **For Giveaways**\nWhen there is a giveaway, you will be notified.")
                 .queue(ROLES_CHANNEL, msg -> {
                     message.accept(msg);
                     setReactionMessage(msg);
