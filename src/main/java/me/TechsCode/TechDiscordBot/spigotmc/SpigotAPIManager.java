@@ -5,7 +5,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import me.TechsCode.TechDiscordBot.spigotmc.data.*;
-import me.TechsCode.TechDiscordBot.spigotmc.data.ProfileComment;
 import me.TechsCode.TechDiscordBot.spigotmc.data.lists.*;
 
 import java.io.BufferedReader;
@@ -13,43 +12,37 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class SpigotAPI {
+public class SpigotAPIManager {
     private static String base_url;
     private static String apiToken;
 
-    public SpigotAPI(String url, String token){
+    public SpigotAPIManager(String url, String token) {
         base_url = url;
         apiToken = token;
     }
 
-    private JsonObject makeRequest(String endPoint, String attributes){
+    private JsonObject makeRequest(String endPoint, String attributes) {
         Gson gson = new Gson();
         JsonObject object = new JsonObject();
 
-        try{
-            URL url = new URL(base_url + endPoint + "?token="+ apiToken + attributes);
+        try {
+            //System.out.println(base_url + endPoint + "?token="+ apiToken + attributes);
+            URL url = new URL(base_url + endPoint + "?token=" + apiToken + attributes);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
 
-            int status = con.getResponseCode();
-            if(status == 200){
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(con.getInputStream()));
-                String inputLine;
-                StringBuilder content = new StringBuilder();
-                while ((inputLine = in.readLine()) != null) {
-                    content.append(inputLine);
-                }
-                in.close();
-                object = gson.fromJson(content.toString(), JsonObject.class);
-            }else{
-                JsonObject errorObj = new JsonObject();
-                errorObj.addProperty("status", "error");
-                errorObj.addProperty("msg", "Error getting data");
-                object = errorObj;
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuilder content = new StringBuilder();
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
             }
+            in.close();
+            object = gson.fromJson(content.toString(), JsonObject.class);
+
             con.disconnect();
-        }catch (Exception e){
+        } catch (Exception e) {
             JsonObject errorObj = new JsonObject();
             errorObj.addProperty("status", "error");
             errorObj.addProperty("msg", e.getMessage());
@@ -59,12 +52,12 @@ public class SpigotAPI {
         return object;
     }
 
-    public APIWebStatus getStatus(){
+    public APIWebStatus getStatus() {
         JsonObject obj = makeRequest("status", "");
 
-        if(obj.has("status")){
-            if(obj.get("status").getAsString().equals("error")){
-                return new APIWebStatus("offline", 404, "offline", 404, 0,"Unknown");
+        if (obj.has("status")) {
+            if (obj.get("status").getAsString().equals("error")) {
+                return new APIWebStatus("offline", 404, "offline", 404, 0, "Unknown");
             }
         }
 
@@ -72,16 +65,16 @@ public class SpigotAPI {
     }
 
     //SPIGOT
-    public ProfileCommentList getSpigotProfileComments(String userid, boolean showAll){
-        JsonObject obj = makeRequest("data/spigot/verify", "?user="+userid+"?showall="+showAll);
+    public ProfileCommentList fetchSpigotProfileComments(String userid, boolean showAll) {
+        JsonObject obj = makeRequest("spigot/verifyUser", "&user=" + userid + "&showAll=" + showAll);
         ProfileCommentList comments = new ProfileCommentList();
 
-        if(obj.has("status")){
-            if(obj.get("status").getAsString().equals("error")){
+        if (obj.has("status")) {
+            if (obj.get("status").getAsString().equals("error")) {
                 return comments;
             }
         }
-        if(!obj.has("data")){
+        if (!obj.has("data")) {
             return comments;
         }
 
@@ -99,16 +92,16 @@ public class SpigotAPI {
         return comments;
     }
 
-    public ResourcesList getSpigotResource(){
+    public ResourcesList fetchSpigotResource() {
         JsonObject obj = makeRequest("data/spigot/resources", "");
         ResourcesList resources = new ResourcesList();
 
-        if(obj.has("status")){
-            if(obj.get("status").getAsString().equals("error")){
+        if (obj.has("status")) {
+            if (obj.get("status").getAsString().equals("error")) {
                 return resources;
             }
         }
-        if(!obj.has("data")){
+        if (!obj.has("data")) {
             return resources;
         }
 
@@ -119,7 +112,7 @@ public class SpigotAPI {
             JsonObject time = resource.get("time").getAsJsonObject();
 
             Cost pluginCost = null;
-            if(resource.has("cost")){
+            if (resource.has("cost")) {
                 JsonObject cost = resource.get("cost").getAsJsonObject();
                 pluginCost = new Cost(cost.get("currency").getAsString(), cost.get("value").getAsFloat());
             }
@@ -138,16 +131,16 @@ public class SpigotAPI {
         return resources;
     }
 
-    public ReviewsList getSpigotReviews(){
+    public ReviewsList fetchSpigotReviews() {
         JsonObject obj = makeRequest("data/spigot/reviews", "");
         ReviewsList reviews = new ReviewsList();
 
-        if(obj.has("status")){
-            if(obj.get("status").getAsString().equals("error")){
+        if (obj.has("status")) {
+            if (obj.get("status").getAsString().equals("error")) {
                 return reviews;
             }
         }
-        if(!obj.has("data")){
+        if (!obj.has("data")) {
             return reviews;
         }
 
@@ -169,16 +162,16 @@ public class SpigotAPI {
         return reviews;
     }
 
-    public UpdatesList getSpigotUpdates(){
+    public UpdatesList fetchSpigotUpdates() {
         JsonObject obj = makeRequest("data/spigot/updates", "");
         UpdatesList updates = new UpdatesList();
 
-        if(obj.has("status")){
-            if(obj.get("status").getAsString().equals("error")){
+        if (obj.has("status")) {
+            if (obj.get("status").getAsString().equals("error")) {
                 return updates;
             }
         }
-        if(!obj.has("data")){
+        if (!obj.has("data")) {
             return updates;
         }
 
@@ -200,16 +193,16 @@ public class SpigotAPI {
         return updates;
     }
 
-    public PurchasesList getSpigotPurchases(){
+    public PurchasesList fetchSpigotPurchases() {
         JsonObject obj = makeRequest("data/spigot/purchases", "");
         PurchasesList purchases = new PurchasesList();
 
-        if(obj.has("status")){
-            if(obj.get("status").getAsString().equals("error")){
+        if (obj.has("status")) {
+            if (obj.get("status").getAsString().equals("error")) {
                 return purchases;
             }
         }
-        if(!obj.has("data")){
+        if (!obj.has("data")) {
             return purchases;
         }
 
@@ -220,7 +213,7 @@ public class SpigotAPI {
             JsonObject time = purchase.get("time").getAsJsonObject();
 
             Cost pluginCost = null;
-            if(purchase.has("cost")){
+            if (purchase.has("cost")) {
                 JsonObject cost = purchase.get("cost").getAsJsonObject();
                 pluginCost = new Cost(cost.get("currency").getAsString(), cost.get("value").getAsFloat());
             }
@@ -236,16 +229,16 @@ public class SpigotAPI {
     }
 
     //Market
-    public ProfileCommentList getMarketProfileComments(String userid, boolean showAll){
-        JsonObject obj = makeRequest("data/market/verify", "?user="+userid+"?showall="+showAll);
+    public ProfileCommentList fetchMarketProfileComments(String userid, boolean showAll) {
+        JsonObject obj = makeRequest("market/verifyUser", "&user=" + userid + "&showAll=" + showAll);
         ProfileCommentList comments = new ProfileCommentList();
 
-        if(obj.has("status")){
-            if(obj.get("status").getAsString().equals("error")){
+        if (obj.has("status")) {
+            if (obj.get("status").getAsString().equals("error")) {
                 return comments;
             }
         }
-        if(!obj.has("data")){
+        if (!obj.has("data")) {
             return comments;
         }
 
@@ -263,16 +256,16 @@ public class SpigotAPI {
         return comments;
     }
 
-    public ResourcesList getMarketResource(){
+    public ResourcesList fetchMarketResource() {
         JsonObject obj = makeRequest("data/market/resources", "");
         ResourcesList resources = new ResourcesList();
 
-        if(obj.has("status")){
-            if(obj.get("status").getAsString().equals("error")){
+        if (obj.has("status")) {
+            if (obj.get("status").getAsString().equals("error")) {
                 return resources;
             }
         }
-        if(!obj.has("data")){
+        if (!obj.has("data")) {
             return resources;
         }
 
@@ -283,7 +276,7 @@ public class SpigotAPI {
             JsonObject time = resource.get("time").getAsJsonObject();
 
             Cost pluginCost = null;
-            if(resource.has("cost")){
+            if (resource.has("cost")) {
                 JsonObject cost = resource.get("cost").getAsJsonObject();
                 pluginCost = new Cost(cost.get("currency").getAsString(), cost.get("value").getAsFloat());
             }
@@ -296,22 +289,22 @@ public class SpigotAPI {
                     resource.get("version").getAsString(),
                     pluginCost,
                     new Time(time.get("human").getAsString(), time.get("unix").getAsInt())
-                    ,"market"));
+                    , "market"));
         }
 
         return resources;
     }
 
-    public ReviewsList getMarketReviews(){
+    public ReviewsList fetchMarketReviews() {
         JsonObject obj = makeRequest("data/market/reviews", "");
         ReviewsList reviews = new ReviewsList();
 
-        if(obj.has("status")){
-            if(obj.get("status").getAsString().equals("error")){
+        if (obj.has("status")) {
+            if (obj.get("status").getAsString().equals("error")) {
                 return reviews;
             }
         }
-        if(!obj.has("data")){
+        if (!obj.has("data")) {
             return reviews;
         }
 
@@ -333,16 +326,16 @@ public class SpigotAPI {
         return reviews;
     }
 
-    public UpdatesList getMarketUpdates(){
+    public UpdatesList fetchMarketUpdates() {
         JsonObject obj = makeRequest("data/market/updates", "");
         UpdatesList updates = new UpdatesList();
 
-        if(obj.has("status")){
-            if(obj.get("status").getAsString().equals("error")){
+        if (obj.has("status")) {
+            if (obj.get("status").getAsString().equals("error")) {
                 return updates;
             }
         }
-        if(!obj.has("data")){
+        if (!obj.has("data")) {
             return updates;
         }
 
@@ -364,16 +357,16 @@ public class SpigotAPI {
         return updates;
     }
 
-    public PurchasesList getMarketPurchases(){
+    public PurchasesList fetchMarketPurchases() {
         JsonObject obj = makeRequest("data/market/purchases", "");
         PurchasesList purchases = new PurchasesList();
 
-        if(obj.has("status")){
-            if(obj.get("status").getAsString().equals("error")){
+        if (obj.has("status")) {
+            if (obj.get("status").getAsString().equals("error")) {
                 return purchases;
             }
         }
-        if(!obj.has("data")){
+        if (!obj.has("data")) {
             return purchases;
         }
 
@@ -384,7 +377,7 @@ public class SpigotAPI {
             JsonObject time = review.get("time").getAsJsonObject();
 
             Cost pluginCost = null;
-            if(review.has("cost")){
+            if (review.has("cost")) {
                 JsonObject cost = review.get("cost").getAsJsonObject();
                 pluginCost = new Cost(cost.get("currency").getAsString(), cost.get("value").getAsFloat());
             }

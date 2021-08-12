@@ -16,8 +16,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static java.lang.Thread.sleep;
-
 public class RoleAssignerModule extends Module {
 
     private final DefinedQuery<Role> VERIFICATION_ROLE = new DefinedQuery<Role>() {
@@ -67,9 +65,9 @@ public class RoleAssignerModule extends Module {
                 loop();
 
                 try {
-                    sleep(TimeUnit.SECONDS.toMillis(3));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Thread.sleep(TimeUnit.MINUTES.toMillis(2));
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
                 }
             }
         }).start();
@@ -109,7 +107,7 @@ public class RoleAssignerModule extends Module {
         possibleRoles.add(reviewSquad);
         possibleRoles.addAll(RESOURCE_ROLES.query().all());
 
-        Resource[] resources = TechDiscordBot.getSpigotAPI().getSpigotResource().stream().filter(Resource::isPremium).toArray(Resource[]::new);
+        Resource[] resources = TechDiscordBot.getSpigotAPI().getSpigotResources().stream().filter(Resource::isPremium).toArray(Resource[]::new);
 
         HashMap<String, List<String>> resourcePurchaserIds = new HashMap<>();
         HashMap<String, List<String>> resourceReviewerIds = new HashMap<>();

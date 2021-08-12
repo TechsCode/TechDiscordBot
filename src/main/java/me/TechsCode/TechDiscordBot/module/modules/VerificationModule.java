@@ -10,6 +10,7 @@ import me.TechsCode.TechDiscordBot.objects.Requirement;
 import me.TechsCode.TechDiscordBot.spigotmc.data.APIStatus;
 import me.TechsCode.TechDiscordBot.spigotmc.data.ProfileComment;
 import me.TechsCode.TechDiscordBot.spigotmc.data.Purchase;
+import me.TechsCode.TechDiscordBot.spigotmc.data.lists.ProfileCommentList;
 import me.TechsCode.TechDiscordBot.util.Plugin;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -156,47 +157,50 @@ public class VerificationModule extends Module {
         String finalUsername = username;
 
         new Thread(() -> {
-            long start = System.currentTimeMillis();
+            try {
+                Thread.sleep(TimeUnit.MINUTES.toMillis(3));
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
 
-            while (System.currentTimeMillis() - start < TimeUnit.MINUTES.toMillis(3)) {
-                for (ProfileComment all : getSpigotAPI().getSpigotProfileComments(userId, false)) {
+            ProfileCommentList comments = getSpigotAPI().getSpigotProfileComments(finalUsername+"."+userId, false);
 
-                    if (all.getText().equals("TechVerification." + code)) {
-                        if (all.getUserId().equals(userId)) {
-                            m.delete().complete();
+            for (ProfileComment all : comments) {
+                if (all.getText().equals("TechVerification." + code)) {
+                    if (all.getUserId().equals(finalUsername+"."+userId)) {
+                        m.delete().complete();
 
-                            String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " Has verified as https://www.spigotmc.org/members/" + finalUsername.toLowerCase() + "." + userId;
-                            alertMsg(msg);
+                        String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " Has verified as https://www.spigotmc.org/members/" + finalUsername.toLowerCase() + "." + userId;
+                        alertMsg(msg);
 
-                            VerificationLogs.log(
-                                    new TechEmbedBuilder(e.getAuthor().getName() + "'s Verification Completed")
-                                            .success().text(e.getAuthor().getName() + " has successfully verified their SpigotMC Account!")
-                                            .thumbnail(avatarUrl)
-                            );
-                        }
-
-                        sendInstructions();
-                        this.verificationQueue.remove(e.getAuthor().getId());
-
-                        if (all.getUserId().equals(userId)) {
-                            TechDiscordBot.getStorage().createVerification(userId, e.getAuthor().getId());
-
-                            new TechEmbedBuilder("Verification Complete!")
-                                    .text("You've been successfully verified!\n\nHere are your purchased plugins: " + Plugin.getMembersPluginsinEmojis(e.getMember()) + "\n\n*Your roles will be updated automatically from now on!*")
-                                    .thumbnail(avatarUrl)
-                                    .queue(e.getMember());
-                        } else {
-                            String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " Has tried to verify as https://www.spigotmc.org/members/" + finalUsername.toLowerCase() + "." + userId;
-                            alertMsg(msg);
-
-                            m.editMessage(errorMessage.text("Please verify your own account.").build()).complete().delete().queueAfter(10L, TimeUnit.SECONDS);
-                        }
-
-                        new TechEmbedBuilder()
-                                .text("You may now delete the message on your profile! [Go to Comment](https://www.spigotmc.org/profile-posts/" + all.getCommentId() + ")")
-                                .queue(e.getMember());
-                        return;
+                        VerificationLogs.log(
+                                new TechEmbedBuilder(e.getAuthor().getName() + "'s Verification Completed")
+                                        .success().text(e.getAuthor().getName() + " has successfully verified their SpigotMC Account!")
+                                        .thumbnail(avatarUrl)
+                        );
                     }
+
+                    sendInstructions();
+                    this.verificationQueue.remove(e.getAuthor().getId());
+
+                    if (all.getUserId().equals(finalUsername+"."+userId)) {
+                        TechDiscordBot.getStorage().createVerification(userId, e.getAuthor().getId());
+
+                        new TechEmbedBuilder("Verification Complete!")
+                                .text("You've been successfully verified!\n\nHere are your purchased plugins: " + Plugin.getMembersPluginsinEmojis(e.getMember()) + "\n\n*Your roles will be updated automatically from now on!*")
+                                .thumbnail(avatarUrl)
+                                .queue(e.getMember());
+                    } else {
+                        String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " Has tried to verify as https://www.spigotmc.org/members/" + finalUsername.toLowerCase() + "." + userId;
+                        alertMsg(msg);
+
+                        m.editMessage(errorMessage.text("Please verify your own account.").build()).complete().delete().queueAfter(10L, TimeUnit.SECONDS);
+                    }
+
+                    new TechEmbedBuilder()
+                            .text("You may now delete the message on your profile! [Go to Comment](https://www.spigotmc.org/profile-posts/" + all.getCommentId() + ")")
+                            .queue(e.getMember());
+                    return;
                 }
             }
 

@@ -10,9 +10,9 @@ import java.util.Optional;
 
 public class Resource {
 
-    private String id, name, tagLine, category, version, market;
-    private Cost cost;
-    private Time time;
+    private final String id, name, tagLine, category, version, market;
+    private final Cost cost;
+    private final Time time;
 
     public Resource(String id, String name, String tagLine, String category, String version, Cost cost, Time time, String market) {
         this.id = id;

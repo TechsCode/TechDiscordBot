@@ -73,7 +73,7 @@ public class APICommand extends CommandModule {
                 int purchases = TechDiscordBot.getSpigotAPI().getSpigotPurchases().size();
                 int reviews = TechDiscordBot.getSpigotAPI().getSpigotReviews().size();
                 int updates = TechDiscordBot.getSpigotAPI().getSpigotUpdates().size();
-                int resources = TechDiscordBot.getSpigotAPI().getSpigotResource().size();
+                int resources = TechDiscordBot.getSpigotAPI().getSpigotResources().size();
 
                 sb.append("**Purchases:** ").append(purchases).append("\n");
                 sb.append("**Reviews:** ").append(reviews).append("\n");
@@ -85,17 +85,24 @@ public class APICommand extends CommandModule {
         }
 
         String lastUpdatedFormatted = "Never";
+        String botLastParsed = "Never";
 
         if(status.isUsable()) {
             DateFormat dateTimeInstanceRT = new SimpleDateFormat("MMMM dd, hh:mm:ss a z");
 
             if(name.equals("Spigot")) {
                 lastUpdatedFormatted = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSpigotAPI().getStatus().getLastFetch()));
+                botLastParsed = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSpigotAPI().getLastFetch()));
             } else {
                 lastUpdatedFormatted = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSongodaAPI().getRefreshTime()));
             }
         }
 
-        sb.append("**Last Fetched**: ").append(lastUpdatedFormatted);
+        if(name.equals("Spigot")) {
+            sb.append("**Last API Fetched**: ").append(lastUpdatedFormatted);
+            sb.append("\n**Last Bot Fetched**: ").append(botLastParsed);
+        } else {
+            sb.append("**Last Fetched**: ").append(lastUpdatedFormatted);
+        }
     }
 }

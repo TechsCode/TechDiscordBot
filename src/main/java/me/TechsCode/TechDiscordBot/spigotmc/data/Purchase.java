@@ -1,6 +1,7 @@
 package me.TechsCode.TechDiscordBot.spigotmc.data;
 
 import com.google.gson.JsonObject;
+import me.TechsCode.TechDiscordBot.TechDiscordBot;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -23,8 +24,7 @@ public class Purchase {
     }
 
     public Resource getResource(){
-        //return dataset.getSpigotResource().id(resourceId).orElse(null);
-        return null;
+        return TechDiscordBot.getSpigotAPI().getSpigotResources().id(resourceId).orElse(null);
     }
 
     public User getUser() {

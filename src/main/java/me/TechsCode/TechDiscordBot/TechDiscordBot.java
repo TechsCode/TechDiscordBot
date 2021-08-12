@@ -7,8 +7,9 @@ import me.TechsCode.TechDiscordBot.objects.ChannelQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.reminders.ReminderManager;
 import me.TechsCode.TechDiscordBot.songoda.SongodaAPIClient;
-import me.TechsCode.TechDiscordBot.spigotmc.SpigotAPI;
+import me.TechsCode.TechDiscordBot.spigotmc.SpigotApi;
 import me.TechsCode.TechDiscordBot.spigotmc.data.APIStatus;
+import me.TechsCode.TechDiscordBot.util.Config;
 import me.TechsCode.TechDiscordBot.util.ConsoleColor;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -35,7 +36,7 @@ public class TechDiscordBot {
     private static Guild guild;
     private static Member self;
 
-    private static SpigotAPI spigotAPIClient;
+    private static SpigotApi spigotAPI;
     private static SongodaAPIClient songodaAPIClient;
 //    private static List<SongodaPurchase> songodaPurchases;
 
@@ -47,14 +48,13 @@ public class TechDiscordBot {
     private static ReminderManager remindersManager;
 
     public static void main(String[] args) {
-        if (args.length != 9) {
-            log(ConsoleColor.RED + "Invalid start arguments. Consider using:");
-            log(ConsoleColor.WHITE_BOLD_BRIGHT + "java -jar TechPluginSupportBot.jar <Discord Bot Token> <Tech API Token> <Songoda API Token> <MySQL Host> <MySQL Port> <MySQL Database> <MySQL Username> <MySQL Password> <Github Token>");
+        if (!Config.getInstance().isConfigured()) {
+            log(ConsoleColor.RED + "Invalid config file. Please enter the information in config.json");
             return;
         }
 
         try {
-            new TechDiscordBot(args[0], args[1], args[2], MySQLSettings.of(args[3], args[4], args[5], args[6], args[7]), args[8]);
+            new TechDiscordBot(Config.getInstance().getToken(), Config.getInstance().getApiToken(), Config.getInstance().getSongodaApiToken(), MySQLSettings.of(Config.getInstance().getMySqlHost(), Config.getInstance().getMySqlPort(), Config.getInstance().getMySqlDatabase(), Config.getInstance().getMySqlUsername(), Config.getInstance().getMySqlPassword()), Config.getInstance().getGithubToken());
         } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -91,7 +91,7 @@ public class TechDiscordBot {
 
         TechDiscordBot.githubToken = githubToken;
 
-        spigotAPIClient = new SpigotAPI("http://api.techscode.de/", apiToken);
+        spigotAPI = new SpigotApi("http://api.techscode.de/", apiToken);
         songodaAPIClient = new SongodaAPIClient(songodaApiToken);
 //        songodaPurchases = SongodaPurchases.getPurchases();
 
@@ -125,7 +125,7 @@ public class TechDiscordBot {
             log("  » " + ConsoleColor.RED + "API is not usable!");
 
         log("  » Purchases: " + getSpigotAPI().getSpigotPurchases().size());
-        log("  » Resources: " + getSpigotAPI().getSpigotResource().size());
+        log("  » Resources: " + getSpigotAPI().getSpigotResources().size());
         log("  » Updates: " + getSpigotAPI().getSpigotUpdates().size());
         log("  » Reviews: " + getSpigotAPI().getSpigotReviews().size());
         log("");
@@ -135,7 +135,7 @@ public class TechDiscordBot {
             log("  » " + ConsoleColor.RED + "API is not usable!");
 
         log("  » Purchases: " + getSpigotAPI().getMarketPurchases().size());
-        log("  » Resources: " + getSpigotAPI().getMarketResource().size());
+        log("  » Resources: " + getSpigotAPI().getMarketResources().size());
         log("  » Updates: " + getSpigotAPI().getMarketUpdates().size());
         log("  » Reviews: " + getSpigotAPI().getMarketReviews().size());
         log("");
@@ -162,6 +162,7 @@ public class TechDiscordBot {
 
         log("");
         log("Startup Completed! The bot has successfully started!");
+        log("The bot is ready");
     }
 
     public static JDA getJDA() {
@@ -184,8 +185,8 @@ public class TechDiscordBot {
         return storage;
     }
 
-    public static SpigotAPI getSpigotAPI() {
-        return spigotAPIClient;
+    public static SpigotApi getSpigotAPI() {
+        return spigotAPI;
     }
 
     public static SongodaAPIClient getSongodaAPI() {
@@ -261,7 +262,7 @@ public class TechDiscordBot {
     }
 
     public APIStatus getStatus() {
-        return APIStatus.getStatus(spigotAPIClient);
+        return APIStatus.getStatus(spigotAPI.getSpigotAPIManager());
     }
 
     public APIStatus getSongodaStatus() {

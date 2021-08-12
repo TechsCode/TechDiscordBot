@@ -1,13 +1,15 @@
 package me.TechsCode.TechDiscordBot.spigotmc.data;
 
+import me.TechsCode.TechDiscordBot.TechDiscordBot;
+
 import java.util.Objects;
 
 public class Review {
 
-    private String id, text, resourceId;
-    private User user;
-    private int rating;
-    private Time time;
+    private final String id, text, resourceId;
+    private final User user;
+    private final int rating;
+    private final Time time;
 
     public Review(String id, String resourceId, User user, String text, int rating, Time time) {
         this.id = id;
@@ -23,8 +25,7 @@ public class Review {
     }
 
     public Resource getResource() {
-        //return dataset.getSpigotResource().id(resourceId).orElse(null);
-        return null;
+        return TechDiscordBot.getSpigotAPI().getSpigotResources().id(resourceId).orElse(null);
     }
 
     public User getUser() {

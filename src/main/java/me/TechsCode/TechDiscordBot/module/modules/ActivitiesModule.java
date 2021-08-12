@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 public class ActivitiesModule extends Module {
 
@@ -49,7 +50,7 @@ public class ActivitiesModule extends Module {
                     TechDiscordBot.getSpigotAPI().getSpigotUpdates().forEach(u -> announcedIds.add(u.getId()));
                 }
 
-                TechDiscordBot.getSpigotAPI().getSpigotResource().forEach(resource -> {
+                TechDiscordBot.getSpigotAPI().getSpigotResources().forEach(resource -> {
                     Plugin plugin = Plugin.fromId(resource.getId());
                     if (plugin == null)
                         return;
@@ -59,6 +60,12 @@ public class ActivitiesModule extends Module {
                     //Arrays.stream(newReviews).forEach(review -> printReview(plugin, review));
                     Arrays.stream(newUpdates).forEach(update -> printUpdate(plugin, update));
                 });
+
+                try {
+                    Thread.sleep(TimeUnit.MINUTES.toMillis(5));
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
             }
         }).start();
     }

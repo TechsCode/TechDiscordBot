@@ -1,15 +1,17 @@
 package me.TechsCode.TechDiscordBot.spigotmc.data;
 
+import me.TechsCode.TechDiscordBot.TechDiscordBot;
+
 import java.util.Objects;
 
 public class Update {
 
-    private String id;
-    private String resourceId;
-    private String title;
-    private String[] images;
-    private String description;
-    private Time time;
+    private final String id;
+    private final String resourceId;
+    private final String title;
+    private final String[] images;
+    private final String description;
+    private final Time time;
 
     public Update(String id, String resourceId, String title, String[] images, String description, Time time) {
         this.id = id;
@@ -17,13 +19,11 @@ public class Update {
         this.title = title;
         this.images = images;
         this.description = description;
-        this.title = title;
         this.time = time;
     }
 
     public Resource getResource(){
-        //return dataset.getSpigotResource().id(resourceId).orElse(null);
-        return null;
+        return TechDiscordBot.getSpigotAPI().getSpigotResources().id(resourceId).orElse(null);
     }
 
     public String getId() {

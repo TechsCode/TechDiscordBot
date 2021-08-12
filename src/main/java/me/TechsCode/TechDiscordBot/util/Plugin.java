@@ -70,7 +70,7 @@ public enum Plugin {
     }
 
     public String getDescription() {
-        return TechDiscordBot.getSpigotAPI().getSpigotResource().id(getResourceId()).get().getTagLine();
+        return TechDiscordBot.getSpigotAPI().getSpigotResources().id(getResourceId()).get().getTagLine();
     }
 
     public String getResourceLogo() {
@@ -141,7 +141,7 @@ public enum Plugin {
     }
 
     public Resource getResource() {
-        return TechDiscordBot.getSpigotAPI().getSpigotResource().id(getResourceId()).get();
+        return TechDiscordBot.getSpigotAPI().getSpigotResources().id(getResourceId()).get();
     }
 
     public Update getLatestUpdate() {

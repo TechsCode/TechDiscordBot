@@ -2,7 +2,7 @@ package me.TechsCode.TechDiscordBot.spigotmc.data;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.songoda.SongodaAPIClient;
-import me.TechsCode.TechDiscordBot.spigotmc.SpigotAPI;
+import me.TechsCode.TechDiscordBot.spigotmc.SpigotAPIManager;
 
 import java.util.concurrent.TimeUnit;
 
@@ -35,7 +35,7 @@ public enum APIStatus {
         return TechDiscordBot.getGuild().getEmotesByName(emojiName, true).get(0).getAsMention();
     }
 
-    public static APIStatus getStatus(SpigotAPI client) {
+    public static APIStatus getStatus(SpigotAPIManager client) {
         APIStatus status;
 
         if(client.getStatus().getLastFetch() != 0L) {
