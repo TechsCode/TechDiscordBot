@@ -6,6 +6,7 @@ import me.TechsCode.TechDiscordBot.module.modules.TicketModule;
 import me.TechsCode.TechDiscordBot.util.PasswordGenerator;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.*;
@@ -72,7 +73,8 @@ public class TicketTranscript {
 
         if(canType(TicketTranscriptMessageType.MESSAGE)) {
             object.addProperty("message", message.getContentDisplay());
-            object.add("author", buildMember(message.getMember()));
+            if(message.getMember() != null)
+                object.add("author", buildMember(message.getMember()));
             object.addProperty("created", message.getTimeCreated().toEpochSecond() * 1000);
 
             if(message.getTimeEdited() != null)
@@ -196,7 +198,12 @@ public class TicketTranscript {
         }
 
         HashMap<String, Integer> rolePositions = new HashMap<>();
-        byRoles.forEach((k, v) -> rolePositions.put(k, channel.getJDA().getGuilds().get(0).getRolesByName(k, true).get(0).getPositionRaw()));
+        byRoles.forEach((k, v) -> {
+            List<Role> roles = channel.getJDA().getGuilds().get(0).getRolesByName(k, true);
+
+            if(roles.size() > 0)
+                rolePositions.put(k, roles.get(0).getPositionRaw());
+        });
 
         byRoles = byRoles.entrySet().stream().sorted(Map.Entry.comparingByKey(Comparator.comparingInt(rolePositions::get))).collect(Collectors.toMap(
                 Map.Entry::getKey,

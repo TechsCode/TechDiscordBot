@@ -27,7 +27,7 @@ public class ApplyCommand extends CommandModule {
     private final DefinedQuery<Category> APPLICATION_CATEGORY = new DefinedQuery<Category>() {
         @Override
         protected Query<Category> newQuery() {
-            return bot.getCategories("Applications");
+            return bot.getCategories("\uD83D\uDCDD | Applications");
         }
     };
 

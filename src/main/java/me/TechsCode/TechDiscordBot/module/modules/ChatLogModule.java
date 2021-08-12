@@ -21,7 +21,7 @@ public class ChatLogModule extends Module {
     private final DefinedQuery<TextChannel> CHATLOGS_CHANNEL = new DefinedQuery<TextChannel>() {
         @Override
         protected Query<TextChannel> newQuery() {
-            return bot.getChannels("chatlogs");
+            return bot.getChannels("chat-logs");
         }
     };
 

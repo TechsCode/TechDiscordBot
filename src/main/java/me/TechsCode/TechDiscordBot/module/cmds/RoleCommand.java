@@ -1,6 +1,7 @@
 package me.TechsCode.TechDiscordBot.module.cmds;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
+import me.TechsCode.TechDiscordBot.logs.RoleLogs;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
@@ -131,6 +132,11 @@ public class RoleCommand extends CommandModule {
                             .error().text("Removed " + role.getAsMention() + " from " + member.getAsMention())
                             .build()
             ).queue();
+
+            RoleLogs.log(
+                new TechEmbedBuilder("Role Removed")
+                        .error().text("Removed " + role.getAsMention() + " from " + member.getAsMention())
+            );
         } else {
             TechDiscordBot.getGuild().addRoleToMember(member, role).complete();
             e.replyEmbeds(
@@ -138,6 +144,11 @@ public class RoleCommand extends CommandModule {
                             .success().text("Added " + role.getAsMention() + " to " + member.getAsMention())
                             .build()
             ).queue();
+
+            RoleLogs.log(
+                    new TechEmbedBuilder("Role Added")
+                            .success().text("Added " + role.getAsMention() + " to " + member.getAsMention())
+            );
         }
     }
 }

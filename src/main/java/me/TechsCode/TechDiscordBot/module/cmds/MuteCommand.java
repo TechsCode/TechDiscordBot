@@ -1,6 +1,7 @@
 package me.TechsCode.TechDiscordBot.module.cmds;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
+import me.TechsCode.TechDiscordBot.logs.PunishLogs;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
@@ -82,9 +83,11 @@ public class MuteCommand extends CommandModule {
         } else if(memberHasMutedRole(member)) {
             e.getGuild().removeRoleFromMember(member, MUTED_ROLE.query().first()).queue();
             e.reply(member.getAsMention() + " is no longer muted!").queue();
+            PunishLogs.log(member.getAsMention() + " is no longer muted!");
         } else {
             e.getGuild().addRoleToMember(member, MUTED_ROLE.query().first()).queue();
             e.reply(member.getAsMention() + " is now muted!").queue();
+            PunishLogs.log(member.getAsMention() + " is now muted!");
         }
     }
 
