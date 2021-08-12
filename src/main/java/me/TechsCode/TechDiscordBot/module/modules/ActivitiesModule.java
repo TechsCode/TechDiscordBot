@@ -26,7 +26,7 @@ public class ActivitiesModule extends Module {
     private final DefinedQuery<TextChannel> ACTIVITIES_CHANNEL = new DefinedQuery<TextChannel>() {
         @Override
         protected Query<TextChannel> newQuery() {
-            return bot.getChannels("activities");
+            return bot.getChannels("\uD83D\uDCDA︱activities");
         }
     };
 

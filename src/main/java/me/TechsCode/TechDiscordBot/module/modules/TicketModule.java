@@ -2,6 +2,8 @@ package me.TechsCode.TechDiscordBot.module.modules;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.logs.ServerLogs;
+import me.TechsCode.TechDiscordBot.logs.TicketLogs;
+import me.TechsCode.TechDiscordBot.logs.TranscriptLogs;
 import me.TechsCode.TechDiscordBot.module.Module;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
@@ -65,6 +67,13 @@ public class TicketModule extends Module {
         }
     };
 
+    private final DefinedQuery<Role> PATREON_ROLE = new DefinedQuery<Role>() {
+        @Override
+        protected Query<Role> newQuery() {
+            return bot.getRoles("Patreon");
+        }
+    };
+
     private final DefinedQuery<Role> SUB_VERIFIED = new DefinedQuery<Role>() {
         @Override
         protected Query<Role> newQuery() {
@@ -75,7 +84,7 @@ public class TicketModule extends Module {
     private final DefinedQuery<Category> TICKET_CATEGORY = new DefinedQuery<Category>() {
         @Override
         protected Query<Category> newQuery() {
-            return bot.getCategories("tickets");
+            return bot.getCategories("\uD83C\uDFAB ︱Tickets");
         }
     };
 
@@ -206,9 +215,10 @@ public class TicketModule extends Module {
                     .queue(ticketChannel);
         }
 
-        new TechEmbedBuilder("New Ticket")
-                .text(member.getAsMention() + " created a new ticket (" + ticketChannel.getAsMention() + ")")
-                .queue(channel);
+        TicketLogs.log(
+            new TechEmbedBuilder("New Ticket")
+                    .text(member.getAsMention() + " created a new ticket (" + ticketChannel.getAsMention() + ")")
+        );
 
         reset();
     }
@@ -221,7 +231,9 @@ public class TicketModule extends Module {
                 e.printStackTrace();
             }
 
-            if(this.selectionUserId == null || userId == null) return;
+            if(this.selectionUserId == null || userId == null)
+                return;
+
             if(this.selectionUserId.equals(userId) && isSelection) {
                 new TechEmbedBuilder("Ticket - Error")
                         .error()
@@ -321,10 +333,12 @@ public class TicketModule extends Module {
             return;
         }
 
-        if(!isSelection) return;
+        if(!isSelection)
+            return;
 
         String message = e.getMessage().getContentDisplay();
-        if(message.length() > 1024) message = message.substring(0, 1024); //Make sure It outputs the embed. Embed values cannot be longer than 1024 chars.
+        if(message.length() > 1024)
+            message = message.substring(0, 1024); //Make sure It outputs the embed. Embed values cannot be longer than 1024 chars.
 
         e.getMessage().delete().queue();
         createTicket(e.getMember(), selectionPlugin, message);
@@ -332,7 +346,8 @@ public class TicketModule extends Module {
 
     @SubscribeEvent
     public void onSlashCommand(SlashCommandEvent e) {
-        if(e.getMember() == null || e.getMember().getUser().isBot()) return;
+        if(e.getMember() == null || e.getMember().getUser().isBot())
+            return;
 
         if(e.getName().equals("ticket") && e.getSubcommandName() != null) {
             if(!isTicketChat(e.getTextChannel())) {
@@ -348,13 +363,42 @@ public class TicketModule extends Module {
             }
 
             Member member = e.getOption("member") == null ? null : e.getOption("member").getAsMember();
-            if(member == null && !e.getSubcommandName().equals("close")) {
-                e.reply("*Member is invalid!** This probably shouldn't be happening...").setEphemeral(true).queue();
+            if(!e.getSubcommandName().equals("transcript") && !e.getSubcommandName().equals("close") && member == null) {
+                e.reply("**Member is invalid!** This probably shouldn't be happening...").setEphemeral(true).queue();
                 return;
             }
 
             switch (e.getSubcommandName()) {
-                case "add":
+                case "transcript": {
+                    if (!TechDiscordBot.isStaff(e.getMember())) {
+                        e.reply("You cannot force a ticket transcript!").setEphemeral(true).queue();
+                        return;
+                    }
+
+                    TicketTranscript transcript = TicketTranscript.buildTranscript(e.getTextChannel(), TicketTranscriptOptions.DEFAULT);
+                    Member ticketMember = getMemberFromTicket(e.getTextChannel());
+
+                    e.reply("Generating the transcript... please wait.").queue(msg -> {
+                        transcript.build(object -> {
+                            if(ticketMember != null) {
+                                TranscriptLogs.log(
+                                        new TechEmbedBuilder("Ticket Transcript (Command)")
+                                                .text(ticketMember == null ? "Transcript of #" + e.getChannel().getName() + ": " + transcript.getUrl() : "Transcript of " + ticketMember.getAsMention() +  "'s ticket:\n" + transcript.getUrl())
+                                                .color(Color.ORANGE)
+                                );
+                            }
+
+                            msg.editOriginalEmbeds(
+                                    new TechEmbedBuilder("Ticket Transcript")
+                                            .text(ticketMember == null ? "Transcript of #" + e.getChannel().getName() + ": " + transcript.getUrl() : "Transcript of " + ticketMember.getAsMention() +  "'s ticket:\n" + transcript.getUrl())
+                                            .color(Color.ORANGE)
+                                            .build()
+                            ).queue();
+
+                            TechDiscordBot.getStorage().saveTranscript(object);
+                        });
+                    });
+                } case "add":
                     if (e.getMember().equals(member)) {
                         e.reply("You can't be added to a ticket you're already in.").setEphemeral(true).queue();
                         return;
@@ -401,7 +445,7 @@ public class TicketModule extends Module {
                                     .color(Color.ORANGE)
                                     .queue(e.getMember());
 
-                            ServerLogs.log(
+                            TicketLogs.log(
                                 new TechEmbedBuilder("Ticket Transcript")
                                         .text("Transcript of " + e.getMember().getAsMention() +  "'s ticket:\n" + transcript.getUrl())
                                         .color(Color.ORANGE)
@@ -410,11 +454,11 @@ public class TicketModule extends Module {
                             e.getTextChannel().delete().queueAfter(15, TimeUnit.SECONDS, s -> CLOSING_CHANNELS.remove(channelId));
                             TechDiscordBot.getStorage().saveTranscript(object);
                         });
-
-                        new TechEmbedBuilder("Solved Ticket")
-                                .text("The ticket (" + e.getTextChannel().getName() + ") created by " + e.getMember().getAsMention() + " is now solved. Thanks for contacting us!")
-                                .success()
-                                .queueAfter(channel, 15, TimeUnit.SECONDS, (msg) -> reset());
+                        TicketLogs.log(
+                                new TechEmbedBuilder("Solved Ticket")
+                                        .text("The ticket (" + e.getTextChannel().getName() + ") created by " + e.getMember().getAsMention() + " is now solved. Thanks for contacting us!")
+                                        .success()
+                        );
                     } else {
                         if (!TechDiscordBot.isStaff(e.getMember())) {
                             e.reply("You cannot close this ticket!").setEphemeral(true).queue();
@@ -446,6 +490,7 @@ public class TicketModule extends Module {
                                     .text("The ticket (" + e.getTextChannel().getName() + ") from " + ticketMember.getAsMention() + " has been closed!")
                                     .success()
                                     .queueAfter(channel, 15, TimeUnit.SECONDS, (msg) -> reset());
+
                             if (ticketMember != null) {
                                 new TechEmbedBuilder("Ticket Closed")
                                         .text("Your ticket (" + e.getTextChannel().getName() + ") has been closed!" + reasonSend)
@@ -461,7 +506,7 @@ public class TicketModule extends Module {
 
                         transcript.build(object -> {
                             if(ticketMember != null) {
-                                ServerLogs.log(
+                                TranscriptLogs.log(
                                     new TechEmbedBuilder("Ticket Transcript")
                                             .text(ticketMember == null ? "Transcript of #" + e.getChannel().getName() + ": " + transcript.getUrl() : "Transcript of " + ticketMember.getAsMention() +  "'s ticket:\n" + transcript.getUrl())
                                             .color(Color.ORANGE)

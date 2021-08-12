@@ -1,6 +1,7 @@
 package me.TechsCode.TechDiscordBot.module.modules;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
+import me.TechsCode.TechDiscordBot.logs.VerificationLogs;
 import me.TechsCode.TechDiscordBot.module.Module;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
@@ -30,7 +31,7 @@ public class VerificationModule extends Module {
     private final DefinedQuery<TextChannel> VERIFICATION_CHANNEL = new DefinedQuery<TextChannel>() {
         @Override
         protected Query<TextChannel> newQuery() {
-            return bot.getChannels("verification");
+            return bot.getChannels("\uD83D\uDCD8︱verification");
         }
     };
 
@@ -167,10 +168,11 @@ public class VerificationModule extends Module {
                             String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " Has verified as https://www.spigotmc.org/members/" + finalUsername.toLowerCase() + "." + userId;
                             alertMsg(msg);
 
-                            new TechEmbedBuilder(e.getAuthor().getName() + "'s Verification Completed")
-                                    .success().text(e.getAuthor().getName() + " has successfully verified their SpigotMC Account!")
-                                    .thumbnail(avatarUrl)
-                                    .queue(this.channel);
+                            VerificationLogs.log(
+                                    new TechEmbedBuilder(e.getAuthor().getName() + "'s Verification Completed")
+                                            .success().text(e.getAuthor().getName() + " has successfully verified their SpigotMC Account!")
+                                            .thumbnail(avatarUrl)
+                            );
                         }
 
                         sendInstructions();

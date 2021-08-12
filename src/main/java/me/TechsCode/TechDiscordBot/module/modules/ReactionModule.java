@@ -42,7 +42,7 @@ public class ReactionModule extends Module {
 
     public void sendMessage(Consumer<Message> message) {
         new TechEmbedBuilder("Reaction Roles")
-                .text(getUpdateEmote().getAsMention() + " **For Plugin Updates**\nWhen there is a new update, you will be notified.\n\n" + getAnnouncementEmote().getAsMention() + " **For Announcements**\nWhen there is an announcement, you will receive a ping.\n\n" + getGiveawayEmote().getAsMention() + " **For Giveaways**\nWhen there is a giveaway, you will be notified.")
+                .text(getUpdateEmote().getAsMention() + " **For Plugin Updates**\nWhen there is a new update, you will be notified.\n\n" + getAnnouncementEmote().getAsMention() + " **For Announcements**\nWhen there is an announcement, you will receive a ping.\n\n" + getPatreonNewsEmote().getAsMention() + " **For PatreonNews**\nWhen there are any new Benefits, Events and more, you will receive a ping.\n\n" + getGiveawayEmote().getAsMention() + " **For Giveaways**\nWhen there is a giveaway, you will be notified.")
                 .queue(ROLES_CHANNEL, msg -> {
                     message.accept(msg);
                     setReactionMessage(msg);
@@ -54,7 +54,7 @@ public class ReactionModule extends Module {
     }
 
     public void resetReactions(Message message) {
-        message.clearReactions().queue(a -> message.addReaction(getUpdateEmote()).queue(a2 -> message.addReaction(getAnnouncementEmote()).queue(a3 -> message.addReaction(getGiveawayEmote()).queue())));
+        message.clearReactions().queue(a -> message.addReaction(getUpdateEmote()).queue(a2 -> message.addReaction(getAnnouncementEmote()).queue(a3 -> message.addReaction(getPatreonNewsEmote()).queue(a4 -> message.addReaction(getGiveawayEmote()).queue()))));
     }
 
     public Emote getAnnouncementEmote() {
@@ -68,6 +68,8 @@ public class ReactionModule extends Module {
     public Emote getGiveawayEmote() {
         return TechDiscordBot.getJDA().getEmoteById("837724632529895486");
     }
+
+    public Emote getPatreonNewsEmote() { return TechDiscordBot.getJDA().getEmoteById("873383006520356964"); }
 
     @SubscribeEvent
     public void onReactionAdd(MessageReactionAddEvent e) {
