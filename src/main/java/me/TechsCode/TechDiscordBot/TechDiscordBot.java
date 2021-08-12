@@ -91,9 +91,9 @@ public class TechDiscordBot {
 
         TechDiscordBot.githubToken = githubToken;
 
-        spigotAPIClient = new SpigotAPI("http://localhost/", apiToken);
+        spigotAPIClient = new SpigotAPI("http://api.techscode.de/", apiToken);
         songodaAPIClient = new SongodaAPIClient(songodaApiToken);
-//        songodaPurchases = SongodaPurchases.getSpigotPurchases();
+//        songodaPurchases = SongodaPurchases.getPurchases();
 
         log("Initializing MySQL Storage " + mySQLSettings.getHost() + ":" + mySQLSettings.getPort() + "!");
         storage = Storage.of(mySQLSettings);
@@ -253,7 +253,7 @@ public class TechDiscordBot {
     }
 
     public static void log(String message) {
-        System.out.println(ConsoleColor.PURPLE_BRIGHT + "[" + ConsoleColor.WHITE_BOLD_BRIGHT + "TechPluginSupport" + ConsoleColor.PURPLE_BRIGHT + "] " + ConsoleColor.RESET + message + ConsoleColor.RESET);
+        System.out.println("[TechPluginSupport] " + message + ConsoleColor.RESET);
     }
 
     public static String getGithubToken() {
