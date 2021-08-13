@@ -55,6 +55,6 @@ jobs:
           protocol: ftps
           server: servers.techscode.com
           port: 2022
-          local-dir: ${{ env.path }}
+          local-dir: build/
           username: github_upload.dd4ae440
           password: ${{ secrets.FTP_PASSWORD }}
