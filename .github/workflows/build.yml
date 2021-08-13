@@ -49,12 +49,3 @@ jobs:
           asset_path: ${{ env.path }}
           asset_name: ${{ env.name }}
           asset_content_type: application/java-archive
-      - name: Upload Release To Pterodactyl
-        uses: SamKirkland/FTP-Deploy-Action@4.1.0
-        with:
-          protocol: ftps
-          server: servers.techscode.com
-          port: 2022
-          local-dir: build/
-          username: github_upload.dd4ae440
-          password: ${{ secrets.FTP_PASSWORD }}
