@@ -58,7 +58,7 @@ public class SpigotCheckCommand extends CommandModule {
         if(member == null && spigotId == null)
             member = m;
 
-        if (!TechDiscordBot.getBot().getStatus().isUsable()) {
+        if (!TechDiscordBot.getBot().getSpigotStatus().isUsable()) {
             e.replyEmbeds(
                 new TechEmbedBuilder("API Not Usable")
                     .error()

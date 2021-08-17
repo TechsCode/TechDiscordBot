@@ -35,17 +35,25 @@ public enum APIStatus {
         return TechDiscordBot.getGuild().getEmotesByName(emojiName, true).get(0).getAsMention();
     }
 
-    public static APIStatus getStatus(SpigotAPIManager client) {
+    public static APIStatus getSpigotStatus(SpigotAPIManager client) {
         APIStatus status;
 
-        if(client.getStatus().getLastFetch() != 0L) {
-            if(client.getStatus().getLastFetch() + TimeUnit.HOURS.toMillis(1) < System.currentTimeMillis()) {
-                status = NOT_FETCHING;
-            } else {
-                status = ONLINE;
-            }
+        if(!client.getStatus().isSpigotFetching()) {
+            status = NOT_FETCHING;
         } else {
-            status = OFFLINE;
+            status = ONLINE;
+        }
+
+        return status;
+    }
+
+    public static APIStatus getMarketStatus(SpigotAPIManager client) {
+        APIStatus status;
+
+        if(!client.getStatus().isMarketFetching()) {
+            status = NOT_FETCHING;
+        } else {
+            status = ONLINE;
         }
 
         return status;

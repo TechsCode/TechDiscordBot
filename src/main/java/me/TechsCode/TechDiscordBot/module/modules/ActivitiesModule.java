@@ -42,7 +42,7 @@ public class ActivitiesModule extends Module {
         announcedIds = new ArrayList<>();
         new Thread(() -> {
             while (true) {
-                if(!TechDiscordBot.getBot().getStatus().isUsable())
+                if(!TechDiscordBot.getBot().getSpigotStatus().isUsable())
                     continue;
 
                 if(announcedIds.isEmpty()) {

@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 public class SpigotApi {
     private static SpigotAPIManager spigotAPIClient;
-    private static long lastFetch;
+    private static long lastBotFetch;
 
     ResourcesList spigotResourcesList;
     ReviewsList spigotReviewsList;
@@ -50,11 +50,11 @@ public class SpigotApi {
         marketUpdateList = spigotAPIClient.fetchMarketUpdates();
         marketPurchasesList = spigotAPIClient.fetchMarketPurchases();
 
-        lastFetch = System.currentTimeMillis();
+        lastBotFetch = System.currentTimeMillis();
     }
 
-    public long getLastFetch() {
-        return lastFetch;
+    public long getLastBotFetch() {
+        return lastBotFetch;
     }
 
     public APIWebStatus getStatus(){

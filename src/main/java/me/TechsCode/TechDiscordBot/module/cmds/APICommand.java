@@ -47,11 +47,13 @@ public class APICommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
-        APIStatus spigotStatus = bot.getStatus();
+        APIStatus spigotStatus = bot.getSpigotStatus();
+        APIStatus marketStatus = bot.getSpigotStatus();
         APIStatus songodaStatus = bot.getSongodaStatus();
 
         StringBuilder sb = new StringBuilder();
         appendStatus("Spigot", spigotStatus, sb, m);
+        appendStatus("Market", spigotStatus, sb, m);
         appendStatus("Songoda", songodaStatus, sb, m);
 
         e.replyEmbeds(
@@ -79,6 +81,16 @@ public class APICommand extends CommandModule {
                 sb.append("**Reviews:** ").append(reviews).append("\n");
                 sb.append("**Updates:** ").append(updates).append("\n");
                 sb.append("**Resources:** ").append(resources).append("\n\n");
+            }else if(name.equals("Market")) {
+                int purchases = TechDiscordBot.getSpigotAPI().getMarketPurchases().size();
+                int reviews = TechDiscordBot.getSpigotAPI().getMarketReviews().size();
+                int updates = TechDiscordBot.getSpigotAPI().getMarketUpdates().size();
+                int resources = TechDiscordBot.getSpigotAPI().getMarketResources().size();
+
+                sb.append("**Purchases:** ").append(purchases).append("\n");
+                sb.append("**Reviews:** ").append(reviews).append("\n");
+                sb.append("**Updates:** ").append(updates).append("\n");
+                sb.append("**Resources:** ").append(resources).append("\n\n");
             } else {
                 sb.append("**Purchases:** ").append(TechDiscordBot.getSongodaAPI().getSpigotPurchases().size()).append("\n\n");
             }
@@ -86,23 +98,34 @@ public class APICommand extends CommandModule {
 
         String lastUpdatedFormatted = "Never";
         String botLastParsed = "Never";
+        DateFormat dateTimeInstanceRT = new SimpleDateFormat("MMMM dd, hh:mm:ss a z");
 
-        if(status.isUsable()) {
-            DateFormat dateTimeInstanceRT = new SimpleDateFormat("MMMM dd, hh:mm:ss a z");
+        switch (name) {
+            case "Songoda":
+                if (status.isUsable()) {
+                    lastUpdatedFormatted = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSongodaAPI().getRefreshTime()));
+                }
 
-            if(name.equals("Spigot")) {
-                lastUpdatedFormatted = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSpigotAPI().getStatus().getLastFetch()));
-                botLastParsed = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSpigotAPI().getLastFetch()));
-            } else {
-                lastUpdatedFormatted = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSongodaAPI().getRefreshTime()));
-            }
-        }
+                sb.append("**Last Fetched**: ").append(lastUpdatedFormatted);
+                break;
+            case "Spigot":
+                if (status.isUsable()) {
+                    lastUpdatedFormatted = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSpigotAPI().getStatus().getLastSpigotFetch()));
+                    botLastParsed = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSpigotAPI().getLastBotFetch()));
+                }
 
-        if(name.equals("Spigot")) {
-            sb.append("**Last API Fetched**: ").append(lastUpdatedFormatted);
-            sb.append("\n**Last Bot Fetched**: ").append(botLastParsed);
-        } else {
-            sb.append("**Last Fetched**: ").append(lastUpdatedFormatted);
+                sb.append("**Last Fetched**: ").append(lastUpdatedFormatted);
+                sb.append("\n**Last Parsed**: ").append(botLastParsed);
+                break;
+            case "Market":
+                if (status.isUsable()) {
+                    lastUpdatedFormatted = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSpigotAPI().getStatus().getLastMarketFetch()));
+                    botLastParsed = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSpigotAPI().getLastBotFetch()));
+                }
+
+                sb.append("**Last Fetched**: ").append(lastUpdatedFormatted);
+                sb.append("\n**Last Parsed**: ").append(botLastParsed);
+                break;
         }
     }
 }

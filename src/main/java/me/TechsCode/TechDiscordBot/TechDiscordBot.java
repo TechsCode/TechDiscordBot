@@ -91,7 +91,7 @@ public class TechDiscordBot {
 
         TechDiscordBot.githubToken = githubToken;
 
-        spigotAPI = new SpigotApi("http://api.techscode.de/", apiToken);
+        spigotAPI = new SpigotApi("http://localhost/", apiToken);
         songodaAPIClient = new SongodaAPIClient(songodaApiToken);
 //        songodaPurchases = SongodaPurchases.getPurchases();
 
@@ -121,7 +121,7 @@ public class TechDiscordBot {
         log("");
 
         log("Spigot:");
-        if(!getStatus().isUsable())
+        if(!getSpigotStatus().isUsable())
             log("  » " + ConsoleColor.RED + "API is not usable!");
 
         log("  » Purchases: " + getSpigotAPI().getSpigotPurchases().size());
@@ -131,7 +131,7 @@ public class TechDiscordBot {
         log("");
 
         log("Market:");
-        if(!getStatus().isUsable())
+        if(!getMarketStatus().isUsable())
             log("  » " + ConsoleColor.RED + "API is not usable!");
 
         log("  » Purchases: " + getSpigotAPI().getMarketPurchases().size());
@@ -261,8 +261,12 @@ public class TechDiscordBot {
         return githubToken;
     }
 
-    public APIStatus getStatus() {
-        return APIStatus.getStatus(spigotAPI.getSpigotAPIManager());
+    public APIStatus getSpigotStatus() {
+        return APIStatus.getSpigotStatus(spigotAPI.getSpigotAPIManager());
+    }
+
+    public APIStatus getMarketStatus() {
+        return APIStatus.getMarketStatus(spigotAPI.getSpigotAPIManager());
     }
 
     public APIStatus getSongodaStatus() {

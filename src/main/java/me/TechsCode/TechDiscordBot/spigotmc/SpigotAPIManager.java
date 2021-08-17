@@ -57,11 +57,11 @@ public class SpigotAPIManager {
 
         if (obj.has("status")) {
             if (obj.get("status").getAsString().equals("error")) {
-                return new APIWebStatus("offline", 404, "offline", 404, 0, "Unknown");
+                return new APIWebStatus(false, false, 0, 0, "Unknown", "Unknown");
             }
         }
 
-        return new APIWebStatus(obj.get("spigotStatus").getAsString(), obj.get("spigotCode").getAsInt(), obj.get("marketStatus").getAsString(), obj.get("marketCode").getAsInt(), obj.get("lastFetch").getAsInt(), obj.get("lastFetchDate").getAsString());
+        return new APIWebStatus(obj.get("spigotFetching").getAsBoolean(), obj.get("marketFetching").getAsBoolean(), obj.get("lastSpigotFetch").getAsLong(), obj.get("lastMarketFetch").getAsLong(), obj.get("lastSpigotFetchDate").getAsString(), obj.get("lastMarketFetchDate").getAsString());
     }
 
     //SPIGOT

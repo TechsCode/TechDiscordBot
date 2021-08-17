@@ -2,39 +2,41 @@ package me.TechsCode.TechDiscordBot.spigotmc.data;
 
 public class APIWebStatus {
 
-    private final String spigotStatus, marketStatus, lastFetchDate;
-    private final int lastFetch, spigotStatusCode, marketStatusCode;
+    private final String lastSpigotFetchDate, lastMarketFetchDate;
+    private final long lastSpigotFetch, lastMarketFetch;
+    private final boolean spigotFetching, marketFetching;
 
-    public APIWebStatus(String spigotStatus, int spigotStatusCode, String marketStatus, int marketStatusCode, int lastFetch, String lastFetchDate){
-        this.spigotStatus = spigotStatus;
-        this.spigotStatusCode = spigotStatusCode;
-        this.marketStatus = marketStatus;
-        this.marketStatusCode = marketStatusCode;
-        this.lastFetch = lastFetch;
-        this.lastFetchDate = lastFetchDate;
+    public APIWebStatus(boolean spigotFetching, boolean marketFetching, long lastSpigotFetch, long lastMarketFetch, String lastSpigotFetchDate, String lastMarketFetchDate){
+        this.spigotFetching = spigotFetching;
+        this.marketFetching = marketFetching;
+        this.lastSpigotFetch = lastSpigotFetch;
+        this.lastMarketFetch = lastMarketFetch;
+        this.lastSpigotFetchDate = lastSpigotFetchDate;
+        this.lastMarketFetchDate = lastMarketFetchDate;
     }
 
-    public int getLastFetch() {
-        return lastFetch;
+    public boolean isMarketFetching() {
+        return marketFetching;
     }
 
-    public String getLastFetchDate() {
-        return lastFetchDate;
+    public boolean isSpigotFetching() {
+        return spigotFetching;
     }
 
-    public String getSpigotStatus() {
-        return spigotStatus;
+    public long getLastSpigotFetch() {
+        return lastSpigotFetch;
     }
 
-    public int getSpigotStatusCode() {
-        return spigotStatusCode;
+    public String getLastSpigotFetchDate() {
+        return lastSpigotFetchDate;
     }
 
-    public String getMarketStatus() {
-        return marketStatus;
+    public long getLastMarketFetch() {
+        return lastMarketFetch;
     }
 
-    public int getMarketStatusCode() {
-        return marketStatusCode;
+    public String getLastMarketFetchDate() {
+        return lastMarketFetchDate;
     }
+
 }

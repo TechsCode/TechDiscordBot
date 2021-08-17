@@ -87,7 +87,7 @@ public class VerificationModule extends Module {
 
         TechEmbedBuilder errorMessage = new TechEmbedBuilder("Error (" + e.getAuthor().getName() + ")").error();
 
-        if (!TechDiscordBot.getBot().getStatus().isUsable()) {
+        if (!TechDiscordBot.getBot().getSpigotStatus().isUsable()) {
             errorMessage.text("**The API is currently offline.**\nThere is no ETA of when it will be back up.\nYou will have to wait to verify until then.").error().sendTemporary(channel, 10);
 
             String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + "Tried to verify but the the api is down!";
@@ -117,7 +117,7 @@ public class VerificationModule extends Module {
         if (purchases.length == 0) {
             errorMessage.text("User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " does not own any of Tech's Plugins!\n\n*It may take up to 20 minutes for the bot to recognize new purchases.*\n\n*This could also be an issue with the api. If you believe this is a mistake, please contact a staff member!*");
 
-            if (TechDiscordBot.getBot().getStatus() == APIStatus.NOT_FETCHING) {
+            if (TechDiscordBot.getBot().getSpigotStatus() == APIStatus.NOT_FETCHING) {
                 errorMessage.text(errorMessage.getText() + "\n\n**The API is currently not fetching new information, this could also be the issue.");
 
                 String msg = "User (" + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + ") tried to verify but the the api is down!";
