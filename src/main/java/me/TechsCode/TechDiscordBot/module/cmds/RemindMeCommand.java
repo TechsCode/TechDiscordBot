@@ -74,11 +74,10 @@ public class RemindMeCommand extends CommandModule {
             ).queue();
         } else {
             SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy 'at' hh:mm:ss a");
-            String date = sdf.format(new Date(r.getTime()));
 
             e.replyEmbeds(
                 new TechEmbedBuilder("Reminder Set!")
-                    .text("I will remind you in **" + r.getHumanTime() + "** (" + date + ") for **" + r.getReminder() + "**!")
+                    .text("I will remind you in <t:" + (r.getTime() / 1000) + ":R> for **" + r.getReminder() + "**!")
                     .success()
                     .build()
             ).queue();
