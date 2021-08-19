@@ -77,7 +77,7 @@ public class RemindMeCommand extends CommandModule {
 
             e.replyEmbeds(
                 new TechEmbedBuilder("Reminder Set!")
-                    .text("I will remind you in <t:" + (r.getTime() / 1000) + ":R> for **" + r.getReminder() + "**!")
+                    .text("I will remind you <t:" + (r.getTime() / 1000) + ":R> for **" + r.getReminder() + "**!")
                     .success()
                     .build()
             ).queue();
