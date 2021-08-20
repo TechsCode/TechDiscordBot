@@ -53,7 +53,7 @@ public class APICommand extends CommandModule {
 
         StringBuilder sb = new StringBuilder();
         appendStatus("Spigot", spigotStatus, sb, m);
-        appendStatus("Market", spigotStatus, sb, m);
+        appendStatus("MC-Market", spigotStatus, sb, m);
         appendStatus("Songoda", songodaStatus, sb, m);
 
         e.replyEmbeds(
@@ -81,7 +81,7 @@ public class APICommand extends CommandModule {
                 sb.append("**Reviews:** ").append(reviews).append("\n");
                 sb.append("**Updates:** ").append(updates).append("\n");
                 sb.append("**Resources:** ").append(resources).append("\n\n");
-            }else if(name.equals("Market")) {
+            }else if(name.equals("MC-Market")) {
                 int purchases = TechDiscordBot.getSpigotAPI().getMarketPurchases().size();
                 int reviews = TechDiscordBot.getSpigotAPI().getMarketReviews().size();
                 int updates = TechDiscordBot.getSpigotAPI().getMarketUpdates().size();
@@ -117,7 +117,7 @@ public class APICommand extends CommandModule {
                 sb.append("**Last Fetched**: ").append(lastUpdatedFormatted);
                 sb.append("\n**Last Parsed**: ").append(botLastParsed);
                 break;
-            case "Market":
+            case "MC-Market":
                 if (status.isUsable()) {
                     lastUpdatedFormatted = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSpigotAPI().getStatus().getLastMarketFetch()));
                     botLastParsed = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSpigotAPI().getLastBotFetch()));
