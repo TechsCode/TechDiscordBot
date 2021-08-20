@@ -91,7 +91,7 @@ public class TechDiscordBot {
 
         TechDiscordBot.githubToken = githubToken;
 
-        spigotAPI = new SpigotApi("http://localhost/", apiToken);
+        spigotAPI = new SpigotApi("http://api.techscode.de/", apiToken);
         songodaAPIClient = new SongodaAPIClient(songodaApiToken);
 //        songodaPurchases = SongodaPurchases.getPurchases();
 
