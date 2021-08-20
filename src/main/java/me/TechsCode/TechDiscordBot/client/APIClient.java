@@ -1,7 +1,6 @@
 package me.TechsCode.TechDiscordBot.client;
 
-public abstract class APIClient extends Thread {
-
+public class APIClient extends Thread {
     private final String token;
 
     public APIClient(String token) {

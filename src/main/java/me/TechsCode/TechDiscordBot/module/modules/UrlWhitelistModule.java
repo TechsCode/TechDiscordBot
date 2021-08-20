@@ -128,12 +128,13 @@ public class UrlWhitelistModule extends Module {
             Pattern p = Pattern.compile("[(http(s)?):\\/\\/(www\\.)?a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,18}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)");//. represents single character
             Matcher m = p.matcher(messagePart);
             boolean b = m.matches();
-            
+
             if(b){
                 String regexResponse = m.group(0);
                 if(!regexResponse.startsWith("http://") && !regexResponse.startsWith("https://")){
                     regexResponse = "http://"+regexResponse;
                 }
+              
                 try{
                     URL url = new URL(regexResponse);
                     String[] domainExploded = url.getHost().split("\\.");

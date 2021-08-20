@@ -63,7 +63,7 @@ public class VerifyCommand extends CommandModule {
             return;
         }
 
-        if(TechDiscordBot.getSpigotAPI().getPurchases().userId(spigotId).size() == 0) {
+        if(TechDiscordBot.getSpigotAPI().getSpigotPurchases().userId(spigotId).size() == 0) {
             e.reply(spigotId + " (" + member.getAsMention() + ") does not own any of Tech's Plugins!").setEphemeral(true).queue();
             return;
         }

@@ -4,11 +4,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
-import me.TechsCode.SpigotAPI.data.Cost;
-import me.TechsCode.SpigotAPI.data.Time;
-import me.TechsCode.SpigotAPI.data.User;
-import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.client.APIClient;
+import me.TechsCode.TechDiscordBot.spigotmc.data.Cost;
+import me.TechsCode.TechDiscordBot.spigotmc.data.User;
+import me.TechsCode.TechDiscordBot.spigotmc.data.Time;
 import me.TechsCode.TechDiscordBot.util.Plugin;
 
 import java.io.IOException;
@@ -40,7 +39,7 @@ public class SongodaAPIClient extends APIClient {
         return time;
     }
 
-    public SongodaPurchaseList getPurchases() {
+    public SongodaPurchaseList getSpigotPurchases() {
         return purchases;
     }
 
@@ -77,7 +76,7 @@ public class SongodaAPIClient extends APIClient {
                     int userId = object.get("user_id").getAsInt();
 
                     SongodaPurchase sp = new SongodaPurchase(Plugin.byEmojiName(product.replace(" ", "")).getResourceId(), new User(String.valueOf(userId), username, avatar), new Time(new SimpleDateFormat("MMM dd, yyyy 'at' hh:mm a").format(new Date(createdAt)), createdAt), new Cost(currency, cost), discordId == null ? discord : discordId);
-                    sp.inject(TechDiscordBot.getSpigotAPI().getData().get());
+                    //sp.inject(TechDiscordBot.getSpigotAPI().getData().get());
 
                     this.purchases.add(sp);
                 });

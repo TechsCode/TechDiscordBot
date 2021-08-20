@@ -1,13 +1,13 @@
 package me.TechsCode.TechDiscordBot.module.modules;
 
-import me.TechsCode.SpigotAPI.data.Review;
-import me.TechsCode.SpigotAPI.data.Update;
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.Module;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
 import me.TechsCode.TechDiscordBot.objects.Requirement;
+import me.TechsCode.TechDiscordBot.spigotmc.data.Review;
+import me.TechsCode.TechDiscordBot.spigotmc.data.Update;
 import me.TechsCode.TechDiscordBot.util.Plugin;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 public class ActivitiesModule extends Module {
 
@@ -41,24 +42,30 @@ public class ActivitiesModule extends Module {
         announcedIds = new ArrayList<>();
         new Thread(() -> {
             while (true) {
-                if(!TechDiscordBot.getBot().getStatus().isUsable())
+                if(!TechDiscordBot.getBot().getSpigotStatus().isUsable())
                     continue;
 
                 if(announcedIds.isEmpty()) {
-                    //TechDiscordBot.getSpigotAPI().getReviews().forEach(r -> announcedIds.add(r.getId()));
-                    TechDiscordBot.getSpigotAPI().getUpdates().forEach(u -> announcedIds.add(u.getId()));
+                    //TechDiscordBot.getSpigotAPI().getSpigotReviews().forEach(r -> announcedIds.add(r.getId()));
+                    TechDiscordBot.getSpigotAPI().getSpigotUpdates().forEach(u -> announcedIds.add(u.getId()));
                 }
 
-                TechDiscordBot.getSpigotAPI().getResources().forEach(resource -> {
+                TechDiscordBot.getSpigotAPI().getSpigotResources().forEach(resource -> {
                     Plugin plugin = Plugin.fromId(resource.getId());
                     if (plugin == null)
                         return;
 
-                    //Review[] newReviews = resource.getReviews().stream().filter(r -> !announcedIds.contains(r.getId())).toArray(Review[]::new);
+                    //Review[] newReviews = resource.getSpigotReviews().stream().filter(r -> !announcedIds.contains(r.getId())).toArray(Review[]::new);
                     Update[] newUpdates = resource.getUpdates().stream().filter(u -> !announcedIds.contains(u.getId())).toArray(Update[]::new);
                     //Arrays.stream(newReviews).forEach(review -> printReview(plugin, review));
                     Arrays.stream(newUpdates).forEach(update -> printUpdate(plugin, update));
                 });
+
+                try {
+                    Thread.sleep(TimeUnit.MINUTES.toMillis(5));
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
             }
         }).start();
     }
