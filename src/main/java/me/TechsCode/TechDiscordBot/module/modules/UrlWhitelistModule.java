@@ -84,9 +84,9 @@ public class UrlWhitelistModule extends Module {
 
             if (blockMessage) {
                 e.getMessage().delete().queue();
-                new TechEmbedBuilder("Blocked url(s)")
+                new TechEmbedBuilder("Blocked URL(s)")
                         .color(Color.RED)
-                        .text("Your message contained a link which is not in our whitelist.\n\nIf you think this is a mistake take a look at our [whitelist](https://github.com/TechsCode-Team/UrlWhitelist).")
+                        .text("Your message contained a URL which is not in our whitelist.\n\nIf you think this is a mistake, take a look at our [**whitelist**](https://github.com/TechsCode-Team/UrlWhitelist).")
                         .queue(e.getChannel());
             }
         }
@@ -125,17 +125,16 @@ public class UrlWhitelistModule extends Module {
             String domain = "";
             boolean successfulParse = false;
 
-            Pattern p = Pattern.compile("[(http(s)?):\\/\\/(www\\.)?a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)");//. represents single character
+            Pattern p = Pattern.compile("[(http(s)?):\\/\\/(www\\.)?a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,18}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)");//. represents single character
             Matcher m = p.matcher(messagePart);
             boolean b = m.matches();
 
             if(b){
                 String regexResponse = m.group(0);
-
                 if(!regexResponse.startsWith("http://") && !regexResponse.startsWith("https://")){
                     regexResponse = "http://"+regexResponse;
                 }
-
+              
                 try{
                     URL url = new URL(regexResponse);
                     String[] domainExploded = url.getHost().split("\\.");
@@ -147,6 +146,7 @@ public class UrlWhitelistModule extends Module {
                     containedUrls.add(domain);
                 }
             }
+            
         }
 
         return containedUrls;

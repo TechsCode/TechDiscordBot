@@ -28,7 +28,7 @@ public class GetReleaseCommand extends CommandModule {
 
     private final DefinedQuery<Category> SUPPORT_CATEGORIES = new DefinedQuery<Category>() {
         @Override
-        protected Query<Category> newQuery() { return bot.getCategories("tickets", "paid plugin support", "free plugin support", "staff discussions"); }
+        protected Query<Category> newQuery() { return bot.getCategories("🎫 ︱Tickets", "📦︱Paid Plugin Support", "📦︱Free Plugin Support", "staff discussions"); }
     };
 
     public GetReleaseCommand(TechDiscordBot bot) {
