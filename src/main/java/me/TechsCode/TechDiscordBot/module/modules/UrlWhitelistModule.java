@@ -125,7 +125,7 @@ public class UrlWhitelistModule extends Module {
             String domain = "";
             boolean successfulParse = false;
 
-            Pattern p = Pattern.compile("[(http(s)?):\\/\\/(www\\.)?a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)");//. represents single character
+            Pattern p = Pattern.compile("[(http(s)?):\\/\\/(www\\.)?a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,13}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)");//. represents single character
             Matcher m = p.matcher(messagePart);
             boolean b = m.matches();
             
