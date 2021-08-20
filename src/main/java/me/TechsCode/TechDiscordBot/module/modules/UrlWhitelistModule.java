@@ -84,9 +84,9 @@ public class UrlWhitelistModule extends Module {
 
             if (blockMessage) {
                 e.getMessage().delete().queue();
-                new TechEmbedBuilder("Blocked url(s)")
+                new TechEmbedBuilder("Blocked URL(s)")
                         .color(Color.RED)
-                        .text("Your message contained a link which is not in our whitelist.\n\nIf you think this is a mistake take a look at our [whitelist](https://github.com/TechsCode-Team/UrlWhitelist).")
+                        .text("Your message contained a URL which is not in our whitelist.\n\nIf you think this is a mistake, take a look at our [**whitelist**](https://github.com/TechsCode-Team/UrlWhitelist).")
                         .queue(e.getChannel());
             }
         }
