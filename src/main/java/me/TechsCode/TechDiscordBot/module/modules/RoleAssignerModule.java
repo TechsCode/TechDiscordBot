@@ -117,8 +117,8 @@ public class RoleAssignerModule extends Module {
             resourceReviewerIds.put(resource.getId(), resource.getReviews().stream().map(r -> r.getUser().getUserId()).collect(Collectors.toList()));
         });
 
-        for(Member all : TechDiscordBot.getGuild().getMembers()) {
-            Verification verification = verifications.stream().filter(v -> v.getDiscordId().equals(all.getUser().getId())).findAny().orElse(null);
+        for(Member member : TechDiscordBot.getGuild().getMembers()) {
+            Verification verification = verifications.stream().filter(v -> v.getDiscordId().equals(member.getUser().getId())).findAny().orElse(null);
             Set<Role> rolesToKeep = new HashSet<>();
 
             if(verification != null) {
@@ -138,43 +138,43 @@ public class RoleAssignerModule extends Module {
                 if(purchases != 0 && purchases == reviews) rolesToKeep.add(reviewSquad);
             }
 
-            for (SongodaPurchase songodaPurchase : TechDiscordBot.getSongodaAPI().getSpigotPurchases().discord(all)) {
+            for (SongodaPurchase songodaPurchase : TechDiscordBot.getSongodaAPI().getSpigotPurchases().discord(member)) {
                 rolesToKeep.add(songodaVerificationRole);
                 rolesToKeep.add(bot.getRoles(songodaPurchase.getResource().getName()).first());
             }
 
-            /*if(TechDiscordBot.getStorage().isSubVerifiedUser(all.getId())) {
-                if(TechDiscordBot.getStorage().getVerifiedIdFromSubVerifiedId(all.getId()) != null && TechDiscordBot.getGuild().getMemberById(TechDiscordBot.getStorage().getVerifiedIdFromSubVerifiedId(all.getId())) != null) {
-                    TechDiscordBot.getGuild().addRoleToMember(all, SUB_VERIFIED_ROLE.query().first()).queue();
+            /*if(TechDiscordBot.getStorage().isSubVerifiedUser(member.getId())) {
+                if(TechDiscordBot.getStorage().getVerifiedIdFromSubVerifiedId(member.getId()) != null && TechDiscordBot.getGuild().getMemberById(TechDiscordBot.getStorage().getVerifiedIdFromSubVerifiedId(member.getId())) != null) {
+                    TechDiscordBot.getGuild().addRoleToMember(member, SUB_VERIFIED_ROLE.query().first()).queue();
                 } else {
-                    TechDiscordBot.getGuild().removeRoleFromMember(all, SUB_VERIFIED_ROLE.query().first()).queue();
+                    TechDiscordBot.getGuild().removeRoleFromMember(member, SUB_VERIFIED_ROLE.query().first()).queue();
                 }
             } else {
-                if(all.getRoles().contains(SUB_VERIFIED_ROLE.query().first())) {
-                    TechDiscordBot.getGuild().removeRoleFromMember(all, SUB_VERIFIED_ROLE.query().first()).queue();
+                if(member.getRoles().contains(SUB_VERIFIED_ROLE.query().first())) {
+                    TechDiscordBot.getGuild().removeRoleFromMember(member, SUB_VERIFIED_ROLE.query().first()).queue();
                 }
             }*/
 
             Set<Role> rolesToRemove = new HashSet<>();
 
-            if(all.getRoles().stream().map(Role::getName).noneMatch(r -> r.equals("Keep Roles")))
+            if(member.getRoles().stream().map(Role::getName).noneMatch(r -> r.equals("Keep Roles")))
                 rolesToRemove = possibleRoles.stream()
                     .filter(role -> !rolesToKeep.contains(role))
-                    .filter(role -> all.getRoles().contains(role))
+                    .filter(role -> member.getRoles().contains(role))
                     .collect(Collectors.toSet());
 
             Set<Role> rolesToAdd = rolesToKeep.stream()
-                    .filter(role -> !all.getRoles().contains(role))
+                    .filter(role -> !member.getRoles().contains(role))
                     .collect(Collectors.toSet());
 
             rolesToAdd.forEach(r -> {
-                TechDiscordBot.getGuild().addRoleToMember(all, r).complete();
-                TechDiscordBot.log("Role » Added " + r.getName() + " (" + all.getEffectiveName() + ")");
+                TechDiscordBot.getGuild().addRoleToMember(member, r).complete();
+                TechDiscordBot.log("Role » Added " + r.getName() + " (" + member.getEffectiveName() + ")");
             });
 
             rolesToRemove.forEach(r -> {
-                TechDiscordBot.getGuild().removeRoleFromMember(all, r).complete();
-                TechDiscordBot.log("Role » Removed " + r.getName() + " (" + all.getEffectiveName() + ")");
+                TechDiscordBot.getGuild().removeRoleFromMember(member, r).complete();
+                TechDiscordBot.log("Role » Removed " + r.getName() + " (" + member.getEffectiveName() + ")");
             });
         }
     }
