@@ -100,4 +100,12 @@ public class SpigotApi {
     public PurchasesList getMarketPurchases() {
         return marketPurchasesList;
     }
+
+    public boolean stopAPI(){
+        return spigotAPIClient.restartAPI();
+    }
+
+    public boolean restartAPI(){
+        return spigotAPIClient.restartAPI();
+    }
 }
