@@ -48,12 +48,12 @@ public class APICommand extends CommandModule {
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         APIStatus spigotStatus = bot.getSpigotStatus();
-        APIStatus marketStatus = bot.getSpigotStatus();
+        APIStatus marketStatus = bot.getMarketStatus();
         APIStatus songodaStatus = bot.getSongodaStatus();
 
         StringBuilder sb = new StringBuilder();
         appendStatus("Spigot", spigotStatus, sb, m);
-        appendStatus("MC-Market", spigotStatus, sb, m);
+        appendStatus("MC-Market", marketStatus, sb, m);
         appendStatus("Songoda", songodaStatus, sb, m);
 
         e.replyEmbeds(
