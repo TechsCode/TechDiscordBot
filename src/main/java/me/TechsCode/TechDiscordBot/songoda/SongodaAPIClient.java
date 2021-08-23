@@ -49,7 +49,7 @@ public class SongodaAPIClient extends APIClient {
             try {
                 URL url = new URL("https://songoda.com/api/dashboard/payments?token=" + getToken() + "&per_page=2000000");
                 HttpURLConnection httpcon = (HttpURLConnection) url.openConnection();
-                httpcon.addRequestProperty("User-Agent", "Mozilla/4.76");
+                httpcon.addRequestProperty("User-Agent", "Mozilla/5.0");
                 httpcon.connect();
 
                 JsonArray data = JsonParser.parseReader(new InputStreamReader((InputStream) httpcon.getContent())).getAsJsonObject().getAsJsonArray("data");
@@ -76,7 +76,6 @@ public class SongodaAPIClient extends APIClient {
                     int userId = object.get("user_id").getAsInt();
 
                     SongodaPurchase sp = new SongodaPurchase(Plugin.byEmojiName(product.replace(" ", "")).getResourceId(), new User(String.valueOf(userId), username, avatar), new Time(new SimpleDateFormat("MMM dd, yyyy 'at' hh:mm a").format(new Date(createdAt)), createdAt), new Cost(currency, cost), discordId == null ? discord : discordId);
-                    //sp.inject(TechDiscordBot.getSpigotAPI().getData().get());
 
                     this.purchases.add(sp);
                 });
