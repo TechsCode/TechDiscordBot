@@ -4,6 +4,8 @@ import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
+import me.TechsCode.TechDiscordBot.util.Pterodactyl;
+import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
@@ -13,6 +15,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +26,13 @@ public class RestartCommand extends CommandModule {
         @Override
         protected Query<Role> newQuery() {
             return bot.getRoles("Staff");
+        }
+    };
+
+    private final DefinedQuery<Role> ADMIN_ROLE = new DefinedQuery<Role>() {
+        @Override
+        protected Query<Role> newQuery() {
+            return bot.getRoles("Senior Supporter", "Assistant", "Developer", "\uD83D\uDCBB Coding Wizard");
         }
     };
 
@@ -37,7 +47,7 @@ public class RestartCommand extends CommandModule {
 
     @Override
     public String getDescription() {
-        return "Restart the bot.";
+        return "Restart the Bot or the API.";
     }
 
     @Override
@@ -49,6 +59,8 @@ public class RestartCommand extends CommandModule {
     public OptionData[] getOptions() {
         return new OptionData[] {
                 new OptionData(OptionType.STRING, "service", "The Service to restart (API or Bot)", true)
+                        .addChoice("Bot", "Bot")
+                        .addChoice("API", "API")
         };
     }
 
@@ -62,37 +74,62 @@ public class RestartCommand extends CommandModule {
         String service = e.getOption("service").getAsString();
 
         if(service.equalsIgnoreCase("Bot")) {
-            try {
-                List<Message> messages = new ArrayList<>();
+            deleteMessage();
+                e.replyEmbeds(new TechEmbedBuilder("Restart Status Loading...")
+                        .text("Restarting Bot.....")
+                        .color(Color.ORANGE)
+                        .build()
+                ).queue(q ->{
+                    if (Pterodactyl.doRestart()) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                        }
 
-                messages.addAll(TechDiscordBot.getJDA().getTextChannelById("695493411117072425").getHistory().retrievePast(1).complete());
-                messages.addAll(TechDiscordBot.getJDA().getTextChannelById("695294630803275806").getHistory().retrievePast(1).complete());
-                messages.addAll(TechDiscordBot.getJDA().getTextChannelById("727403767523442759").getHistory().retrievePast(1).complete());
+                        q.editOriginalEmbeds(new TechEmbedBuilder("Restarted!")
+                                .text("The Bot has been restarted!")
+                                .success()
+                                .build()).queue();
 
-                messages.forEach(m -> m.delete().complete());
-
-                e.reply("Bot Restarting").setEphemeral(true).complete();
-                Thread.sleep(500);
-
-                Runtime.getRuntime().exec("cmd.exe /c start C:\\Users\\Administrator\\Desktop\\TechBot\\start.bat");
-                Thread.sleep(1000);
-
-                System.exit(0);
-            } catch (InterruptedException | IOException ex) {
-                ex.printStackTrace();
-            }
+                        Pterodactyl.doKill();
+                    }else{
+                        q.editOriginalEmbeds(new TechEmbedBuilder("Restart Status Failed!")
+                                .text("The Bot failed to restart!")
+                                .error()
+                                .build()).queue();
+                    }
+                });
         }
         if(service.equalsIgnoreCase("API")) {
-            try {
-                e.reply("API Restarting").setEphemeral(true).complete();
-                Thread.sleep(500);
-
-                Runtime.getRuntime().exec("cmd.exe /c start C:\\Users\\Administrator\\Desktop\\SpigotAPI\\start.bat");
-                Thread.sleep(1000);
-            } catch (InterruptedException | IOException interruptedException) {
-                interruptedException.printStackTrace();
-            }
+            e.replyEmbeds(new TechEmbedBuilder("API Restart Status Loading...")
+                    .text("Restarting API.....")
+                    .color(Color.ORANGE)
+                    .build()
+            ).queue(q ->{
+                if (TechDiscordBot.getSpigotAPI().restartAPI()) {
+                    q.editOriginalEmbeds(new TechEmbedBuilder("API Restarted!")
+                            .text("The API has been restarted!")
+                            .success()
+                            .build()).queue();
+                } else {
+                    q.editOriginalEmbeds(new TechEmbedBuilder("API Restart Failed!")
+                            .text("The API has failed to restart!")
+                            .error()
+                            .build()).queue();
+                }
+            });
         }
+    }
+
+    private void deleteMessage() {
+        List<Message> messages = new ArrayList<>();
+        messages.addAll(TechDiscordBot.getJDA().getTextChannelById("695493411117072425").getHistory().retrievePast(1).complete()); // #📘︱verification
+        messages.addAll(TechDiscordBot.getJDA().getTextChannelById("695294630803275806").getHistory().retrievePast(1).complete()); // #tickets
+        messages.addAll(TechDiscordBot.getJDA().getTextChannelById("727403767523442759").getHistory().retrievePast(1).complete()); // #songoda-transfer
+        messages.addAll(TechDiscordBot.getJDA().getTextChannelById("837679014268895292").getHistory().retrievePast(1).complete()); // #📖︱role-selector
+
+        messages.forEach(m -> m.delete().complete());
     }
 }
 
