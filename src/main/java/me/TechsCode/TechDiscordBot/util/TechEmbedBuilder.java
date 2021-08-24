@@ -1,5 +1,6 @@
 package me.TechsCode.TechDiscordBot.util;
 
+import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -141,7 +142,13 @@ public class TechEmbedBuilder extends EmbedBuilder {
 
     public void queue(User user) {
         try {
-            user.openPrivateChannel().queue(c -> c.sendMessageEmbeds(build()).queue());
+            user.openPrivateChannel().submit()
+                    .thenCompose(channel -> channel.sendMessageEmbeds(build()).submit())
+                    .whenComplete((message, error) -> {
+                        if (error != null){
+                            TechDiscordBot.log("Could not send pm to "+user.getName());
+                        }
+                    });
         } catch (Exception ignore) { }
     }
 
