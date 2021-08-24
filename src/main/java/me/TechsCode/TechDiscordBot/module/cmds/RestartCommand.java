@@ -19,6 +19,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class RestartCommand extends CommandModule {
 
@@ -80,7 +81,9 @@ public class RestartCommand extends CommandModule {
                         .color(Color.ORANGE)
                         .build()
                 ).queue(q ->{
-                    if (Pterodactyl.doRestart()) {
+                    boolean success = Pterodactyl.doRestart();
+
+                    if (success) {
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException ex) {
@@ -102,34 +105,45 @@ public class RestartCommand extends CommandModule {
                 });
         }
         if(service.equalsIgnoreCase("API")) {
-            e.replyEmbeds(new TechEmbedBuilder("API Restart Status Loading...")
-                    .text("Restarting API.....")
-                    .color(Color.ORANGE)
-                    .build()
-            ).queue(q ->{
-                if (TechDiscordBot.getSpigotAPI().restartAPI()) {
-                    q.editOriginalEmbeds(new TechEmbedBuilder("API Restarted!")
-                            .text("The API has been restarted!")
-                            .success()
-                            .build()).queue();
-                } else {
-                    q.editOriginalEmbeds(new TechEmbedBuilder("API Restart Failed!")
-                            .text("The API has failed to restart!")
-                            .error()
-                            .build()).queue();
-                }
-            });
+            if(member.getRoles().contains(ADMIN_ROLE.query().first())) {
+                e.replyEmbeds(new TechEmbedBuilder("API Restart Status Loading...")
+                        .text("Restarting API.....")
+                        .color(Color.ORANGE)
+                        .build()
+                ).queue(q -> {
+                    if (TechDiscordBot.getSpigotAPI().restartAPI()) {
+                        q.editOriginalEmbeds(new TechEmbedBuilder("API Restarted!")
+                                .text("The API has been restarted!")
+                                .success()
+                                .build()).queue();
+                    } else {
+                        q.editOriginalEmbeds(new TechEmbedBuilder("API Restart Failed!")
+                                .text("The API has failed to restart!")
+                                .error()
+                                .build()).queue();
+                    }
+                });
+            }else{
+                e.replyEmbeds(new TechEmbedBuilder("Restart Failed")
+                        .text("You have no permission to perform this command")
+                        .error()
+                        .build()).queue();
+            }
         }
     }
 
     private void deleteMessage() {
-        List<Message> messages = new ArrayList<>();
-        messages.addAll(TechDiscordBot.getJDA().getTextChannelById("695493411117072425").getHistory().retrievePast(1).complete()); // #📘︱verification
-        messages.addAll(TechDiscordBot.getJDA().getTextChannelById("695294630803275806").getHistory().retrievePast(1).complete()); // #tickets
-        messages.addAll(TechDiscordBot.getJDA().getTextChannelById("727403767523442759").getHistory().retrievePast(1).complete()); // #songoda-transfer
-        messages.addAll(TechDiscordBot.getJDA().getTextChannelById("837679014268895292").getHistory().retrievePast(1).complete()); // #📖︱role-selector
+        try {
+            List<Message> messages = new ArrayList<>();
+            messages.addAll(Objects.requireNonNull(TechDiscordBot.getJDA().getTextChannelById("695493411117072425")).getHistory().retrievePast(1).complete()); // #📘︱verification
+            messages.addAll(Objects.requireNonNull(TechDiscordBot.getJDA().getTextChannelById("695294630803275806")).getHistory().retrievePast(1).complete()); // #tickets
+            messages.addAll(Objects.requireNonNull(TechDiscordBot.getJDA().getTextChannelById("727403767523442759")).getHistory().retrievePast(1).complete()); // #songoda-transfer
+            messages.addAll(Objects.requireNonNull(TechDiscordBot.getJDA().getTextChannelById("837679014268895292")).getHistory().retrievePast(1).complete()); // #📖︱role-selector
 
-        messages.forEach(m -> m.delete().complete());
+            messages.forEach(m -> m.delete().complete());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }
 
