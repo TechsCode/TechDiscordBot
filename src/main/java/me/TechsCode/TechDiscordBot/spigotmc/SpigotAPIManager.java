@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.spigotmc.data.*;
 import me.TechsCode.TechDiscordBot.spigotmc.data.lists.*;
 
@@ -22,11 +23,7 @@ public class SpigotAPIManager {
     }
 
     private JsonObject makeRequest(String endPoint, String attributes) {
-        Gson gson = new Gson();
-        JsonObject object = new JsonObject();
-
         try {
-            //System.out.println(base_url + endPoint + "?token="+ apiToken + attributes);
             URL url = new URL(base_url + endPoint + "?token=" + apiToken + attributes);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
@@ -39,17 +36,16 @@ public class SpigotAPIManager {
                 content.append(inputLine);
             }
             in.close();
-            object = gson.fromJson(content.toString(), JsonObject.class);
-
             con.disconnect();
+
+            Gson gson = new Gson();
+            return gson.fromJson(content.toString(), JsonObject.class);
         } catch (Exception e) {
             JsonObject errorObj = new JsonObject();
             errorObj.addProperty("status", "error");
             errorObj.addProperty("msg", e.getMessage());
-            object = errorObj;
+            return errorObj;
         }
-
-        return object;
     }
 
     public APIWebStatus getStatus() {
@@ -390,5 +386,23 @@ public class SpigotAPIManager {
         }
 
         return purchases;
+    }
+
+    public boolean stopAPI(){
+        JsonObject obj = makeRequest("actions/stop", "");
+        if (obj.has("Status")) {
+            return !obj.get("Status").getAsString().equals("Error");
+        }else{
+            return false;
+        }
+    }
+
+    public boolean restartAPI() {
+        JsonObject obj = makeRequest("actions/restart", "");
+        if (obj.has("Status")) {
+            return !obj.get("Status").getAsString().equals("Error");
+        }else{
+            return false;
+        }
     }
 }

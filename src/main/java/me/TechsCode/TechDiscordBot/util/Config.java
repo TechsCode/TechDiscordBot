@@ -95,4 +95,10 @@ public class Config {
     public String getGithubToken(){
         return root.get("githubToken").getAsString();
     }
+    public String getPteroToken(){
+        return root.get("pterodactylToken").getAsString();
+    }
+    public String getPteroUrl(){
+        return root.get("pterodactylUrl").getAsString();
+    }
 }
