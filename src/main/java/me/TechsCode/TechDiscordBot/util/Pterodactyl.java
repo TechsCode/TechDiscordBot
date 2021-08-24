@@ -33,6 +33,7 @@ public class Pterodactyl {
 				os.write(input, 0, input.length);
 			}catch (Exception e){
 				e.printStackTrace();
+				return false;
 			}
 
 			int responseCode = con.getResponseCode();
@@ -64,6 +65,7 @@ public class Pterodactyl {
 				os.write(input, 0, input.length);
 			}catch (Exception e){
 				e.printStackTrace();
+				return false;
 			}
 
 			int responseCode = con.getResponseCode();
