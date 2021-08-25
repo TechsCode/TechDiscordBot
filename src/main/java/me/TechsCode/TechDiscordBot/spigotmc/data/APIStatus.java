@@ -31,6 +31,10 @@ public enum APIStatus {
         return this == ONLINE || this == NOT_FETCHING;
     }
 
+    public boolean isVerifyUsable() {
+        return this == ONLINE;
+    }
+
     public String getEmoji() {
         return TechDiscordBot.getGuild().getEmotesByName(emojiName, true).get(0).getAsMention();
     }
