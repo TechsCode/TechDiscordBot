@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
  
-public class OtherSitesCommand extends CommandModule {
+public class GuidesCommand extends CommandModule {
  
     public PasteBinCommand(TechDiscordBot bot) {
         super(bot);
