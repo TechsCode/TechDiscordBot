@@ -150,7 +150,7 @@ public class VerificationModule extends Module {
 
         TechEmbedBuilder instructions = new TechEmbedBuilder("Verify " + e.getAuthor().getName())
                 .thumbnail(avatarUrl)
-                .text("Now go to your SpigotMC Profile and post `TechVerification." + code + "`\n\nLink to your Profile:\nhttps://www.spigotmc.org/members/" + username.toLowerCase() + "." + userId + "\n\n**Please verify yourself within 3 Minutes!**");
+                .text("Now go to your SpigotMC Profile and post `TechVerification." + code + "`\n\nLink to your Profile:\nhttps://www.spigotmc.org/members/" + username.toLowerCase() + "." + userId + "\n\n**Please wait 3 minutes!**");
 
         Message m = e.getMessage().getChannel().sendMessage(instructions.build()).complete();
         verificationQueue.add(e.getAuthor().getId());
