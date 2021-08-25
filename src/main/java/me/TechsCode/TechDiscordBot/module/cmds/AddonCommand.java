@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
  
 public class AddonCommand extends CommandModule {
  
-    public PasteBinCommand(TechDiscordBot bot) {
+    public AddonCommand(TechDiscordBot bot) {
         super(bot);
     }
  
