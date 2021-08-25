@@ -25,6 +25,7 @@ public class Storage {
     private final String MUTES_TABLE = "Mutes";
     private final String SUB_VERIFICATIONS_TABLE = "SubVerifications";
     private final String TRANSCRIPTS_TABLE = "Transcripts";
+    private final String PLUGIN_UPDATES_TABLE = "PluginUpdates";
 
     private Storage(MySQLSettings mySQLSettings) {
         this.connected = false;
@@ -51,6 +52,7 @@ public class Storage {
         mysql.update("CREATE TABLE IF NOT EXISTS " + REMINDERS_TABLE + " (user_id varchar(32), channel_id varchar(32), time varchar(32), type tinyint(1), reminder longtext);");
         mysql.update("CREATE TABLE IF NOT EXISTS " + SUB_VERIFICATIONS_TABLE + " (discordId_verified varchar(32), discordId_subVerified varchar(32));");
         mysql.update("CREATE TABLE IF NOT EXISTS " + TRANSCRIPTS_TABLE + " (id varchar(36), value longtext) DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;");
+        mysql.update("CREATE TABLE IF NOT EXISTS " + PLUGIN_UPDATES_TABLE + " (resourceId varchar(32), id varchar(32), PRIMARY KEY (resourceId) ) DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;");
 
         this.connected = true;
     }
@@ -276,4 +278,34 @@ public class Storage {
     public void deleteReminder(Reminder reminder) {
         mysql.update("DELETE FROM " + REMINDERS_TABLE + " WHERE user_id='" + reminder.getUserId() + "' AND channel_id='" + (reminder.getChannelId() == null ? "NULL" : "'" + reminder.getChannelId() + "'") + "' AND time='" + reminder.getTime() + "' AND type=" + reminder.getType().getI() + " AND reminder='" + reminder.getReminder().replace("'", "''") + "';");
     }
+
+    public boolean isNewUpdate(String id, String resourceId){
+        boolean gotResult = false;
+        boolean isNewUpdate = false;
+
+        try {
+            Connection connection = mysql.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + PLUGIN_UPDATES_TABLE + " WHERE `resourceId`=" + resourceId);
+
+            ResultSet rs = preparedStatement.executeQuery();
+
+            gotResult = rs.next();
+            if(gotResult){
+                String updateId = rs.getString("id");
+
+                if(!id.equals(updateId)){
+                    isNewUpdate = true;
+                }
+            }
+            mysql.update("INSERT INTO " + PLUGIN_UPDATES_TABLE + " (resourceId, id) VALUES ('"+resourceId+"', '"+id+"') ON DUPLICATE KEY UPDATE id='"+id+"';");
+
+            rs.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return isNewUpdate;
+    }
+
 }

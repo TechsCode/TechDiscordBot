@@ -14,7 +14,6 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public class ActivitiesModule extends Module {
@@ -39,26 +38,22 @@ public class ActivitiesModule extends Module {
 
     @Override
     public void onEnable() {
-        announcedIds = new ArrayList<>();
         new Thread(() -> {
             while (true) {
                 if(!TechDiscordBot.getBot().getSpigotStatus().isUsable())
                     continue;
-
-                if(announcedIds.isEmpty()) {
-                    //TechDiscordBot.getSpigotAPI().getSpigotReviews().forEach(r -> announcedIds.add(r.getId()));
-                    TechDiscordBot.getSpigotAPI().getSpigotUpdates().forEach(u -> announcedIds.add(u.getId()));
-                }
 
                 TechDiscordBot.getSpigotAPI().getSpigotResources().forEach(resource -> {
                     Plugin plugin = Plugin.fromId(resource.getId());
                     if (plugin == null)
                         return;
 
-                    //Review[] newReviews = resource.getSpigotReviews().stream().filter(r -> !announcedIds.contains(r.getId())).toArray(Review[]::new);
-                    Update[] newUpdates = resource.getUpdates().stream().filter(u -> !announcedIds.contains(u.getId())).toArray(Update[]::new);
-                    //Arrays.stream(newReviews).forEach(review -> printReview(plugin, review));
-                    Arrays.stream(newUpdates).forEach(update -> printUpdate(plugin, update));
+                    Update latestUpdate = plugin.getLatestUpdate();
+
+                    boolean isNewUpdate = TechDiscordBot.getStorage().isNewUpdate(resource.getId(), latestUpdate.getId());
+                    if(isNewUpdate){
+                        printUpdate(plugin, latestUpdate);
+                    }
                 });
 
                 try {
