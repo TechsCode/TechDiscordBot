@@ -23,6 +23,7 @@ import static me.TechsCode.TechDiscordBot.TechDiscordBot.getSpigotAPI;
 public class Spigot {
 
 	private static List<String> verificationQueue;
+	private boolean isDone = false;
 
 	public static boolean verify(GuildMessageReceivedEvent e){
 		if(e.getMember() == null)return false;
