@@ -19,6 +19,7 @@ import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.dv8tion.jda.api.interactions.components.Button;
 
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class VerificationModule extends Module {
@@ -73,31 +74,6 @@ public class VerificationModule extends Module {
         if (lastSelectionEmbed != null) lastSelectionEmbed.delete().submit();
     }
 
-    private void deleteSelection() {
-        if (lastSelectionEmbed != null){
-            lastSelectionEmbed.delete().submit();
-            lastSelectionEmbed = null;
-        }
-    }
-
-    public void sendSelection() {
-        deleteSelection();
-
-        channel.sendMessageEmbeds( new TechEmbedBuilder("Marketplace Selector")
-            .text("Have you purchased one or more of our plugins and wish to verify yourself?\n\n"+
-            "You have come to the right place!\n"+
-            "Just select the emoji below that corresponds to the marketplace where you bought the plugin(s), and we will explain the next steps after your selection.")
-            .build()
-        ).setActionRow(
-                Button.primary("spigot", "Spigot").withEmoji(Emoji.fromMarkdown("<:spigot:879756315747053628>")),
-                Button.primary("mc-market", "MC-Market").withEmoji(Emoji.fromMarkdown("<:mcmarket:879756190089895988>")),
-                Button.primary("songoda", "Songoda").withEmoji(Emoji.fromMarkdown("<:songoda:879756362861666375>")),
-                Button.primary("polymart", "Polymart").withEmoji(Emoji.fromMarkdown("<:polymart:879756228589400145>")).asDisabled()
-        ).queue((message) -> {
-            lastSelectionEmbed = message;
-        });
-    }
-
     @SubscribeEvent
     public void onButtonClick(ButtonClickEvent e) {
         Member member = e.getMember();
@@ -106,7 +82,7 @@ public class VerificationModule extends Module {
         TechEmbedBuilder errorMessage = new TechEmbedBuilder("Error (" + member.getUser().getName() + ")").error();
 
         if(e.getComponentId().equals("spigot")){
-            if(!VerificationUtil.spigotApiUsable(e, channel, errorMessage)) return;
+            isVerifyUsable(e, channel, errorMessage);
             if(VerificationUtil.isVerified(e, channel, errorMessage)) return;
 
             deleteSelection();
@@ -114,7 +90,7 @@ public class VerificationModule extends Module {
             channel.getManager().putPermissionOverride(member, Collections.singleton(Permission.MESSAGE_WRITE), Collections.singletonList(Permission.MESSAGE_TTS));
             instruction = channel.sendMessage(Spigot.sendInstructions().build()).complete();
             selectedMarket = "spigot";
-            //TODO Add logger when started verification
+
         }
         if(e.getComponentId().equals("mc-market")){
             deleteSelection();
@@ -122,7 +98,7 @@ public class VerificationModule extends Module {
             //TODO Add the mc-market verification trigger
         }
         if(e.getComponentId().equals("songoda")){
-            new TechEmbedBuilder("Songoda Verification").text("To verify your Songoda purchase you need to connect your discord account to your songoda account.\n\nNeed help with connecting?\nYou can connect your account [here](https://songoda.com/account/integrations)").error().sendTemporary(channel, 15);;
+            new TechEmbedBuilder("Songoda Verification").text("To verify your Songoda purchase you need to connect your discord account to your songoda account.\n\nNeed help with connecting?\n*You can connect your account [here](https://songoda.com/account/integrations)*").error().sendTemporary(channel, 15);;
         }
         if(e.getComponentId().equals("polymart")){
             new TechEmbedBuilder("Polymart Verification").text("It is not possible to verify your Polymart purchase because we haven't uploaded them yet.").error().sendTemporary(channel, 15);
@@ -151,7 +127,7 @@ public class VerificationModule extends Module {
         switch (selectedMarket) {
             case "spigot":
                 instruction.delete().complete();
-                if (!VerificationUtil.isVerifyingVerifiedUser(username, channel, errorMessage) || !VerificationUtil.hasPurchased(username, channel, errorMessage)) {
+                if (VerificationUtil.isVerifyingVerifiedUser(e, username, channel, errorMessage) || VerificationUtil.hasPurchased(username, channel, errorMessage)) {
                     newSelection();
                     break;
                 } else if (Spigot.verify(e)) {
@@ -170,9 +146,46 @@ public class VerificationModule extends Module {
         }
     }
 
+    public void sendSelection() {
+        deleteSelection();
+
+        channel.sendMessageEmbeds( new TechEmbedBuilder("Marketplace Selector")
+                .text("Have you purchased one or more of our plugins and wish to verify yourself?\n\n"+
+                        "You have come to the right place!\n"+
+                        "Just select the emoji below that corresponds to the marketplace where you bought the plugin(s), and we will explain the next steps after your selection.")
+                .build()
+        ).setActionRow(
+                Button.primary("spigot", "Spigot").withEmoji(Emoji.fromMarkdown("<:spigot:879756315747053628>")),
+                Button.primary("mc-market", "MC-Market").withEmoji(Emoji.fromMarkdown("<:mcmarket:879756190089895988>")),
+                Button.primary("songoda", "Songoda").withEmoji(Emoji.fromMarkdown("<:songoda:879756362861666375>")),
+                Button.primary("polymart", "Polymart").withEmoji(Emoji.fromMarkdown("<:polymart:879756228589400145>")).asDisabled()
+        ).queue((message) -> {
+            lastSelectionEmbed = message;
+        });
+    }
+
     private void newSelection(){
         sendSelection();
         selectedMarket = null;
+    }
+
+    public void deleteSelection() {
+        if (lastSelectionEmbed != null){
+            lastSelectionEmbed.delete().submit();
+            lastSelectionEmbed = null;
+        }
+    }
+
+    private void isVerifyUsable(ButtonClickEvent e, TextChannel channel, TechEmbedBuilder errorMessage) {
+        if (!VerificationUtil.spigotApiUsable(e, channel, errorMessage)) {
+            try {
+                deleteSelection();
+                Thread.sleep(TimeUnit.MINUTES.toMillis(600000));
+                newSelection();
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
 
