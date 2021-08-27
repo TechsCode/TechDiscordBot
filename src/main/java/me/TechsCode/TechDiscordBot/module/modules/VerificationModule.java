@@ -128,6 +128,11 @@ public class VerificationModule extends Module {
             case "spigot":
                 instruction.delete().complete();
                 if (VerificationUtil.isVerifyingVerifiedUser(e, username, channel, errorMessage) || VerificationUtil.hasPurchased(username, channel, errorMessage)) {
+                    try{
+                        Thread.sleep(3000);
+                    } catch (InterruptedException interruptedException) {
+                        interruptedException.printStackTrace();
+                    }
                     newSelection();
                     break;
                 } else if (Spigot.verify(e)) {

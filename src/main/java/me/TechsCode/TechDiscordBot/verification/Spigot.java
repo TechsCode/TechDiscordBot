@@ -92,8 +92,9 @@ public class Spigot {
 								.text("You've been successfully verified!\n\nHere are your purchased plugins: " + Plugin.getMembersPluginsinEmojis(e.getMember()) + "\n\n*Your roles will be updated automatically from now on!*")
 								.thumbnail(avatarUrl)
 								.queue(e.getMember());
+						String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " Has tried to verified as https://www.spigotmc.org/members/" + finalUsername.toLowerCase() + "." + userId;
+						alertMsg(msg);
 					} else {
-						//TODO Change logger of verifying other account
 						String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " Has tried to verify as https://www.spigotmc.org/members/" + finalUsername.toLowerCase() + "." + userId;
 						alertMsg(msg);
 
