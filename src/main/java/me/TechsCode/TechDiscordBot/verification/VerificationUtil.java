@@ -4,6 +4,8 @@ import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
 import me.TechsCode.TechDiscordBot.spigotmc.data.APIStatus;
 import me.TechsCode.TechDiscordBot.spigotmc.data.Purchase;
+import me.TechsCode.TechDiscordBot.spigotmc.data.User;
+import me.TechsCode.TechDiscordBot.spigotmc.data.lists.PurchasesList;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -41,18 +43,16 @@ public class VerificationUtil {
 	}
 
 	public static boolean isVerifyingVerifiedUser(GuildMessageReceivedEvent e, String username, TextChannel channel, TechEmbedBuilder errorMessage) {
-		Purchase[] purchases = TechDiscordBot.getSpigotAPI().getSpigotPurchases().username(username).toArray(new Purchase[0]);
-		username = purchases[0].getUser().getUsername();
-		String userId = purchases[0].getUser().getUserId();
+		PurchasesList purchases = TechDiscordBot.getSpigotAPI().getSpigotPurchases().username(username);
+		if(purchases.isEmpty()) return false;
 
-		Verification existingVerification = TechDiscordBot.getStorage().retrieveVerificationWithSpigot(userId);
+		User user = purchases.get(0).getUser();
+		Verification existingVerification = TechDiscordBot.getStorage().retrieveVerificationWithSpigot(user.getUserId());
 
 		if (existingVerification != null) {
-			Purchase purchase = TechDiscordBot.getSpigotAPI().getSpigotPurchases().userId(existingVerification.getUserId()).get(0);
-			// TODO purchase.getUser().getUsername() returns spigot username instaid of discord
-			errorMessage.text("The Spigot User " + username + " is already linked with " + purchase.getUser().getUsername() + ". If you believe this is a mistake, please contact a Staff Member.").sendTemporary(channel, 10);
+			errorMessage.text("The Spigot User " + user.getUsername() + " is already linked with <@" + existingVerification.getDiscordId() + ">. If you believe this is a mistake, please contact a Staff Member.").sendTemporary(channel, 10);
 
-			logger("User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " Has tried to verify as https://www.spigotmc.org/members/" + username.toLowerCase() + "." + userId + " But this user is already verified!");
+			logger("User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " Has tried to verify as https://www.spigotmc.org/members/" + user.getUsername() + "." + user.getUserId() + " But this user is already verified!");
 			return true;
 		}
 		return false;

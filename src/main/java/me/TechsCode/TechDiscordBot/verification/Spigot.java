@@ -2,8 +2,6 @@ package me.TechsCode.TechDiscordBot.verification;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.logs.VerificationLogs;
-import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
-import me.TechsCode.TechDiscordBot.spigotmc.data.APIStatus;
 import me.TechsCode.TechDiscordBot.spigotmc.data.ProfileComment;
 import me.TechsCode.TechDiscordBot.spigotmc.data.Purchase;
 import me.TechsCode.TechDiscordBot.spigotmc.data.lists.ProfileCommentList;
@@ -15,6 +13,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +25,7 @@ public class Spigot {
 	private static List<String> verificationQueue;
 
 	public static boolean verify(GuildMessageReceivedEvent e){
+		if(e.getMember() == null)return false;
 		verificationQueue = new ArrayList<>();
 
 		TextChannel channel = e.getChannel();
@@ -53,69 +53,57 @@ public class Spigot {
 
 		TechEmbedBuilder verifyInstructions = new TechEmbedBuilder("Verify " + e.getAuthor().getName())
 				.thumbnail(avatarUrl)
-				.text("Now go to your SpigotMC Profile and post `TechVerification." + code + "`\n\nLink to your Profile:\nhttps://www.spigotmc.org/members/" + username.toLowerCase() + "." + userId + "\n\n**Please verify yourself within 3 Minutes!**");
+				.text("Now go to your SpigotMC Profile and post `TechVerification." + code + "`\n\nLink to your Profile:\nhttps://www.spigotmc.org/members/" + username.toLowerCase() + "." + userId + "\n\n**The bot will check your spigot profile after 3 minutes!**");
 
 		Message m = e.getMessage().getChannel().sendMessage(verifyInstructions.build()).complete();
 		verificationQueue.add(e.getAuthor().getId());
 		String finalUsername = username;
 
-		new Thread(() -> {
-			try {
-				Thread.sleep(TimeUnit.MINUTES.toMillis(3));
-			} catch (InterruptedException ex) {
-				ex.printStackTrace();
-			}
+		try {
+			Thread.sleep(TimeUnit.MINUTES.toMillis(3));
+		} catch (InterruptedException ex) {
+			ex.printStackTrace();
+		}
 
-			ProfileCommentList comments = getSpigotAPI().getSpigotProfileComments(finalUsername+"."+userId, false);
+		ProfileCommentList comments = getSpigotAPI().getSpigotProfileComments(finalUsername+"."+userId, false); //showAll = false only gets the messages from the user
+		if(comments.isEmpty()){
+			String msg = "The bot did not find any messages posted by you on your profile!";
+			alertMsg(msg);
+			m.editMessageEmbeds(errorMessage.text("No messages found on that account.").build()).complete().delete().completeAfter(10L, TimeUnit.SECONDS);
 
-			for (ProfileComment all : comments) {
-				if (all.getText().equals("TechVerification." + code)) {
-					if (all.getUserId().equals(finalUsername+"."+userId)) {
-						m.delete().complete();
+			return false;
+		}
 
-						String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " Has verified as https://www.spigotmc.org/members/" + finalUsername.toLowerCase() + "." + userId;
-						alertMsg(msg);
+		for (ProfileComment user : comments) {
+			if (user.getText().equals("TechVerification." + code)) {
+				m.delete().complete();
+				TechDiscordBot.getStorage().createVerification(userId, e.getAuthor().getId());
+				verificationQueue.remove(e.getAuthor().getId());
 
-						VerificationLogs.log(
-								new TechEmbedBuilder(e.getAuthor().getName() + "'s Verification Completed")
-										.success().text(e.getAuthor().getName() + " has successfully verified their SpigotMC Account!")
-										.thumbnail(avatarUrl)
-						);
-					}
+				new TechEmbedBuilder("Verification Complete!")
+						.text("You've been successfully verified!\n\nHere are your purchased plugins: " + Plugin.getMembersPluginsinEmojis(e.getMember()) + "\n\n*Your roles will be updated automatically from now on!*")
+						.thumbnail(avatarUrl)
+						.queue(Objects.requireNonNull(e.getMember()));
 
-					verificationQueue.remove(e.getAuthor().getId());
+				new TechEmbedBuilder()
+						.text("You may now delete the message on your profile! [Go to Comment](https://www.spigotmc.org/profile-posts/" + user.getCommentId() + ")")
+						.queue(e.getMember());
 
-					if (all.getUserId().equals(finalUsername+"."+userId)) {
-						TechDiscordBot.getStorage().createVerification(userId, e.getAuthor().getId());
-
-						new TechEmbedBuilder("Verification Complete!")
-								.text("You've been successfully verified!\n\nHere are your purchased plugins: " + Plugin.getMembersPluginsinEmojis(e.getMember()) + "\n\n*Your roles will be updated automatically from now on!*")
+				String msg = "<@"+e.getMember().getId()+"> verified as https://www.spigotmc.org/members/" + finalUsername.toLowerCase() + "." + userId;
+				alertMsg(msg);
+				VerificationLogs.log(
+						new TechEmbedBuilder(e.getAuthor().getName() + "'s Verification Completed")
+								.success().text(e.getAuthor().getName() + " has successfully verified their SpigotMC Account!")
 								.thumbnail(avatarUrl)
-								.queue(e.getMember());
-						String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " Has tried to verified as https://www.spigotmc.org/members/" + finalUsername.toLowerCase() + "." + userId;
-						alertMsg(msg);
-					} else {
-						String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + " Has tried to verify as https://www.spigotmc.org/members/" + finalUsername.toLowerCase() + "." + userId;
-						alertMsg(msg);
+				);
 
-						m.editMessage(errorMessage.text("Please verify your own account.").build()).complete().delete().queueAfter(10L, TimeUnit.SECONDS);
-					}
-
-					new TechEmbedBuilder()
-							.text("You may now delete the message on your profile! [Go to Comment](https://www.spigotmc.org/profile-posts/" + all.getCommentId() + ")")
-							.queue(e.getMember());
-					return;
-				}
+				return true;
 			}
+		}
 
-			verificationQueue.remove(e.getAuthor().getId());
-			m.editMessage(errorMessage.text("**You took too long!**\n\nThe Verification process has timed out! Please try again.").build())
-					.complete()
-					.delete()
-					.queueAfter(10, TimeUnit.SECONDS);
-		}).start();
+		m.editMessageEmbeds(errorMessage.text("The bot did not find any messages containing `TechVerification." + code + "` on your profile!").build()).complete().delete().completeAfter(20, TimeUnit.SECONDS);
 
-		return true;
+		return false;
 	}
 
 	public static TechEmbedBuilder sendInstructions() {
