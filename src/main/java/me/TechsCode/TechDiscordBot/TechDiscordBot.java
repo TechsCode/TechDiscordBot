@@ -81,11 +81,16 @@ public class TechDiscordBot {
             return;
         }
 
-        guild = guilds.size() != 0 ? jda.getGuildById("311178000026566658") : null;
+        if(guilds.size() == 0) {
+            log(ConsoleColor.RED + "The bot is not a member of any guild. Please join a guild!");
+            return;
+        }
+
+        guild = jda.getGuildById("311178000026566658");
         self = guild != null ? guild.getSelfMember() : null;
 
         if(guild == null) {
-            log(ConsoleColor.RED + "The bot is not a member of any guild. Please join a guild!");
+            log(ConsoleColor.RED + "The bot is not in the right guild!");
             return;
         }
 
