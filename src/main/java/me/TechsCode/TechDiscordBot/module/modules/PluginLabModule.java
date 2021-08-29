@@ -32,7 +32,7 @@ public class PluginLabModule extends Module {
     public HashMap<String, TextChannel> updatePlugins() {
         plugins = new HashMap<>();
 
-        Objects.requireNonNull(TechDiscordBot.getJDA().getCategoryById("741760152570691665")).getTextChannels().stream().filter(Objects::nonNull).filter(channel -> channel.getName().endsWith("-lab")).forEach(channel -> {
+        Objects.requireNonNull(TechDiscordBot.getJDA().getCategoriesByName("\uD83E\uDDEA︱Plugin Lab", true).get(0)).getTextChannels().stream().filter(Objects::nonNull).filter(channel -> channel.getName().endsWith("-lab")).forEach(channel -> {
             String pluginName;
 
             if(channel.getTopic() != null) {
