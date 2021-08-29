@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class TranscriptLogs {
 
-    private static final long CHANNEL_ID = 761382066633572373L;
+    private static final long CHANNEL_ID = 873361909909446666L;
 
     public static boolean log(String msg) {
         return sendChannel("Log", msg, null);
