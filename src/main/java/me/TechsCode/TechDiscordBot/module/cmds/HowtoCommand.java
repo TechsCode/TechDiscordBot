@@ -46,7 +46,7 @@ public class HowtoCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
-        String howto = e.getOption("howto").getAsString();
+        String howto = e.getOption("howto") == null ? null : e.getOption("howto").getAsString();
 
         if(howto.equalsIgnoreCase("MySQL")) {
             e.replyEmbeds(
