@@ -2,10 +2,6 @@ package me.TechsCode.TechDiscordBot.module.cmds;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
-import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
-import me.TechsCode.TechDiscordBot.spigotmc.data.Purchase;
-import me.TechsCode.TechDiscordBot.spigotmc.data.lists.PurchasesList;
-import me.TechsCode.TechDiscordBot.util.Plugin;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -13,8 +9,6 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
-
-import java.util.Comparator;
 
 public class HowtoCommand extends CommandModule {
 
@@ -41,7 +35,7 @@ public class HowtoCommand extends CommandModule {
     public OptionData[] getOptions() {
         return new OptionData[] {
                 new OptionData(OptionType.STRING, "howto", "Select Topic.")
-                .addChoice("example", 0),
+                .addChoice("example", "example"),
         };
     }
 
