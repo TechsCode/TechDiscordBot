@@ -445,7 +445,7 @@ public class TicketModule extends Module {
                                     .color(Color.ORANGE)
                                     .queue(e.getMember());
 
-                            TicketLogs.log(
+                            TranscriptLogs.log(
                                 new TechEmbedBuilder("Ticket Transcript")
                                         .text("Transcript of " + e.getMember().getAsMention() +  "'s ticket:\n" + transcript.getUrl())
                                         .color(Color.ORANGE)
