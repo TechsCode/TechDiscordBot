@@ -46,14 +46,25 @@ public class HowtoCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
-        String howto = e.getOption("howto") == null ? null : e.getOption("howto").getAsString();
+        String howto = e.getOption("howto").getAsString();
 
-        if(howto.equalsIgnoreCase("example")) {
+        if(howto.equalsIgnoreCase("MySQL")) {
             e.replyEmbeds(
-                    new TechEmbedBuilder("This is Zombis Title")
+                    new TechEmbedBuilder("How To Setup MySQL")
                             .success()
-                            .text("EXAMPLE TEXT")
-                            .field("EXAMPLE FIELD", "EXAMPLE FIELD CONTENT", true)
+                            .text("To connect your server to MySQL, open the GUI of the desired plugin and\n" +
+                                    "click on, Settings >> MySQL Database >> Setup MySQL >> Credentials```\n" +
+                                    "\n" +
+                                    "Here you will need to fill in the credentials of your database.\n" +
+                                    "\n" +
+                                    "Once you have filled in all the credentials, you can now test the connection and save it.\n" +
+                                    "\n" +
+                                    "When you have saved your credentials, you need to restart your server for the plugin to connect.\n" +
+                                    "\n" +
+                                    "When you have repeated this process for all of your servers, your plugin is now proxy-ready.\n" +
+                                    "\n" +
+                                    "**NOTE: If your database has not connected or the test takes too long, you have entered the wrong credentials.**")
+                            //.field("EXAMPLE FIELD", "EXAMPLE FIELD CONTENT", true)
                             .build()
             ).queue();
         }
