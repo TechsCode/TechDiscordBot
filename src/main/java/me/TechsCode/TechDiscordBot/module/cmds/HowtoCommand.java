@@ -40,7 +40,8 @@ public class HowtoCommand extends CommandModule {
     @Override
     public OptionData[] getOptions() {
         return new OptionData[] {
-                new OptionData(OptionType.STRING, "howto", "Member to check."),
+                new OptionData(OptionType.STRING, "howto", "Select Topic.")
+                .addChoice("example", 0),
         };
     }
 
