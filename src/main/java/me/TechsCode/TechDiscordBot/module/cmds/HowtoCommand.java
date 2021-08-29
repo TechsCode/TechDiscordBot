@@ -34,8 +34,8 @@ public class HowtoCommand extends CommandModule {
     @Override
     public OptionData[] getOptions() {
         return new OptionData[] {
-                new OptionData(OptionType.STRING, "howto", "Select Topic.")
-                .addChoice("example", "example"),
+                new OptionData(OptionType.STRING, "topic", "Select Topic.", true)
+                .addChoice("MySQL", "MySQL"),
         };
     }
 
@@ -46,9 +46,9 @@ public class HowtoCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
-        String howto = e.getOption("howto") == null ? null : e.getOption("howto").getAsString();
+        String topic = e.getOption("topic").getAsString();
 
-        if(howto.equalsIgnoreCase("MySQL")) {
+        if(topic.equalsIgnoreCase("MySQL")) {
             e.replyEmbeds(
                     new TechEmbedBuilder("How To Setup MySQL")
                             .success()
