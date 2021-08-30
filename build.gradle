@@ -34,7 +34,9 @@ dependencies {
 
 buildscript {
     repositories {
-        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
@@ -47,12 +49,17 @@ shadowJar {
 }
 
 jar {
+    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
     manifest {
-        attributes 'Class-Path': '/libs/a.jar'
+        attributes 'Class-Path': configurations.runtime.files.collect { "lib/$it.name" }.join(' ')
         attributes 'Main-Class': 'me.TechsCode.TechDiscordBot.TechDiscordBot'
     }
 }
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+    manifest {
+        attributes 'Class-Path': configurations.runtime.files.collect { "lib/$it.name" }.join(' ')
+        attributes 'Main-Class': 'me.TechsCode.TechDiscordBot.TechDiscordBot'
+    }
 }
