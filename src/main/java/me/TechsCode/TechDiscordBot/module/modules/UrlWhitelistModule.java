@@ -16,8 +16,10 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -71,10 +73,18 @@ public class UrlWhitelistModule extends Module {
         if (SUPPORT_CATEGORIES.query().stream().anyMatch(c -> c.getId().equals(e.getChannel().getParent().getId()))) return;
 
         String message = e.getMessage().getContentRaw();
+
         boolean blockMessage = false;
 
         if (!whitelistedUrls.isEmpty()) {
-            blockMessage = messageContainsUrl(message);
+            Set<String> extractedUrls = extractUrls(message);
+            for (String extractedUrl : extractedUrls) {
+                if (!whitelistedUrls.contains(extractedUrl)) {
+                    blockMessage = true;
+                    break;
+                }
+            }
+
             if (blockMessage) {
                 e.getMessage().delete().queue();
                 new TechEmbedBuilder("Blocked URL(s)")
@@ -83,6 +93,7 @@ public class UrlWhitelistModule extends Module {
                         .queue(e.getChannel());
             }
         }
+
     }
 
     private void getWhitelist() {
@@ -109,18 +120,33 @@ public class UrlWhitelistModule extends Module {
         }
     }
 
-    private boolean messageContainsUrl(String text) {
-        String[] messageParts = {};
-        messageParts = text.split(" ");
-        for (String messagePart : messageParts) {
-            Pattern p = Pattern.compile("/(https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9]+\\.[^\\s]{2,}|www\\.[a-zA-Z0-9]+\\.[^\\s]{2,})/gm\n");
-            Matcher m = p.matcher(messagePart);
+    private Set<String> extractUrls(String text) {
+        Set<String> containedUrls = new LinkedHashSet<>();
 
-            if(m.find()){
-                return true;
+        String domain = "";
+        boolean successfulParse = false;
+
+        String regex = "(https?://(?:www\\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|https?://(?:www\\.|(?!www))[a-zA-Z0-9]+\\.[^\\s]{2,}|www\\.[a-zA-Z0-9]+\\.[^\\s]{2,})";
+        Pattern p = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+        Matcher m = p.matcher(text);
+
+        while (m.find()) {
+            String regexResponse = m.group(0);
+            TechDiscordBot.log("response: "+regexResponse);
+
+            try{
+                URL url = new URL(regexResponse);
+                String[] domainExploded = url.getHost().split("\\.");
+                domain = domainExploded[domainExploded.length - 2] + "." + domainExploded[domainExploded.length - 1];
+                successfulParse = true;
+            }catch (Exception ignored){}
+
+            if(successfulParse){
+                containedUrls.add(domain);
             }
         }
-        return false;
+
+        return containedUrls;
     }
 
     public Requirement[] getRequirements() {

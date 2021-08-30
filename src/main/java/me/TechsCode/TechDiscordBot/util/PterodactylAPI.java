@@ -46,6 +46,4 @@ public class PterodactylAPI {
 		client.retrieveServerByIdentifier(serverId).flatMap(ClientServer::kill).executeAsync();
 	}
 
-
-
 }
