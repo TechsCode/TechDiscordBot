@@ -113,7 +113,7 @@ public class UrlWhitelistModule extends Module {
         String[] messageParts = {};
         messageParts = text.split(" ");
         for (String messagePart : messageParts) {
-            Pattern p = Pattern.compile("(http|ftp|https):\\/\\/([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:\\/~+#-]*[\\w@?^=%&\\/~+#-])?");
+            Pattern p = Pattern.compile("/(https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9]+\\.[^\\s]{2,}|www\\.[a-zA-Z0-9]+\\.[^\\s]{2,})/gm\n");
             Matcher m = p.matcher(messagePart);
 
             if(m.find()){
