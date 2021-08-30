@@ -77,7 +77,7 @@ public class RestartCommand extends CommandModule {
                 TechDiscordBot.getPterodactylAPI().restartServer("dd4ae440");
 
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(2000);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
