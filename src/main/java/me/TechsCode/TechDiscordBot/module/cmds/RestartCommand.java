@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class RestartCommand extends CommandModule {
 
@@ -66,7 +67,7 @@ public class RestartCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member member, SlashCommandEvent e) {
-        String service = e.getOption("service").getAsString();
+        String service = Objects.requireNonNull(e.getOption("service")).getAsString();
 
         if(service.equalsIgnoreCase("Bot")) {
             e.replyEmbeds(new TechEmbedBuilder("Restart Status Loading...")
@@ -89,8 +90,7 @@ public class RestartCommand extends CommandModule {
                         .success()
                         .build()).queue();
             });
-        }
-        if(service.equalsIgnoreCase("API")) {
+        }else if(service.equalsIgnoreCase("API")) {
             if(member.getRoles().contains(ADMIN_ROLE.query().first())) {
                 e.replyEmbeds(new TechEmbedBuilder("API Restart Status Loading...")
                         .text("Restarting API.....")
@@ -115,6 +115,12 @@ public class RestartCommand extends CommandModule {
                         .error()
                         .build()).queue();
             }
+        }else{
+            e.replyEmbeds(new TechEmbedBuilder("Restart Invalid Service")
+                    .text("Invalid Service Choice!!")
+                    .color(Color.ORANGE)
+                    .build()
+            ).queue();
         }
     }
 
