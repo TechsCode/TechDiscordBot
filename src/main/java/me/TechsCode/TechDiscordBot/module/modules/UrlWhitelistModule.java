@@ -132,8 +132,6 @@ public class UrlWhitelistModule extends Module {
 
         while (m.find()) {
             String regexResponse = m.group(0);
-            TechDiscordBot.log("response: "+regexResponse);
-
             try{
                 URL url = new URL(regexResponse);
                 String[] domainExploded = url.getHost().split("\\.");
