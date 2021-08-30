@@ -10,10 +10,6 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class APICommand extends CommandModule {
 
     public APICommand(TechDiscordBot bot) {
@@ -98,12 +94,11 @@ public class APICommand extends CommandModule {
 
         String lastUpdatedFormatted = "Never";
         String botLastParsed = "Never";
-        DateFormat dateTimeInstanceRT = new SimpleDateFormat("MMMM dd, hh:mm:ss a z");
 
         switch (name) {
             case "Songoda":
                 if (status.isUsable()) {
-                    lastUpdatedFormatted = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSongodaAPI().getRefreshTime()));
+                    lastUpdatedFormatted = "<t:" + (TechDiscordBot.getSongodaAPI().getRefreshTime() / 1000) + ":R>";
                 }
 
                 sb.append("**Last Fetched**: ").append(lastUpdatedFormatted);
