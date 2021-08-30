@@ -84,12 +84,6 @@ public class RestartCommand extends CommandModule {
 
                 TechDiscordBot.getPterodactylAPI().killServer("dd4ae440");
 
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
-
                 q.editOriginalEmbeds(new TechEmbedBuilder("Restarted!")
                         .text("The bot has been restarted!")
                         .success()
