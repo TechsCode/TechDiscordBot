@@ -4,7 +4,6 @@ import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
-import me.TechsCode.TechDiscordBot.util.Pterodactyl;
 import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -75,27 +74,26 @@ public class RestartCommand extends CommandModule {
                     .color(Color.ORANGE)
                     .build()
             ).queue(q ->{
-                boolean success = Pterodactyl.doRestart();
+                TechDiscordBot.getPterodactylAPI().restartServer("dd4ae440");
 
-                if (success) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                    }
-
-                    q.editOriginalEmbeds(new TechEmbedBuilder("Restarted!")
-                            .text("The Bot has been restarted!")
-                            .success()
-                            .build()).queue();
-
-                    Pterodactyl.doKill();
-                }else{
-                    q.editOriginalEmbeds(new TechEmbedBuilder("Restart Status Failed!")
-                            .text("The Bot failed to restart!")
-                            .error()
-                            .build()).queue();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
                 }
+
+                TechDiscordBot.getPterodactylAPI().killServer("dd4ae440");
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+
+                q.editOriginalEmbeds(new TechEmbedBuilder("Restarted!")
+                        .text("The bot has been restarted!")
+                        .success()
+                        .build()).queue();
             });
         }
         if(service.equalsIgnoreCase("API")) {
