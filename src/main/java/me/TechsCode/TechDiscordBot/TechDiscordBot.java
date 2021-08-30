@@ -11,6 +11,7 @@ import me.TechsCode.TechDiscordBot.spigotmc.SpigotApi;
 import me.TechsCode.TechDiscordBot.spigotmc.data.APIStatus;
 import me.TechsCode.TechDiscordBot.util.Config;
 import me.TechsCode.TechDiscordBot.util.ConsoleColor;
+import me.TechsCode.TechDiscordBot.util.PterodactylAPI;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
@@ -47,6 +48,8 @@ public class TechDiscordBot {
     private static ModulesManager modulesManager;
     private static ReminderManager remindersManager;
 
+    private static PterodactylAPI pterodactylAPI;
+
     public static void main(String[] args) {
         if (!Config.getInstance().isConfigured()) {
             log(ConsoleColor.RED + "Invalid config file. Please enter the information in config.json");
@@ -54,13 +57,13 @@ public class TechDiscordBot {
         }
 
         try {
-            new TechDiscordBot(Config.getInstance().getToken(), Config.getInstance().getApiToken(), Config.getInstance().getSongodaApiToken(), MySQLSettings.of(Config.getInstance().getMySqlHost(), Config.getInstance().getMySqlPort(), Config.getInstance().getMySqlDatabase(), Config.getInstance().getMySqlUsername(), Config.getInstance().getMySqlPassword()), Config.getInstance().getGithubToken());
+            new TechDiscordBot(Config.getInstance().getToken(), Config.getInstance().getApiToken(), Config.getInstance().getSongodaApiToken(), MySQLSettings.of(Config.getInstance().getMySqlHost(), Config.getInstance().getMySqlPort(), Config.getInstance().getMySqlDatabase(), Config.getInstance().getMySqlUsername(), Config.getInstance().getMySqlPassword()), Config.getInstance().getGithubToken(), Config.getInstance().getPteroUrl(), Config.getInstance().getPteroClientToken(), Config.getInstance().getPteroApiToken());
         } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    public TechDiscordBot(String token, String apiToken, String songodaApiToken, MySQLSettings mySQLSettings, String githubToken) throws LoginException, InterruptedException {
+    public TechDiscordBot(String token, String apiToken, String songodaApiToken, MySQLSettings mySQLSettings, String githubToken, String pteroUrl, String pteroClientToken, String pteroApiToken) throws LoginException, InterruptedException {
         i = this;
 
         jda = JDABuilder.createDefault(token)
@@ -107,6 +110,9 @@ public class TechDiscordBot {
             log(ConsoleColor.RED + "Failed to connect to MySQL!");
             log(storage.getLatestErrorMessage());
         }
+
+        pterodactylAPI = new PterodactylAPI();
+        pterodactylAPI.setup(pteroUrl, pteroClientToken, pteroApiToken);
 
         modulesManager = new ModulesManager();
         log("Loading modules..");
@@ -193,6 +199,8 @@ public class TechDiscordBot {
     public static SpigotApi getSpigotAPI() {
         return spigotAPI;
     }
+
+    public static PterodactylAPI getPterodactylAPI(){return pterodactylAPI;};
 
     public static SongodaAPIClient getSongodaAPI() {
         return songodaAPIClient;
