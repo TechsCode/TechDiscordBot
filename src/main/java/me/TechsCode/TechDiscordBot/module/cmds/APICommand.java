@@ -110,8 +110,8 @@ public class APICommand extends CommandModule {
                 break;
             case "Spigot":
                 if (status.isUsable()) {
-                    lastUpdatedFormatted = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSpigotAPI().getStatus().getLastSpigotFetch()));
-                    botLastParsed = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSpigotAPI().getLastBotFetch()));
+                    lastUpdatedFormatted = "<t:" + (TechDiscordBot.getSpigotAPI().getStatus().getLastSpigotFetch() / 1000) + ":R>";
+                    botLastParsed = "<t:" + (TechDiscordBot.getSpigotAPI().getLastBotFetch() / 1000) + ":R>";
                 }
 
                 sb.append("**Last Fetched**: ").append(lastUpdatedFormatted);
@@ -119,8 +119,8 @@ public class APICommand extends CommandModule {
                 break;
             case "MC-Market":
                 if (status.isUsable()) {
-                    lastUpdatedFormatted = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSpigotAPI().getStatus().getLastMarketFetch()));
-                    botLastParsed = dateTimeInstanceRT.format(new Date(TechDiscordBot.getSpigotAPI().getLastBotFetch()));
+                    lastUpdatedFormatted = "<t:" + (TechDiscordBot.getSpigotAPI().getStatus().getLastMarketFetch() / 1000) + ":R>";
+                    botLastParsed = "<t:" + (TechDiscordBot.getSpigotAPI().getLastBotFetch() / 1000) + ":R>";
                 }
 
                 sb.append("**Last Fetched**: ").append(lastUpdatedFormatted);
