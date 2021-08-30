@@ -17,7 +17,7 @@ public class ReactionModule extends Module {
 
     public Message reactionMessage;
 
-    private final TextChannel ROLES_CHANNEL = this.bot.getChannels("\uD83D\uDCD6︱role-selector").get(0);
+    private final TextChannel ROLES_CHANNEL = bot.getChannels("\uD83D\uDCD6︱role-selector").get(0);
 
     public ReactionModule(TechDiscordBot bot) {
         super(bot);
