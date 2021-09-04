@@ -47,7 +47,7 @@ public class CodeCommand extends CommandModule {
         String code = UUID.randomUUID().toString().split("-")[0];
 
         e.replyEmbeds(new TechEmbedBuilder("Manual Verification Code")
-                .text("TechManualVerification."+code)
+                .text("`TechManualVerification."+code+"`")
                 .build()).queue();
     }
 
