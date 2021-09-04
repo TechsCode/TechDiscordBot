@@ -2,6 +2,7 @@ package me.TechsCode.TechDiscordBot.module.cmds;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
+import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
@@ -10,9 +11,9 @@ import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
 import java.util.UUID;
 
-public class getVerifyCodeCommand extends CommandModule {
+public class CodeCommand extends CommandModule {
 
-    public getVerifyCodeCommand(TechDiscordBot bot) {
+    public CodeCommand(TechDiscordBot bot) {
         super(bot);
     }
 
@@ -44,7 +45,10 @@ public class getVerifyCodeCommand extends CommandModule {
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         String code = UUID.randomUUID().toString().split("-")[0];
-        String msg = "`TechManualVerification."+code+"`'`";
-        e.reply(msg);
+
+        e.replyEmbeds(new TechEmbedBuilder("Manual Verification Code")
+                .text("TechManualVerification."+code)
+                .build()).queue();
     }
+
 }
