@@ -145,7 +145,7 @@ public enum Plugin {
     }
 
     public Update getLatestUpdate() {
-        return TechDiscordBot.getSpigotAPI().getSpigotUpdates().resource(getResourceId()).get(TechDiscordBot.getSpigotAPI().getSpigotUpdates().resource(getResourceId()).size() - 1);
+        return TechDiscordBot.getSpigotAPI().getSpigotUpdates().resource(getResourceId()).stream().findFirst().orElse(null);
     }
 
     public static List<Plugin> allWithWiki() {

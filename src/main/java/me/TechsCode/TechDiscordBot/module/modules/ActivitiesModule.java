@@ -2,6 +2,7 @@ package me.TechsCode.TechDiscordBot.module.modules;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.Module;
+import me.TechsCode.TechDiscordBot.mysql.storage.Storage;
 import me.TechsCode.TechDiscordBot.mysql.storage.Verification;
 import me.TechsCode.TechDiscordBot.objects.DefinedQuery;
 import me.TechsCode.TechDiscordBot.objects.Query;
@@ -13,7 +14,7 @@ import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class ActivitiesModule extends Module {
@@ -30,8 +31,6 @@ public class ActivitiesModule extends Module {
         }
     };
 
-    private ArrayList<String> announcedIds;
-
     public ActivitiesModule(TechDiscordBot bot) {
         super(bot);
     }
@@ -40,21 +39,7 @@ public class ActivitiesModule extends Module {
     public void onEnable() {
         new Thread(() -> {
             while (true) {
-                if(!TechDiscordBot.getBot().getSpigotStatus().isUsable())
-                    continue;
-
-                TechDiscordBot.getSpigotAPI().getSpigotResources().forEach(resource -> {
-                    Plugin plugin = Plugin.fromId(resource.getId());
-                    if (plugin == null)
-                        return;
-
-                    Update latestUpdate = plugin.getLatestUpdate();
-
-                    boolean isNewUpdate = TechDiscordBot.getStorage().isNewUpdate(resource.getId(), latestUpdate.getId());
-                    if(isNewUpdate){
-                        printUpdate(plugin, latestUpdate);
-                    }
-                });
+                checkResources();
 
                 try {
                     Thread.sleep(TimeUnit.MINUTES.toMillis(5));
@@ -80,22 +65,37 @@ public class ActivitiesModule extends Module {
         };
     }
 
-    public void printReview(Plugin plugin, Review review) {
-        StringBuilder ratingSB = new StringBuilder();
-        for(int i = 0; i < review.getRating(); ++i) ratingSB.append(":star:");
-        Verification verification = TechDiscordBot.getStorage().retrieveVerificationWithSpigot(review.getUser().getUserId());
+    public void checkResources(){
+        if(!TechDiscordBot.getBot().getSpigotStatus().isUsable())
+            return;
 
-        boolean isVerified = verification != null;
-        boolean isMemberInDiscord = (isVerified && TechDiscordBot.getBot().getMember(verification.getDiscordId()) != null);
-        String usernameOrAt = (isMemberInDiscord ? TechDiscordBot.getBot().getMember(verification.getDiscordId()).getAsMention() : review.getUser().getUsername());
+            TechDiscordBot.getSpigotAPI().getSpigotResources().forEach(resource -> {
+            Plugin plugin = Plugin.fromId(resource.getId());
+            if (plugin == null)
+                return;
 
-        new TechEmbedBuilder("Review from " + review.getUser().getUsername())
-                .color(plugin.getColor())
-                .thumbnail(review.getResource().getIcon())
-                .field("Rating", ratingSB.toString(), true)
-                .text("```" + review.getText() + "```\nThanks to " + usernameOrAt + " for making this review!")
-                .queue(ACTIVITIES_CHANNEL.query().first());
-        announcedIds.add(review.getResource().getId() + "-" + review.getUser().getUserId());
+            Update latestUpdate = plugin.getLatestUpdate();
+            boolean isNewUpdate = isNewUpdate(resource.getId(), latestUpdate.getId());
+            if(isNewUpdate){
+                printUpdate(plugin, latestUpdate);
+            }
+        });
+    }
+
+    public boolean isNewUpdate(String resourceId, String updateId){
+        Storage s = TechDiscordBot.getStorage();
+        if(s.lastPluginExists(resourceId)){
+            String latestUpdate = s.getLastPluginUpdate(resourceId);
+            if(!Objects.equals(updateId, latestUpdate)){
+                s.updateLastPluginUpdate(resourceId, updateId);
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            s.insertLastPluginUpdate(resourceId, updateId);
+            return true;
+        }
     }
 
     public void printUpdate(Plugin plugin, Update update) {
@@ -113,6 +113,22 @@ public class ActivitiesModule extends Module {
 
         if(update.getImages() != null && update.getImages().length > 0 && !update.getImages()[0].isEmpty()) ceb.image(update.getImages()[0]);
         ceb.queue(ACTIVITIES_CHANNEL.query().first());
-        announcedIds.add((update.getId()));
+    }
+
+    public void printReview(Plugin plugin, Review review) {
+        StringBuilder ratingSB = new StringBuilder();
+        for(int i = 0; i < review.getRating(); ++i) ratingSB.append(":star:");
+        Verification verification = TechDiscordBot.getStorage().retrieveVerificationWithSpigot(review.getUser().getUserId());
+
+        boolean isVerified = verification != null;
+        boolean isMemberInDiscord = (isVerified && TechDiscordBot.getBot().getMember(verification.getDiscordId()) != null);
+        String usernameOrAt = (isMemberInDiscord ? TechDiscordBot.getBot().getMember(verification.getDiscordId()).getAsMention() : review.getUser().getUsername());
+
+        new TechEmbedBuilder("Review from " + review.getUser().getUsername())
+                .color(plugin.getColor())
+                .thumbnail(review.getResource().getIcon())
+                .field("Rating", ratingSB.toString(), true)
+                .text("```" + review.getText() + "```\nThanks to " + usernameOrAt + " for making this review!")
+                .queue(ACTIVITIES_CHANNEL.query().first());
     }
 }

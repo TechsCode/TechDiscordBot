@@ -52,7 +52,7 @@ public class Storage {
         mysql.update("CREATE TABLE IF NOT EXISTS " + REMINDERS_TABLE + " (user_id varchar(32), channel_id varchar(32), time varchar(32), type tinyint(1), reminder longtext);");
         mysql.update("CREATE TABLE IF NOT EXISTS " + SUB_VERIFICATIONS_TABLE + " (discordId_verified varchar(32), discordId_subVerified varchar(32));");
         mysql.update("CREATE TABLE IF NOT EXISTS " + TRANSCRIPTS_TABLE + " (id varchar(36), value longtext) DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;");
-        mysql.update("CREATE TABLE IF NOT EXISTS " + PLUGIN_UPDATES_TABLE + " (resourceId varchar(32), id varchar(32), PRIMARY KEY (resourceId) ) DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;");
+        mysql.update("CREATE TABLE IF NOT EXISTS " + PLUGIN_UPDATES_TABLE + " (resourceId varchar(32), updateId varchar(32), PRIMARY KEY (resourceId) ) DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;");
 
         this.connected = true;
     }
@@ -279,25 +279,16 @@ public class Storage {
         mysql.update("DELETE FROM " + REMINDERS_TABLE + " WHERE user_id='" + reminder.getUserId() + "' AND channel_id='" + (reminder.getChannelId() == null ? "NULL" : "'" + reminder.getChannelId() + "'") + "' AND time='" + reminder.getTime() + "' AND type=" + reminder.getType().getI() + " AND reminder='" + reminder.getReminder().replace("'", "''") + "';");
     }
 
-    public boolean isNewUpdate(String id, String resourceId){
-        boolean gotResult = false;
-        boolean isNewUpdate = false;
+    public String getLastPluginUpdate(String resourceId){
+        String update = "unknown";
 
         try {
             Connection connection = mysql.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + PLUGIN_UPDATES_TABLE + " WHERE `resourceId`=" + resourceId);
-
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + PLUGIN_UPDATES_TABLE + " WHERE `resourceId`='"+resourceId+"';");
             ResultSet rs = preparedStatement.executeQuery();
 
-            gotResult = rs.next();
-            if(gotResult){
-                String updateId = rs.getString("id");
-
-                if(!id.equals(updateId)){
-                    isNewUpdate = true;
-                }
-            }
-            mysql.update("INSERT INTO " + PLUGIN_UPDATES_TABLE + " (resourceId, id) VALUES ('"+resourceId+"', '"+id+"') ON DUPLICATE KEY UPDATE id='"+id+"';");
+            while (rs.next())
+                update = rs.getString("updateId");
 
             rs.close();
             connection.close();
@@ -305,7 +296,34 @@ public class Storage {
             e.printStackTrace();
         }
 
-        return isNewUpdate;
+        return update;
+    }
+
+    public void updateLastPluginUpdate(String resourceId, String newUpdateId){
+        mysql.update("UPDATE " + PLUGIN_UPDATES_TABLE + " SET `updateId`=? WHERE `resourceId`=?;", newUpdateId, resourceId);
+    }
+
+    public void insertLastPluginUpdate(String resourceId, String newUpdateId){
+        mysql.update("INSERT INTO " + PLUGIN_UPDATES_TABLE + " (resourceId, updateId) VALUES (?, ?)", resourceId, newUpdateId);
+    }
+
+    public boolean lastPluginExists(String resourceId){
+        boolean exists = false;
+
+        try {
+            Connection connection = mysql.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + PLUGIN_UPDATES_TABLE + " WHERE `resourceId`='"+resourceId+"';");
+            ResultSet rs = preparedStatement.executeQuery();
+
+            exists = rs.next();
+
+            rs.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return exists;
     }
 
 }
