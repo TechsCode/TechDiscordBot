@@ -25,7 +25,7 @@ public class RestartCommand extends CommandModule {
         }
     };
 
-    private final DefinedQuery<Role> ADMIN_ROLE = new DefinedQuery<Role>() {
+    private final DefinedQuery<Role> ADMIN_ROLES = new DefinedQuery<Role>() {
         @Override
         protected Query<Role> newQuery() {
             return bot.getRoles("Senior Supporter", "Assistant", "Developer", "\uD83D\uDCBB Coding Wizard");
@@ -91,7 +91,7 @@ public class RestartCommand extends CommandModule {
                         .build()).queue();
             });
         }else if(service.equalsIgnoreCase("API")) {
-            if(member.getRoles().contains(ADMIN_ROLE.query().first())) {
+            if(ADMIN_ROLES.query().stream().anyMatch(r -> member.getRoles().contains(r))) {
                 e.replyEmbeds(new TechEmbedBuilder("API Restart Status Loading...")
                         .text("Restarting API.....")
                         .color(Color.ORANGE)
