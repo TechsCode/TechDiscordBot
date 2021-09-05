@@ -154,7 +154,7 @@ public class TicketModule extends Module {
         plugin.queue(channel, message -> setLastInstructions(message, msg -> {
             PLUGIN_EMOTES.query().all().stream().filter(emote -> msg != null).forEach(emote -> msg.addReaction(emote).queue((msg2) -> {
                 try {
-                    msg.addReaction(ERROR_EMOTE.query().first()).complete();
+                    msg.addReaction(ERROR_EMOTE.query().first()).queue();
                 } catch (Exception ignored) {}
             }));
         }));
