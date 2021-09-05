@@ -56,7 +56,8 @@ public class APICommand extends CommandModule {
             new TechEmbedBuilder("API Status")
                 .text(sb.toString())
                 .build()
-        ).queue();
+        ).complete();
+
     }
 
     private void appendStatus(String name, APIStatus status, StringBuilder sb, Member m) {

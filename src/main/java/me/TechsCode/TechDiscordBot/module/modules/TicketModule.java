@@ -1,7 +1,6 @@
 package me.TechsCode.TechDiscordBot.module.modules;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
-import me.TechsCode.TechDiscordBot.logs.ServerLogs;
 import me.TechsCode.TechDiscordBot.logs.TicketLogs;
 import me.TechsCode.TechDiscordBot.logs.TranscriptLogs;
 import me.TechsCode.TechDiscordBot.module.Module;
@@ -155,7 +154,7 @@ public class TicketModule extends Module {
         plugin.queue(channel, message -> setLastInstructions(message, msg -> {
             PLUGIN_EMOTES.query().all().stream().filter(emote -> msg != null).forEach(emote -> msg.addReaction(emote).queue((msg2) -> {
                 try {
-                    msg.addReaction(ERROR_EMOTE.query().first()).queue(null, null);
+                    msg.addReaction(ERROR_EMOTE.query().first()).complete();
                 } catch (Exception ignored) {}
             }));
         }));
