@@ -1,10 +1,12 @@
 package me.TechsCode.TechDiscordBot.github;
 
+import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import org.kohsuke.github.GHAsset;
 import org.kohsuke.github.GHRelease;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class GithubRelease {
 
@@ -13,8 +15,10 @@ public class GithubRelease {
     private GHAsset asset = null;
 
     public GithubRelease(GHRelease release) throws IOException {
-        if(release.getAssets().size() > 0) {
-            this.asset = release.getAssets().get(0);
+        List<GHAsset> releaseAsset = release.listAssets().toList();
+        TechDiscordBot.log(releaseAsset.get(0).getName());
+        if(releaseAsset.size() > 0) {
+            this.asset = releaseAsset.get(0);
             this.file = GitHubUtil.downloadFile(release.getTagName(), asset);
         }
         this.release = release;
