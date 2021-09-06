@@ -16,7 +16,6 @@ public class GithubRelease {
 
     public GithubRelease(GHRelease release) throws IOException {
         List<GHAsset> releaseAsset = release.listAssets().toList();
-        TechDiscordBot.log(releaseAsset.get(0).getName());
         if(releaseAsset.size() > 0) {
             this.asset = releaseAsset.get(0);
             this.file = GitHubUtil.downloadFile(release.getTagName(), asset);

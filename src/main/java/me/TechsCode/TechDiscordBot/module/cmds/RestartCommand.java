@@ -71,7 +71,7 @@ public class RestartCommand extends CommandModule {
 
         if(service.equalsIgnoreCase("Bot")) {
             e.replyEmbeds(new TechEmbedBuilder("Restart Status Loading...")
-                    .text("Restarting Bot :loading:")
+                    .text("Restarting Bot...")
                     .thumbnail("https://i.ibb.co/9gth0SW/1496.gif")
                     .color(Color.ORANGE)
                     .build()
