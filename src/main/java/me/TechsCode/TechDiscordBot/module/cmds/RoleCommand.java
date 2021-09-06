@@ -98,9 +98,7 @@ public class RoleCommand extends CommandModule {
 
     @Override
     public CommandPrivilege[] getCommandPrivileges() {
-        return new CommandPrivilege[] {
-                CommandPrivilege.enable(STAFF_ROLES.query().first())
-        };
+        return STAFF_ROLES.query().stream().map(CommandPrivilege::enable).toArray(CommandPrivilege[]::new);
     }
 
     @Override
