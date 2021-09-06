@@ -82,7 +82,7 @@ public class GetReleaseCommand extends CommandModule {
                                     .build()
                     ).queue();
                 } else {
-                    q.editOriginal("**Failed!** Could not get the file!\n\n**Possible reasons:**\n- Eazy messed up.\n- The release has no files for some reason.\n- GitHub is down.").queue();
+                    q.editOriginal("**Failed!** Could not get the file!\n\n**Possible reasons:**\n- The developer messed up.\n- The release has no files for some reason.\n- GitHub is down.").queue();
                 }
             });
         } else {
