@@ -70,8 +70,9 @@ public class RestartCommand extends CommandModule {
         String service = Objects.requireNonNull(e.getOption("service")).getAsString();
 
         if(service.equalsIgnoreCase("Bot")) {
-            e.replyEmbeds(new TechEmbedBuilder("Restart Status Loading :loading:")
+            e.replyEmbeds(new TechEmbedBuilder("Restart Status Loading...")
                     .text("Restarting Bot :loading:")
+                    .thumbnail("https://i.ibb.co/9gth0SW/1496.gif")
                     .color(Color.ORANGE)
                     .build()
             ).queue(q ->{
@@ -92,8 +93,9 @@ public class RestartCommand extends CommandModule {
             });
         }else if(service.equalsIgnoreCase("API")) {
             if(ADMIN_ROLES.query().stream().anyMatch(r -> member.getRoles().contains(r))) {
-                e.replyEmbeds(new TechEmbedBuilder("API Restart Status Loading :loading:")
-                        .text("Restarting API :loading:")
+                e.replyEmbeds(new TechEmbedBuilder("API Restart Status Loading...")
+                        .text("Restarting API...")
+                        .thumbnail("https://i.ibb.co/9gth0SW/1496.gif")
                         .color(Color.ORANGE)
                         .build()
                 ).queue(q -> {
