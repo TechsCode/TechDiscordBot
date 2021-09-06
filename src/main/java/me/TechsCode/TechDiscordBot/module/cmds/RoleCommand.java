@@ -19,9 +19,11 @@ import java.util.ArrayList;
 
 public class RoleCommand extends CommandModule {
 
-    private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
+    private final DefinedQuery<Role> STAFF_ROLES = new DefinedQuery<Role>() {
         @Override
-        protected Query<Role> newQuery() { return bot.getRoles("Staff"); }
+        protected Query<Role> newQuery() {
+            return bot.getRoles("Senior Supporter", "Assistant", "Developer", "\uD83D\uDCBB Coding Wizard");
+        }
     };
 
     private final ArrayList<String> SENIOR_SUPPORTER_ROLES = new ArrayList<String>() {{
@@ -97,7 +99,7 @@ public class RoleCommand extends CommandModule {
     @Override
     public CommandPrivilege[] getCommandPrivileges() {
         return new CommandPrivilege[] {
-                CommandPrivilege.enable(STAFF_ROLE.query().first())
+                CommandPrivilege.enable(STAFF_ROLES.query().first())
         };
     }
 
@@ -142,9 +144,9 @@ public class RoleCommand extends CommandModule {
         if(m.equals(member)) {
             e.replyEmbeds(
                     new TechEmbedBuilder("Role Management - Error")
-                        .error()
-                        .text("You can't edit your own roles!")
-                        .build()
+                            .error()
+                            .text("You can't edit your own roles!")
+                            .build()
             ).queue();
             return;
         }
@@ -158,8 +160,8 @@ public class RoleCommand extends CommandModule {
             ).queue();
 
             RoleLogs.log(
-                new TechEmbedBuilder("Role Removed")
-                        .error().text("Removed " + role.getAsMention() + " from " + member.getAsMention())
+                    new TechEmbedBuilder("Role Removed")
+                            .error().text("Removed " + role.getAsMention() + " from " + member.getAsMention())
             );
         } else {
             TechDiscordBot.getGuild().addRoleToMember(member, role).complete();
