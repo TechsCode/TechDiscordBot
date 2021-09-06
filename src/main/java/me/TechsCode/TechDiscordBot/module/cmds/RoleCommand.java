@@ -35,6 +35,7 @@ public class RoleCommand extends CommandModule {
         add("Keep Roles");
         add("MC-Market");
         add("Verified");
+        add("Songoda Verified");
     }};
 
     private final ArrayList<String> ASSISTANT_ROLES = new ArrayList<String>() {{
@@ -44,16 +45,39 @@ public class RoleCommand extends CommandModule {
         add("Ultra Regions");
         add("Insane Shops");
         add("Ultra Economy");
+        add("Ultra Scoreboards");
         add("Keep Roles");
         add("MC-Market");
         add("Verified");
-        add("Ultra Scoreboards");
+        add("Songoda Verified");
         add("Junior Supporter");
         add("Supporter");
         add("Senior Supporter");
         add("Retired");
         add("Wiki Editor");
         add("Staff");
+    }};
+
+    private final ArrayList<String> DEVELOPER_ROLES = new ArrayList<String>() {{
+        add("Ultra Permissions");
+        add("Ultra Customizer");
+        add("Ultra Punishments");
+        add("Ultra Regions");
+        add("Insane Shops");
+        add("Ultra Economy");
+        add("Ultra Scoreboards");
+        add("Keep Roles");
+        add("MC-Market");
+        add("Verified");
+        add("Junior Supporter");
+        add("Supporter");
+        add("Senior Supporter");
+        add("Retired");
+        add("Wiki Editor");
+        add("Staff");
+        add("Assistant");
+        add("Team Manager");
+        add("Songoda Verified");
     }};
 
     public RoleCommand(TechDiscordBot bot) {
@@ -99,7 +123,7 @@ public class RoleCommand extends CommandModule {
             e.replyEmbeds(
                     new TechEmbedBuilder("Role Management")
                             .color(Color.orange)
-                            .text("**Senior Supporter**: Keep Roles, MC-Market, Verified and all plugin roles \n **Assistant**: Staff, Junior Supporter, Supporter, Senior Supporter, Retired, Wiki Editor, Plugin Lab")
+                            .text("**Senior Supporter**: Keep Roles, MC-Market, Verified and all plugin roles\n**Assistant**: Staff, Supporter Roles, Retired, Wiki Editor, Plugin Lab\n**Developer**: Assistant, Team Manager")
                             .build()
             ).queue();
             return;
@@ -109,7 +133,7 @@ public class RoleCommand extends CommandModule {
             e.replyEmbeds(
                     new TechEmbedBuilder("Role Management")
                             .color(Color.orange)
-                            .text("**Senior Supporter**: Keep Roles, MC-Market, Verified and all plugin roles \n **Assistant**: Junior Supporter, Supporter, Senior Supporter, Retired, Wiki Editor, Plugin Lab")
+                            .text("**Senior Supporter**: Keep Roles, MC-Market, Verified and all plugin roles\n**Assistant**: Staff, Supporter Roles, Retired, Wiki Editor, Plugin Lab\n**Developer**: Assistant, Team Manager")
                             .build()
             ).queue();
             return;
