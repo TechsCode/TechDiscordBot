@@ -54,7 +54,7 @@ public class RestartCommand extends CommandModule {
     @Override
     public OptionData[] getOptions() {
         return new OptionData[] {
-                new OptionData(OptionType.STRING, "service", "The Service to restart (API or Bot)", true)
+                new OptionData(OptionType.STRING, "service", "The service to restart (API or Bot)", true)
                         .addChoice("Bot", "Bot")
                         .addChoice("API", "API")
         };
@@ -70,8 +70,8 @@ public class RestartCommand extends CommandModule {
         String service = Objects.requireNonNull(e.getOption("service")).getAsString();
 
         if(service.equalsIgnoreCase("Bot")) {
-            e.replyEmbeds(new TechEmbedBuilder("Restart Status Loading...")
-                    .text("Restarting Bot.....")
+            e.replyEmbeds(new TechEmbedBuilder("Restart Status Loading :loading:")
+                    .text("Restarting Bot :loading:")
                     .color(Color.ORANGE)
                     .build()
             ).queue(q ->{
@@ -92,8 +92,8 @@ public class RestartCommand extends CommandModule {
             });
         }else if(service.equalsIgnoreCase("API")) {
             if(ADMIN_ROLES.query().stream().anyMatch(r -> member.getRoles().contains(r))) {
-                e.replyEmbeds(new TechEmbedBuilder("API Restart Status Loading...")
-                        .text("Restarting API.....")
+                e.replyEmbeds(new TechEmbedBuilder("API Restart Status Loading :loading:")
+                        .text("Restarting API :loading:")
                         .color(Color.ORANGE)
                         .build()
                 ).queue(q -> {
@@ -117,7 +117,7 @@ public class RestartCommand extends CommandModule {
             }
         }else{
             e.replyEmbeds(new TechEmbedBuilder("Restart Invalid Service")
-                    .text("Invalid Service Choice!!")
+                    .text("Invalid Service Choice!")
                     .color(Color.ORANGE)
                     .build()
             ).queue();
