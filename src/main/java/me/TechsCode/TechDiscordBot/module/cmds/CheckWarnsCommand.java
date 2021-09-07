@@ -35,7 +35,7 @@ public class CheckWarnsCommand extends CommandModule {
 
     @Override
     public String getDescription() {
-        return "Check the warns of a user.";
+        return "Check the warnings of a user.";
     }
 
     @Override
