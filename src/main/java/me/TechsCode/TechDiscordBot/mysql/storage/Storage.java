@@ -26,6 +26,7 @@ public class Storage {
     private final String SUB_VERIFICATIONS_TABLE = "SubVerifications";
     private final String TRANSCRIPTS_TABLE = "Transcripts";
     private final String PLUGIN_UPDATES_TABLE = "PluginUpdates";
+    private final String WARNINGS_TABLE = "Warnings";
 
     private Storage(MySQLSettings mySQLSettings) {
         this.connected = false;
@@ -53,6 +54,7 @@ public class Storage {
         mysql.update("CREATE TABLE IF NOT EXISTS " + SUB_VERIFICATIONS_TABLE + " (discordId_verified varchar(32), discordId_subVerified varchar(32));");
         mysql.update("CREATE TABLE IF NOT EXISTS " + TRANSCRIPTS_TABLE + " (id varchar(36), value longtext) DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;");
         mysql.update("CREATE TABLE IF NOT EXISTS " + PLUGIN_UPDATES_TABLE + " (resourceId varchar(32), updateId varchar(32), PRIMARY KEY (resourceId) ) DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;");
+        mysql.update("CREATE TABLE IF NOT EXISTS " + WARNINGS_TABLE + " (id varchar(32), memberId varchar(32), reporterId varchar(32), reason longtext, time varchar(32), PRIMARY KEY (id) ) DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;");
 
         this.connected = true;
     }
@@ -324,6 +326,54 @@ public class Storage {
         }
 
         return exists;
+    }
+
+    public void addWarning(Warning warning) {
+        mysql.update("INSERT INTO " + WARNINGS_TABLE + " (id, memberId, reporterId, reason, time) VALUES (?, ?, ?, ?, ?);", warning.getId(), warning.getMemberId(), warning.getReporterId(), warning.getReason(), warning.getTime());
+    }
+
+    public void deleteWarning(int warningId) {
+        mysql.update("DELETE FROM " + WARNINGS_TABLE + " WHERE `id`=?;", warningId);
+    }
+
+    public Set<Warning> retrieveWarningsByUserID(String userId) {
+        Set<Warning> ret = new HashSet<>();
+
+        try {
+            Connection connection = mysql.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + WARNINGS_TABLE + " WHERE `memberId`='"+userId+"';");
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next())
+                ret.add(new Warning(rs.getInt("id"), rs.getString("memberId"), rs.getString("reporterId"), rs.getString("reason"), rs.getLong("time")));
+
+            rs.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return ret;
+    }
+
+    public Warning retrieveWarningById(String warningId){
+        Warning warning = null;
+
+        try {
+            Connection connection = mysql.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + WARNINGS_TABLE + " WHERE `id`='"+warningId+"';");
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next())
+                warning = new Warning(rs.getInt("id"), rs.getString("memberId"), rs.getString("reporterId"), rs.getString("reason"), rs.getLong("time"));
+
+            rs.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return warning;
     }
 
 }

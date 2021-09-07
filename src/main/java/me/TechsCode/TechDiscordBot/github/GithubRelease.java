@@ -1,6 +1,5 @@
 package me.TechsCode.TechDiscordBot.github;
 
-import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import org.kohsuke.github.GHAsset;
 import org.kohsuke.github.GHRelease;
 
