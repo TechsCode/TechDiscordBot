@@ -52,7 +52,10 @@ public class WarnCommand extends CommandModule {
                         .addChoice("Mini-Modding", "Mini-Modding")
                         .addChoice("Spamming", "Spamming")
                         .addChoice("NSFW Content", "NSFW Content")
-                        .addChoice("Advertisement", "Advertisement"),
+                        .addChoice("Advertisement", "Advertisement")
+                        .addChoice("Being Disrespectful", "Being Disrespectful")
+                        .addChoice("Not Listening to Staff", "Not Listening to Staff")
+                        .addChoice("Sending Bad Links", "Sending Bad Links"),
         };
     }
 
