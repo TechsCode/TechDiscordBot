@@ -19,10 +19,10 @@ import java.util.Objects;
 
 public class DeleteWarnCommand extends CommandModule {
 
-    private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
+    private final DefinedQuery<Role> ADMIN_ROLES = new DefinedQuery<Role>() {
         @Override
         protected Query<Role> newQuery() {
-            return bot.getRoles("Staff");
+            return bot.getRoles("Senior Supporter", "Assistant", "Developer", "\uD83D\uDCBB Coding Wizard");
         }
     };
 
@@ -42,7 +42,7 @@ public class DeleteWarnCommand extends CommandModule {
 
     @Override
     public CommandPrivilege[] getCommandPrivileges() {
-        return new CommandPrivilege[] { CommandPrivilege.enable(STAFF_ROLE.query().first()) };
+        return ADMIN_ROLES.query().stream().map(CommandPrivilege::enable).toArray(CommandPrivilege[]::new);
     }
 
     @Override
@@ -62,13 +62,19 @@ public class DeleteWarnCommand extends CommandModule {
         String id = Objects.requireNonNull(e.getOption("id")).getAsString();
 
         Warning warning = TechDiscordBot.getStorage().retrieveWarningById(id);
+        if(warning != null){
+            MessageEmbed msg = new TechEmbedBuilder("Warning Deleted")
+                    .text("Warning for "+warning.getMember().getAsMention()+" with id "+warning.getId()+" has been successfully deleted.")
+                    .build();
+            e.replyEmbeds(msg).queue();
 
-        MessageEmbed msg = new TechEmbedBuilder("Warning Deleted")
-                .text("Warning for "+warning.getMember().getAsMention()+" with id "+warning.getId()+" has been successfully deleted.")
-                .build();
-        e.replyEmbeds(msg).queue();
-
-        warning.delete();
+            warning.delete();
+        }else{
+            MessageEmbed msg = new TechEmbedBuilder("Warning Not Found")
+                    .text("Warning with id "+id+" not found.")
+                    .build();
+            e.replyEmbeds(msg).queue();
+        }
     }
 }
 
