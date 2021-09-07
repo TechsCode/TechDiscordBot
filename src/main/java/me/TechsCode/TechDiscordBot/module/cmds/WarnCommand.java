@@ -64,12 +64,25 @@ public class WarnCommand extends CommandModule {
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         User user = Objects.requireNonNull(e.getOption("user")).getAsUser();
+        Member member = TechDiscordBot.getGuild().getMemberById(user.getId());
+
         String reason = Objects.requireNonNull(e.getOption("reason")).getAsString();
+
+        MessageEmbed msg;
+
+        assert member != null;
+        if(member.getRoles().contains(STAFF_ROLE.query().first())){
+            msg = new TechEmbedBuilder("User Warnings")
+                    .text("You can not warn a staff member.")
+                    .build();
+            e.replyEmbeds(msg).queue();
+            return;
+        }
 
         Warning warning = new Warning(user.getId(), m.getId(), reason, System.currentTimeMillis());
         warning.save();
 
-        MessageEmbed msg = new TechEmbedBuilder("User Warnings")
+        msg = new TechEmbedBuilder("User Warnings")
                    .addField("User:", warning.getMember().getAsMention(), false)
                    .addField("Reporter", warning.getReporter().getAsMention(), false)
                    .addField("Reason", warning.getReason(), false)
