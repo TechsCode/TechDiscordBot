@@ -90,7 +90,7 @@ public class UrlWhitelistModule extends Module {
                 new TechEmbedBuilder("Blocked URL(s)")
                         .color(Color.RED)
                         .text("Your message contained a URL which is not in our whitelist.\n\nIf you think this is a mistake, take a look at our [**whitelist**](https://github.com/TechsCode-Team/UrlWhitelist).")
-                        .queue(e.getChannel());
+                        .sendTemporary(e.getChannel(), 10, TimeUnit.SECONDS);
             }
         }
 
