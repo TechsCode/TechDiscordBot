@@ -45,7 +45,7 @@ public class WarnCommand extends CommandModule {
     @Override
     public OptionData[] getOptions() {
         return new OptionData[] {
-                new OptionData(OptionType.USER, "user", "Select user.", true),
+                new OptionData(OptionType.USER, "user", "Select a user.", true),
                 new OptionData(OptionType.STRING, "reason", "Enter a reason.", true)
                         .addChoice("Ghost Pinging", "Ghost Pinging")
                         .addChoice("Mass Mentioning", "Mass Mentioning")
@@ -73,7 +73,7 @@ public class WarnCommand extends CommandModule {
         assert member != null;
         if(member.getRoles().contains(STAFF_ROLE.query().first())){
             msg = new TechEmbedBuilder("User Warnings")
-                    .text("You can not warn a staff member.")
+                    .text("You cannot warn a staff member.")
                     .build();
             e.replyEmbeds(msg).queue();
             return;
