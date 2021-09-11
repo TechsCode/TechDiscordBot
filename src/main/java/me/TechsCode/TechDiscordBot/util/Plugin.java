@@ -7,12 +7,10 @@ import me.TechsCode.TechDiscordBot.spigotmc.data.Update;
 import me.TechsCode.TechDiscordBot.spigotmc.data.lists.PurchasesList;
 import net.dv8tion.jda.api.entities.*;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -102,31 +100,16 @@ public enum Plugin {
     }
 
     public File getBannerAsFile() {
-        File bFile = new File(getRoleName().toLowerCase() + "_banner.png");
+        String resourceName = getResource().getName().replaceAll(" ", "");
+        File bFile = new File("banners/"+resourceName+".png");
 
         if(bFile.exists())
             return bFile;
 
-        try {
-            BufferedImage image = ImageIO.read(new URL(getBanner()));
-
-            Dimension dim = getScaledDimension(new Dimension(image.getWidth(), image.getHeight()), new Dimension(960, 540));
-            Image scaled = image.getScaledInstance((int)dim.getWidth(), (int)dim.getHeight(), Image.SCALE_SMOOTH);
-
-            BufferedImage bufferedImage = new BufferedImage(960, 540, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D bGr = bufferedImage.createGraphics();
-
-            int yOffset = 35; // Moving it up 35 pixels
-            bGr.drawImage(scaled, 0, (int) Math.round(540 - dim.getHeight() - yOffset), null);
-            bGr.dispose();
-
-            File file = new File(getRoleName().toLowerCase() + "_banner.png");
-
-            ImageIO.write(bufferedImage, "png", file);
-            return file;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        try{
+            URL url = new URL(getBanner());
+            return Paths.get(url.toURI()).toFile();
+        }catch (Exception ignored){}
 
         return null;
     }
