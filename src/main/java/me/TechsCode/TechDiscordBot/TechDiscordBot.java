@@ -101,7 +101,6 @@ public class TechDiscordBot {
 
         spigotAPI = new SpigotApi("http://api.techscode.de/", apiToken);
         songodaAPIClient = new SongodaAPIClient(songodaApiToken);
-//        songodaPurchases = SongodaPurchases.getPurchases();
 
         log("Initializing MySQL Storage " + mySQLSettings.getHost() + ":" + mySQLSettings.getPort() + "!");
         storage = Storage.of(mySQLSettings);
@@ -132,40 +131,41 @@ public class TechDiscordBot {
         log("");
 
         log("Spigot:");
-        if(!getSpigotStatus().isUsable())
-            log("  » " + ConsoleColor.RED + "API is not usable!");
-
-        log("  » Purchases: " + getSpigotAPI().getSpigotPurchases().size());
-        log("  » Resources: " + getSpigotAPI().getSpigotResources().size());
-        log("  » Updates: " + getSpigotAPI().getSpigotUpdates().size());
-        log("  » Reviews: " + getSpigotAPI().getSpigotReviews().size());
+        if(!getSpigotStatus().isUsable()) {
+            log("  > " + ConsoleColor.RED + "API is not usable!");
+        }else{
+            log("  > Purchases: " + getSpigotAPI().getSpigotPurchases().size());
+            log("  > Resources: " + getSpigotAPI().getSpigotResources().size());
+            log("  > Updates: " + getSpigotAPI().getSpigotUpdates().size());
+            log("  > Reviews: " + getSpigotAPI().getSpigotReviews().size());
+        }
         log("");
 
         log("Market:");
-        if(!getMarketStatus().isUsable())
-            log("  » " + ConsoleColor.RED + "API is not usable!");
-
-        log("  » Purchases: " + getSpigotAPI().getMarketPurchases().size());
-        log("  » Resources: " + getSpigotAPI().getMarketResources().size());
-        log("  » Updates: " + getSpigotAPI().getMarketUpdates().size());
-        log("  » Reviews: " + getSpigotAPI().getMarketReviews().size());
+        if(!getMarketStatus().isUsable()) {
+            log("  > " + ConsoleColor.RED + "API is not usable!");
+        }else{
+            log("  > Purchases: " + getSpigotAPI().getMarketPurchases().size());
+            log("  > Resources: " + getSpigotAPI().getMarketResources().size());
+            log("  > Updates: " + getSpigotAPI().getMarketUpdates().size());
+            log("  > Reviews: " + getSpigotAPI().getMarketReviews().size());
+        }
         log("");
 
         log("Songoda: ");
         if(getSongodaAPI().isLoaded()) {
-            log("  » Purchases: " + getSongodaAPI().getSpigotPurchases().size());
+            log("  > Purchases: " + getSongodaAPI().getSpigotPurchases().size());
         } else {
-            log("  » " + ConsoleColor.RED + "Could not connect. Cannot show info!");
+            log("  > " + ConsoleColor.RED + "Could not connect. Cannot show info!");
         }
-//        log("  » Final Purchases: " + getSongodaPurchases().size());
 
         log("");
 
         log("Guild:");
-        log("  » Members: " + getGuild().getMembers().size());
-        log("  » Verified Members: " + getStorage().retrieveVerifications().stream().filter(v -> guild.getMemberById(v.getDiscordId()) != null).count());
-        log("  » Review Squad Members: " + getGuild().getMembers().stream().filter(member -> member.getRoles().stream().anyMatch(role -> role.getName().equals("Review Squad"))).count());
-        log("  » Donators: " + getGuild().getMembers().stream().filter(member -> member.getRoles().stream().anyMatch(role -> role.getName().contains("Donator"))).count());
+        log("  > Members: " + getGuild().getMembers().size());
+        log("  > Verified Members: " + getStorage().retrieveVerifications().stream().filter(v -> guild.getMemberById(v.getDiscordId()) != null).count());
+        log("  > Review Squad Members: " + getGuild().getMembers().stream().filter(member -> member.getRoles().stream().anyMatch(role -> role.getName().equals("Review Squad"))).count());
+        log("  > Donators: " + getGuild().getMembers().stream().filter(member -> member.getRoles().stream().anyMatch(role -> role.getName().contains("Donator"))).count());
 
         log("");
 
@@ -274,15 +274,15 @@ public class TechDiscordBot {
         return githubToken;
     }
 
-    public APIStatus getSpigotStatus() {
+    public static APIStatus getSpigotStatus() {
         return APIStatus.getSpigotStatus(spigotAPI.getSpigotAPIManager());
     }
 
-    public APIStatus getMarketStatus() {
+    public static APIStatus getMarketStatus() {
         return APIStatus.getMarketStatus(spigotAPI.getSpigotAPIManager());
     }
 
-    public APIStatus getSongodaStatus() {
+    public static APIStatus getSongodaStatus() {
         return APIStatus.getStatus(getSongodaAPI());
     }
 }

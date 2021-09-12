@@ -57,6 +57,10 @@ public class SpigotApi {
         return lastBotFetch;
     }
 
+    public boolean isOnline(){
+        return spigotAPIClient.isOnline();
+    }
+
     public APIWebStatus getStatus(){
         return spigotAPIClient.getStatus();
     }

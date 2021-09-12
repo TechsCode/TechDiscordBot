@@ -19,29 +19,17 @@ public enum APIStatus {
         this.emojiName = emojiName;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public boolean isUsable() {
-        return this == ONLINE || this == NOT_FETCHING;
-    }
-
-    public String getEmoji() {
-        return TechDiscordBot.getGuild().getEmotesByName(emojiName, true).get(0).getAsMention();
-    }
-
     public static APIStatus getSpigotStatus(SpigotAPIManager client) {
         APIStatus status;
 
-        if(!client.getStatus().isSpigotFetching()) {
-            status = NOT_FETCHING;
+        if(client.isOnline()){
+            if(!client.getStatus().isSpigotFetching()) {
+                status = NOT_FETCHING;
+            } else {
+                status = ONLINE;
+            }
         } else {
-            status = ONLINE;
+            status = OFFLINE;
         }
 
         return status;
@@ -50,10 +38,14 @@ public enum APIStatus {
     public static APIStatus getMarketStatus(SpigotAPIManager client) {
         APIStatus status;
 
-        if(!client.getStatus().isMarketFetching()) {
-            status = NOT_FETCHING;
+        if(client.isOnline()) {
+            if (!client.getStatus().isMarketFetching()) {
+                status = NOT_FETCHING;
+            } else {
+                status = ONLINE;
+            }
         } else {
-            status = ONLINE;
+            status = OFFLINE;
         }
 
         return status;
@@ -73,6 +65,22 @@ public enum APIStatus {
         }
 
         return status;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public boolean isUsable() {
+        return this == ONLINE || this == NOT_FETCHING;
+    }
+
+    public String getEmoji() {
+        return TechDiscordBot.getGuild().getEmotesByName(emojiName, true).get(0).getAsMention();
     }
 
 }

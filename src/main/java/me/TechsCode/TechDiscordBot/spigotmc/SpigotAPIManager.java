@@ -23,6 +23,13 @@ public class SpigotAPIManager {
     }
 
     private JsonObject makeRequest(String endPoint, String attributes) {
+        if(!TechDiscordBot.getSpigotStatus().isUsable()){
+            JsonObject errorObj = new JsonObject();
+            errorObj.addProperty("status", "error");
+            errorObj.addProperty("msg", "API is offline");
+            return errorObj;
+        }
+
         try {
             URL url = new URL(base_url + endPoint + "?token=" + apiToken + attributes);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -38,8 +45,15 @@ public class SpigotAPIManager {
             in.close();
             con.disconnect();
 
-            Gson gson = new Gson();
-            return gson.fromJson(content.toString(), JsonObject.class);
+            if(con.getResponseCode() == 200){
+                Gson gson = new Gson();
+                return gson.fromJson(content.toString(), JsonObject.class);
+            }else{
+                JsonObject errorObj = new JsonObject();
+                errorObj.addProperty("status", "error");
+                errorObj.addProperty("msg", "API is offline");
+                return errorObj;
+            }
         } catch (Exception e) {
             JsonObject errorObj = new JsonObject();
             errorObj.addProperty("status", "error");
@@ -48,16 +62,28 @@ public class SpigotAPIManager {
         }
     }
 
-    public APIWebStatus getStatus() {
-        JsonObject obj = makeRequest("status", "");
+    public boolean isOnline(){
+        try {
+            URL url = new URL(base_url + "docs");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.setConnectTimeout(1000);
 
-        if (obj.has("status")) {
-            if (obj.get("status").getAsString().equals("error")) {
-                return new APIWebStatus(false, false, 0, 0, "Unknown", "Unknown");
-            }
+            con.disconnect();
+
+            return con.getResponseCode() == 200;
+        } catch (Exception e) {
+            return false;
         }
+    }
 
-        return new APIWebStatus(obj.get("spigotFetching").getAsBoolean(), obj.get("marketFetching").getAsBoolean(), obj.get("lastSpigotFetch").getAsLong(), obj.get("lastMarketFetch").getAsLong(), obj.get("lastSpigotFetchDate").getAsString(), obj.get("lastMarketFetchDate").getAsString());
+    public APIWebStatus getStatus() {
+        if(isOnline()){
+            JsonObject obj = makeRequest("status", "");
+            return new APIWebStatus(obj.get("spigotFetching").getAsBoolean(), obj.get("marketFetching").getAsBoolean(), obj.get("lastSpigotFetch").getAsLong(), obj.get("lastMarketFetch").getAsLong(), obj.get("lastSpigotFetchDate").getAsString(), obj.get("lastMarketFetchDate").getAsString());
+        }else{
+            return new APIWebStatus(false, false, 0, 0, "Unknown", "Unknown");
+        }
     }
 
     //SPIGOT
@@ -67,6 +93,7 @@ public class SpigotAPIManager {
 
         if (obj.has("status")) {
             if (obj.get("status").getAsString().equals("error")) {
+                TechDiscordBot.log(obj.get("msg").getAsString());
                 return comments;
             }
         }
@@ -94,6 +121,7 @@ public class SpigotAPIManager {
 
         if (obj.has("status")) {
             if (obj.get("status").getAsString().equals("error")) {
+                TechDiscordBot.log(obj.get("msg").getAsString());
                 return resources;
             }
         }
@@ -133,6 +161,7 @@ public class SpigotAPIManager {
 
         if (obj.has("status")) {
             if (obj.get("status").getAsString().equals("error")) {
+                TechDiscordBot.log(obj.get("msg").getAsString());
                 return reviews;
             }
         }
@@ -164,6 +193,7 @@ public class SpigotAPIManager {
 
         if (obj.has("status")) {
             if (obj.get("status").getAsString().equals("error")) {
+                TechDiscordBot.log(obj.get("msg").getAsString());
                 return updates;
             }
         }
@@ -195,6 +225,7 @@ public class SpigotAPIManager {
 
         if (obj.has("status")) {
             if (obj.get("status").getAsString().equals("error")) {
+                TechDiscordBot.log(obj.get("msg").getAsString());
                 return purchases;
             }
         }
@@ -231,6 +262,7 @@ public class SpigotAPIManager {
 
         if (obj.has("status")) {
             if (obj.get("status").getAsString().equals("error")) {
+                TechDiscordBot.log(obj.get("msg").getAsString());
                 return comments;
             }
         }
@@ -258,6 +290,7 @@ public class SpigotAPIManager {
 
         if (obj.has("status")) {
             if (obj.get("status").getAsString().equals("error")) {
+                TechDiscordBot.log(obj.get("msg").getAsString());
                 return resources;
             }
         }
@@ -297,6 +330,7 @@ public class SpigotAPIManager {
 
         if (obj.has("status")) {
             if (obj.get("status").getAsString().equals("error")) {
+                TechDiscordBot.log(obj.get("msg").getAsString());
                 return reviews;
             }
         }
@@ -328,6 +362,7 @@ public class SpigotAPIManager {
 
         if (obj.has("status")) {
             if (obj.get("status").getAsString().equals("error")) {
+                TechDiscordBot.log(obj.get("msg").getAsString());
                 return updates;
             }
         }
@@ -359,6 +394,7 @@ public class SpigotAPIManager {
 
         if (obj.has("status")) {
             if (obj.get("status").getAsString().equals("error")) {
+                TechDiscordBot.log(obj.get("msg").getAsString());
                 return purchases;
             }
         }
