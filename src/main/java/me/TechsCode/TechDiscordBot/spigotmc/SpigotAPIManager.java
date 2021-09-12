@@ -23,7 +23,7 @@ public class SpigotAPIManager {
     }
 
     private JsonObject makeRequest(String endPoint, String attributes) {
-        if(!TechDiscordBot.getSpigotStatus().isUsable()){
+        if(!isOnline()){
             JsonObject errorObj = new JsonObject();
             errorObj.addProperty("status", "error");
             errorObj.addProperty("msg", "API is offline");
