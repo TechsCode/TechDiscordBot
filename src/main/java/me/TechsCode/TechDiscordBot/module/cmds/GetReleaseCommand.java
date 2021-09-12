@@ -52,7 +52,7 @@ public class GetReleaseCommand extends CommandModule {
 
     @Override
     public OptionData[] getOptions() {
-        if(TechDiscordBot.getSpigotAPI().getStatus().isSpigotFetching()){
+        if(TechDiscordBot.getSpigotStatus().isUsable()){
             return new OptionData[] {
                     new OptionData(OptionType.STRING, "plugin", "The plugin name.", true)
                             .addChoices(TechDiscordBot.getSpigotAPI().getSpigotResources().stream().map(r -> new Command.Choice(r.getName().replace(" ", ""), r.getName().replace(" ", ""))).collect(Collectors.toList()))
