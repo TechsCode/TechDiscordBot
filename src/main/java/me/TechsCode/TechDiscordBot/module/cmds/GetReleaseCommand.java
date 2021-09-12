@@ -52,10 +52,17 @@ public class GetReleaseCommand extends CommandModule {
 
     @Override
     public OptionData[] getOptions() {
-        return new OptionData[] {
-                new OptionData(OptionType.STRING, "plugin", "The plugin name.", true)
-                    .addChoices(TechDiscordBot.getSpigotAPI().getSpigotResources().stream().map(r -> new Command.Choice(r.getName().replace(" ", ""), r.getName().replace(" ", ""))).collect(Collectors.toList()))
-        };
+        if(TechDiscordBot.getSpigotAPI().getStatus().isSpigotFetching()){
+            return new OptionData[] {
+                    new OptionData(OptionType.STRING, "plugin", "The plugin name.", true)
+                            .addChoices(TechDiscordBot.getSpigotAPI().getSpigotResources().stream().map(r -> new Command.Choice(r.getName().replace(" ", ""), r.getName().replace(" ", ""))).collect(Collectors.toList()))
+            };
+        }else{
+            return new OptionData[] {
+                    new OptionData(OptionType.STRING, "plugin", "The plugin name.", true)
+                            .addChoice("Error getting plugins", "error")
+            };
+        }
     }
 
     @Override
@@ -66,6 +73,8 @@ public class GetReleaseCommand extends CommandModule {
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
         String plugin = e.getOption("plugin").getAsString();
+        if(plugin.equals("error"))
+            return;
 
         if (SUPPORT_CATEGORIES.query().stream().anyMatch(c -> c.getId().equals(channel.getParent().getId()))) {
             e.reply("Getting release... please wait.").queue(q -> {
