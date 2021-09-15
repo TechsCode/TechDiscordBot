@@ -32,7 +32,7 @@ public class UrlWhitelistModule extends Module {
         }
     };
 
-    private final DefinedQuery<Category> SUPPORT_CATEGORIES = new DefinedQuery<Category>() {
+    private final DefinedQuery<Category> IGNORED_CATEGORIES = new DefinedQuery<Category>() {
         @Override
         protected Query<Category> newQuery() { return bot.getCategories("\uD83D\uDCC1 | Archives", "\uD83D\uDCD1 | Staff Logs", "Other Staff Discussions", "staff discussions", "⚖ | Leadership-Discussions", "\uD83C\uDFAB ︱Tickets"); }
     };
@@ -50,7 +50,7 @@ public class UrlWhitelistModule extends Module {
                 getWhitelist();
 
                 try {
-                    Thread.sleep(TimeUnit.HOURS.toMillis(1)); //Wait every hour
+                    Thread.sleep(TimeUnit.MINUTES.toMillis(10)); //Wait every hour
                 } catch (Exception ignored) {
                 }
             }
@@ -70,7 +70,7 @@ public class UrlWhitelistModule extends Module {
         if (e.getMember() == null) return;
         if (e.getAuthor().isBot()) return;
         if (e.getMember().getRoles().contains(STAFF_ROLE.query().first())) return;
-        if (SUPPORT_CATEGORIES.query().stream().anyMatch(c -> c.getId().equals(e.getChannel().getParent().getId()))) return;
+        if (IGNORED_CATEGORIES.query().stream().anyMatch(c -> c.getId().equals(e.getChannel().getParent().getId()))) return;
 
         String message = e.getMessage().getContentRaw();
 
@@ -89,7 +89,7 @@ public class UrlWhitelistModule extends Module {
                 e.getMessage().delete().queue();
                 new TechEmbedBuilder("Blocked URL(s)")
                         .color(Color.RED)
-                        .text("Your message contained a URL which is not in our whitelist.\n\nIf you think this is a mistake, take a look at our [**whitelist**](https://github.com/TechsCode-Team/UrlWhitelist).")
+                        .text("Your message contained a URL which is not in our whitelist.\n\nIf you think this is a mistake, take a look at our [**link whitelist**](https://github.com/TechsCode-Team/TechBot-Whitelists/blob/main/urlWhitelist.txt).")
                         .sendTemporary(e.getChannel(), 10, TimeUnit.SECONDS);
             }
         }
@@ -98,7 +98,7 @@ public class UrlWhitelistModule extends Module {
 
     private void getWhitelist() {
         try {
-            URL url = new URL("https://raw.githubusercontent.com/TechsCode-Team/UrlWhitelist/main/urls.txt");
+            URL url = new URL("https://raw.githubusercontent.com/TechsCode-Team/TechBot-Whitelists/main/urlWhitelist.txt");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
 
@@ -112,7 +112,7 @@ public class UrlWhitelistModule extends Module {
                 }
                 in.close();
             } else {
-                System.err.println("Error getting url whitelist list");
+                System.err.println("Error getting url whitelist");
             }
             con.disconnect();
         } catch (Exception e) {
