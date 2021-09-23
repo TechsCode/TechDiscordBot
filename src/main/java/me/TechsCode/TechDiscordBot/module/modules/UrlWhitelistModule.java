@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class UrlWhitelistModule extends Module {
+
     private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
         @Override
         protected Query<Role> newQuery() {
@@ -34,10 +35,13 @@ public class UrlWhitelistModule extends Module {
 
     private final DefinedQuery<Category> IGNORED_CATEGORIES = new DefinedQuery<Category>() {
         @Override
-        protected Query<Category> newQuery() { return bot.getCategories("\uD83D\uDCC1 | Archives", "\uD83D\uDCD1 | Staff Logs", "Other Staff Discussions", "staff discussions", "⚖ | Leadership-Discussions", "\uD83C\uDFAB ︱Tickets"); }
+        protected Query<Category> newQuery() {
+            return bot.getCategories("\uD83D\uDCC1 | Archives", "\uD83D\uDCD1 | Staff Logs", "Other Staff Discussions", "staff discussions", "⚖ | Leadership-Discussions", "\uD83C\uDFAB ︱Tickets");
+        }
     };
 
-    List<String> whitelistedUrls = new ArrayList<String>();
+    private final List<String> WHITELISTED_URLS = new ArrayList<>();
+    private final String URL = "https://raw.githubusercontent.com/TechsCode-Team/TechBot-Whitelists/main/urlWhitelist.txt";
 
     public UrlWhitelistModule(TechDiscordBot bot) {
         super(bot);
@@ -50,16 +54,14 @@ public class UrlWhitelistModule extends Module {
                 getWhitelist();
 
                 try {
-                    Thread.sleep(TimeUnit.MINUTES.toMillis(10)); //Wait every hour
-                } catch (Exception ignored) {
-                }
+                    Thread.sleep(TimeUnit.MINUTES.toMillis(10));
+                } catch (Exception ignored) { }
             }
         }).start();
     }
 
     @Override
-    public void onDisable() {
-    }
+    public void onDisable() { }
 
     public String getName() {
         return "UrlWhitelistModule";
@@ -67,53 +69,49 @@ public class UrlWhitelistModule extends Module {
 
     @SubscribeEvent
     public void onMessage(GuildMessageReceivedEvent e) {
-        if (e.getMember() == null) return;
-        if (e.getAuthor().isBot()) return;
-        if (e.getMember().getRoles().contains(STAFF_ROLE.query().first())) return;
-        if (IGNORED_CATEGORIES.query().stream().anyMatch(c -> c.getId().equals(e.getChannel().getParent().getId()))) return;
+        if (e.getMember() == null || e.getAuthor().isBot() || e.getMember().getRoles().contains(STAFF_ROLE.query().first()) || IGNORED_CATEGORIES.query().stream().anyMatch(c -> c.getId().equals(e.getChannel().getParent().getId()))) return;
 
         String message = e.getMessage().getContentRaw();
 
-        boolean blockMessage = false;
-
-        if (!whitelistedUrls.isEmpty()) {
+        if (!WHITELISTED_URLS.isEmpty()) {
             Set<String> extractedUrls = extractUrls(message);
-            for (String extractedUrl : extractedUrls) {
-                if (!whitelistedUrls.contains(extractedUrl)) {
-                    blockMessage = true;
-                    break;
-                }
-            }
+            boolean blockMessage = extractedUrls.stream().anyMatch(extractedUrl -> !WHITELISTED_URLS.contains(extractedUrl));
 
             if (blockMessage) {
                 e.getMessage().delete().queue();
                 new TechEmbedBuilder("Blocked URL(s)")
                         .color(Color.RED)
-                        .text("Your message contained a URL which is not in our whitelist.\n\nIf you think this is a mistake, take a look at our [**link whitelist**](https://github.com/TechsCode-Team/TechBot-Whitelists/blob/main/urlWhitelist.txt).")
+                        .text("Your message contained a URL which is not in our whitelist.\n\nIf you think this is a mistake, take a look at our [**link whitelist**](" + URL + ").")
                         .sendTemporary(e.getChannel(), 10, TimeUnit.SECONDS);
             }
         }
-
     }
 
     private void getWhitelist() {
         try {
-            URL url = new URL("https://raw.githubusercontent.com/TechsCode-Team/TechBot-Whitelists/main/urlWhitelist.txt");
+            URL url = new URL(URL);
+
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
 
             int status = con.getResponseCode();
+
             if (status == 200) {
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(con.getInputStream()));
+                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
+
                 while ((inputLine = in.readLine()) != null) {
-                    whitelistedUrls.add(inputLine.trim());
+                    String word = inputLine.trim().toLowerCase();
+
+                    if(!WHITELISTED_URLS.contains(word))
+                        WHITELISTED_URLS.add(word);
                 }
+
                 in.close();
             } else {
-                System.err.println("Error getting url whitelist");
+                TechDiscordBot.log("ERROR", "Failed to fetch the white listed urls.");
             }
+
             con.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
@@ -132,22 +130,24 @@ public class UrlWhitelistModule extends Module {
 
         while (m.find()) {
             String regexResponse = m.group(0);
-            try{
+
+            try {
                 URL url = new URL(regexResponse);
                 String[] domainExploded = url.getHost().split("\\.");
                 domain = domainExploded[domainExploded.length - 2] + "." + domainExploded[domainExploded.length - 1];
                 successfulParse = true;
-            }catch (Exception ignored){}
+            } catch (Exception ignored) {}
 
-            if(successfulParse){
+            if(successfulParse)
                 containedUrls.add(domain);
-            }
         }
 
         return containedUrls;
     }
 
     public Requirement[] getRequirements() {
-        return new Requirement[0];
+        return new Requirement[] {
+                new Requirement(IGNORED_CATEGORIES, IGNORED_CATEGORIES.query().amount(), "Could not find all of the ignored category channels.")
+        };
     }
 }

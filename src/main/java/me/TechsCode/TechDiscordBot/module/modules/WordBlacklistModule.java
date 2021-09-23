@@ -21,12 +21,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public class WordBlacklistModule extends Module {
+
     private final DefinedQuery<Category> IGNORED_CATEGORIES = new DefinedQuery<Category>() {
         @Override
-        protected Query<Category> newQuery() { return bot.getCategories("\uD83D\uDCC1 | Archives", "\uD83D\uDCD1 | Staff Logs", "Other Staff Discussions", "staff discussions", "⚖ | Leadership-Discussions"); }
+        protected Query<Category> newQuery() {
+            return bot.getCategories("\uD83D\uDCC1 | Archives", "\uD83D\uDCD1 | Staff Logs", "Other Staff Discussions", "staff discussions", "⚖ | Leadership-Discussions");
+        }
     };
 
-    List<String> blackListedWords = new ArrayList<String>();
+    private final List<String> BLACKLISTED_WORDS = new ArrayList<>();
+    private final String URL = "https://raw.githubusercontent.com/TechsCode-Team/TechBot-Whitelists/main/wordBlacklist";
 
     public WordBlacklistModule(TechDiscordBot bot) {
         super(bot);
@@ -39,16 +43,14 @@ public class WordBlacklistModule extends Module {
                 getBlacklist();
 
                 try {
-                    Thread.sleep(TimeUnit.MINUTES.toMillis(10)); //Wait every hour
-                } catch (Exception ignored) {
-                }
+                    Thread.sleep(TimeUnit.MINUTES.toMillis(10));
+                } catch (Exception ignored) { }
             }
         }).start();
     }
 
     @Override
-    public void onDisable() {
-    }
+    public void onDisable() { }
 
     public String getName() {
         return "WordBlacklistModule";
@@ -56,45 +58,48 @@ public class WordBlacklistModule extends Module {
 
     @SubscribeEvent
     public void onMessage(GuildMessageReceivedEvent e) {
-        if (e.getMember() == null) return;
-        if (e.getAuthor().isBot()) return;
-        if (IGNORED_CATEGORIES.query().stream().anyMatch(c -> c.getId().equals(e.getChannel().getParent().getId()))) return;
+        if (e.getMember() == null || e.getAuthor().isBot() || IGNORED_CATEGORIES.query().stream().anyMatch(c -> c.getId().equals(e.getChannel().getParent().getId()))) return;
 
         String message = e.getMessage().getContentRaw().toLowerCase();
+        String blacklist = String.join("|", BLACKLISTED_WORDS);
 
-        String blacklist = String.join("|", blackListedWords);
-
-        String regex = "[^!@#$%^&*]*("+blacklist+")[^!@#$%^&*]*";
+        String regex = "[^!@#$%^&*]*(" + blacklist + ")[^!@#$%^&*]*";
         boolean blockMessage= Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL).matcher(message).matches();
 
         if (blockMessage) {
             e.getMessage().delete().queue();
             new TechEmbedBuilder("Blocked Word(s)")
                     .color(Color.RED)
-                    .text("Your message contained a world which is in our blacklist.\n\nIf you think this is a mistake, take a look at our [**word blacklist**](https://github.com/TechsCode-Team/TechBot-Whitelists/blob/main/wordBlacklist).")
+                    .text("Your message contained a world which is in our blacklist.\n\nIf you think this is a mistake, take a look at our [**word blacklist**](" + URL + ").")
                     .sendTemporary(e.getChannel(), 10, TimeUnit.SECONDS);
         }
-
     }
 
     private void getBlacklist() {
         try {
-            URL url = new URL("https://raw.githubusercontent.com/TechsCode-Team/TechBot-Whitelists/main/wordBlacklist");
+            URL url = new URL(URL);
+
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
 
             int status = con.getResponseCode();
+
             if (status == 200) {
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(con.getInputStream()));
+                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
+
                 while ((inputLine = in.readLine()) != null) {
-                    blackListedWords.add(inputLine.trim().toLowerCase());
+                    String word = inputLine.trim().toLowerCase();
+
+                    if(!BLACKLISTED_WORDS.contains(word))
+                        BLACKLISTED_WORDS.add(word);
                 }
+
                 in.close();
             } else {
-                System.err.println("Error getting world blacklist");
+                TechDiscordBot.log("ERROR", "Failed to fetch the black listed words.");
             }
+
             con.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,6 +107,8 @@ public class WordBlacklistModule extends Module {
     }
 
     public Requirement[] getRequirements() {
-        return new Requirement[0];
+        return new Requirement[] {
+                new Requirement(IGNORED_CATEGORIES, IGNORED_CATEGORIES.query().amount(), "Could not find all of the ignored category channels.")
+        };
     }
 }
