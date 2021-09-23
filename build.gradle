@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    implementation ('net.dv8tion:JDA:4.3.0_299') { exclude module: 'opus-java' }
+    implementation ('net.dv8tion:JDA:4.3.0_331') { exclude module: 'opus-java' }
 
     implementation 'com.google.guava:guava:30.1.1-jre'
     implementation 'org.jsoup:jsoup:1.14.2'
