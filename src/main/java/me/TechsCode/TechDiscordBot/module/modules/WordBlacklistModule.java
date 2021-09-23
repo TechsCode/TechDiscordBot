@@ -16,11 +16,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
-public class WordWhitelistModule extends Module {
+public class WordBlacklistModule extends Module {
     private final DefinedQuery<Category> IGNORED_CATEGORIES = new DefinedQuery<Category>() {
         @Override
         protected Query<Category> newQuery() { return bot.getCategories("\uD83D\uDCC1 | Archives", "\uD83D\uDCD1 | Staff Logs", "Other Staff Discussions", "staff discussions", "⚖ | Leadership-Discussions"); }
@@ -28,7 +28,7 @@ public class WordWhitelistModule extends Module {
 
     List<String> blackListedWords = new ArrayList<String>();
 
-    public WordWhitelistModule(TechDiscordBot bot) {
+    public WordBlacklistModule(TechDiscordBot bot) {
         super(bot);
     }
 
@@ -60,15 +60,12 @@ public class WordWhitelistModule extends Module {
         if (e.getAuthor().isBot()) return;
         if (IGNORED_CATEGORIES.query().stream().anyMatch(c -> c.getId().equals(e.getChannel().getParent().getId()))) return;
 
-        String[] message = e.getMessage().getContentRaw().toLowerCase().split(" ");
+        String message = e.getMessage().getContentRaw().toLowerCase();
 
-        boolean blockMessage = false;
-        for (String blackListedWord : blackListedWords) {
-            if(Arrays.asList(message).contains(blackListedWord)){
-                blockMessage = true;
-                break;
-            }
-        }
+        String blacklist = String.join("|", blackListedWords);
+
+        String regex = "[^!@#$%^&*]*("+blacklist+")[^!@#$%^&*]*";
+        boolean blockMessage= Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL).matcher(message).matches();
 
         if (blockMessage) {
             e.getMessage().delete().queue();
