@@ -57,13 +57,13 @@ public class TechDiscordBot {
         }
 
         try {
-            new TechDiscordBot(Config.getInstance().getToken(), Config.getInstance().getApiToken(), Config.getInstance().getSongodaApiToken(), MySQLSettings.of(Config.getInstance().getMySqlHost(), Config.getInstance().getMySqlPort(), Config.getInstance().getMySqlDatabase(), Config.getInstance().getMySqlUsername(), Config.getInstance().getMySqlPassword()), Config.getInstance().getGithubToken(), Config.getInstance().getPteroUrl(), Config.getInstance().getPteroClientToken(), Config.getInstance().getPteroApiToken());
+            new TechDiscordBot(Config.getInstance().getToken(), Config.getInstance().getApiToken(), Config.getInstance().getSongodaApiToken(), MySQLSettings.of(Config.getInstance().getMySqlHost(), Config.getInstance().getMySqlPort(), Config.getInstance().getMySqlDatabase(), Config.getInstance().getMySqlUsername(), Config.getInstance().getMySqlPassword()), Config.getInstance().getGithubToken(), Config.getInstance().getPteroUrl(), Config.getInstance().getPteroClientToken(), Config.getInstance().getPteroApiToken(), Config.getInstance().getSpigotApiUrl());
         } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    public TechDiscordBot(String token, String apiToken, String songodaApiToken, MySQLSettings mySQLSettings, String githubToken, String pteroUrl, String pteroClientToken, String pteroApiToken) throws LoginException, InterruptedException {
+    public TechDiscordBot(String token, String apiToken, String songodaApiToken, MySQLSettings mySQLSettings, String githubToken, String pteroUrl, String pteroClientToken, String pteroApiToken, String spigotApiUrl) throws LoginException, InterruptedException {
         i = this;
 
         jda = JDABuilder.createDefault(token)
@@ -99,7 +99,7 @@ public class TechDiscordBot {
 
         TechDiscordBot.githubToken = githubToken;
 
-        spigotAPI = new SpigotApi("http://api.techscode.de/", apiToken);
+        spigotAPI = new SpigotApi(spigotApiUrl, apiToken);
         songodaAPIClient = new SongodaAPIClient(songodaApiToken);
 
         log("Initializing MySQL Storage " + mySQLSettings.getHost() + ":" + mySQLSettings.getPort() + "!");

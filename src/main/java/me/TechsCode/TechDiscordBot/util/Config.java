@@ -57,7 +57,8 @@ public class Config {
                 !getMySqlDatabase().equals("") ||
                 !getMySqlUsername().equals("") ||
                 !getMySqlPassword().equals("") ||
-                !getGithubToken().equals("");
+                !getGithubToken().equals("") ||
+                !getSpigotApiUrl().equals("");
     }
 
     public String getToken(){
@@ -107,4 +108,6 @@ public class Config {
     public String getPteroApiToken(){
         return root.get("pterodactylApiToken").getAsString();
     }
+
+    public String getSpigotApiUrl(){return root.get("spigotApiUrl").getAsString();}
 }
