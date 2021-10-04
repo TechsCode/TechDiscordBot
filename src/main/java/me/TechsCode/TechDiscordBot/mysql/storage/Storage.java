@@ -20,7 +20,7 @@ public class Storage {
     private final MySQL mysql;
     private boolean connected;
 
-    private final String VERIFICATIONS_TABLE = "Verifications";
+    private final String VERIFICATIONS_TABLE = "VerificationsOld";
     private final String REMINDERS_TABLE = "Reminders";
     private final String MUTES_TABLE = "Mutes";
     private final String SUB_VERIFICATIONS_TABLE = "SubVerifications";
