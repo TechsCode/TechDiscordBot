@@ -39,6 +39,7 @@ public class RoleCommand extends CommandModule {
         add("MC-Market");
         add("Songoda");
         add("Polymart");
+        add("Songoda Verified");
         add("Verified");
         add("Review Squad");
     }};
@@ -57,6 +58,7 @@ public class RoleCommand extends CommandModule {
         add("Songoda");
         add("Polymart");
         add("Verified");
+        add("Songoda Verified");
         add("Review Squad");
         add("Junior Supporter");
         add("Supporter");
@@ -80,6 +82,7 @@ public class RoleCommand extends CommandModule {
         add("Songoda");
         add("Polymart");
         add("Verified");
+        add("Songoda Verified");
         add("Review Squad");
         add("Junior Supporter");
         add("Supporter");
