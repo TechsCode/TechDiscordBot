@@ -66,7 +66,7 @@ public class CheckWarnsCommand extends CommandModule {
         embed.text("This user has "+warnings.size()+" warnings.");
 
         for (Warning warning : warnings) {
-            embed.addField(warning.getTimeFormatted(), "Reason: "+warning.getReason()+" | ID: "+warning.getId()+"\nReporter: "+warning.getReporter().getAsMention(), false);
+            embed.addField(warning.getTimeFormatted(), "Reason: "+warning.getReason()+" | ID: "+warning.getId()+"\nIssuer: "+warning.getReporter().getAsMention(), false);
         }
         
         e.replyEmbeds(embed.build()).queue();
