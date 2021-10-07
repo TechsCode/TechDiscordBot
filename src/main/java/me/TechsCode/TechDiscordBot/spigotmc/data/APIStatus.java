@@ -19,6 +19,27 @@ public enum APIStatus {
         this.emojiName = emojiName;
     }
 
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public boolean isUsable() {
+        return this == ONLINE || this == NOT_FETCHING;
+    }
+
+    public boolean isVerifyUsable() {
+        return this == ONLINE;
+    }
+
+    public String getEmoji() {
+        return TechDiscordBot.getGuild().getEmotesByName(emojiName, true).get(0).getAsMention();
+    }
+
     public static APIStatus getSpigotStatus(SpigotAPIManager client) {
         APIStatus status;
 
