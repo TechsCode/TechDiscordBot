@@ -93,7 +93,7 @@ public class Storage {
             e.printStackTrace();
         }
 
-       return hasSubVerification;
+        return hasSubVerification;
     }
 
     public boolean isSubVerifiedUser(String discordId_subVerified) {
