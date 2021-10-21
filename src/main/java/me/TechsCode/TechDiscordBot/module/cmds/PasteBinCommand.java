@@ -39,6 +39,6 @@ public class PasteBinCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
-        e.reply("https://paste.greazi.com").queue();
+        e.reply("http://paste.techscode.com/").queue();
     }
 }
