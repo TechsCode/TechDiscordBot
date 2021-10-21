@@ -8,9 +8,9 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
-public class PasteBinCommand extends CommandModule {
+public class PastebinCommand extends CommandModule {
 
-    public PasteBinCommand(TechDiscordBot bot) {
+    public PastebinCommand(TechDiscordBot bot) {
         super(bot);
     }
 
@@ -39,6 +39,6 @@ public class PasteBinCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
-        e.reply("http://paste.techscode.com/").queue();
+        e.reply("https://paste.techscode.com/").queue();
     }
 }
