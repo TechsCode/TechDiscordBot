@@ -88,20 +88,4 @@ public enum APIStatus {
         return status;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public boolean isUsable() {
-        return this == ONLINE || this == NOT_FETCHING;
-    }
-
-    public String getEmoji() {
-        return TechDiscordBot.getGuild().getEmotesByName(emojiName, true).get(0).getAsMention();
-    }
-
 }

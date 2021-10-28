@@ -58,7 +58,7 @@ public class OverviewCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
-        if(!TechDiscordBot.getBot().getSpigotStatus().isUsable()) {
+        if(!TechDiscordBot.getSpigotStatus().isUsable()) {
             e.replyEmbeds(
                     new TechEmbedBuilder("API")
                             .text("The API has to be usable to execute this command!")
