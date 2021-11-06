@@ -71,7 +71,6 @@ public class PruneCommand extends CommandModule {
 
     @SubscribeEvent
     public void onButtonClick(ButtonClickEvent event) {
-        if(!event.getComponentId().contains(":")) return;
         String[] id = event.getComponentId().split(":");
 
         String authorId = id[0];
