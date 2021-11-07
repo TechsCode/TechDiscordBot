@@ -72,7 +72,15 @@ public class VerificationModule extends Module {
         if (lastInstructions != null)
             lastInstructions.delete().complete();
 
-        TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("How It Works").text("**SpigotMC**\nType your SpigotMC Username in this Chat to verify.\n\n**MC-Market**\nTo verify your MC-Market purchases, please contact a\n<@&854044253885956136> or <@&608113993038561325> for manual verification.\n\n**Songoda**\nTo verify your Songoda purchases, please link your\nDiscord account to the Songoda website, simple as that!\n\nMake sure your profile is set to public and **not** private.\nVerification is not working? Please contact a staff member in <#311178000026566658>.");
+        TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("Manual Verification").text("Hi there,\n" +
+                "\n" +
+                "Unfortunately our verification system is down therefor we need to verify your purchases manually.\n" +
+                "\n" +
+                "To verify your purchase, we ask you to fill out this form [HERE](https://forms.gle/ucpCX6yznMeidXp9A)\n" +
+                "\n" +
+                "Once you have filled in the form, we will receive it and review it as fast as possible.\n" +
+                "\n" +
+                "*Do not DM or ping any staff member to get verified or ask if it can be done faster*");
         lastInstructions = howItWorksMessage.complete(channel);
     }
 
@@ -87,14 +95,14 @@ public class VerificationModule extends Module {
 
         TechEmbedBuilder errorMessage = new TechEmbedBuilder("Error (" + e.getAuthor().getName() + ")").error();
 
-        if (!TechDiscordBot.getBot().getSpigotStatus().isUsable()) {
-            errorMessage.text("**The API is currently offline.**\nThere is no ETA of when it will be back up.\nYou will have to wait to verify until then.").error().sendTemporary(channel, 10);
-
-            String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + "Tried to verify but the the api is down!";
-            alertMsg(msg);
-
-            return;
-        }
+//        if (!TechDiscordBot.getBot().getSpigotStatus().isUsable()) {
+//            errorMessage.text("**The API is currently offline.**\nThere is no ETA of when it will be back up.\nYou will have to wait to verify until then.").error().sendTemporary(channel, 10);
+//
+//            String msg = "User " + e.getAuthor().getName() + "#" + e.getAuthor().getDiscriminator() + "Tried to verify but the the api is down!";
+//            alertMsg(msg);
+//
+//            return;
+//        }
 
         if (verificationQueue.contains(e.getAuthor().getId())) {
             errorMessage.text("Please follow the instruction above!").sendTemporary(channel, 15);
