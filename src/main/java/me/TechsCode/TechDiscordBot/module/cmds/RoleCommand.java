@@ -22,7 +22,7 @@ public class RoleCommand extends CommandModule {
     private final DefinedQuery<Role> STAFF_ROLES = new DefinedQuery<Role>() {
         @Override
         protected Query<Role> newQuery() {
-            return bot.getRoles("Senior Supporter", "Assistant", "Developer", "\uD83D\uDCBB Coding Wizard");
+            return bot.getRoles("Senior Supporter");
         }
     };
 
@@ -42,56 +42,6 @@ public class RoleCommand extends CommandModule {
         add("Songoda Verified");
         add("Verified");
         add("Review Squad");
-    }};
-
-    private final ArrayList<String> ASSISTANT_ROLES = new ArrayList<String>() {{
-        add("Ultra Permissions");
-        add("Ultra Customizer");
-        add("Ultra Punishments");
-        add("Ultra Regions");
-        add("Insane Shops");
-        add("Ultra Economy");
-        add("Ultra Scoreboards");
-        add("Keep Roles");
-        add("SpigotMC");
-        add("MC-Market");
-        add("Songoda");
-        add("Polymart");
-        add("Verified");
-        add("Songoda Verified");
-        add("Review Squad");
-        add("Junior Supporter");
-        add("Supporter");
-        add("Senior Supporter");
-        add("Retired");
-        add("Wiki Editor");
-        add("Staff");
-    }};
-
-    private final ArrayList<String> DEVELOPER_ROLES = new ArrayList<String>() {{
-        add("Ultra Permissions");
-        add("Ultra Customizer");
-        add("Ultra Punishments");
-        add("Ultra Regions");
-        add("Insane Shops");
-        add("Ultra Economy");
-        add("Ultra Scoreboards");
-        add("Keep Roles");
-        add("SpigotMC");
-        add("MC-Market");
-        add("Songoda");
-        add("Polymart");
-        add("Verified");
-        add("Songoda Verified");
-        add("Review Squad");
-        add("Junior Supporter");
-        add("Supporter");
-        add("Senior Supporter");
-        add("Retired");
-        add("Wiki Editor");
-        add("Staff");
-        add("Assistant");
-        add("Team Manager");
     }};
 
     public RoleCommand(TechDiscordBot bot) {
@@ -141,11 +91,11 @@ public class RoleCommand extends CommandModule {
             return;
         }
 
-        if((m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(854044253885956136L)) && !m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(608113993038561325L)) && !SENIOR_SUPPORTER_ROLES.contains(role.getName())) || m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(608113993038561325L)) && !ASSISTANT_ROLES.contains(role.getName())) {
+        if((m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(854044253885956136L)) && !m.getRoles().contains(TechDiscordBot.getGuild().getRoleById(608113993038561325L)) && !SENIOR_SUPPORTER_ROLES.contains(role.getName()))) {
             e.replyEmbeds(
                     new TechEmbedBuilder("Role Management")
                             .color(Color.orange)
-                            .text("**Senior Supporter**: Verified, Plugins, Marketplaces, Review Squad & Keep Roles\n**Assistant**: Staff, Supporter Roles, Retired, Wiki Editor & Plugin Lab\n**Developer**: Assistant & Team Manager")
+                            .text("**Senior Supporter**: Verified, Plugins, Marketplaces, Review Squad & Keep Roles")
                             .build()
             ).queue();
             return;
