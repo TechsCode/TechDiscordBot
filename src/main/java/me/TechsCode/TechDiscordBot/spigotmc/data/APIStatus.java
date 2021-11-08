@@ -19,7 +19,6 @@ public enum APIStatus {
         this.emojiName = emojiName;
     }
 
-
     public String getStatus() {
         return status;
     }
