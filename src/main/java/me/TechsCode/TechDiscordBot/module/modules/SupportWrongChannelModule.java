@@ -85,7 +85,7 @@ public class SupportWrongChannelModule extends Module {
     public void triggerMessage(Message sentMessage, Member member) {
         if (messages.containsValue(member.getId())) return;
 
-        TextChannel verificationChannel = bot.getChannel("695493411117072425");
+        TextChannel verificationChannel = bot.getChannel("907349490556616745");
         TechEmbedBuilder teb = new TechEmbedBuilder()
                 .text("Hello, " + member.getAsMention() + "! I've detected that you might be trying to get help in this channel! Please verify in " + verificationChannel.getAsMention() + " in order to get help, thanks!\n\n*If you are not trying to get help, you can delete this message by reacting to it!*")
                 .error();
