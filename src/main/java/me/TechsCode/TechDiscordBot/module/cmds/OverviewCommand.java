@@ -24,7 +24,7 @@ public class OverviewCommand extends CommandModule {
     };
     private final DefinedQuery<TextChannel> OVERVIEW_CHANNEL = new DefinedQuery<TextChannel>() {
         @Override
-        protected Query<TextChannel> newQuery() { return bot.getChannels("overview"); }
+        protected Query<TextChannel> newQuery() { return bot.getChannels("#\uD83D\uDCCC︱overview"); }
     };
 
     public OverviewCommand(TechDiscordBot bot) {
@@ -33,7 +33,7 @@ public class OverviewCommand extends CommandModule {
 
     @Override
     public String getName() {
-        return "#\uD83D\uDCCC︱overview ";
+        return "overview";
     }
 
     @Override
