@@ -26,7 +26,7 @@ public class RulesCommand extends CommandModule {
     private final DefinedQuery<TextChannel> OVERVIEW_CHANNEL = new DefinedQuery<TextChannel>() {
         @Override
         protected Query<TextChannel> newQuery() {
-            return bot.getChannels("overview");
+            return bot.getChannels("\uD83D\uDCCC︱overview");
         }
     };
 
