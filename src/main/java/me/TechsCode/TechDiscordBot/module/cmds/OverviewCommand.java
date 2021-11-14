@@ -33,7 +33,7 @@ public class OverviewCommand extends CommandModule {
 
     @Override
     public String getName() {
-        return "overview";
+        return "#\uD83D\uDCCC︱overview ";
     }
 
     @Override
