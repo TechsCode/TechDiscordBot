@@ -74,7 +74,7 @@ public class VerificationModule extends Module {
 
         TechEmbedBuilder howItWorksMessage = new TechEmbedBuilder("Manual Verification").text("Hi there,\n" +
                 "\n" +
-                "Unfortunately our verification system is down therefor we need to verify your purchases manually.\n" +
+                "Due to the unavailability of our verification system, we will have to manually authenticate your transactions.\n" +
                 "\n" +
                 "To verify your purchase, we ask you to fill out this form [HERE](https://forms.gle/ucpCX6yznMeidXp9A)\n" +
                 "\n" +
