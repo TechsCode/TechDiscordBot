@@ -16,12 +16,12 @@ public class UltraEditorCommand extends CommandModule {
 
     @Override
     public String getName() {
-        return "ultraeditor";
+        return "insaneeditor";
     }
 
     @Override
     public String getDescription() {
-        return "Returns the Ultra Editor website!";
+        return "Returns the Insane Editor website!";
     }
 
     @Override
@@ -41,6 +41,6 @@ public class UltraEditorCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
-        e.reply("https://ultraeditor.tech").queue();
+        e.reply("https://insaneeditor.com").queue();
     }
 }
