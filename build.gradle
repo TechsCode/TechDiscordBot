@@ -3,8 +3,6 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 group = "me.TechsCode"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'
 
 assemble.dependsOn shadowJar
