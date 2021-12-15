@@ -30,7 +30,7 @@ public class WordBlacklistModule extends Module {
         @Override
         protected Query<Category> newQuery() {
             //return bot.getCategories("\uD83D\uDCC1 | Archives", "\uD83D\uDCD1 | Staff Logs", "Other Staff Discussions", "staff discussions", "⚖ | Leadership-Discussions"); //Category for Official Use
-            return bot.getCategories("\uD83D\uDCAC | Community Talk", "\uD83D\uDCAC | General Discussions", "\uD83D\uDCE6︱Free Plugin Support", "\uD83D\uDCE6︱Paid Plugin Support", "⚖ | Leadership-Discussions", "Staff Discussions"); //Category for Testubg
+            return bot.getCategories("\uD83D\uDCAC | Community Talk", "\uD83D\uDCAC | General Discussions", "\uD83D\uDCE6︱Free Plugin Support", "\uD83D\uDCE6︱Paid Plugin Support", "⚖ | Leadership-Discussions", "Staff Discussions"); //Category for Testuse
         }
     };
 
@@ -91,8 +91,15 @@ public class WordBlacklistModule extends Module {
         AtomicBoolean blockMessage = new AtomicBoolean(false);
         for (String regex : BLACKLISTED_WORDS) {
             Matcher matcher = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL).matcher(message);
+
+            TechDiscordBot.log(message);
+            TechDiscordBot.log("matches: "+matcher.matches());
+            TechDiscordBot.log("find: "+matcher.find());
+            TechDiscordBot.log(regex);
+
             boolean match = matcher.find();
             if (match) {
+                TechDiscordBot.log(matcher.group(1));
                 blockMessage.set(true);
                 break;
             }
