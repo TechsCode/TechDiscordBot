@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class WordBlacklistModule extends Module {
@@ -88,8 +89,10 @@ public class WordBlacklistModule extends Module {
     public boolean runMatcher(String message){
         AtomicBoolean blockMessage = new AtomicBoolean(false);
         for (String regex : BLACKLISTED_WORDS) {
-            boolean match = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL).matcher(message).find();
-            if (match) {
+            Matcher matcher = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL).matcher(message);
+            boolean match = matcher.find();
+            String group = matcher.group(0);
+            if (match && (!group.startsWith(":") && !group.endsWith(":"))) {
                 blockMessage.set(true);
                 break;
             }
