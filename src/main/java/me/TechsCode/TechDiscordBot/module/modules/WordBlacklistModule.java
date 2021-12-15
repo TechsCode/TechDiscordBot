@@ -91,8 +91,7 @@ public class WordBlacklistModule extends Module {
         for (String regex : BLACKLISTED_WORDS) {
             Matcher matcher = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL).matcher(message);
             boolean match = matcher.find();
-            String group = matcher.group(0);
-            if (match && (!group.startsWith(":") && !group.endsWith(":"))) {
+            if (match) {
                 blockMessage.set(true);
                 break;
             }
