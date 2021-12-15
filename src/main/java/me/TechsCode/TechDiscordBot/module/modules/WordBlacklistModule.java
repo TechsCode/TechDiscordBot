@@ -92,14 +92,14 @@ public class WordBlacklistModule extends Module {
         for (String regex : BLACKLISTED_WORDS) {
             Matcher matcher = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL).matcher(message);
 
-            TechDiscordBot.log(message);
-            TechDiscordBot.log("matches: "+matcher.matches());
-            TechDiscordBot.log("find: "+matcher.find());
-            TechDiscordBot.log(regex);
+//            TechDiscordBot.log(message);
+//            TechDiscordBot.log("matches: "+matcher.matches());
+//            TechDiscordBot.log("find: "+matcher.find());
+//            TechDiscordBot.log(regex);
 
             boolean match = matcher.find();
             if (match) {
-                TechDiscordBot.log(matcher.group(1));
+//                TechDiscordBot.log(matcher.group(1));
                 blockMessage.set(true);
                 break;
             }
