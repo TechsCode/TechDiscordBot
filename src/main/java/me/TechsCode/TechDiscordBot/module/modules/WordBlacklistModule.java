@@ -29,7 +29,7 @@ public class WordBlacklistModule extends Module {
     private final DefinedQuery<Category> IGNORED_CATEGORIES = new DefinedQuery<Category>() {
         @Override
         protected Query<Category> newQuery() {
-            return bot.getCategories("\uD83D\uDCC1 | Archives", "\uD83D\uDCD1 | Staff Logs", "Other Staff Discussions", "staff discussions", "⚖ | Leadership-Discussions"); //Category for Official Use
+            return bot.getCategories("\uD83D\uDCC1 | Archives", "\uD83D\uDCD1 | Staff Logs", "Staff Discussions", "⚖ | Leadership-Discussions"); //Category for Official Use
             //return bot.getCategories("\uD83D\uDCAC | Community Talk", "\uD83D\uDCAC | General Discussions", "\uD83D\uDCE6︱Free Plugin Support", "\uD83D\uDCE6︱Paid Plugin Support", "⚖ | Leadership-Discussions", "Staff Discussions"); //Category for Testuse
         }
     };
