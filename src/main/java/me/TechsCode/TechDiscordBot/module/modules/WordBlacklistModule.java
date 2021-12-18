@@ -105,8 +105,6 @@ public class WordBlacklistModule extends Module {
                 break;
             }
         }
-
-        TechDiscordBot.log("block: "+blockMessage.get());
         return blockMessage.get();
     }
 
