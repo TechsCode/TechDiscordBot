@@ -9,6 +9,7 @@ import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
 import java.awt.*;
@@ -71,20 +72,37 @@ public class UrlWhitelistModule extends Module {
     public void onMessage(GuildMessageReceivedEvent e) {
         if (e.getMember() == null || e.getAuthor().isBot() || e.getMember().getRoles().contains(STAFF_ROLE.query().first()) || IGNORED_CATEGORIES.query().stream().anyMatch(c -> c.getId().equals(e.getChannel().getParent().getId()))) return;
 
-        String message = e.getMessage().getContentRaw();
+        boolean block = checkMessage(e.getMessage().getContentRaw());
+        if (block) {
+            e.getMessage().delete().queue();
+            new TechEmbedBuilder("Blocked URL(s)")
+                    .color(Color.RED)
+                    .text("Your message contained a URL which is not in our whitelist.\n\nIf you think this is a mistake, take a look at our [**link whitelist**](" + URL + ").")
+                    .sendTemporary(e.getChannel(), 10, TimeUnit.SECONDS);
+        }
+    }
 
+    @SubscribeEvent
+    public void onMessageUpdate(GuildMessageUpdateEvent e) {
+        if (e.getMember() == null || e.getAuthor().isBot() || e.getMember().getRoles().contains(STAFF_ROLE.query().first()) || IGNORED_CATEGORIES.query().stream().anyMatch(c -> c.getId().equals(e.getChannel().getParent().getId()))) return;
+
+        boolean block = checkMessage(e.getMessage().getContentRaw());
+        if (block) {
+            e.getMessage().delete().queue();
+            new TechEmbedBuilder("Blocked URL(s)")
+                    .color(Color.RED)
+                    .text("Your message contained a URL which is not in our whitelist.\n\nIf you think this is a mistake, take a look at our [**link whitelist**](" + URL + ").")
+                    .sendTemporary(e.getChannel(), 10, TimeUnit.SECONDS);
+        }
+    }
+
+    private boolean checkMessage(String message){
+        boolean blockMessage = false;
         if (!WHITELISTED_URLS.isEmpty()) {
             Set<String> extractedUrls = extractUrls(message);
-            boolean blockMessage = extractedUrls.stream().anyMatch(extractedUrl -> !WHITELISTED_URLS.contains(extractedUrl));
-
-            if (blockMessage) {
-                e.getMessage().delete().queue();
-                new TechEmbedBuilder("Blocked URL(s)")
-                        .color(Color.RED)
-                        .text("Your message contained a URL which is not in our whitelist.\n\nIf you think this is a mistake, take a look at our [**link whitelist**](" + URL + ").")
-                        .sendTemporary(e.getChannel(), 10, TimeUnit.SECONDS);
-            }
+            blockMessage = extractedUrls.stream().anyMatch(extractedUrl -> !WHITELISTED_URLS.contains(extractedUrl));
         }
+        return blockMessage;
     }
 
     private void getWhitelist() {
