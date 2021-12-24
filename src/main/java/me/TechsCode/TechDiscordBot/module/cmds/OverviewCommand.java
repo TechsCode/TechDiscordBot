@@ -114,7 +114,7 @@ public class OverviewCommand extends CommandModule {
 
     public void showFeedback() {
         new TechEmbedBuilder("Feedback")
-                .text("Would you like to suggest a feature or report a bug for Tech's Plugins? You can do so by clicking here: https://feedback.techscode.com")
+                .text("Would you like to suggest a feature or report a bug for Tech's Plugins? You can do so by clicking here: https://github.com/TechsCode-Team/Feedback/discussions")
                 .thumbnail("https://i.imgur.com/nzfiUTy.png")
                 .queue(OVERVIEW_CHANNEL.query().first());
     }
