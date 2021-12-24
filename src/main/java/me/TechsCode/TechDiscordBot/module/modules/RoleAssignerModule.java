@@ -28,7 +28,7 @@ public class RoleAssignerModule extends Module {
     private final DefinedQuery<Role> SONGODA_VERIFICATION_ROLE = new DefinedQuery<Role>() {
         @Override
         protected Query<Role> newQuery() {
-            return bot.getRoles("Songoda Verified");
+            return bot.getRoles("Songoda");
         }
     };
 

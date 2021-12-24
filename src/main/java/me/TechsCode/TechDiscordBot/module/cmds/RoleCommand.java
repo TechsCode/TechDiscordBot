@@ -39,7 +39,6 @@ public class RoleCommand extends CommandModule {
         add("MC-Market");
         add("Songoda");
         add("Polymart");
-        add("Songoda Verified");
         add("Verified");
         add("Review Squad");
     }};
