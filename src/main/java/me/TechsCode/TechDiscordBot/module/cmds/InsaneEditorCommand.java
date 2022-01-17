@@ -8,9 +8,9 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
-public class UltraEditorCommand extends CommandModule {
+public class InsaneEditorCommand extends CommandModule {
 
-    public UltraEditorCommand(TechDiscordBot bot) {
+    public InsaneEditorCommand(TechDiscordBot bot) {
         super(bot);
     }
 
