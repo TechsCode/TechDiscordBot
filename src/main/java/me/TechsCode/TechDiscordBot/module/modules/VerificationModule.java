@@ -76,7 +76,7 @@ public class VerificationModule extends Module {
                 "\n" +
                 "Due to the unavailability of our verification system, we will have to manually authenticate your transactions.\n" +
                 "\n" +
-                "To verify your purchase, we ask you to fill out this form [HERE](https://forms.gle/ucpCX6yznMeidXp9A)\n" +
+                "To verify your purchase, we ask you to fill out this form [here](https://forms.gle/PBX7z5LaXqdYh7wF6)\n" +
                 "\n" +
                 "Once you have filled in the form, we will receive it and review it as fast as possible.\n" +
                 "\n" +
