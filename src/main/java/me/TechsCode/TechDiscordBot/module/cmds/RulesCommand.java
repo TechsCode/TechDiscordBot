@@ -81,38 +81,38 @@ public class RulesCommand extends CommandModule {
     public void showTOS() {
         new TechEmbedBuilder("Discord TOS & Guidelines")
                 .text("This server is compliant with the Discord Terms of Service and Guidelines. " +
-                        "We will ban if the content is not a complaint. Be sure to familiarize yourself with them here:\n" +
+                        "We will ban if the content is not a compliant. Be sure to familiarize yourself with them here:\n" +
                         "- [Terms of Service](https://dis.gd/tos)\n- [Content Guidelines](https://dis.gd/guidelines)" +
                         "\n\nOur Staff reserve the right to request a member to confirm their age if they are perceived to be potentially under 13. Noncompliance will result in the assumption of being under 13.")
                 .queue(OVERVIEW_CHANNEL.query().first());
     }
 
     public void showRules_Section1() {
-        new TechEmbedBuilder("Section 1 - Text & Voice Chat")
+        new TechEmbedBuilder("Rules Section 1 - Text & Voice Chat")
                 .text("**`Article 1.1`**\n" +
                         "Attempting to bypass any blocked words or links may result in punishments.\n" +
                         "**`Article 1.2`**\n" +
                         "Hate speech is strictly prohibited.\n" +
                         "**`Article 1.3`**\n" +
-                        "NSFW (Not safe for work) is strictly prohibited, resulting in heavy punishments.\n" +
+                        "NSFW (Not safe for work) is strictly prohibited.\n" +
                         "**`Article 1.4`**\n" +
                         "Repeating a message five or more times will be classified as spam and prohibited.\n" +
                         "**`Article 1.5`**\n" +
-                        "Disrespectful, malicious, and harmful messages are strictly prohibited, resulting in heavy punishments.\n" +
+                        "Disrespectful, malicious, and harmful messages are strictly prohibited.\n" +
                         "**`Article 1.6`**\n" +
-                        "Mentioning a member then deleting your message is prohibited and may result in punishments.\n" +
+                        "Mentioning a member then deleting your message is prohibited.\n" +
                         "**`Article 1.7`**\n" +
                         "Mass mentioning users is prohibited and will result in punishments.\n" +
                         "**`Article 1.8`**\n" +
-                        "Providing any kind of supports to any of Tech's plugins to unverified members is strictly prohibited.")
+                        "Providing any kind of support to any of Tech's plugins to unverified members is strictly prohibited.")
                 .thumbnail("https://i.imgur.com/SfFEnoU.png")
                 .queue(OVERVIEW_CHANNEL.query().first());
     }
 
     public void showRules_Section2() {
-        new TechEmbedBuilder("Section 2 - Advertising")
+        new TechEmbedBuilder("Rules Section 2 - Advertising")
                 .text("**`Article 2.1`**\n" +
-                        "Advertising anywhere other than your about me and status is prohibited and will result in punishments.\n" +
+                        "Advertising anywhere other than your about me and status is prohibited.\n" +
                         "**`Article 2.2`**\n" +
                         "DM Advertising is strictly prohibited and will result in heavy punishments. If a Tech's Plugin Support member directly messages you an advertisement, please create a ticket to report them.\n" +
                         "**`Article 2.3`**\n" +
@@ -122,21 +122,21 @@ public class RulesCommand extends CommandModule {
     }
 
     public void showRules_Section3() {
-        new TechEmbedBuilder("Section 3 - Other")
+        new TechEmbedBuilder("Rules Section 3 - Other")
                 .text("**`Article 3.1`**\n" +
-                        "Inappropriate usernames and nicknames are prohibited and result in punishments.\n" +
+                        "Inappropriate usernames and nicknames are prohibited.\n" +
                         "**`Article 3.2`**\n" +
-                        "Using leaked or cracked copies of any resource are prohibited and result in heavy punishments.\n" +
+                        "Using leaked or cracked copies of any resource are prohibited.\n" +
                         "**`Article 3.3`**\n" +
-                        "Using or creating a modified version of premium resources is prohibited, resulting in heavy punishments.\n" +
+                        "Using or creating a modified version of premium resources is prohibited.\n" +
                         "**`Article 3.4`**\n" +
-                        "Asking for the staff or other particular roles is prohibited and will result in punishments.\n" +
+                        "Asking for the staff or other particular roles is prohibited.\n" +
                         "**`Article 3.5`**\n" +
-                        "Promoting the use of leaked or cracked resources are strictly prohibited, resulting in heavy punishments.\n" +
+                        "Promoting the use of leaked or cracked resources are strictly prohibited.\n" +
                         "**`Article 3.6`**\n" +
                         "Inviting or having alternative Discord accounts in this server may result in all of your accounts getting banned unless an Assistant or higher grants permission.\n" +
                         "**`Article 3.7`**\n" +
-                        "Sharing another user's Personal Identifiable Information (\"PII\") without express permission from them is strictly prohibited and will result in heavy punishments.")
+                        "Sharing another user's Personal Identifiable Information (\"PII\") without express permission from them is strictly prohibited.")
                 .thumbnail("https://i.imgur.com/SfFEnoU.png")
                 .queue(OVERVIEW_CHANNEL.query().first());
     }
