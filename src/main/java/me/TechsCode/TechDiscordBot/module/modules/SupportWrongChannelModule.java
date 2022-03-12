@@ -87,7 +87,7 @@ public class SupportWrongChannelModule extends Module {
 
         TextChannel verificationChannel = bot.getChannel("907349490556616745");
         TechEmbedBuilder teb = new TechEmbedBuilder()
-                .text("Hello, " + member.getAsMention() + "! I've detected that you might be trying to get help in this channel! To verify your purchase, we ask you to fill out this [form](https://forms.gle/ucpCX6yznMeidXp9A) in order to get help, thanks!\n\n*If you are not trying to get help, you can delete this message by reacting to it!*")
+                .text("Hello, " + member.getAsMention() + "! I've detected that you might be trying to get help in this channel! To verify your purchase, we ask you to fill out this [form](https://forms.gle/PBX7z5LaXqdYh7wF6) in order to get help, thanks!\n\n*If you are not trying to get help, you can delete this message by reacting to it!*")
                 .error();
 
 //        TextChannel verificationChannel = bot.getChannel("907349490556616745");
