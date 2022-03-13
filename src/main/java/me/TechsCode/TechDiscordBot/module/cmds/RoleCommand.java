@@ -35,6 +35,7 @@ public class RoleCommand extends CommandModule {
         add("Ultra Economy");
         add("Ultra Scoreboards");
         add("Ultra Motd");
+        add("Ultra Motd Preorder");
         add("Keep Roles");
         add("Spigot");
         add("MC-Market");
