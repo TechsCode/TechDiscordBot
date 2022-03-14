@@ -15,7 +15,7 @@ public class APIWebsiteCommand extends CommandModule {
     }
 
     @Override
-    public String getName() { return "api"; }
+    public String getName() { return "api website"; }
 
     @Override
     public String getDescription() {
