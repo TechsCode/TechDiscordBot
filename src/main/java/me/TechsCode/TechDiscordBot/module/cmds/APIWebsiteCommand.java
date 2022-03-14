@@ -8,9 +8,9 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
-public class APICommand extends CommandModule {
+public class APIWebsiteCommand extends CommandModule {
 
-    public APICommand(TechDiscordBot bot) {
+    public APIWebsiteCommand(TechDiscordBot bot) {
         super(bot);
     }
 
@@ -19,7 +19,7 @@ public class APICommand extends CommandModule {
 
     @Override
     public String getDescription() {
-        return "Returns the API website!";
+        return "Returns the api website!";
     }
 
     @Override
