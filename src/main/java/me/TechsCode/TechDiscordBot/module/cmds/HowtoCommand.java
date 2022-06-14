@@ -60,7 +60,7 @@ public class HowtoCommand extends CommandModule {
                                     "{#RRGGBB}Some Text{#RRGGBB}```\n" +
                                     "__For Gradients Colors__ >\n" +
                                     "```{#RRGGBB>}Some Text{#RRGGBB<}```\n" +
-                                    "To be able to create gradient colors in an easier way and having a preview of them you can use this [site](https://rgb.fedee.tk/), you have to select as `Type` **Techscode {#rrggbb>}** then write the text you want to use in `Message`, after modify the colors and finally copy the text where it will be written `Output`.")
+                                    "To be able to create gradient colors in an easier way and having a preview of them you can use this [site](https://rgb.fedee.tk/), you have to select as `Type` **TechsCode {#rrggbb>}** then write the text you want to use in `Message`, after modify the colors and finally copy the text where it will be written `Output`.")
                             //.field("EXAMPLE FIELD", "EXAMPLE FIELD CONTENT", true)
                             .build()
             ).queue();
