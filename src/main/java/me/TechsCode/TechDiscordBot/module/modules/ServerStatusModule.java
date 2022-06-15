@@ -51,7 +51,7 @@ public class ServerStatusModule extends Module {
 
 	@Override
 	public Requirement[] getRequirements() {
-		return null;
+		return new Requirement[0];
 	}
 
 }
