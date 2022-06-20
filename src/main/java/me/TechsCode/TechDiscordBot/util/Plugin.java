@@ -23,7 +23,8 @@ public enum Plugin {
     ULTRA_PUNISHMENTS("Ultra Punishments", PluginMarketplace.of("63511", "154", "19030", "1204"), "531255363505487872", "531251918291599401", new Color(247, 119, 39), "UltraPunishments", "https://www.spigotmc.org/data/resource_icons/63/63511.jpg?1597561836"),
     INSANE_SHOPS("Insane Shops", PluginMarketplace.of("67352", "153", "19032", "1202"), "531255363505487872", "576813543698202624", new Color(114, 185, 77), "InsaneShops", "https://www.spigotmc.org/data/resource_icons/67/67352.jpg?1597561788"),
     ULTRA_ECONOMY("Ultra Economy", PluginMarketplace.of("83374", "639", "19033", "1206"), "749034791936196649", "737773631198986240", new Color(255, 198, 10), "UltraEconomy", "https://www.spigotmc.org/data/resource_icons/83/83374.jpg?1598896895"),
-    ULTRA_SCOREBOARDS("Ultra Scoreboards", PluginMarketplace.of("93726", "643", "20697", "1401"), "811397836616630352", "858052621574078474", new Color(131, 52, 235), "UltraScoreboards", "https://www.spigotmc.org/data/resource_icons/93/93726.jpg?1624925787");
+    ULTRA_SCOREBOARDS("Ultra Scoreboards", PluginMarketplace.of("93726", "643", "20697", "1401"), "811397836616630352", "858052621574078474", new Color(131, 52, 235), "UltraScoreboards", "https://www.spigotmc.org/data/resource_icons/93/93726.jpg?1624925787"),
+    ULTRA_MOTD("Ultra Motd", PluginMarketplace.of("100883", "", "", ""), "936284238519599104", "931264562995540038", new Color(85, 144, 217), "UltraMotd", "https://www.spigotmc.org/data/resource_icons/100/100883.jpg?1647948784");
 
     private final PluginMarketplace pluginMarketplace;
     private final String channelId, roleName, roleId, emojiName, logo;
