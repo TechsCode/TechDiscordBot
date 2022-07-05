@@ -53,11 +53,12 @@ public class HowtoCommand extends CommandModule {
             e.replyEmbeds(
                     new TechEmbedBuilder("How To Use Hex & Gradient")
                             .success()
-                            .text("In order to use **Hex** and **Gradients** in Ultra and Insane plugins, you will have to use two different formats.\n" +
+                            .text("In order to use **Hex** and **Gradients** in Ultra and Insane plugins," +
+                                    "you will have to use two different formats.\n" +
                                     "\n" +
                                     "__For Hex Colors__ >\n" +
                                     "```\n" +
-                                    "{#RRGGBB}Some Text{#RRGGBB}```\n" +
+                                    "{#RRGGBB}Some Text```\n" +
                                     "__For Gradients Colors__ >\n" +
                                     "```{#RRGGBB>}Some Text{#RRGGBB<}```\n" +
                                     "To be able to create gradient colors in an easier way and having a preview of them you can use this [site](https://rgb.fedee.tk/), you have to select as `Type` **TechsCode {#rrggbb>}** then write the text you want to use in `Message`, after modify the colors and finally copy the text where it will be written `Output`.")
