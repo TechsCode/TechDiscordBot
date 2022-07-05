@@ -171,7 +171,7 @@ public class TicketModule extends Module {
             lastInstructions.delete().queue();
 
         TechEmbedBuilder issue = new TechEmbedBuilder("Ticket Creation (" + member.getEffectiveName() + ")")
-                .text("Last but not least, please tell us what you're having an issue with!\n\nIn your server, please run the following commands and take a screenshot of the information.\n`/about` and `/about <plugin_name>`", "", ERROR_EMOTE.query().first().getAsMention() + " - Cancel", "", "*Try not to make the message over 1024 chars long.*", "*We'll cut it off due to Discord's Limitations!*");
+                .text("Last but not least, please tell us what you're having an issue with!\n\nIn your server, please run the following commands\nand take a screenshot of the information.\n\n__To get the server information__ **>**```/about```\n__To get the plugin information__ **>**```/about <plugin_name>```", "", ERROR_EMOTE.query().first().getAsMention() + " - Cancel", "", "*Try not to make the message over 1024 chars long.*", "*We'll cut it off due to Discord's Limitations!*");
 
         issue.queue(channel, message -> setLastInstructions(message, msg -> {
             try {
