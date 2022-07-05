@@ -56,7 +56,7 @@ public class WarnCommand extends CommandModule {
                         .addChoice("Being Disrespectful", "Being Disrespectful")
                         .addChoice("Not Listening to Staff", "Not Listening to Staff")
                         .addChoice("Sending Bad Links", "Sending Bad Links")
-                        .addChoice("Breaking Offical Rules", "Breaking Offical Rules")
+                        .addChoice("Breaking Official Rules", "Breaking Official Rules")
                         .addChoice("Asking for Content/Plugins", "Asking for Content/Plugins")
                         .addChoice("Racism/Discrimination", "Racism/Discrimination"),
         };
