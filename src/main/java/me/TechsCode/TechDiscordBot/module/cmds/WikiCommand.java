@@ -82,7 +82,7 @@ public class WikiCommand extends CommandModule {
 
             e.replyEmbeds(
                     new TechEmbedBuilder("Wikis")
-                        .text("*Showing the wiki of the support channel you're in.*\n\n" + plugin.getEmoji().getAsMention() + " " + plugin.getWiki() + "\n\nFor more info please execute the command `wiki help`.")
+                        .text("*Showing the wiki of the support channel you're in.*\n\n" + plugin.getEmoji().getAsMention() + " " + plugin.getWiki())
                         .build()
             ).queue();
         }
