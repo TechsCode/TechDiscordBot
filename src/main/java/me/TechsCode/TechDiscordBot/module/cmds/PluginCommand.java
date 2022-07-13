@@ -19,7 +19,7 @@ public class PluginCommand extends CommandModule {
 
     @Override
     public String getName() {
-        return "howto";
+        return "plugin";
     }
 
     @Override
