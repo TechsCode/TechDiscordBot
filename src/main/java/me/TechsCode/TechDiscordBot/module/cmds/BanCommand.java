@@ -14,11 +14,15 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
+import java.util.Objects;
+
 public class BanCommand extends CommandModule {
 
-    private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
+    private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<>() {
         @Override
-        protected Query<Role> newQuery() { return bot.getRoles("Staff"); }
+        protected Query<Role> newQuery() {
+            return bot.getRoles("Staff");
+        }
     };
 
     public BanCommand(TechDiscordBot bot) {
@@ -44,7 +48,7 @@ public class BanCommand extends CommandModule {
     public OptionData[] getOptions() {
         return new OptionData[] {
                 new OptionData(OptionType.USER, "member", "The member to ban.", true),
-                new OptionData(OptionType.STRING, "reason", "The reason to ban the member.", false)
+                new OptionData(OptionType.STRING, "reason", "The reason to ban the member.", true)
         };
     }
 
@@ -55,15 +59,16 @@ public class BanCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
-        Member member = e.getOption("member").getAsMember();
-        String reason = e.getOption("reason").getAsString();
+        Member member = Objects.requireNonNull(e.getOption("member")).getAsMember();
+        String reason = Objects.requireNonNull(e.getOption("reason")).getAsString();
 
-        Member selfMember = e.getGuild().getSelfMember();
+        Member selfMember = Objects.requireNonNull(e.getGuild()).getSelfMember();
         if (member != null && !selfMember.canInteract(member)) {
             e.reply("This user is too powerful for me to ban.").queue();
             return;
         }
 
+        assert member != null;
         if (member.getRoles().contains(STAFF_ROLE.query().first())) {
             e.replyEmbeds(
                     new TechEmbedBuilder("Ban - Error")
@@ -86,14 +91,14 @@ public class BanCommand extends CommandModule {
             e.replyEmbeds(
                     new TechEmbedBuilder("Banned " + member.getUser().getName() + "#" + member.getUser().getDiscriminator())
                             .success()
-                            .text("Successfully banned " + member.getAsMention() + (reason == null ? "!" : " for `" + reason + "`!"))
+                            .text("Successfully banned " + member.getAsMention() + " for `" + reason + "`!")
                             .build()
             ).queue();
 
             PunishLogs.log(
                     new TechEmbedBuilder("Banned " + member.getUser().getName() + "#" + member.getUser().getDiscriminator())
                             .success()
-                            .text("Successfully banned " + member.getAsMention() + (reason == null ? "!" : " for `" + reason + "`!"))
+                            .text("Successfully banned " + member.getAsMention() + " for `" + reason + "`!")
             );
         }
     }
