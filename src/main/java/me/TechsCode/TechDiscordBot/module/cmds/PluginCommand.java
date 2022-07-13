@@ -2,17 +2,14 @@ package me.TechsCode.TechDiscordBot.module.cmds;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
-import me.TechsCode.TechDiscordBot.util.Plugin;
-import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 
-import java.util.Arrays;
+import java.util.Objects;
 
 public class PluginCommand extends CommandModule {
 
@@ -22,13 +19,11 @@ public class PluginCommand extends CommandModule {
 
     @Override
     public String getName() {
-        return "plugin";
+        return "howto";
     }
 
     @Override
-    public String getDescription() {
-        return "Get info/links about a plugin.";
-    }
+    public String getDescription() { return "Get info/links about a plugin."; }
 
     @Override
     public CommandPrivilege[] getCommandPrivileges() {
@@ -38,8 +33,13 @@ public class PluginCommand extends CommandModule {
     @Override
     public OptionData[] getOptions() {
         return new OptionData[] {
-                new OptionData(OptionType.STRING, "plugin", "The plugin you want info about.", true)
-                        .addChoices(Arrays.stream(Plugin.values()).map(p -> new Command.Choice(p.getRoleName(), p.getRoleName())).toArray(Command.Choice[]::new))
+                new OptionData(OptionType.STRING, "plugin", "Select Plugin", true)
+                        .addChoice("Vault", "Vault")
+                        .addChoice("PlaceholderAPI", "PlaceholderAPI")
+                        .addChoice("ProtocolLib", "ProtocolLib")
+                        .addChoice("TAB", "TAB")
+                        .addChoice("NametagEdit", "NametagEdit"),
+
         };
     }
 
@@ -50,21 +50,10 @@ public class PluginCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
-        Plugin plugin = e.getOption("plugin") == null ? null : Plugin.byRoleName(e.getOption("plugin").getAsString());
+        String topic = Objects.requireNonNull(e.getOption("plugin")).getAsString();
 
-        if(plugin == null) {
-            e.reply("Could not find the plugin, this probably shouldn't be happening.").setEphemeral(true).queue();
-            return;
-        }
-
-        e.replyEmbeds(
-                new TechEmbedBuilder(plugin.getRoleName())
-                    .text(plugin.getDescription() + ".")
-                    .field("Download Links", plugin.getPluginMarketplace().toString(), true)
-                    .field("Wiki", plugin.getWiki(), true)
-                    .color(plugin.getColor())
-                    .thumbnail(plugin.getResourceLogo())
-                    .build()
-        ).queue();
-    }
-}
+        if (topic.equalsIgnoreCase("Vault")) { e.reply("https://www.spigotmc.org/resources/vault.34315/").queue(); }
+        if (topic.equalsIgnoreCase("PlaceholderAPI")) { e.reply("https://www.spigotmc.org/resources/placeholderapi.6245/").queue(); }
+        if (topic.equalsIgnoreCase("ProtocolLib")) { e.reply("https://www.spigotmc.org/resources/protocollib.1997/").queue(); }
+        if (topic.equalsIgnoreCase("TAB")) { e.reply("https://github.com/NEZNAMY/TAB").queue(); }
+        if (topic.equalsIgnoreCase("NametagEdit")) { e.reply("https://github.com/NEZNAMY/TAB").queue(); }}}
