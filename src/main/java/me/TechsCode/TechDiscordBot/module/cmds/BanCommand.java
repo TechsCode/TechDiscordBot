@@ -18,11 +18,9 @@ import java.util.Objects;
 
 public class BanCommand extends CommandModule {
 
-    private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<>() {
+    private final DefinedQuery<Role> STAFF_ROLE = new DefinedQuery<Role>() {
         @Override
-        protected Query<Role> newQuery() {
-            return bot.getRoles("Staff");
-        }
+        protected Query<Role> newQuery() { return bot.getRoles("Staff"); }
     };
 
     public BanCommand(TechDiscordBot bot) {
