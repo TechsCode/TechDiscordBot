@@ -98,7 +98,7 @@ public class OverviewCommand extends CommandModule {
 
     public void showInfo() {
         new TechEmbedBuilder("Tech's Plugin Support")
-                .text("Welcome to **Tech's Plugin Support**. Here, not only can you get support for Tech's Plugins. You can talk and socialize with people too! You can also get help with other plugins!\n\nIf you're new here and need help with one or more of Tech's Plugins, you can verify in <#695493411117072425> to get support. Once you do, you will get access to the specified support channels.")
+                .text("Welcome to **Tech's Plugin Support**. Here, not only can you get support for Tech's Plugins. You can talk and socialize with people too! You can also get help with other plugins!\n\nIf you're new here and need help with one or more of Tech's Plugins, you can verify in <#907349490556616745> to get support. Once you do, you will get access to the specified support channels.")
                 .thumbnail("https://i.imgur.com/SfFEnoU.png")
                 .queue(OVERVIEW_CHANNEL.query().first());
     }
