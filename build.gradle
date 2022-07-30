@@ -19,14 +19,14 @@ repositories {
 dependencies {
     implementation ('net.dv8tion:JDA:4.3.0_331') { exclude module: 'opus-java' }
 
-    implementation 'com.google.guava:guava:31.0.1-jre'
+    implementation 'com.google.guava:guava:31.1-jre'
     implementation 'org.jsoup:jsoup:1.14.3'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
-    implementation 'mysql:mysql-connector-java:8.0.25'
+    implementation 'mysql:mysql-connector-java:8.0.29'
     implementation "com.googlecode.json-simple:json-simple:1.1.1"
-    implementation 'net.sourceforge.htmlunit:htmlunit:2.55.0'
-    implementation 'com.google.code.gson:gson:2.8.9'
-    implementation 'org.kohsuke:github-api:1.301'
+    implementation 'net.sourceforge.htmlunit:htmlunit:2.62.0'
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'org.kohsuke:github-api:1.306'
     implementation 'com.mattmalec:Pterodactyl4J:2.BETA_78'
 }
 
@@ -42,8 +42,8 @@ buildscript {
 }
 
 shadowJar {
-    archiveName = 'TechDiscordBot.jar'
-    destinationDir = file("build")
+    archiveFileName  = 'TechDiscordBot.jar'
+    destinationDirectory  = file("build")
 }
 
 jar {
