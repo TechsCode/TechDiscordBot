@@ -2,6 +2,7 @@ package me.TechsCode.TechDiscordBot.module.cmds;
 
 import me.TechsCode.TechDiscordBot.TechDiscordBot;
 import me.TechsCode.TechDiscordBot.module.CommandModule;
+import me.TechsCode.TechDiscordBot.util.TechEmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
@@ -39,6 +40,10 @@ public class FeedbackCommand extends CommandModule {
 
     @Override
     public void onCommand(TextChannel channel, Member m, SlashCommandEvent e) {
-        e.reply("https://github.com/TechsCode-Team/Feedback/discussions").queue();
+        e.replyEmbeds(new TechEmbedBuilder("Feedback")
+                .success()
+                .text("For suggestions, <#1020188847461629972>.\n" + "For Bug Reports, <#1020188935953076244>.\n" + "For Enhancements, <#1020189010406150204>.")
+                .build()
+        ).queue();
     }
 }
