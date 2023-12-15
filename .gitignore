@@ -1,6 +1,22 @@
-*.DS_Store
-*.iml
+#################
+## IDEA
+#################
+
+# User-specific stuff
 .idea/
+.idea_modules/
 .gradle/
+*.iml
+*.DS_Store
+.run/
+
+# IntelliJ
 out/
-build/
+target/
+settings.yaml
+
+techBotSettings.yaml
+
+Archive/
+
+target/
