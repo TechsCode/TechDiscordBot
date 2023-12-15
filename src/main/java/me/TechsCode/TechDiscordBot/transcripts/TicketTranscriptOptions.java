@@ -1,4 +1,4 @@
-package me.TechsCode.TechDiscordBot.transcripts;
+package me.techscode.techdiscordbot.transcripts;
 
 public class TicketTranscriptOptions {
 

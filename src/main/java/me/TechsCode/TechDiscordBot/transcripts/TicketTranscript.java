@@ -1,13 +1,13 @@
-package me.TechsCode.TechDiscordBot.transcripts;
+package me.techscode.techdiscordbot.transcripts;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import me.TechsCode.TechDiscordBot.module.modules.TicketModule;
-import me.TechsCode.TechDiscordBot.util.PasswordGenerator;
+import com.greazi.discordbotfoundation.utils.RandomGenerator;
+import me.techscode.techdiscordbot.database.Database;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -32,7 +32,7 @@ public class TicketTranscript {
         this.fetchAll = options.getMessagesAmount() == -1;
 
         this.id = UUID.randomUUID().toString();
-        this.password = PasswordGenerator.generateRandomPassword(10);
+        this.password = RandomGenerator.string(10);
     }
 
     public static TicketTranscript buildTranscript(TextChannel channel, TicketTranscriptOptions options) {
@@ -58,7 +58,7 @@ public class TicketTranscript {
             object.addProperty("password", this.password);
 
             object.add("members", buildMembers(memberMessages));
-            object.add("creator", buildMember(TicketModule.getMemberFromTicket(channel)));
+            object.add("creator", buildMember(Database.TICKETS.get(channel.getIdLong()).get(0).getMember().getDiscordMember() == null ? channel.getGuild().getMemberById("619084935655063552") : Database.TICKETS.get(channel.getIdLong()).get(0).getMember().getDiscordMember()));
             object.add("messages", array);
 
             consumer.accept(object);
